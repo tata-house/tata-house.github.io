@@ -1,13 +1,13 @@
 -- ============================================================
--- TATA SUSHI — Seed: mesas + reservas oficiais do Dia dos Namorados
--- Execute DEPOIS do schema.sql
+-- TATA SUSHI — Migração operação (PASSO 2 de 2)
+-- Execute DEPOIS do migracao-passo-1.sql.
+-- 1) Reposiciona as mesas no mapa de chão único (salão + varanda)
+-- 2) Fechar conta passa a liberar a mesa automaticamente
+-- 3) Substitui as reservas pela planilha oficial do evento
 -- ============================================================
 
--- ---------- MESAS ----------
--- Posições (pos_x/pos_y em %) num MAPA DE CHÃO ÚNICO vertical:
--- salão no topo (~0-65%), varanda embaixo (~65-100%).
--- Balcão 41-45 no topo, coluna esquerda 24/21/20, centro 19/17/15/13/12,
--- barra fria 51-55, parede direita 11..1, varanda 60/62/64 + 66/65 + V1/V2.
+-- ---------- 1. MESAS (posições % no mapa de chão único) ----------
+-- Salão ocupa o topo (~0-65%), varanda a parte de baixo (~65-100%).
 insert into public.tables (numero, area, capacidade, ativa, pos_x, pos_y, observacao) values
   -- Balcão do bar (topo) — apoio, bloqueadas para reserva
   ('41', 'salao', 2, false, 36, 5,  'Balcão do bar — apoio'),
@@ -48,9 +48,81 @@ insert into public.tables (numero, area, capacidade, ativa, pos_x, pos_y, observ
   ('66', 'varanda', 2, true, 35, 75, 'Área externa'),
   ('65', 'varanda', 2, true, 32, 86, 'Área externa'),
   ('V1', 'varanda', 2, true, 12, 73, 'Lugar extra varanda'),
-  ('V2', 'varanda', 2, true, 12, 88, 'Lugar extra varanda');
+  ('V2', 'varanda', 2, true, 12, 88, 'Lugar extra varanda')
+on conflict (numero) do update set
+  area = excluded.area,
+  capacidade = excluded.capacidade,
+  ativa = excluded.ativa,
+  pos_x = excluded.pos_x,
+  pos_y = excluded.pos_y,
+  observacao = excluded.observacao;
 
--- ---------- RESERVAS OFICIAIS (planilha do evento) ----------
+-- ---------- 2. FECHAR CONTA LIBERA A MESA ----------
+create or replace function public.fechar_conta(
+  p_reservation_id uuid,
+  p_valor_conta numeric,
+  p_observacao text default null
+)
+returns public.cash_closures
+language plpgsql security definer set search_path = public
+as $$
+declare
+  r public.reservations;
+  c public.cash_closures;
+  v_credito numeric := 0;
+begin
+  select * into r from public.reservations where id = p_reservation_id for update;
+
+  if not found then
+    raise exception 'Reserva não encontrada.';
+  end if;
+  if r.status in ('finalizada', 'cancelada', 'no_show') then
+    raise exception 'Esta conta já foi encerrada.';
+  end if;
+  if p_valor_conta < 0 then
+    raise exception 'Valor da conta inválido.';
+  end if;
+
+  if r.credito_aplicado then
+    v_credito := least(r.credito_disponivel, p_valor_conta);
+  end if;
+
+  insert into public.cash_closures
+    (reservation_id, table_id, valor_conta, credito_aplicado_valor, valor_pago, fechado_por, observacao)
+  values
+    (p_reservation_id, r.table_id, p_valor_conta, v_credito, p_valor_conta - v_credito, auth.uid(), p_observacao)
+  returning * into c;
+
+  insert into public.payments (reservation_id, tipo, valor, metodo, registrado_por)
+  values (p_reservation_id, 'conta', p_valor_conta - v_credito, null, auth.uid());
+
+  -- Finaliza E libera a mesa num passo só (mesa volta a livre para a hostess)
+  update public.reservations
+     set status = 'finalizada',
+         mesa_liberada = true
+   where id = p_reservation_id;
+
+  insert into public.reservation_events (reservation_id, tipo, detalhes, user_id)
+  values (
+    p_reservation_id, 'finalizada',
+    jsonb_build_object('valor_conta', p_valor_conta, 'credito', v_credito, 'valor_pago', p_valor_conta - v_credito),
+    auth.uid()
+  );
+
+  return c;
+end;
+$$;
+
+-- Mesas de contas já finalizadas ficam liberadas
+update public.reservations set mesa_liberada = true where status = 'finalizada';
+
+-- ---------- 3. RESERVAS OFICIAIS DA PLANILHA ----------
+-- Limpa as reservas atuais (e dependências) e insere a lista oficial.
+delete from public.cash_closures;
+delete from public.payments;
+delete from public.reservation_events;
+delete from public.reservations;
+
 -- Turno 19h — todas Pix pago
 insert into public.reservations (nome, turno, area_preferida, table_id, status, pix_status, observacao, origem)
 select v.nome, '19:00'::public.turno_tipo, 'salao'::public.area_tipo, t.id,
@@ -100,3 +172,6 @@ from (values
   ('Pedro Guerra e Amanda Guerra', '1', 'pago', null)
 ) as v(nome, mesa, pix, obs)
 join public.tables t on t.numero = v.mesa;
+
+-- Confere: deve retornar 13 / 12 / 1
+select turno, count(*) from public.reservations group by turno order by turno;

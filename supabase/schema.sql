@@ -7,7 +7,7 @@
 -- ---------- TIPOS ----------
 create type public.app_role as enum ('gerente', 'recepcao', 'caixa');
 create type public.area_tipo as enum ('salao', 'varanda');
-create type public.turno_tipo as enum ('19:00', '21:00');
+create type public.turno_tipo as enum ('19:00', '21:00', '22:00');
 create type public.reserva_status as enum (
   'pre_reserva',   -- ativo
   'pix_pendente',  -- ativo
@@ -271,8 +271,10 @@ begin
   insert into public.payments (reservation_id, tipo, valor, metodo, registrado_por)
   values (p_reservation_id, 'conta', p_valor_conta - v_credito, null, auth.uid());
 
+  -- Finaliza E libera a mesa num passo só (mesa volta a livre para a hostess)
   update public.reservations
-     set status = 'finalizada'
+     set status = 'finalizada',
+         mesa_liberada = true
    where id = p_reservation_id;
 
   insert into public.reservation_events (reservation_id, tipo, detalhes, user_id)

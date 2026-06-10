@@ -1,26 +1,46 @@
-import { STATUS_ATIVOS, type MesaEstado } from './constants';
+import { STATUS_ATIVOS, TURNOS, type MesaEstado } from './constants';
 import type { Mesa, Reserva, Turno } from './types';
+
+/** Turno do mapa: um horário específico ou a operação atual ("agora"). */
+export type TurnoMapa = Turno | 'agora';
 
 export interface EstadoDaMesa {
   estado: MesaEstado;
   reserva: Reserva | null;
 }
 
-/** Estado visual de uma mesa em um turno (cores do mapa). */
-export function estadoMesa(mesa: Mesa, reservas: Reserva[], turno: Turno): EstadoDaMesa {
+/** Tempo que a mesa fica cinza ("liberada") após fechar a conta, antes de voltar a livre. */
+export const LIBERADA_MS = 8000;
+
+function finalizadaRecente(r: Reserva): boolean {
+  return r.status === 'finalizada' && Date.now() - new Date(r.atualizado_em).getTime() < LIBERADA_MS;
+}
+
+/** Estado visual de uma mesa (cores do mapa) em um turno ou na operação atual. */
+export function estadoMesa(mesa: Mesa, reservas: Reserva[], turno: TurnoMapa): EstadoDaMesa {
   if (!mesa.ativa) return { estado: 'bloqueada', reserva: null };
 
-  const doTurno = reservas.filter((r) => r.table_id === mesa.id && r.turno === turno);
+  const daMesa = reservas.filter(
+    (r) => r.table_id === mesa.id && (turno === 'agora' || r.turno === turno),
+  );
 
-  const ativa = doTurno.find((r) => STATUS_ATIVOS.includes(r.status));
-  if (ativa) {
-    if (ativa.status === 'sentado') return { estado: 'ocupada', reserva: ativa };
-    if (ativa.status === 'chegou') return { estado: 'chegou', reserva: ativa };
-    return { estado: 'reservada', reserva: ativa };
+  // Sentado e chegou prevalecem (no modo "agora", de qualquer turno).
+  const sentada = daMesa.find((r) => r.status === 'sentado');
+  if (sentada) return { estado: 'ocupada', reserva: sentada };
+  const chegada = daMesa.find((r) => r.status === 'chegou');
+  if (chegada) return { estado: 'chegou', reserva: chegada };
+
+  const ativas = daMesa.filter((r) => STATUS_ATIVOS.includes(r.status));
+  if (ativas.length > 0) {
+    const porTurno = [...ativas].sort((a, b) => TURNOS.indexOf(a.turno) - TURNOS.indexOf(b.turno));
+    return { estado: 'reservada', reserva: porTurno[0] };
   }
 
-  const finalizadaSemLimpeza = doTurno.find((r) => r.status === 'finalizada' && !r.mesa_liberada);
-  if (finalizadaSemLimpeza) return { estado: 'limpeza', reserva: finalizadaSemLimpeza };
+  // Conta fechada: cinza por alguns segundos (ou até liberar manualmente), depois volta a livre.
+  const liberada =
+    daMesa.find(finalizadaRecente) ??
+    daMesa.find((r) => r.status === 'finalizada' && !r.mesa_liberada);
+  if (liberada) return { estado: 'limpeza', reserva: liberada };
 
   return { estado: 'livre', reserva: null };
 }
@@ -33,4 +53,12 @@ export function mesasLivres(mesas: Mesa[], reservas: Reserva[], turno: Turno, in
     const { estado } = estadoMesa(m, reservas, turno);
     return estado === 'livre' || estado === 'limpeza';
   });
+}
+
+/** Uma mesa pode receber este casal? (livre ou em limpeza no turno do casal) */
+export function mesaPodeReceber(mesa: Mesa, reservas: Reserva[], reserva: Reserva): boolean {
+  if (!mesa.ativa) return false;
+  if (mesa.id === reserva.table_id) return false;
+  const { estado } = estadoMesa(mesa, reservas, reserva.turno);
+  return estado === 'livre' || estado === 'limpeza';
 }

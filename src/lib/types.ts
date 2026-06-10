@@ -1,6 +1,6 @@
 export type Role = 'gerente' | 'recepcao' | 'caixa';
 export type Area = 'salao' | 'varanda';
-export type Turno = '19:00' | '21:00';
+export type Turno = '19:00' | '21:00' | '22:00';
 export type ReservaStatus =
   | 'pre_reserva'
   | 'pix_pendente'

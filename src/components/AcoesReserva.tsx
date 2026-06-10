@@ -11,7 +11,7 @@ import {
   moverMesa,
   sentarCliente,
 } from '@/lib/actions';
-import { AREA_LABEL, STATUS_ATIVOS } from '@/lib/constants';
+import { AREA_LABEL, STATUS_ATIVOS, TURNO_LABEL } from '@/lib/constants';
 import { useDados } from '@/lib/data-context';
 import { mesasLivres } from '@/lib/mesa-estado';
 import type { Reserva } from '@/lib/types';
@@ -71,7 +71,7 @@ export function AcoesReserva({
             <BadgeStatus status={reserva.status} />
             <BadgePix status={reserva.pix_status} />
             <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold dark:bg-gray-700">
-              Turno {reserva.turno}
+              Turno {TURNO_LABEL[reserva.turno]}
             </span>
             <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold dark:bg-gray-700">
               {reserva.origem === 'passante' ? '🚶 Passante' : '📋 Reserva'}
@@ -139,7 +139,7 @@ export function AcoesReserva({
             </div>
           ) : finalizando ? (
             <div className="space-y-3">
-              <label className={estiloRotulo}>Valor da conta (R$)</label>
+              <label className={estiloRotulo}>Valor da conta (R$) — opcional</label>
               <input
                 className={estiloInput}
                 value={valorConta}
@@ -158,12 +158,15 @@ export function AcoesReserva({
                 </Botao>
                 <Botao
                   className="flex-1"
-                  disabled={executando || !valorConta}
+                  disabled={executando}
                   onClick={() =>
-                    executar(() => fecharConta(reserva.id, Number(valorConta.replace(',', '.')) || 0))
+                    executar(async () => {
+                      await fecharConta(reserva.id, Number(valorConta.replace(',', '.')) || 0);
+                      await liberarMesa(reserva.id);
+                    })
                   }
                 >
-                  Finalizar mesa
+                  Fechar conta e liberar mesa
                 </Botao>
               </div>
             </div>
@@ -191,7 +194,7 @@ export function AcoesReserva({
               )}
               {reserva.status === 'sentado' && (
                 <Botao variante="secundario" onClick={() => setFinalizando(true)} disabled={executando}>
-                  🧾 Finalizar mesa
+                  🧾 Fechar conta
                 </Botao>
               )}
               {reserva.status === 'finalizada' && !reserva.mesa_liberada && (

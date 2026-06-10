@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from 'react';
 import { criarReserva, editarReserva } from '@/lib/actions';
-import { AREA_LABEL, PIX_LABEL, STATUS_ATIVOS, STATUS_LABEL } from '@/lib/constants';
+import { PIX_LABEL, TURNOS, TURNO_LABEL } from '@/lib/constants';
 import { useDados } from '@/lib/data-context';
 import { mesasLivres } from '@/lib/mesa-estado';
-import type { Area, PixStatus, Reserva, ReservaStatus, Turno } from '@/lib/types';
+import type { PixStatus, Reserva, Turno } from '@/lib/types';
 import { Botao, Modal, estiloInput, estiloRotulo } from './ui';
 
 export function FormularioReserva({
@@ -24,9 +24,7 @@ export function FormularioReserva({
   const [nome, setNome] = useState(reserva?.nome ?? '');
   const [telefone, setTelefone] = useState(reserva?.telefone ?? '');
   const [turno, setTurno] = useState<Turno>(reserva?.turno ?? '19:00');
-  const [area, setArea] = useState<Area | ''>(reserva?.area_preferida ?? '');
   const [tableId, setTableId] = useState(reserva?.table_id ?? '');
-  const [status, setStatus] = useState<ReservaStatus>(reserva?.status ?? 'confirmada');
   const [pixStatus, setPixStatus] = useState<PixStatus>(reserva?.pix_status ?? 'pendente');
   const [observacao, setObservacao] = useState(reserva?.observacao ?? '');
 
@@ -37,7 +35,7 @@ export function FormularioReserva({
 
   async function salvar() {
     if (!nome.trim()) {
-      setErro('Informe o nome.');
+      setErro('Informe o nome do casal.');
       return;
     }
     setSalvando(true);
@@ -47,9 +45,7 @@ export function FormularioReserva({
         nome: nome.trim(),
         telefone: telefone.trim() || null,
         turno,
-        area_preferida: (area || null) as Area | null,
         table_id: tableId || null,
-        status,
         pix_status: pixStatus,
         observacao: observacao.trim() || null,
       };
@@ -68,51 +64,19 @@ export function FormularioReserva({
   }
 
   return (
-    <Modal titulo={reserva ? 'Editar reserva' : 'Nova reserva'} aberto={aberto} aoFechar={aoFechar}>
+    <Modal titulo={reserva ? 'Editar casal' : 'Novo casal'} aberto={aberto} aoFechar={aoFechar}>
       <div className="space-y-4">
         <div>
           <label className={estiloRotulo}>Nome do casal *</label>
           <input className={estiloInput} value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex.: Maria e João" />
         </div>
-        <div>
-          <label className={estiloRotulo}>Telefone</label>
-          <input className={estiloInput} value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="(11) 99999-9999" inputMode="tel" />
-        </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className={estiloRotulo}>Turno</label>
             <select className={estiloInput} value={turno} onChange={(e) => setTurno(e.target.value as Turno)}>
-              <option value="19:00">19:00</option>
-              <option value="21:00">21:00</option>
-            </select>
-          </div>
-          <div>
-            <label className={estiloRotulo}>Área preferida</label>
-            <select className={estiloInput} value={area} onChange={(e) => setArea(e.target.value as Area | '')}>
-              <option value="">Sem preferência</option>
-              <option value="salao">{AREA_LABEL.salao}</option>
-              <option value="varanda">{AREA_LABEL.varanda}</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label className={estiloRotulo}>Mesa (somente mesas livres no turno)</label>
-          <select className={estiloInput} value={tableId} onChange={(e) => setTableId(e.target.value)}>
-            <option value="">Sem mesa atribuída</option>
-            {livres.map((m) => (
-              <option key={m.id} value={m.id}>
-                Mesa {m.numero} — {AREA_LABEL[m.area]}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className={estiloRotulo}>Status</label>
-            <select className={estiloInput} value={status} onChange={(e) => setStatus(e.target.value as ReservaStatus)}>
-              {(reserva ? (Object.keys(STATUS_LABEL) as ReservaStatus[]) : STATUS_ATIVOS).map((s) => (
-                <option key={s} value={s}>
-                  {STATUS_LABEL[s]}
+              {TURNOS.map((t) => (
+                <option key={t} value={t}>
+                  {TURNO_LABEL[t]}
                 </option>
               ))}
             </select>
@@ -127,6 +91,21 @@ export function FormularioReserva({
               ))}
             </select>
           </div>
+        </div>
+        <div>
+          <label className={estiloRotulo}>Mesa (opcional — dá para arrastar no mapa depois)</label>
+          <select className={estiloInput} value={tableId} onChange={(e) => setTableId(e.target.value)}>
+            <option value="">Sem mesa (aguardando)</option>
+            {livres.map((m) => (
+              <option key={m.id} value={m.id}>
+                Mesa {m.numero}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={estiloRotulo}>Telefone (opcional)</label>
+          <input className={estiloInput} value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="(11) 99999-9999" inputMode="tel" />
         </div>
         <div>
           <label className={estiloRotulo}>Observações</label>

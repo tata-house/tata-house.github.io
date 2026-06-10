@@ -1,6 +1,12 @@
 import type { Area, PixStatus, ReservaStatus, Role, Turno } from './types';
 
-export const TURNOS: Turno[] = ['19:00', '21:00'];
+export const TURNOS: Turno[] = ['19:00', '21:00', '22:00'];
+
+export const TURNO_LABEL: Record<Turno, string> = {
+  '19:00': '19h',
+  '21:00': '21h',
+  '22:00': '22h',
+};
 
 export const AREA_LABEL: Record<Area, string> = {
   salao: 'Salão Principal',
@@ -25,11 +31,11 @@ export const STATUS_ATIVOS: ReservaStatus[] = [
 export const STATUS_LABEL: Record<ReservaStatus, string> = {
   pre_reserva: 'Pré-reserva',
   pix_pendente: 'Pix pendente',
-  confirmada: 'Confirmada',
+  confirmada: 'Reservado',
   chegou: 'Chegou',
   sentado: 'Sentado',
-  finalizada: 'Finalizada',
-  cancelada: 'Cancelada',
+  finalizada: 'Finalizado',
+  cancelada: 'Cancelado',
   no_show: 'No-show',
 };
 
@@ -80,7 +86,7 @@ export const MESA_ESTADO_LABEL: Record<MesaEstado, string> = {
   livre: 'Livre',
   reservada: 'Reservada',
   chegou: 'Chegou',
-  ocupada: 'Ocupada',
-  limpeza: 'Limpeza / finalizada',
+  ocupada: 'Sentado',
+  limpeza: 'Liberada',
   bloqueada: 'Bloqueada',
 };

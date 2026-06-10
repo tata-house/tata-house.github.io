@@ -3,13 +3,13 @@ import { RegistroSw } from '@/components/RegistroSw';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Tata Sushi — Reservas',
-  description: 'Operação de reservas do Dia dos Namorados — Tata Sushi',
+  title: 'TATÁ Sushi — Operação Dia dos Namorados',
+  description: 'Mapa de mesas e operação do Dia dos Namorados — TATÁ Sushi',
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Tata Sushi',
+    title: 'TATÁ Sushi',
   },
   icons: {
     icon: '/icons/icon-192.png',
@@ -21,7 +21,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  themeColor: '#16a34a',
+  themeColor: '#00b14f',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

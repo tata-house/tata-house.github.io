@@ -5,7 +5,7 @@ import { AcoesReserva } from '@/components/AcoesReserva';
 import { SeletorTurno } from '@/components/SeletorTurno';
 import { BadgeStatus, Botao, Cartao, Modal, estiloInput, estiloRotulo } from '@/components/ui';
 import { criarReserva } from '@/lib/actions';
-import { AREA_LABEL } from '@/lib/constants';
+import { AREA_LABEL, TURNOS, TURNO_LABEL } from '@/lib/constants';
 import { useDados } from '@/lib/data-context';
 import { mesasLivres } from '@/lib/mesa-estado';
 import type { Reserva, Turno } from '@/lib/types';
@@ -114,8 +114,11 @@ export default function PassantesPage() {
             <div>
               <label className={estiloRotulo}>Turno</label>
               <select className={estiloInput} value={turno} onChange={(e) => setTurno(e.target.value as Turno)}>
-                <option value="19:00">19:00</option>
-                <option value="21:00">21:00</option>
+                {TURNOS.map((t) => (
+                  <option key={t} value={t}>
+                    {TURNO_LABEL[t]}
+                  </option>
+                ))}
               </select>
             </div>
             <div>

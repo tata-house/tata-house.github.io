@@ -122,7 +122,8 @@ export function FormularioReserva({
           </select>
           {opcoesMesa.length === 0 && (
             <p className="mt-1 text-sm font-semibold text-red-600 dark:text-red-400">
-              Nenhuma mesa cadastrada no banco — execute os scripts de migração no Supabase.
+              Nenhuma mesa cadastrada no banco — execute supabase/fix-operacao-namorados.sql no SQL
+              Editor do Supabase (uma vez só).
             </p>
           )}
         </div>

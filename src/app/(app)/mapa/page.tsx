@@ -43,7 +43,7 @@ const LEGENDA: MesaEstado[] = ['livre', 'reservada', 'chegou', 'ocupada', 'limpe
 const BLOQUEADA: EstadoDaMesa = { estado: 'bloqueada', reserva: null };
 
 export default function MapaPage() {
-  const { mesas, reservas, carregando, recarregar } = useDados();
+  const { mesas, reservas, carregando, erro, supabaseHost, recarregar } = useDados();
   const [turno, setTurno] = useState<TurnoMapa>('agora');
   const [busca, setBusca] = useState('');
   const [mesaSelecionada, setMesaSelecionada] = useState<Mesa | null>(null);
@@ -174,6 +174,21 @@ export default function MapaPage() {
   return (
     <DndContext sensors={sensores} onDragStart={aoIniciarArraste} onDragEnd={aoSoltar} onDragCancel={aoCancelar}>
       <div className="space-y-3">
+        {(erro || mesas.length === 0) && (
+          <div className="rounded-2xl border-2 border-red-500 bg-red-50 p-4 text-sm dark:bg-red-950/40">
+            <p className="font-black text-red-700 dark:text-red-300">
+              {erro
+                ? `Erro ao ler o banco: ${erro}`
+                : 'Nenhuma mesa cadastrada no banco — o SQL de correção ainda não rodou neste projeto.'}
+            </p>
+            <p className="mt-1 text-red-800 dark:text-red-200">
+              Este site está conectado ao Supabase <b className="break-all">{supabaseHost}</b>. Confira
+              se é o MESMO projeto onde você executou o SQL. Para corrigir, abra o SQL Editor desse
+              projeto e execute o arquivo <b>supabase/fix-operacao-namorados.sql</b> (uma vez só).
+            </p>
+          </div>
+        )}
+
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h1 className="text-2xl font-black">Mapa de mesas</h1>
           <div className="flex gap-2">

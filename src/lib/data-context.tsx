@@ -17,14 +17,28 @@ interface DataContextValue {
   mesas: Mesa[];
   perfil: Profile | null;
   carregando: boolean;
+  /** Mensagem de erro do Supabase na última leitura (RLS, chave errada, rede...). */
+  erro: string | null;
+  /** Host do projeto Supabase configurado — para conferir se é o projeto certo. */
+  supabaseHost: string;
   recarregar: () => Promise<void>;
 }
+
+const SUPABASE_HOST = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').host;
+  } catch {
+    return 'NEXT_PUBLIC_SUPABASE_URL não configurada';
+  }
+})();
 
 const DataContext = createContext<DataContextValue>({
   reservas: [],
   mesas: [],
   perfil: null,
   carregando: true,
+  erro: null,
+  supabaseHost: SUPABASE_HOST,
   recarregar: async () => {},
 });
 
@@ -33,6 +47,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [mesas, setMesas] = useState<Mesa[]>([]);
   const [perfil, setPerfil] = useState<Profile | null>(null);
   const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
   const carregandoRef = useRef(false);
 
   const recarregar = useCallback(async () => {
@@ -49,6 +64,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
       ]);
       if (resReservas.data) setReservas(resReservas.data as Reserva[]);
       if (resMesas.data) setMesas(resMesas.data as Mesa[]);
+      const falha = resMesas.error ?? resReservas.error;
+      setErro(falha ? falha.message : null);
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'Falha de conexão com o Supabase.');
     } finally {
       carregandoRef.current = false;
       setCarregando(false);
@@ -87,7 +106,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }, [recarregar]);
 
   return (
-    <DataContext.Provider value={{ reservas, mesas, perfil, carregando, recarregar }}>
+    <DataContext.Provider
+      value={{ reservas, mesas, perfil, carregando, erro, supabaseHost: SUPABASE_HOST, recarregar }}
+    >
       {children}
     </DataContext.Provider>
   );

@@ -61,27 +61,24 @@ Abra http://localhost:3000.
 
 ## 2. Configuração do Supabase
 
-### Projeto novo (do zero)
+### Script único (projeto novo OU existente)
 
-1. Crie um projeto em https://supabase.com (região São Paulo recomendada).
-2. No **SQL Editor**, execute na ordem:
-   - [`supabase/schema.sql`](supabase/schema.sql) — tabelas, constraints, triggers, funções e RLS;
-   - [`supabase/seed.sql`](supabase/seed.sql) — mesas (posições do mapa de chão) e as reservas oficiais da planilha.
+1. No **SQL Editor** do projeto, cole e execute **uma única vez**
+   [`supabase/fix-operacao-namorados.sql`](supabase/fix-operacao-namorados.sql).
+   O script é **idempotente** (pode rodar de novo sem duplicar nada) e garante:
+   tipos/tabelas/funções/triggers, turnos 19h/21h/22h, RLS para o login único,
+   Realtime, as 34 mesas com posições e as 26 reservas oficiais da planilha.
+   ⚠️ Ele **substitui** as reservas existentes pela lista oficial.
+2. O resultado da execução já mostra a conferência: 34 mesas, 24 reserváveis,
+   reservas 13 (19h) / 12 (21h) / 1 (22h).
 3. Em **Authentication → Users → Add user**, crie **um único usuário** para a equipe
    (ex.: `equipe@tatasushi.com.br`, marque *Auto Confirm User*).
-4. Copie **Project Settings → API → URL** e **anon public key** para o `.env.local`
-   (e depois para a Vercel).
+4. Copie **Project Settings → API → URL** e **anon public key (Legacy, formato `eyJ...`)**
+   para o `.env.local` (e depois para a Vercel). A URL do projeto **precisa ser a mesma**
+   onde o SQL foi executado.
 
-### Projeto já existente (migração)
-
-No **SQL Editor**, execute **em duas etapas separadas** (aguarde o sucesso da primeira):
-
-1. [`supabase/migracao-passo-1.sql`](supabase/migracao-passo-1.sql) — adiciona o turno 22h;
-2. [`supabase/migracao-passo-2.sql`](supabase/migracao-passo-2.sql) — reposiciona as mesas no
-   mapa de chão único, faz o caixa liberar a mesa ao fechar a conta e substitui as
-   reservas pela planilha oficial (13 às 19h, 12 às 21h, 1 às 22h).
-
-> O Realtime já fica habilitado pelo `schema.sql` (`alter publication supabase_realtime ...`).
+> Os arquivos `schema.sql`, `seed.sql` e `migracao-passo-1/2.sql` continuam no repositório
+> como referência, mas o `fix-operacao-namorados.sql` os cobre por completo.
 
 ## 3. Deploy na Vercel
 
@@ -124,7 +121,7 @@ Rotas de apoio (fora do menu, ainda acessíveis pela URL): `/dashboard`, `/check
 ## 6. Checklist de teste antes do evento
 
 **Banco e acesso**
-- [ ] Migração (passo 1 e passo 2) executada sem erro no Supabase
+- [ ] `fix-operacao-namorados.sql` executado sem erro no Supabase (conferência 34 mesas / 13·12·1 reservas)
 - [ ] Login único da equipe funciona
 - [ ] Variáveis configuradas na Vercel e deploy OK
 
@@ -151,10 +148,11 @@ Rotas de apoio (fora do menu, ainda acessíveis pela URL): `/dashboard`, `/check
 
 ```
 supabase/
-  schema.sql               # tabelas, triggers, RPCs, RLS, realtime (instalação nova)
-  seed.sql                 # mesas com posições do mapa de chão + reservas oficiais
-  migracao-passo-1.sql     # migração de banco existente (turno 22h)
-  migracao-passo-2.sql     # migração: posições, caixa libera mesa, reservas oficiais
+  fix-operacao-namorados.sql  # SCRIPT ÚNICO E IDEMPOTENTE — use este (schema + mesas + reservas)
+  schema.sql               # referência: tabelas, triggers, RPCs, RLS, realtime
+  seed.sql                 # referência: mesas + reservas oficiais
+  migracao-passo-1.sql     # referência: migração antiga em 2 passos (turno 22h)
+  migracao-passo-2.sql     # referência: posições, caixa libera mesa, reservas oficiais
 src/
   middleware.ts            # proteção de rotas (Supabase Auth)
   lib/                     # tipos, constantes, ações de negócio, estado das mesas, realtime

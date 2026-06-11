@@ -182,9 +182,20 @@ export default function MapaPage() {
                 : 'Nenhuma mesa cadastrada no banco — o SQL de correção ainda não rodou neste projeto.'}
             </p>
             <p className="mt-1 text-red-800 dark:text-red-200">
-              Este site está conectado ao Supabase <b className="break-all">{supabaseHost}</b>. Confira
-              se é o MESMO projeto onde você executou o SQL. Para corrigir, abra o SQL Editor desse
-              projeto e execute o arquivo <b>supabase/fix-operacao-namorados.sql</b> (uma vez só).
+              {erro?.toLowerCase().includes('permission denied') ? (
+                <>
+                  As tabelas existem, mas faltam as permissões (GRANT). Abra o SQL Editor do projeto{' '}
+                  <b className="break-all">{supabaseHost}</b> e execute de novo o arquivo{' '}
+                  <b>supabase/fix-operacao-namorados.sql</b> na versão mais recente — ela inclui a
+                  seção de GRANTs que resolve este erro. Pode rodar quantas vezes precisar.
+                </>
+              ) : (
+                <>
+                  Este site está conectado ao Supabase <b className="break-all">{supabaseHost}</b>.
+                  Confira se é o MESMO projeto onde você executou o SQL. Para corrigir, abra o SQL
+                  Editor desse projeto e execute o arquivo <b>supabase/fix-operacao-namorados.sql</b>.
+                </>
+              )}
             </p>
           </div>
         )}

@@ -379,6 +379,23 @@ drop policy if exists "closures_all" on public.cash_closures;
 create policy "closures_all" on public.cash_closures for all to authenticated using (true) with check (true);
 
 -- ---------------------------------------------------------------
+-- 5b. GRANTs — sem isso o Postgres devolve "permission denied"
+--     antes mesmo de avaliar o RLS. Alguns projetos Supabase não
+--     aplicam privilégios padrão a tabelas criadas depois.
+-- ---------------------------------------------------------------
+grant usage on schema public to anon, authenticated, service_role;
+grant select, insert, update, delete
+  on all tables in schema public to anon, authenticated, service_role;
+grant usage, select on all sequences in schema public to anon, authenticated, service_role;
+grant execute on all functions in schema public to anon, authenticated, service_role;
+alter default privileges in schema public
+  grant select, insert, update, delete on tables to anon, authenticated, service_role;
+alter default privileges in schema public
+  grant usage, select on sequences to anon, authenticated, service_role;
+alter default privileges in schema public
+  grant execute on functions to anon, authenticated, service_role;
+
+-- ---------------------------------------------------------------
 -- 6. REALTIME (mapa e caixa se atualizam sozinhos entre aparelhos)
 -- ---------------------------------------------------------------
 do $$

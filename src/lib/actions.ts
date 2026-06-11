@@ -121,11 +121,45 @@ export async function moverMesa(id: string, novaTableId: string): Promise<void> 
 
 /** Registro de uma movimentação de mesa, usado pelo botão "Desfazer". */
 export interface MovimentoMesa {
-  movida: { id: string; nome: string; tableIdAnterior: string | null };
+  movida: {
+    id: string;
+    nome: string;
+    tableIdAnterior: string | null;
+    statusAnterior?: ReservaStatus;
+  };
   /** Casais que estavam na mesa destino e voltaram para "aguardando mesa". */
   retiradas: { id: string; nome: string; tableId: string; statusAnterior: ReservaStatus }[];
-  paraTableId: string;
-  paraMesaNumero: string;
+  /** null = o casal foi tirado da mesa (voltou para a lista). */
+  paraTableId: string | null;
+  paraMesaNumero: string | null;
+}
+
+/** Tira o casal da mesa e o devolve à lista como "aguardando mesa".
+ *  A mesa fica livre. Quem estava sentado volta como "chegou". */
+export async function tirarDaMesa(reserva: Reserva): Promise<MovimentoMesa> {
+  exigirConexao();
+  if (!reserva.table_id) throw new Error('Este casal já está sem mesa.');
+  const supabase = getSupabase();
+  const novoStatus = reserva.status === 'sentado' ? 'chegou' : reserva.status;
+  const { error } = await supabase
+    .from('reservations')
+    .update({ table_id: null, status: novoStatus })
+    .eq('id', reserva.id);
+  if (error) throw new Error(traduzirErro(error.message));
+  await registrarEvento(reserva.id, 'mesa_removida', {
+    mesa: reserva.mesa?.numero ?? null,
+  });
+  return {
+    movida: {
+      id: reserva.id,
+      nome: reserva.nome,
+      tableIdAnterior: reserva.table_id,
+      statusAnterior: reserva.status,
+    },
+    retiradas: [],
+    paraTableId: null,
+    paraMesaNumero: null,
+  };
 }
 
 /**
@@ -201,10 +235,13 @@ export async function desfazerMovimento(m: MovimentoMesa): Promise<void> {
   exigirConexao();
   const supabase = getSupabase();
 
-  // 1) o casal movido sai da mesa destino e volta para onde estava
+  // 1) o casal movido volta para onde estava (mesa anterior ou fila),
+  //    com o status anterior se a movimentação o alterou
+  const dadosMovida: Record<string, unknown> = { table_id: m.movida.tableIdAnterior };
+  if (m.movida.statusAnterior) dadosMovida.status = m.movida.statusAnterior;
   const { error: erroMovida } = await supabase
     .from('reservations')
-    .update({ table_id: m.movida.tableIdAnterior })
+    .update(dadosMovida)
     .eq('id', m.movida.id);
   if (erroMovida) throw new Error(traduzirErro(erroMovida.message));
 

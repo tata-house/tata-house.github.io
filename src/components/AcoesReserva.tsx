@@ -11,6 +11,7 @@ import {
   moverMesa,
   reativarReserva,
   sentarCliente,
+  tirarDaMesa,
   voltarStatus,
 } from '@/lib/actions';
 import { AREA_LABEL, STATUS_ATIVOS, TURNO_LABEL } from '@/lib/constants';
@@ -187,6 +188,22 @@ export function AcoesReserva({
               {ativa && (
                 <Botao variante="secundario" onClick={() => setMovendo(true)} disabled={executando}>
                   🔄 Mover mesa
+                </Botao>
+              )}
+              {ativa && reserva.table_id && (
+                <Botao
+                  variante="secundario"
+                  onClick={() =>
+                    executar(
+                      async () => {
+                        await tirarDaMesa(reserva);
+                      },
+                      `Tirar ${reserva.nome} da mesa ${reserva.mesa?.numero ?? ''}? A mesa fica livre e o casal volta para a lista.`,
+                    )
+                  }
+                  disabled={executando}
+                >
+                  🚪 Tirar da mesa
                 </Botao>
               )}
               {reserva.pix_status === 'pendente' && reserva.origem === 'reserva' && (

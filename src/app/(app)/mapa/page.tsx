@@ -20,6 +20,7 @@ import {
   criarReserva,
   desfazerMovimento,
   moverMesaComTroca,
+  tirarDaMesa,
   type MovimentoMesa,
 } from '@/lib/actions';
 import {
@@ -232,10 +233,33 @@ export default function MapaPage() {
     setArrastando(null);
     marcarArraste();
     const arrastada = event.active.data.current?.reserva as Reserva | undefined;
-    const mesa = event.over?.data.current?.mesa as Mesa | null | undefined;
-    if (!arrastada || !mesa) return;
+    const destino = event.over?.data.current as
+      | { mesa?: Mesa | null; semMesa?: boolean }
+      | undefined;
+    if (!arrastada || !destino) return;
     // usa a versão mais recente da reserva (a do drag pode estar defasada)
     const reserva = reservas.find((r) => r.id === arrastada.id) ?? arrastada;
+
+    // Soltou na lista lateral: tira da mesa e devolve para "aguardando"
+    if (destino.semMesa) {
+      if (!reserva.table_id) return;
+      try {
+        const mov = await tirarDaMesa(reserva);
+        setMovimentos((s) => [...s.slice(-9), mov]);
+        await recarregar();
+        setAviso({
+          tipo: 'ok',
+          texto: `${reserva.nome} saiu da mesa ${reserva.mesa?.numero ?? ''} — mesa livre ✓`,
+        });
+      } catch (e) {
+        setAviso({ tipo: 'erro', texto: e instanceof Error ? e.message : 'Erro ao tirar da mesa.' });
+        await recarregar();
+      }
+      return;
+    }
+
+    const mesa = destino.mesa;
+    if (!mesa) return;
     if (mesa.id === reserva.table_id) return;
     const como = comoRecebe(mesa, reservas, reserva);
     if (como === 'bloqueado') {
@@ -478,6 +502,7 @@ export default function MapaPage() {
                 </button>
               ))}
             </div>
+            <ZonaSemMesa ativa={!!arrastando?.table_id} />
             <div className="max-h-[80vh] space-y-4 overflow-y-auto pb-24 pr-1 lg:pb-2">
               {filtroLista === 'todos' ? (
                 <>
@@ -660,6 +685,27 @@ export default function MapaPage() {
         aoSalvar={() => setAviso({ tipo: 'ok', texto: 'Passante adicionado ✓' })}
       />
     </DndContext>
+  );
+}
+
+/* ---------- Zona "tirar da mesa": solte um casal aqui e a mesa fica livre ---------- */
+function ZonaSemMesa({ ativa }: { ativa: boolean }) {
+  const { setNodeRef, isOver } = useDroppable({ id: 'sem-mesa', data: { semMesa: true } });
+  return (
+    <div
+      ref={setNodeRef}
+      className={`rounded-xl border-2 border-dashed px-3 py-2 text-center text-xs font-bold transition ${
+        ativa
+          ? isOver
+            ? 'border-amber-500 bg-amber-100 text-amber-900 ring-4 ring-amber-300 dark:bg-amber-900/50 dark:text-amber-100'
+            : 'border-amber-400 bg-amber-50 text-amber-800 animate-pulse dark:bg-amber-950/40 dark:text-amber-200'
+          : 'border-gray-200 text-gray-400 dark:border-gray-700 dark:text-gray-500'
+      }`}
+    >
+      {ativa
+        ? '⬇️ Solte aqui para TIRAR da mesa (mesa fica livre)'
+        : 'Arraste um casal até aqui para tirá-lo da mesa'}
+    </div>
   );
 }
 

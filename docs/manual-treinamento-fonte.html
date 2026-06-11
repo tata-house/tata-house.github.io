@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: 'Manrope'; font-weight: 400; src: url('/tmp/fonts/manrope-400.ttf'); }
+  @font-face { font-family: 'Manrope'; font-weight: 600; src: url('/tmp/fonts/manrope-600.ttf'); }
+  @font-face { font-family: 'Manrope'; font-weight: 800; src: url('/tmp/fonts/manrope-800.ttf'); }
+  @font-face { font-family: 'Fraunces'; font-weight: 600; src: url('/tmp/fonts/fraunces-600.ttf'); }
+
+  @page {
+    size: A4;
+    margin: 16mm 14mm 18mm 14mm;
+    @bottom-center {
+      content: "TATÁ SUSHI · Operação Dia dos Namorados · pág. " counter(page);
+      font-family: 'Manrope'; font-size: 8pt; color: #aab0b9;
+      letter-spacing: .12em; text-transform: uppercase;
+    }
+  }
+  @page capa { margin: 0; @bottom-center { content: none; } }
+
+  * { box-sizing: border-box; }
+  body { font-family: 'Manrope'; font-weight: 400; color: #23262c; font-size: 10.5pt; line-height: 1.5; margin: 0; }
+  h1, h2, .display { font-family: 'Fraunces'; font-weight: 600; }
+
+  /* ---------- CAPA ---------- */
+  .capa {
+    page: capa; width: 210mm; height: 296mm;
+    background: #0e1013; color: #faf8f4;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 30mm 24mm; page-break-after: always;
+  }
+  .capa .fio { height: 1px; background: linear-gradient(90deg, transparent, #b08d4f, transparent); margin: 8mm 0; }
+  .capa .ponto { width: 14mm; height: 14mm; border-radius: 50%; background: rgba(0,177,79,.14); border: 1px solid rgba(0,177,79,.5); display: flex; align-items: center; justify-content: center; }
+  .capa .ponto i { display: block; width: 4.5mm; height: 4.5mm; border-radius: 50%; background: #00b14f; }
+  .capa h1 { font-size: 34pt; letter-spacing: .22em; margin: 10mm 0 0; }
+  .capa .sub { font-size: 10pt; letter-spacing: .3em; text-transform: uppercase; color: rgba(243,239,231,.55); margin-top: 4mm; }
+  .capa .titulo { font-family: 'Fraunces'; font-size: 21pt; color: #e8e1d3; margin-top: 2mm; }
+  .capa .rodape { font-size: 9pt; color: rgba(243,239,231,.45); letter-spacing: .08em; }
+
+  /* ---------- PÁGINAS ---------- */
+  .pagina { page-break-after: always; }
+  .pagina:last-child { page-break-after: auto; }
+
+  .etiqueta { font-size: 8.5pt; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #b08d4f; }
+  h2 { font-size: 19pt; margin: 1mm 0 1.5mm; color: #15171b; }
+  .descricao { color: #565c66; margin: 0 0 5mm; }
+  .fio { height: 1px; background: linear-gradient(90deg, #b08d4f66, transparent); margin: 3mm 0 6mm; }
+
+  .cartao { background: #faf8f4; border: 1px solid #e8e1d3; border-radius: 10pt; padding: 4mm 5mm; margin-bottom: 3.5mm; page-break-inside: avoid; }
+  .cartao h3 { font-size: 11.5pt; font-weight: 800; margin: 0 0 1mm; color: #15171b; }
+  .cartao p { margin: 0; color: #41454e; }
+
+  .passo { display: flex; gap: 4mm; margin-bottom: 3.2mm; page-break-inside: avoid; }
+  .passo .num {
+    flex: 0 0 8mm; width: 8mm; height: 8mm; border-radius: 50%;
+    background: #15171b; color: #faf8f4; font-weight: 800; font-size: 10.5pt;
+    display: flex; align-items: center; justify-content: center; margin-top: .5mm;
+  }
+  .passo .corpo b { color: #15171b; }
+  .passo .corpo { color: #41454e; }
+
+  .swatches { display: flex; flex-wrap: wrap; gap: 2.5mm; margin: 2mm 0 1mm; }
+  .swatch { display: flex; align-items: center; gap: 2.2mm; background: #fff; border: 1px solid #e8e1d3; border-radius: 99pt; padding: 1.6mm 3.5mm; font-size: 9pt; font-weight: 600; color: #41454e; }
+  .swatch i { display: block; width: 3.6mm; height: 3.6mm; border-radius: 2pt; }
+
+  .dica { background: #f6ecd8; border-radius: 8pt; padding: 3mm 4mm; color: #8a6420; font-weight: 600; font-size: 9.5pt; margin: 4mm 0; page-break-inside: avoid; }
+  .alerta { background: #f5e2df; border-radius: 8pt; padding: 3mm 4mm; color: #8e3a31; font-weight: 600; font-size: 9.5pt; margin: 4mm 0; page-break-inside: avoid; }
+
+  .duascol { display: flex; gap: 5mm; }
+  .duascol > div { flex: 1; }
+
+  table.faq { width: 100%; border-collapse: collapse; font-size: 9.8pt; }
+  table.faq td { border-top: 1px solid #e8e1d3; padding: 2.6mm 2mm; vertical-align: top; }
+  table.faq td:first-child { font-weight: 800; color: #15171b; width: 42%; }
+  table.faq td:last-child { color: #41454e; }
+
+  .cardexemplo { background: #fff; border: 1px solid #e8e1d3; border-radius: 9pt; padding: 3mm 4mm; margin: 2mm 0; display: flex; align-items: center; gap: 3mm; page-break-inside: avoid; }
+  .cardexemplo .barra { width: 1.4mm; height: 9mm; border-radius: 99pt; }
+  .cardexemplo .nome { font-weight: 800; font-size: 10.5pt; color: #15171b; }
+  .cardexemplo .meta { font-size: 9pt; color: #7c828c; font-weight: 600; }
+  .pix { display: inline-block; border-radius: 99pt; padding: .4mm 2.4mm; font-size: 8pt; font-weight: 800; }
+  .pix.pago { background: #e0efe6; color: #1e6b44; }
+  .pix.pend { background: #f6ecd8; color: #8a6420; }
+</style>
+</head>
+<body>
+
+<!-- ================= CAPA ================= -->
+<div class="capa">
+  <div>
+    <div class="ponto"><i></i></div>
+    <h1>TATÁ&nbsp;SUSHI</h1>
+    <div class="sub">Dia dos Namorados</div>
+    <div class="fio"></div>
+    <div class="titulo">Manual de Operação<br>Mapa de Mesas &amp; Caixa</div>
+  </div>
+  <div class="rodape">
+    Treinamento da equipe · Hostess e Caixa<br>
+    Sistema operacional de mesas — usar no tablet
+  </div>
+</div>
+
+<!-- ================= PÁG 1 — O BÁSICO ================= -->
+<div class="pagina">
+  <div class="etiqueta">Para toda a equipe</div>
+  <h2>O básico em 2 minutos</h2>
+  <p class="descricao">O sistema tem duas telas: <b>Mapa de mesas</b> (hostess) e <b>Caixa</b>. Tudo o que uma pessoa faz aparece na hora na tela das outras.</p>
+  <div class="fio"></div>
+
+  <div class="passo"><div class="num">1</div><div class="corpo">
+    <b>Entrar.</b> Abra o site no tablet, digite o e-mail e a senha da equipe e toque em <b>Entrar na operação</b>. O login é único para todos.
+  </div></div>
+  <div class="passo"><div class="num">2</div><div class="corpo">
+    <b>Escolher a tela.</b> Na barra preta do topo: <b>Mapa de mesas</b> para a recepção, <b>Caixa</b> para quem fecha as contas.
+  </div></div>
+  <div class="passo"><div class="num">3</div><div class="corpo">
+    <b>Escolher o turno.</b> No topo do mapa há três botões: <b>19h · 21h · 22h</b>. Cada horário tem o <b>seu próprio mapa</b> — as reservas das 21h não aparecem no mapa das 19h. Antes de mexer, confira qual turno está selecionado (botão preto).
+  </div></div>
+
+  <div class="cartao">
+    <h3>As cores das mesas</h3>
+    <div class="swatches">
+      <span class="swatch"><i style="background:#34906a"></i> Verde — livre</span>
+      <span class="swatch"><i style="background:#48729e"></i> Azul — reservada</span>
+      <span class="swatch"><i style="background:#d18a3a"></i> Laranja — casal chegou</span>
+      <span class="swatch"><i style="background:#b04c41"></i> Vermelho — sentado</span>
+      <span class="swatch"><i style="background:#98948b"></i> Cinza — conta fechada (vira verde sozinha)</span>
+      <span class="swatch"><i style="background:#1b1d21"></i> Preto — bloqueada (apoio)</span>
+    </div>
+    <p style="margin-top:2mm">Cada mesa mostra o número, o nome do casal, o horário e o status. As mesas pretas pequenas (balcão do bar e barra fria) não recebem casais.</p>
+  </div>
+
+  <div class="cartao">
+    <h3>O card do casal (lista da direita)</h3>
+    <div class="cardexemplo">
+      <div class="barra" style="background:#b04c41"></div>
+      <div>
+        <div class="nome">Luthero e Giulia</div>
+        <div class="meta">19h · Mesa 6 · Sentado &nbsp;<span class="pix pago">PIX PAGO</span></div>
+      </div>
+    </div>
+    <div class="cardexemplo">
+      <div class="barra" style="background:#d3a445"></div>
+      <div>
+        <div class="nome">Theo e Julia</div>
+        <div class="meta">19h · Sem mesa · Aguardando &nbsp;<span class="pix pend">PIX PENDENTE</span></div>
+      </div>
+    </div>
+    <p>A barrinha colorida indica a situação. Os status são: <b>Aguardando mesa → Mesa definida → Chegou → Sentado → Finalizado</b> (e No-show / Cancelado quando preciso).</p>
+  </div>
+
+  <div class="dica">💡 Regra de ouro: <b>nunca existem dois casais na mesma mesa</b>, e um casal nunca fica em duas mesas. O sistema garante isso sozinho — pode mover sem medo, e o botão <b>↩ Desfazer</b> reverte a última movimentação.</div>
+</div>
+
+<!-- ================= PÁG 2 — HOSTESS: ARRASTAR ================= -->
+<div class="pagina">
+  <div class="etiqueta">Hostess · Parte 1</div>
+  <h2>Movimentar casais (arrastar e soltar)</h2>
+  <p class="descricao">Quase toda a operação da recepção é arrastar cards. No tablet: <b>segure o dedo no casal por meio segundo</b> até o card “levantar”, arraste e solte.</p>
+  <div class="fio"></div>
+
+  <div class="passo"><div class="num">1</div><div class="corpo">
+    <b>Colocar um casal na mesa.</b> Segure o card do casal na lista da direita e solte em cima de uma mesa. As mesas que <b>piscam</b> estão livres para receber.
+  </div></div>
+  <div class="passo"><div class="num">2</div><div class="corpo">
+    <b>Mudar um casal de mesa.</b> Segure o casal direto na mesa do mapa e solte na mesa nova. <b>A mesa antiga fica livre na hora.</b>
+  </div></div>
+  <div class="passo"><div class="num">3</div><div class="corpo">
+    <b>Soltar numa mesa ocupada (troca).</b> Mesas com a etiqueta <b style="color:#92713a">“troca”</b> já têm casal do mesmo horário. Pode soltar: o novo casal entra e <b>o que estava lá volta para a lista como “Sem mesa · Aguardando”</b> — é só dar outra mesa para ele em seguida.
+  </div></div>
+  <div class="passo"><div class="num">4</div><div class="corpo">
+    <b>Tirar um casal da mesa (mesa fica vazia).</b> Arraste o casal até a <b>faixa pontilhada no topo da lista</b> (“Solte aqui para tirar da mesa”). Ou toque no casal → <b>Tirar da mesa</b>.
+  </div></div>
+  <div class="passo"><div class="num">5</div><div class="corpo">
+    <b>Errou? Desfazer.</b> O botão <b>↩ Desfazer</b> no topo desfaz a última movimentação — devolve todo mundo para onde estava.
+  </div></div>
+
+  <div class="cartao">
+    <h3>O que o mapa mostra enquanto você arrasta</h3>
+    <p>• Mesa <b>piscando</b> = livre, pode soltar.<br>
+       • Mesa com etiqueta <b>“troca”</b> = ocupada pelo mesmo horário; soltar faz a troca automática.<br>
+       • Mesa <b>apagada</b> = não pode receber (bloqueada, ou alguém de outro horário ainda está sentado nela).</p>
+  </div>
+
+  <div class="alerta">⚠ Se aparecer “Mesa está com [casal] (19h)” é porque o casal do horário anterior <b>ainda não saiu</b>. Peça ao caixa para fechar a conta — a mesa fica verde e aí sim você senta o próximo.</div>
+</div>
+
+<!-- ================= PÁG 3 — HOSTESS: DIA A DIA ================= -->
+<div class="pagina">
+  <div class="etiqueta">Hostess · Parte 2</div>
+  <h2>O fluxo de um casal, do início ao fim</h2>
+  <p class="descricao">Toque em qualquer casal (na lista ou na mesa) e use <b>Abrir ações</b>. Tudo o que você precisa está nesse menu.</p>
+  <div class="fio"></div>
+
+  <div class="passo"><div class="num">1</div><div class="corpo">
+    <b>O casal chegou na porta</b> → toque no casal → <b>Chegou</b>. A mesa dele fica <b style="color:#9a5f1d">laranja</b>.
+  </div></div>
+  <div class="passo"><div class="num">2</div><div class="corpo">
+    <b>Levou o casal até a mesa</b> → toque → <b>Sentar</b>. A mesa fica <b style="color:#8e3a31">vermelha</b> e o casal aparece no Caixa.
+  </div></div>
+  <div class="passo"><div class="num">3</div><div class="corpo">
+    <b>O caixa fecha a conta</b> → a mesa fica cinza por alguns segundos e volta a <b style="color:#1e6b44">verde</b> sozinha. Pronto para o próximo casal.
+  </div></div>
+  <div class="passo"><div class="num">4</div><div class="corpo">
+    <b>Virada de turno</b> → toque no botão <b>21h</b> no topo. O mapa mostra as reservas das 21h; arraste cada casal para a mesa liberada.
+  </div></div>
+
+  <div class="duascol">
+    <div class="cartao">
+      <h3>Cadastrar na hora</h3>
+      <p><b>＋ Nova reserva</b> — casal com nome, turno, mesa e Pix.<br><br>
+      <b>Passante</b> — casal que chegou sem reserva: entra sem crédito Pix, já como “Chegou” (ou direto na mesa).</p>
+    </div>
+    <div class="cartao">
+      <h3>Imprevistos</h3>
+      <p><b>No-show</b> — casal não veio: libera a mesa.<br>
+      <b>Cancelar reserva</b> — cancela e libera a mesa.<br>
+      Os dois ficam na lista, no grupo de baixo.</p>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h3>Errou um toque? Tudo tem volta</h3>
+    <p>• Sentou sem querer → toque no casal → <b>↩ Voltar para Chegou</b>.<br>
+       • Marcou “chegou” errado → <b>↩ Voltar para Reservado</b>.<br>
+       • Finalizou / cancelou / marcou no-show por engano → <b>↩ Reativar reserva</b> (o casal volta para a lista como “Aguardando mesa”).<br>
+       • Moveu de mesa errado → <b>↩ Desfazer</b> no topo do mapa.</p>
+  </div>
+
+  <div class="dica">💡 Use os filtros da lista (<b>Sem mesa · Na mesa · Sentados · Finalizados</b>) e a busca pelo nome para achar qualquer casal em segundos.</div>
+</div>
+
+<!-- ================= PÁG 4 — CAIXA ================= -->
+<div class="pagina">
+  <div class="etiqueta">Caixa</div>
+  <h2>Fechar contas e liberar mesas</h2>
+  <p class="descricao">A tela do Caixa mostra <b>somente as mesas em uso agora</b> (casais que chegaram ou estão sentados), com o Pix e o crédito de cada um.</p>
+  <div class="fio"></div>
+
+  <div class="passo"><div class="num">1</div><div class="corpo">
+    <b>Aplicar o crédito de R$ 100.</b> Casais com <b>Pix pago</b> têm R$ 100 de consumação. Toque em <b>Aplicar crédito R$ 100</b> (botão verde) e confirme. <b>Só pode uma vez por casal</b> — o sistema trava sozinho. Passante não tem crédito.
+  </div></div>
+  <div class="passo"><div class="num">2</div><div class="corpo">
+    <b>Fechar a conta.</b> Toque em <b>Fechar conta e liberar mesa</b> → digite o valor da conta (opcional) → o sistema mostra o desconto do crédito e o <b>valor a pagar</b> → confirme.
+  </div></div>
+  <div class="passo"><div class="num">3</div><div class="corpo">
+    <b>O que acontece em seguida</b> (automático): o casal vira <b>Finalizado</b>, sai da tela do Caixa, e a mesa fica <b>livre no mapa da hostess em tempo real</b> — pronta para o casal do próximo turno.
+  </div></div>
+
+  <div class="alerta">⚠ Se aparecer o aviso “este casal tem crédito ainda NÃO aplicado”, aplique o crédito <b>antes</b> de fechar a conta — depois de finalizado não dá mais.</div>
+
+  <div class="cartao">
+    <h3>Leitura rápida do card</h3>
+    <p>• Quadrado preto = número da mesa. Bolinha <b style="color:#8e3a31">vermelha</b> = sentado, <b style="color:#9a5f1d">laranja</b> = chegou e ainda não sentou.<br>
+       • <span class="pix pago">PIX PAGO</span> tem crédito para aplicar · <span class="pix pend">PIX PENDENTE</span> ainda não pagou o sinal.<br>
+       • Dá para buscar por nome do casal ou número da mesa.</p>
+  </div>
+</div>
+
+<!-- ================= PÁG 5 — FAQ ================= -->
+<div class="pagina">
+  <div class="etiqueta">Para toda a equipe</div>
+  <h2>Problemas comuns — o que fazer</h2>
+  <div class="fio"></div>
+  <table class="faq">
+    <tr><td>A mesa está preta e não recebe casal</td><td>É mesa de apoio (balcão do bar / barra fria) — bloqueada de propósito. Use as mesas 1 a 24 e a varanda.</td></tr>
+    <tr><td>No mapa das 21h tem uma mesa vermelha escrita “19h”</td><td>O casal das 19h ainda está sentado nela. Peça ao caixa para fechar a conta; a mesa libera e o mapa das 21h volta ao normal.</td></tr>
+    <tr><td>A mesa ficou cinza</td><td>Conta recém-fechada. Ela vira verde sozinha em alguns segundos — não precisa fazer nada.</td></tr>
+    <tr><td>Apareceu “Conflito: mesa já ocupada”</td><td>Outra pessoa mexeu na mesma mesa ao mesmo tempo. A tela se atualiza sozinha — confira o mapa e tente de novo.</td></tr>
+    <tr><td>Faixa vermelha “Sem conexão” no topo</td><td>O tablet perdeu a internet. As alterações ficam bloqueadas para não bagunçar as mesas. Verifique o wi-fi; ao voltar, tudo atualiza sozinho.</td></tr>
+    <tr><td>Não acho um casal na lista</td><td>Confira: (1) o turno selecionado no topo, (2) o filtro ativo (volte para “Todos”), (3) a busca. Casais finalizados ficam no grupo de baixo.</td></tr>
+    <tr><td>Sentei / movi / finalizei errado</td><td>Tudo tem volta: <b>↩ Desfazer</b> (movimentos), <b>Voltar para Chegou / Reservado</b> (status) e <b>Reativar reserva</b> (finalizado, cancelado ou no-show).</td></tr>
+    <tr><td>O arraste não “pega”</td><td>Segure o dedo parado no card por meio segundo antes de mover. Toque rápido abre o casal; toque longo arrasta.</td></tr>
+  </table>
+
+  <div class="dica" style="margin-top:6mm">💡 Tudo o que acontece fica registrado no histórico do sistema (quem moveu, trocou, fechou conta e quando). Em caso de dúvida no fim da noite, dá para conferir.</div>
+
+  <div style="margin-top:10mm; text-align:center;">
+    <div style="height:1px; background:linear-gradient(90deg,transparent,#b08d4f88,transparent); margin-bottom:5mm"></div>
+    <div class="display" style="font-size:13pt; letter-spacing:.18em; color:#15171b">TATÁ&nbsp;SUSHI</div>
+    <div style="font-size:8.5pt; letter-spacing:.26em; text-transform:uppercase; color:#aab0b9; margin-top:1.5mm">Boa operação — e feliz Dia dos Namorados ❤</div>
+  </div>
+</div>
+
+</body>
+</html>

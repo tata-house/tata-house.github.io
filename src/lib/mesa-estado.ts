@@ -55,10 +55,26 @@ export function mesasLivres(mesas: Mesa[], reservas: Reserva[], turno: Turno, in
   });
 }
 
-/** Uma mesa pode receber este casal? (livre ou em limpeza no turno do casal) */
-export function mesaPodeReceber(mesa: Mesa, reservas: Reserva[], reserva: Reserva): boolean {
-  if (!mesa.ativa) return false;
-  if (mesa.id === reserva.table_id) return false;
-  const { estado } = estadoMesa(mesa, reservas, reserva.turno);
-  return estado === 'livre' || estado === 'limpeza';
+/** Resultado de soltar um casal numa mesa:
+ *  - 'livre': entra direto;
+ *  - 'troca': a mesa tem outro casal ativo do MESMO turno — ele volta
+ *    automaticamente para a lista como "aguardando mesa";
+ *  - 'bloqueado': mesa inativa, é a mesa atual do casal, ou alguém de
+ *    OUTRO turno já está fisicamente nela (chegou/sentado). */
+export type Recebimento = 'livre' | 'troca' | 'bloqueado';
+
+export function comoRecebe(mesa: Mesa, reservas: Reserva[], reserva: Reserva): Recebimento {
+  if (!mesa.ativa || mesa.id === reserva.table_id) return 'bloqueado';
+  const ocupantes = reservas.filter(
+    (r) => r.table_id === mesa.id && r.id !== reserva.id && STATUS_ATIVOS.includes(r.status),
+  );
+  if (
+    ocupantes.some(
+      (r) => r.turno !== reserva.turno && (r.status === 'chegou' || r.status === 'sentado'),
+    )
+  ) {
+    return 'bloqueado';
+  }
+  if (ocupantes.some((r) => r.turno === reserva.turno)) return 'troca';
+  return 'livre';
 }

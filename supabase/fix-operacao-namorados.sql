@@ -10,7 +10,9 @@
 --   2. Turnos 19:00, 21:00 e 22:00 no tipo turno_tipo
 --   3. RLS liberado para o login único da equipe (authenticated)
 --   4. Realtime habilitado em reservations e tables
---   5. As 34 mesas com posições do mapa de chão
+--   5. Layout operacional: mesas 1 a 24 sequenciais, todas ativas
+--      (numerações antigas 41-45/51-55/60/62/64/65/66/V1/V2 ficam
+--      inativas — nada é apagado)
 --   6. As 26 reservas oficiais da planilha (13×19h, 12×21h, 1×22h)
 --   7. Fechar conta no caixa libera a mesa automaticamente
 --
@@ -415,54 +417,27 @@ begin
 end $$;
 
 -- ---------------------------------------------------------------
--- 7. MESAS (upsert — não duplica; corrige posição/área/status)
---    Salão reservável: 1,2,3,4,6,8,9,10,11,12,13,15,17,19,20,21,24
---    Apoio (bloqueadas): bar 41-45 e barra fria 51-55
---    Varanda: 60,62,64,65,66 + V1/V2 (extras internas — NÃO constam
---    no mapa de chão oficial, servem para completar a capacidade)
+-- 7. MESAS — layout operacional: 24 mesas sequenciais (1 a 24),
+--    todas ativas e para 2 pessoas. As numerações antigas (balcão,
+--    barra fria, varanda) ficam INATIVAS — nada é apagado.
+--    (mesmo conteúdo de supabase/mesas-1-a-24.sql)
 -- ---------------------------------------------------------------
-insert into public.tables (numero, area, capacidade, ativa, pos_x, pos_y, observacao) values
-  ('41', 'salao', 2, false, 36, 5,  'Balcão do bar — apoio'),
-  ('42', 'salao', 2, false, 44, 5,  'Balcão do bar — apoio'),
-  ('43', 'salao', 2, false, 52, 5,  'Balcão do bar — apoio'),
-  ('44', 'salao', 2, false, 60, 5,  'Balcão do bar — apoio'),
-  ('45', 'salao', 2, false, 68, 5,  'Balcão do bar — apoio'),
-  ('24', 'salao', 2, true, 18, 14, 'Sofá esquerda'),
-  ('21', 'salao', 2, true, 18, 21, 'Sofá esquerda'),
-  ('20', 'salao', 2, true, 18, 27, 'Sofá esquerda'),
-  ('19', 'salao', 2, true, 45, 14, 'Centro'),
-  ('17', 'salao', 2, true, 45, 21, 'Centro'),
-  ('15', 'salao', 2, true, 45, 28, 'Centro'),
-  ('13', 'salao', 2, true, 47, 40, 'Centro / barra fria'),
-  ('12', 'salao', 2, true, 47, 50, 'Centro / barra fria'),
-  ('51', 'salao', 2, false, 31, 38, 'Barra fria — apoio'),
-  ('52', 'salao', 2, false, 31, 43, 'Barra fria — apoio'),
-  ('53', 'salao', 2, false, 31, 48, 'Barra fria — apoio'),
-  ('54', 'salao', 2, false, 31, 53, 'Barra fria — apoio'),
-  ('55', 'salao', 2, false, 31, 58, 'Barra fria — apoio'),
-  ('11', 'salao', 2, true, 76, 12, 'Sofá direita / fundo'),
-  ('10', 'salao', 2, true, 76, 18, 'Sofá direita / fundo'),
-  ('9',  'salao', 2, true, 76, 24, 'Sofá direita / fundo'),
-  ('8',  'salao', 2, true, 76, 30, 'Sofá direita / fundo'),
-  ('6',  'salao', 2, true, 76, 37, 'Sofá direita / entrada'),
-  ('4',  'salao', 2, true, 76, 43, 'Sofá direita / entrada'),
-  ('3',  'salao', 2, true, 76, 49, 'Sofá direita / entrada'),
-  ('2',  'salao', 2, true, 76, 55, 'Sofá direita / entrada'),
-  ('1',  'salao', 2, true, 76, 61, 'Sofá direita / entrada'),
-  ('60', 'varanda', 2, true, 64, 72, 'Área externa — sofá'),
-  ('62', 'varanda', 2, true, 64, 81, 'Área externa — sofá'),
-  ('64', 'varanda', 2, true, 64, 90, 'Área externa — sofá'),
-  ('66', 'varanda', 2, true, 35, 75, 'Área externa'),
-  ('65', 'varanda', 2, true, 32, 86, 'Área externa'),
-  ('V1', 'varanda', 2, true, 12, 73, 'Extra interna — não consta no mapa de chão oficial'),
-  ('V2', 'varanda', 2, true, 12, 88, 'Extra interna — não consta no mapa de chão oficial')
+insert into public.tables (numero, area, capacidade, ativa, pos_x, pos_y)
+select n::text, 'salao'::public.area_tipo, 2, true,
+       ((n - 1) % 6) * 16 + 10,
+       ((n - 1) / 6) * 22 + 12
+from generate_series(1, 24) as n
 on conflict (numero) do update set
   area = excluded.area,
-  capacidade = excluded.capacidade,
-  ativa = excluded.ativa,
+  capacidade = 2,
+  ativa = true,
   pos_x = excluded.pos_x,
-  pos_y = excluded.pos_y,
-  observacao = excluded.observacao;
+  pos_y = excluded.pos_y;
+
+update public.tables
+   set ativa = false
+ where numero in ('41','42','43','44','45','51','52','53','54','55',
+                  '60','62','64','65','66','V1','V2');
 
 -- ---------------------------------------------------------------
 -- 8. RESERVAS OFICIAIS DA PLANILHA (substitui tudo — sem duplicar)
@@ -525,11 +500,11 @@ join public.tables t on t.numero = v.mesa;
 
 -- ---------------------------------------------------------------
 -- 9. CONFERÊNCIA — o resultado desta query aparece na tela.
---    Esperado: 34 mesas (24 reserváveis) e 13 / 12 / 1 reservas.
+--    Esperado: 24 mesas ativas (1 a 24) e 13 / 12 / 1 reservas.
 -- ---------------------------------------------------------------
 select 'mesas cadastradas'              as item, count(*)::text as valor from public.tables
 union all
-select 'mesas reserváveis (ativas)',           count(*)::text from public.tables where ativa
+select 'mesas ativas (deve ser 24)',           count(*)::text from public.tables where ativa
 union all
 select 'reservas 19h',                         count(*)::text from public.reservations where turno = '19:00'
 union all

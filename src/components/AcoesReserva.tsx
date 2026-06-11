@@ -9,7 +9,9 @@ import {
   marcarChegou,
   marcarNoShow,
   moverMesa,
+  reativarReserva,
   sentarCliente,
+  voltarStatus,
 } from '@/lib/actions';
 import { AREA_LABEL, STATUS_ATIVOS, TURNO_LABEL } from '@/lib/constants';
 import { useDados } from '@/lib/data-context';
@@ -200,6 +202,37 @@ export function AcoesReserva({
               {reserva.status === 'finalizada' && !reserva.mesa_liberada && (
                 <Botao variante="sucesso" onClick={() => executar(() => liberarMesa(reserva.id))} disabled={executando}>
                   🧹 Liberar mesa
+                </Botao>
+              )}
+              {(reserva.status === 'sentado' || reserva.status === 'chegou') && (
+                <Botao
+                  variante="secundario"
+                  onClick={() =>
+                    executar(
+                      () => voltarStatus(reserva),
+                      `Voltar ${reserva.nome} para "${reserva.status === 'sentado' ? 'Chegou' : 'Reservado'}"?`,
+                    )
+                  }
+                  disabled={executando}
+                >
+                  ↩️ Voltar para {reserva.status === 'sentado' ? 'Chegou' : 'Reservado'}
+                </Botao>
+              )}
+              {(reserva.status === 'finalizada' ||
+                reserva.status === 'cancelada' ||
+                reserva.status === 'no_show') && (
+                <Botao
+                  variante="secundario"
+                  className="col-span-2"
+                  onClick={() =>
+                    executar(
+                      () => reativarReserva(reserva),
+                      `Reativar ${reserva.nome}? O casal volta para a lista como "aguardando mesa".`,
+                    )
+                  }
+                  disabled={executando}
+                >
+                  ↩️ Reativar reserva (volta para a lista)
                 </Botao>
               )}
               {ativa && (

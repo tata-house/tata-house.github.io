@@ -239,6 +239,37 @@ export async function marcarNoShow(id: string): Promise<void> {
   await registrarEvento(id, 'no_show');
 }
 
+/** Volta um passo no status (ex.: sentou por engano): sentado → chegou → reservado. */
+export async function voltarStatus(reserva: Reserva): Promise<void> {
+  exigirConexao();
+  const supabase = getSupabase();
+  const anterior: ReservaStatus | null =
+    reserva.status === 'sentado' ? 'chegou' : reserva.status === 'chegou' ? 'confirmada' : null;
+  if (!anterior) throw new Error('Este status não tem volta automática.');
+  const { error } = await supabase
+    .from('reservations')
+    .update({ status: anterior })
+    .eq('id', reserva.id);
+  if (error) throw new Error(traduzirErro(error.message));
+  await registrarEvento(reserva.id, 'status_voltado', { de: reserva.status, para: anterior });
+}
+
+/** Reativa uma reserva finalizada/cancelada/no-show: volta para a lista
+ *  como "aguardando mesa" (sem mesa, para não conflitar com a ocupação atual). */
+export async function reativarReserva(reserva: Reserva): Promise<void> {
+  exigirConexao();
+  const supabase = getSupabase();
+  const dados: Record<string, unknown> = {
+    status: 'confirmada',
+    table_id: null,
+    mesa_liberada: false,
+  };
+  if (reserva.pix_status === 'cancelado') dados.pix_status = 'pendente';
+  const { error } = await supabase.from('reservations').update(dados).eq('id', reserva.id);
+  if (error) throw new Error(traduzirErro(error.message));
+  await registrarEvento(reserva.id, 'reativada', { status_anterior: reserva.status });
+}
+
 export async function aplicarCredito(id: string): Promise<void> {
   exigirConexao();
   const supabase = getSupabase();

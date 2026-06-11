@@ -64,59 +64,77 @@ export default function CaixaPage() {
   const creditoAplicavel = fechando?.credito_aplicado ? Math.min(fechando.credito_disponivel, valorNumerico) : 0;
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-black">Caixa 💰</h1>
+    <div className="mx-auto max-w-3xl space-y-4">
+      <div>
+        <h1 className="font-display text-3xl font-semibold tracking-tight">Caixa</h1>
+        <p className="mt-0.5 text-sm text-carvao-400 dark:text-carvao-300">
+          Mesas em uso agora. Feche a conta para liberar a mesa no mapa da recepção.
+        </p>
+      </div>
 
       <input
         className={estiloInput}
-        placeholder="🔍 Buscar por nome ou nº da mesa..."
+        placeholder="Buscar por nome ou nº da mesa..."
         value={busca}
         onChange={(e) => setBusca(e.target.value)}
       />
 
       {erro && (
-        <p className="rounded-xl bg-red-100 px-4 py-3 text-sm font-semibold text-red-700 dark:bg-red-900/50 dark:text-red-200">{erro}</p>
+        <p className="rounded-2xl bg-[#f5e2df] px-4 py-3 text-sm font-semibold text-[#8e3a31] shadow-suave dark:bg-[#3e2421] dark:text-[#e3a49c]">
+          {erro}
+        </p>
       )}
 
       {carregando ? (
-        <p className="py-10 text-center text-gray-500">Carregando...</p>
+        <p className="py-10 text-center text-carvao-400">Carregando...</p>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {lista.map((r) => (
             <Cartao key={r.id}>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-2xl bg-gray-900 text-white dark:bg-black">
-                    <span className="text-[9px] font-bold uppercase tracking-wide text-gray-400">Mesa</span>
-                    <span className="text-2xl font-black leading-none">{r.mesa?.numero ?? '—'}</span>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex min-w-0 items-center gap-4">
+                  <div className="relative flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-2xl bg-carvao-900 text-areia-50 ring-1 ring-ouro-500/30">
+                    <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-ouro-300/80">
+                      Mesa
+                    </span>
+                    <span className="font-display text-2xl font-semibold leading-none">
+                      {r.mesa?.numero ?? '—'}
+                    </span>
+                    <span
+                      className={`absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full ring-2 ring-white dark:ring-carvao-850 ${
+                        r.status === 'sentado' ? 'bg-[#b04c41]' : 'bg-[#d18a3a]'
+                      }`}
+                      title={r.status === 'sentado' ? 'Sentado' : 'Chegou'}
+                    />
                   </div>
-                  <div>
-                    <div className="text-lg font-bold leading-tight">{r.nome}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {TURNO_LABEL[r.turno]} · {r.origem === 'passante' ? '🚶 Passante' : '📋 Reserva'}
+                  <div className="min-w-0">
+                    <div className="truncate text-lg font-bold leading-tight">{r.nome}</div>
+                    <div className="text-sm text-carvao-400 dark:text-carvao-300">
+                      {TURNO_LABEL[r.turno]} · {r.origem === 'passante' ? 'Passante' : 'Reserva'}
                       {r.status === 'chegou' ? ' · aguardando sentar' : ''}
                     </div>
-                    <div className="mt-1 flex flex-wrap gap-2">
+                    <div className="mt-1.5 flex flex-wrap gap-1.5">
                       {r.origem === 'reserva' && <BadgePix status={r.pix_status} />}
                       <span
-                        className={`rounded-full px-3 py-1 text-sm font-semibold ${
+                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${
                           r.credito_aplicado
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200'
+                            ? 'bg-[#e0efe6] text-[#1e6b44] dark:bg-[#1c3528] dark:text-[#8fd4ae]'
                             : r.credito_disponivel > 0
-                              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200'
-                              : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                              ? 'bg-[#e3ebf3] text-[#3c5d80] dark:bg-[#22303d] dark:text-[#a6c2dc]'
+                              : 'bg-carvao-100 text-carvao-500 dark:bg-carvao-700 dark:text-carvao-200'
                         }`}
                       >
+                        <i className="h-1.5 w-1.5 rounded-full bg-current opacity-60" aria-hidden />
                         {r.credito_aplicado
-                          ? `✓ Crédito aplicado ${hora(r.credito_aplicado_em)}`
+                          ? `Crédito aplicado ${hora(r.credito_aplicado_em)}`
                           : r.credito_disponivel > 0
-                            ? `Crédito: ${brl(r.credito_disponivel)}`
+                            ? `Crédito ${brl(r.credito_disponivel)}`
                             : 'Sem crédito'}
                       </span>
                     </div>
                   </div>
                 </div>
-                <div className="flex w-full flex-col gap-2 sm:w-56">
+                <div className="flex w-full flex-col gap-2 sm:w-60">
                   {r.origem === 'reserva' && !r.credito_aplicado && (
                     <Botao
                       variante="sucesso"
@@ -124,7 +142,7 @@ export default function CaixaPage() {
                       disabled={ocupada === r.id || r.pix_status !== 'pago'}
                       onClick={() => executarCredito(r)}
                     >
-                      💵 Aplicar crédito R$ 100
+                      Aplicar crédito R$ 100
                     </Botao>
                   )}
                   <Botao
@@ -135,16 +153,21 @@ export default function CaixaPage() {
                       setValorConta('');
                     }}
                   >
-                    ✓ Fechar conta e liberar mesa
+                    Fechar conta e liberar mesa
                   </Botao>
                 </div>
               </div>
             </Cartao>
           ))}
           {lista.length === 0 && (
-            <p className="py-10 text-center text-gray-500">
-              Nenhuma mesa ocupada agora. Quando a recepção sentar um casal, ele aparece aqui.
-            </p>
+            <div className="rounded-3xl border border-dashed border-carvao-200 py-14 text-center dark:border-carvao-700">
+              <p className="font-display text-lg text-carvao-400 dark:text-carvao-300">
+                Nenhuma mesa em uso agora
+              </p>
+              <p className="mt-1 text-sm text-carvao-300 dark:text-carvao-500">
+                Quando a recepção sentar um casal, ele aparece aqui.
+              </p>
+            </div>
           )}
         </div>
       )}
@@ -152,7 +175,7 @@ export default function CaixaPage() {
       <Modal titulo={`Fechar conta — ${fechando?.nome ?? ''}`} aberto={!!fechando} aoFechar={() => setFechando(null)}>
         {fechando && (
           <div className="space-y-4">
-            <div className="rounded-xl bg-gray-50 p-3 text-sm font-semibold dark:bg-gray-900">
+            <div className="rounded-2xl bg-areia-100 p-3 text-sm font-semibold text-carvao-600 dark:bg-carvao-800 dark:text-areia-200">
               Mesa {fechando.mesa?.numero ?? '—'} · {TURNO_LABEL[fechando.turno]} ·{' '}
               {fechando.origem === 'passante' ? 'Passante' : 'Reserva'}
             </div>
@@ -168,27 +191,27 @@ export default function CaixaPage() {
               />
             </div>
             {valorNumerico > 0 && (
-              <div className="space-y-1 rounded-xl bg-gray-50 p-4 text-base dark:bg-gray-900">
+              <div className="space-y-1 rounded-2xl bg-areia-100 p-4 text-base dark:bg-carvao-800">
                 <div className="flex justify-between">
                   <span>Valor da conta</span>
                   <span className="font-bold">{brl(valorNumerico)}</span>
                 </div>
-                <div className="flex justify-between text-green-700 dark:text-green-300">
+                <div className="flex justify-between font-semibold text-[#1e6b44] dark:text-[#8fd4ae]">
                   <span>Crédito Pix aplicado</span>
                   <span className="font-bold">− {brl(creditoAplicavel)}</span>
                 </div>
-                <div className="flex justify-between border-t border-gray-300 pt-1 text-lg dark:border-gray-600">
+                <div className="flex justify-between border-t border-carvao-200 pt-1.5 text-lg dark:border-carvao-600">
                   <span className="font-bold">Valor a pagar</span>
                   <span className="font-black">{brl(valorNumerico - creditoAplicavel)}</span>
                 </div>
               </div>
             )}
             {!fechando.credito_aplicado && fechando.credito_disponivel > 0 && (
-              <p className="rounded-xl bg-amber-100 px-4 py-3 text-sm font-semibold text-amber-800 dark:bg-amber-900/50 dark:text-amber-200">
+              <p className="rounded-2xl bg-[#f6ecd8] px-4 py-3 text-sm font-semibold text-[#8a6420] dark:bg-[#3d321a] dark:text-[#e3c987]">
                 ⚠️ Este casal tem crédito de {brl(fechando.credito_disponivel)} ainda NÃO aplicado. Aplique antes de fechar, se for usar.
               </p>
             )}
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-carvao-400 dark:text-carvao-300">
               Ao confirmar, a mesa volta a ficar <strong>livre</strong> no mapa da recepção.
             </p>
             <Botao className="w-full" onClick={executarFechamento} disabled={ocupada === fechando.id}>

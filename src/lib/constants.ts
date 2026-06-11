@@ -40,14 +40,14 @@ export const STATUS_LABEL: Record<ReservaStatus, string> = {
 };
 
 export const STATUS_BADGE: Record<ReservaStatus, string> = {
-  pre_reserva: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200',
-  pix_pendente: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-200',
-  confirmada: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200',
-  chegou: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200',
-  sentado: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200',
-  finalizada: 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200',
-  cancelada: 'bg-gray-200 text-gray-500 line-through dark:bg-gray-800 dark:text-gray-400',
-  no_show: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200',
+  pre_reserva: 'bg-[#f6ecd8] text-[#8a6420] dark:bg-[#3d321a] dark:text-[#e3c987]',
+  pix_pendente: 'bg-[#f6ecd8] text-[#8a6420] dark:bg-[#3d321a] dark:text-[#e3c987]',
+  confirmada: 'bg-[#e3ebf3] text-[#3c5d80] dark:bg-[#22303d] dark:text-[#a6c2dc]',
+  chegou: 'bg-[#f7e8d6] text-[#9a5f1d] dark:bg-[#3f2f1b] dark:text-[#e8bd84]',
+  sentado: 'bg-[#f5e2df] text-[#8e3a31] dark:bg-[#3e2421] dark:text-[#e3a49c]',
+  finalizada: 'bg-carvao-100 text-carvao-500 dark:bg-carvao-700 dark:text-carvao-200',
+  cancelada: 'bg-carvao-100 text-carvao-400 line-through dark:bg-carvao-800 dark:text-carvao-400',
+  no_show: 'bg-[#ece5f1] text-[#6d5388] dark:bg-[#322a3c] dark:text-[#c5b3d8]',
 };
 
 export const PIX_LABEL: Record<PixStatus, string> = {
@@ -58,10 +58,10 @@ export const PIX_LABEL: Record<PixStatus, string> = {
 };
 
 export const PIX_BADGE: Record<PixStatus, string> = {
-  pendente: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-200',
-  pago: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200',
-  isento: 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200',
-  cancelado: 'bg-gray-200 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
+  pendente: 'bg-[#f6ecd8] text-[#8a6420] dark:bg-[#3d321a] dark:text-[#e3c987]',
+  pago: 'bg-[#e0efe6] text-[#1e6b44] dark:bg-[#1c3528] dark:text-[#8fd4ae]',
+  isento: 'bg-carvao-100 text-carvao-500 dark:bg-carvao-700 dark:text-carvao-200',
+  cancelado: 'bg-carvao-100 text-carvao-400 dark:bg-carvao-800 dark:text-carvao-400',
 };
 
 export const ROLE_LABEL: Record<Role, string> = {
@@ -73,14 +73,26 @@ export const ROLE_LABEL: Record<Role, string> = {
 // Cores das mesas no mapa
 export type MesaEstado = 'livre' | 'reservada' | 'chegou' | 'ocupada' | 'limpeza' | 'bloqueada';
 
+// Paleta de mesa dessaturada e elegante — comunica o estado com classe.
+// A primeira classe é sempre o bg (a legenda usa split(' ')[0]).
 export const MESA_COR: Record<MesaEstado, string> = {
-  livre: 'bg-green-500 hover:bg-green-600 text-white',
-  reservada: 'bg-blue-500 hover:bg-blue-600 text-white',
-  chegou: 'bg-orange-500 hover:bg-orange-600 text-white',
-  ocupada: 'bg-red-600 hover:bg-red-700 text-white',
-  limpeza: 'bg-gray-400 hover:bg-gray-500 text-white',
-  bloqueada: 'bg-gray-900 text-gray-400 dark:bg-black',
+  livre: 'bg-[#34906a] hover:bg-[#2b7c5b] text-white',
+  reservada: 'bg-[#48729e] hover:bg-[#3d628a] text-white',
+  chegou: 'bg-[#d18a3a] hover:bg-[#bd7a2f] text-white',
+  ocupada: 'bg-[#b04c41] hover:bg-[#9b4038] text-white',
+  limpeza: 'bg-[#98948b] hover:bg-[#868275] text-white',
+  bloqueada: 'bg-[#1b1d21] text-white/35',
 };
+
+// Cor de acento dos casais (barrinha do card da lista lateral)
+export const CASAL_ACENTO = {
+  aguardando: 'bg-[#d3a445]',
+  definida: 'bg-[#48729e]',
+  chegou: 'bg-[#d18a3a]',
+  sentado: 'bg-[#b04c41]',
+  finalizada: 'bg-carvao-300 dark:bg-carvao-500',
+  encerrada: 'bg-carvao-200 dark:bg-carvao-600',
+} as const;
 
 export const MESA_ESTADO_LABEL: Record<MesaEstado, string> = {
   livre: 'Livre',

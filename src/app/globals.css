@@ -7,7 +7,24 @@ html {
 }
 
 body {
-  @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
+  @apply bg-areia-50 text-carvao-900 antialiased dark:bg-carvao-950 dark:text-areia-100;
+  font-feature-settings: 'ss01' on, 'cv05' on;
+}
+
+::selection {
+  @apply bg-brand-200 text-carvao-900;
+}
+
+/* Barra de rolagem fina e discreta (lista lateral no tablet) */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-carvao-200 dark:bg-carvao-700;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 @media print {

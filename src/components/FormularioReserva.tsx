@@ -121,7 +121,7 @@ export function FormularioReserva({
             ))}
           </select>
           {opcoesMesa.length === 0 && (
-            <p className="mt-1 text-sm font-semibold text-red-600 dark:text-red-400">
+            <p className="mt-1 text-sm font-semibold text-[#8e3a31] dark:text-[#e3a49c]">
               Nenhuma mesa cadastrada no banco — execute supabase/fix-operacao-namorados.sql no SQL
               Editor do Supabase (uma vez só).
             </p>
@@ -135,7 +135,7 @@ export function FormularioReserva({
           <label className={estiloRotulo}>Observações</label>
           <textarea className={estiloInput} rows={2} value={observacao} onChange={(e) => setObservacao(e.target.value)} placeholder="Aniversário, pedido especial, alergia..." />
         </div>
-        {erro && <p className="rounded-xl bg-red-100 px-4 py-3 text-sm font-semibold text-red-700 dark:bg-red-900/50 dark:text-red-200">{erro}</p>}
+        {erro && <p className="rounded-2xl bg-[#f5e2df] px-4 py-3 text-sm font-semibold text-[#8e3a31] dark:bg-[#3e2421] dark:text-[#e3a49c]">{erro}</p>}
         <div className="flex gap-3">
           <Botao variante="secundario" className="flex-1" onClick={aoFechar}>
             Cancelar

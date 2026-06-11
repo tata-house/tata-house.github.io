@@ -24,6 +24,7 @@ import {
   type MovimentoMesa,
 } from '@/lib/actions';
 import {
+  CASAL_ACENTO,
   MESA_COR,
   MESA_ESTADO_LABEL,
   PIX_BADGE,
@@ -296,7 +297,7 @@ export default function MapaPage() {
     }
   }
 
-  if (carregando) return <p className="py-10 text-center text-gray-500">Carregando...</p>;
+  if (carregando) return <p className="py-10 text-center text-carvao-400">Carregando...</p>;
 
   const infoSelecionada = mesaSelecionada ? (estadoDe.get(mesaSelecionada.id) ?? BLOQUEADA) : null;
   const aguardandoParaMesa = mesaSelecionada
@@ -309,13 +310,13 @@ export default function MapaPage() {
     <DndContext sensors={sensores} onDragStart={aoIniciarArraste} onDragEnd={aoSoltar} onDragCancel={aoCancelar}>
       <div className="space-y-3">
         {(erro || mesas.length === 0) && (
-          <div className="rounded-2xl border-2 border-red-500 bg-red-50 p-4 text-sm dark:bg-red-950/40">
-            <p className="font-black text-red-700 dark:text-red-300">
+          <div className="rounded-2xl border border-[#b04c41]/40 bg-[#f5e2df] p-4 text-sm shadow-suave dark:bg-[#3e2421]">
+            <p className="font-bold text-[#8e3a31] dark:text-[#e3a49c]">
               {erro
                 ? `Erro ao ler o banco: ${erro}`
                 : 'Nenhuma mesa cadastrada no banco — o SQL de correção ainda não rodou neste projeto.'}
             </p>
-            <p className="mt-1 text-red-800 dark:text-red-200">
+            <p className="mt-1 text-[#7a352d] dark:text-[#dcb3ac]">
               {erro?.toLowerCase().includes('permission denied') ? (
                 <>
                   As tabelas existem, mas faltam as permissões (GRANT). Abra o SQL Editor do projeto{' '}
@@ -334,49 +335,64 @@ export default function MapaPage() {
           </div>
         )}
 
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h1 className="text-2xl font-black">Mapa de mesas</h1>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="font-display text-3xl font-semibold tracking-tight">Mapa de mesas</h1>
+            <p className="mt-0.5 text-sm text-carvao-400 dark:text-carvao-300">
+              Arraste um casal da lista para a mesa — ou de uma mesa para outra.
+            </p>
+          </div>
           <div className="flex flex-wrap gap-2">
             <Botao
               variante="secundario"
               disabled={movimentos.length === 0 || desfazendo}
               onClick={desfazerUltimo}
             >
-              ↩️ {desfazendo ? 'Desfazendo...' : 'Desfazer última ação'}
+              ↩ {desfazendo ? 'Desfazendo...' : 'Desfazer'}
             </Botao>
-            <Botao onClick={() => setNovoCasal(true)}>➕ Nova reserva</Botao>
             <Botao variante="secundario" onClick={() => setNovoPassante(true)}>
-              🚶 Passante
+              Passante
             </Botao>
+            <Botao onClick={() => setNovoCasal(true)}>＋ Nova reserva</Botao>
           </div>
         </div>
 
         {/* Seletor de turno — cada horário tem o SEU mapa, nunca misturados */}
-        <div className="flex gap-2">
+        <div className="flex w-full rounded-2xl bg-white p-1.5 shadow-suave ring-1 ring-carvao-200/70 dark:bg-carvao-850 dark:ring-carvao-700">
           {TURNOS.map((t) => (
             <button
               key={t}
               onClick={() => setTurno(t)}
-              className={`min-h-12 flex-1 rounded-xl px-3 text-base font-bold transition ${
+              className={`min-h-12 flex-1 rounded-xl text-base font-bold tracking-tight transition-all duration-150 ${
                 turno === t
-                  ? 'bg-brand-600 text-white shadow'
-                  : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200'
+                  ? 'bg-carvao-900 text-areia-50 shadow-media dark:bg-areia-100 dark:text-carvao-900'
+                  : 'text-carvao-400 hover:text-carvao-700 dark:text-carvao-300 dark:hover:text-areia-100'
               }`}
             >
-              🕐 Mapa {TURNO_LABEL[t]}
+              {TURNO_LABEL[t]}
+              <span
+                className={`ml-2 text-[11px] font-semibold uppercase tracking-[0.14em] ${
+                  turno === t ? 'text-brand-400 dark:text-brand-600' : 'text-carvao-300 dark:text-carvao-500'
+                }`}
+              >
+                turno
+              </span>
             </button>
           ))}
         </div>
-        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+        <p className="text-xs text-carvao-400 dark:text-carvao-300">
           Cada horário tem seu próprio mapa: as mesas mostram só as reservas de{' '}
-          {TURNO_LABEL[turno]}. Casais que ainda estão sentados de outro horário aparecem na mesa
-          até o caixa liberar.
+          <b className="text-carvao-600 dark:text-areia-200">{TURNO_LABEL[turno]}</b>. Casais ainda
+          sentados de outro horário aparecem na mesa até o caixa liberar.
         </p>
 
-        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs font-semibold">
+        <div className="flex flex-wrap gap-1.5">
           {LEGENDA.map((e) => (
-            <span key={e} className="flex items-center gap-1">
-              <span className={`inline-block h-3.5 w-3.5 rounded ${MESA_COR[e].split(' ')[0]}`} />
+            <span
+              key={e}
+              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-carvao-500 ring-1 ring-carvao-200/70 dark:bg-carvao-850 dark:text-carvao-200 dark:ring-carvao-700"
+            >
+              <span className={`inline-block h-2.5 w-2.5 rounded-full ${MESA_COR[e].split(' ')[0]}`} />
               {MESA_ESTADO_LABEL[e]}
             </span>
           ))}
@@ -386,52 +402,54 @@ export default function MapaPage() {
           {/* ---------- MAPA DE CHÃO (salão 1-24 + varanda) ---------- */}
           <div className="space-y-3">
             {mesasFaltando.length > 0 && (
-              <p className="rounded-xl bg-amber-100 px-4 py-3 text-sm font-semibold text-amber-800 dark:bg-amber-900/50 dark:text-amber-200">
+              <p className="rounded-2xl bg-[#f6ecd8] px-4 py-3 text-sm font-semibold text-[#8a6420] shadow-suave dark:bg-[#3d321a] dark:text-[#e3c987]">
                 As mesas {mesasFaltando.join(', ')} ainda não existem (ou estão inativas) no banco —
                 execute a versão atual de <b>supabase/mesas-1-a-24.sql</b> no SQL Editor do Supabase.
               </p>
             )}
-            <div className="mx-auto w-full max-w-[480px] lg:mx-0">
-              <div className="relative aspect-[43/100] w-full select-none overflow-hidden rounded-lg border-4 border-gray-900 shadow-xl dark:border-gray-500">
+            <div className="mx-auto w-full max-w-[500px] rounded-[28px] bg-white p-2.5 shadow-media ring-1 ring-carvao-200/60 dark:bg-carvao-850 dark:ring-carvao-700 lg:mx-0">
+              <div className="relative aspect-[43/100] w-full select-none overflow-hidden rounded-3xl ring-1 ring-carvao-900/10">
                 {/* piso do salão (madeira) */}
-                <div className="absolute inset-x-0 top-0 h-[74.5%] bg-[#c29d6d] dark:bg-[#75603f]" />
+                <div className="absolute inset-x-0 top-0 h-[74.5%] bg-[#c0a075] dark:bg-[#6b5941]" />
+                {/* textura sutil de tábuas */}
+                <div className="absolute inset-x-0 top-0 h-[74.5%] bg-[repeating-linear-gradient(90deg,transparent,transparent_28px,rgba(0,0,0,0.025)_28px,rgba(0,0,0,0.025)_29px)]" />
                 {/* piso da varanda */}
-                <div className="absolute inset-x-0 bottom-0 top-[74.5%] bg-[#d9d5d0] dark:bg-stone-500" />
+                <div className="absolute inset-x-0 bottom-0 top-[74.5%] bg-[#dcd8d1] dark:bg-stone-600" />
                 {/* divisória salão/varanda */}
-                <div className="absolute inset-x-0 top-[74.2%] h-[0.4%] bg-gray-900/80 dark:bg-gray-900" />
+                <div className="absolute inset-x-0 top-[74.2%] h-[0.4%] bg-carvao-900/70" />
 
                 {/* porta/serviço (topo direita) */}
-                <div className="absolute right-[16%] top-0 h-[2.4%] w-[10%] bg-gray-300/90" />
+                <div className="absolute right-[16%] top-0 h-[2.4%] w-[10%] bg-white/60" />
                 {/* bar em L (topo) com tampo de mármore */}
-                <div className="absolute left-[19%] top-[2.6%] h-[7.6%] w-[7%] bg-[#5a1b1b]" />
-                <div className="absolute left-[25%] top-[6.6%] h-[3.6%] w-[56%] bg-[#5a1b1b]">
-                  <div className="absolute inset-x-[1%] top-[12%] h-[55%] rounded-[2px] bg-gray-100" />
+                <div className="absolute left-[19%] top-[2.6%] h-[7.6%] w-[7%] rounded-[3px] bg-[#54221f]" />
+                <div className="absolute left-[25%] top-[6.6%] h-[3.6%] w-[56%] rounded-[3px] bg-[#54221f]">
+                  <div className="absolute inset-x-[1%] top-[12%] h-[55%] rounded-[2px] bg-areia-100" />
                 </div>
 
                 {/* sofás (azul-escuro como na planta) */}
-                <div className="absolute left-[0.5%] top-[16%] h-[14%] w-[7%] rounded-md bg-[#3c4458]" />
-                <div className="absolute left-[0.5%] top-[30.5%] h-[14.5%] w-[7%] rounded-md bg-[#3c4458]" />
-                <div className="absolute right-[0.5%] top-[16%] h-[14.5%] w-[7%] rounded-md bg-[#3c4458]" />
-                <div className="absolute right-[0.5%] top-[31%] h-[15%] w-[7%] rounded-md bg-[#3c4458]" />
-                <div className="absolute right-[0.5%] top-[47%] h-[26.5%] w-[7%] rounded-md bg-[#3c4458]" />
-                <div className="absolute right-[0.5%] top-[76%] h-[21%] w-[7%] rounded-md bg-[#3c4458]" />
+                <div className="absolute left-[0.5%] top-[16%] h-[14%] w-[7%] rounded-md bg-[#3e4659]/90" />
+                <div className="absolute left-[0.5%] top-[30.5%] h-[14.5%] w-[7%] rounded-md bg-[#3e4659]/90" />
+                <div className="absolute right-[0.5%] top-[16%] h-[14.5%] w-[7%] rounded-md bg-[#3e4659]/90" />
+                <div className="absolute right-[0.5%] top-[31%] h-[15%] w-[7%] rounded-md bg-[#3e4659]/90" />
+                <div className="absolute right-[0.5%] top-[47%] h-[26.5%] w-[7%] rounded-md bg-[#3e4659]/90" />
+                <div className="absolute right-[0.5%] top-[76%] h-[21%] w-[7%] rounded-md bg-[#3e4659]/90" />
 
                 {/* barra fria do sushi */}
-                <div className="absolute left-[4%] top-[57%] h-[15.5%] w-[20%] rounded-sm border-2 border-gray-500 bg-gray-100 dark:bg-gray-300">
-                  <span className="flex h-full items-center justify-center text-[9px] font-black tracking-[0.2em] text-gray-500 [writing-mode:vertical-lr]">
+                <div className="absolute left-[4%] top-[57%] h-[15.5%] w-[20%] rounded-md border border-carvao-300 bg-areia-100 shadow-inner dark:bg-areia-200">
+                  <span className="flex h-full items-center justify-center text-[9px] font-bold tracking-[0.28em] text-carvao-400 [writing-mode:vertical-lr]">
                     SUSHI
                   </span>
                 </div>
 
                 {/* varanda: planta e banco claro */}
                 <span className="absolute left-[4%] top-[75.5%] text-xl">🪴</span>
-                <div className="absolute bottom-0 left-0 top-[84%] w-[5%] bg-sky-100 dark:bg-sky-200/60" />
+                <div className="absolute bottom-0 left-0 top-[84%] w-[5%] bg-sky-100/80 dark:bg-sky-200/50" />
 
                 {/* rótulos das áreas */}
-                <span className="absolute left-[2%] top-[0.6%] rounded bg-black/55 px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-white">
+                <span className="absolute left-[2.5%] top-[0.8%] rounded-full bg-carvao-950/60 px-2.5 py-1 text-[9px] font-bold tracking-[0.22em] text-areia-100 backdrop-blur-sm">
                   SALÃO
                 </span>
-                <span className="absolute left-[28%] top-[75.3%] rounded bg-black/55 px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-white">
+                <span className="absolute left-[28%] top-[75.5%] rounded-full bg-carvao-950/60 px-2.5 py-1 text-[9px] font-bold tracking-[0.22em] text-areia-100 backdrop-blur-sm">
                   ÁREA EXTERNA
                 </span>
 
@@ -459,7 +477,7 @@ export default function MapaPage() {
 
             {mesasAntigasOcupadas.length > 0 && (
               <div className="space-y-2">
-                <h3 className="text-xs font-black uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <h3 className="px-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-carvao-400 dark:text-carvao-300">
                   Mesas antigas ainda ocupadas — arraste o casal para uma mesa 1-24
                 </h3>
                 <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 xl:grid-cols-6">
@@ -480,10 +498,18 @@ export default function MapaPage() {
           </div>
 
           {/* ---------- LISTA DE CASAIS ---------- */}
-          <div className="space-y-3">
+          <div className="space-y-3 rounded-[28px] bg-white/70 p-3 shadow-suave ring-1 ring-carvao-200/60 backdrop-blur-sm dark:bg-carvao-850/70 dark:ring-carvao-700">
+            <div className="flex items-baseline justify-between px-1 pt-1">
+              <h2 className="font-display text-lg font-semibold tracking-tight">
+                Casais · {TURNO_LABEL[turno]}
+              </h2>
+              <span className="text-xs font-semibold text-carvao-400 dark:text-carvao-300">
+                {lista.doTurno.length} no turno
+              </span>
+            </div>
             <input
               className={estiloInput}
-              placeholder="🔍 Buscar casal..."
+              placeholder="Buscar casal..."
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
             />
@@ -492,10 +518,10 @@ export default function MapaPage() {
                 <button
                   key={f}
                   onClick={() => setFiltroLista(f)}
-                  className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
+                  className={`min-h-10 rounded-full px-4 text-[13px] font-semibold transition ${
                     filtroLista === f
-                      ? 'bg-brand-600 text-white shadow'
-                      : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200'
+                      ? 'bg-carvao-900 text-areia-50 shadow-suave dark:bg-areia-100 dark:text-carvao-900'
+                      : 'bg-white text-carvao-500 ring-1 ring-carvao-200 hover:text-carvao-800 dark:bg-carvao-800 dark:text-carvao-300 dark:ring-carvao-600'
                   }`}
                 >
                   {FILTRO_LABEL[f]}
@@ -503,29 +529,29 @@ export default function MapaPage() {
               ))}
             </div>
             <ZonaSemMesa ativa={!!arrastando?.table_id} />
-            <div className="max-h-[80vh] space-y-4 overflow-y-auto pb-24 pr-1 lg:pb-2">
+            <div className="max-h-[76vh] space-y-5 overflow-y-auto pb-24 pr-1 lg:pb-2">
               {filtroLista === 'todos' ? (
                 <>
-                  <GrupoCasais titulo="⏳ Aguardando mesa" cor="text-amber-600 dark:text-amber-400" reservas={lista.aguardando} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
-                  <GrupoCasais titulo="📍 Na mesa (reservado)" cor="text-blue-600 dark:text-blue-400" reservas={lista.naMesa} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
-                  <GrupoCasais titulo="🟠 Chegaram" cor="text-orange-600 dark:text-orange-400" reservas={lista.chegaram} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
-                  <GrupoCasais titulo="🔴 Sentados" cor="text-red-600 dark:text-red-400" reservas={lista.sentados} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
-                  <GrupoCasais titulo="✓ Finalizados" cor="text-gray-500" reservas={lista.finalizados} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
-                  <GrupoCasais titulo="👻 No-show / cancelados" cor="text-gray-400" reservas={lista.encerrados} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
+                  <GrupoCasais titulo="Aguardando mesa" cor={CASAL_ACENTO.aguardando} reservas={lista.aguardando} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
+                  <GrupoCasais titulo="Na mesa (reservado)" cor={CASAL_ACENTO.definida} reservas={lista.naMesa} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
+                  <GrupoCasais titulo="Chegaram" cor={CASAL_ACENTO.chegou} reservas={lista.chegaram} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
+                  <GrupoCasais titulo="Sentados" cor={CASAL_ACENTO.sentado} reservas={lista.sentados} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
+                  <GrupoCasais titulo="Finalizados" cor={CASAL_ACENTO.finalizada} reservas={lista.finalizados} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
+                  <GrupoCasais titulo="No-show / cancelados" cor={CASAL_ACENTO.encerrada} reservas={lista.encerrados} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
                   {lista.doTurno.length === 0 && (
-                    <div className="space-y-3 py-8 text-center">
-                      <p className="text-sm text-gray-400">Nenhum casal neste turno.</p>
-                      <Botao onClick={() => setNovoCasal(true)}>➕ Cadastrar reserva</Botao>
+                    <div className="space-y-3 py-10 text-center">
+                      <p className="text-sm text-carvao-400">Nenhum casal neste turno.</p>
+                      <Botao onClick={() => setNovoCasal(true)}>＋ Cadastrar reserva</Botao>
                     </div>
                   )}
                 </>
               ) : (
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {listaFiltrada.map((r) => (
                     <CardCasal key={r.id} reserva={r} aoClicar={() => cliqueProtegido(() => setReservaSelecionada(r))} />
                   ))}
                   {listaFiltrada.length === 0 && (
-                    <p className="py-8 text-center text-sm text-gray-400">
+                    <p className="py-10 text-center text-sm text-carvao-400">
                       Nenhum casal em &quot;{FILTRO_LABEL[filtroLista]}&quot;.
                     </p>
                   )}
@@ -539,9 +565,11 @@ export default function MapaPage() {
       {/* fantasma que segue o dedo durante o arraste */}
       <DragOverlay dropAnimation={null}>
         {arrastando && (
-          <div className="rounded-xl bg-brand-600 px-4 py-3 text-sm font-bold text-white shadow-2xl ring-4 ring-brand-300">
+          <div className="rotate-1 rounded-2xl bg-carvao-900/95 px-5 py-3.5 text-sm font-bold text-areia-50 shadow-flutuante ring-2 ring-brand-500/60 backdrop-blur">
             {arrastando.nome}
-            <span className="ml-2 rounded bg-white/20 px-1.5 text-xs">{TURNO_LABEL[arrastando.turno]}</span>
+            <span className="ml-2 rounded-md bg-white/15 px-1.5 py-0.5 text-xs font-semibold">
+              {TURNO_LABEL[arrastando.turno]}
+            </span>
           </div>
         )}
       </DragOverlay>
@@ -549,10 +577,13 @@ export default function MapaPage() {
       {/* aviso (toast) */}
       {aviso && (
         <div
-          className={`fixed bottom-24 left-1/2 z-[60] w-[92%] max-w-md -translate-x-1/2 rounded-2xl px-5 py-4 text-center text-base font-bold text-white shadow-2xl md:bottom-8 ${
-            aviso.tipo === 'ok' ? 'bg-brand-600' : 'bg-red-600'
+          className={`fixed bottom-24 left-1/2 z-[60] w-[92%] max-w-md -translate-x-1/2 rounded-2xl px-6 py-4 text-center text-[15px] font-bold shadow-flutuante ring-1 ring-white/10 backdrop-blur animate-subir md:bottom-8 ${
+            aviso.tipo === 'ok' ? 'bg-carvao-900/95 text-areia-50' : 'bg-[#7e342c]/95 text-areia-50'
           }`}
         >
+          <span className={`mr-2 ${aviso.tipo === 'ok' ? 'text-brand-400' : 'text-[#f0b5ad]'}`}>
+            {aviso.tipo === 'ok' ? '✓' : '✕'}
+          </span>
           {aviso.texto}
         </div>
       )}
@@ -568,23 +599,23 @@ export default function MapaPage() {
             <div className="flex items-center gap-2">
               <span className={`inline-block h-5 w-5 rounded ${MESA_COR[infoSelecionada.estado].split(' ')[0]}`} />
               <span className="text-lg font-black">{MESA_ESTADO_LABEL[infoSelecionada.estado]}</span>
-              <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold dark:bg-gray-700">
+              <span className="rounded-full bg-areia-100 px-3 py-1 text-sm font-semibold text-carvao-600 dark:bg-carvao-700 dark:text-areia-200">
                 Mapa {TURNO_LABEL[turno]}
               </span>
             </div>
             {mesaSelecionada.observacao && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">📍 {mesaSelecionada.observacao}</p>
+              <p className="text-sm text-carvao-400 dark:text-carvao-300">📍 {mesaSelecionada.observacao}</p>
             )}
 
             {infoSelecionada.reserva ? (
               <div className="space-y-3">
-                <div className="rounded-2xl border border-gray-200 p-4 dark:border-gray-700">
+                <div className="rounded-2xl bg-areia-50 p-4 ring-1 ring-carvao-200/70 dark:bg-carvao-800 dark:ring-carvao-600">
                   <div className="text-lg font-bold">{infoSelecionada.reserva.nome}</div>
                   <div className="mt-1 flex flex-wrap gap-2 text-sm">
-                    <span className="rounded-full bg-gray-100 px-3 py-1 font-semibold dark:bg-gray-700">
+                    <span className="rounded-full bg-white px-3 py-1 font-semibold text-carvao-600 ring-1 ring-carvao-200/70 dark:bg-carvao-700 dark:text-areia-200 dark:ring-carvao-600">
                       {TURNO_LABEL[infoSelecionada.reserva.turno]}
                     </span>
-                    <span className="rounded-full bg-gray-100 px-3 py-1 font-semibold dark:bg-gray-700">
+                    <span className="rounded-full bg-white px-3 py-1 font-semibold text-carvao-600 ring-1 ring-carvao-200/70 dark:bg-carvao-700 dark:text-areia-200 dark:ring-carvao-600">
                       {STATUS_LABEL[infoSelecionada.reserva.status]}
                     </span>
                     {infoSelecionada.reserva.origem === 'reserva' && (
@@ -604,7 +635,7 @@ export default function MapaPage() {
                 </Botao>
               </div>
             ) : infoSelecionada.estado === 'bloqueada' ? (
-              <p className="text-gray-500 dark:text-gray-400">Mesa fora do layout operacional — bloqueada para reservas.</p>
+              <p className="text-carvao-400 dark:text-carvao-300">Mesa fora do layout operacional — bloqueada para reservas.</p>
             ) : (
               <div className="space-y-3">
                 <Botao
@@ -615,13 +646,13 @@ export default function MapaPage() {
                 </Botao>
                 {aguardandoParaMesa.length > 0 && (
                   <>
-                    <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+                    <p className="text-sm font-semibold text-carvao-400 dark:text-carvao-300">
                       Ou coloque um casal que está aguardando:
                     </p>
                     {aguardandoParaMesa.slice(0, 8).map((r) => (
                       <button
                         key={r.id}
-                        className="flex w-full items-center justify-between rounded-xl bg-gray-100 px-4 py-3 text-left font-semibold transition active:scale-95 dark:bg-gray-700"
+                        className="flex min-h-12 w-full items-center justify-between rounded-2xl bg-areia-100 px-4 py-3 text-left font-semibold transition hover:bg-areia-200 active:scale-[0.98] dark:bg-carvao-700 dark:hover:bg-carvao-600"
                         onClick={async () => {
                           try {
                             await moverComRegistro(r, mesaSelecionada);
@@ -632,12 +663,12 @@ export default function MapaPage() {
                         }}
                       >
                         <span>{r.nome}</span>
-                        <span className="text-sm text-gray-500 dark:text-gray-300">{TURNO_LABEL[r.turno]} →</span>
+                        <span className="text-sm text-carvao-400 dark:text-carvao-300">{TURNO_LABEL[r.turno]} →</span>
                       </button>
                     ))}
                   </>
                 )}
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-carvao-300 dark:text-carvao-500">
                   Dica: dá para arrastar um casal da lista direto para a mesa.
                 </p>
               </div>
@@ -694,16 +725,16 @@ function ZonaSemMesa({ ativa }: { ativa: boolean }) {
   return (
     <div
       ref={setNodeRef}
-      className={`rounded-xl border-2 border-dashed px-3 py-2 text-center text-xs font-bold transition ${
+      className={`rounded-2xl border border-dashed px-4 py-2.5 text-center text-xs font-semibold transition-all duration-150 ${
         ativa
           ? isOver
-            ? 'border-amber-500 bg-amber-100 text-amber-900 ring-4 ring-amber-300 dark:bg-amber-900/50 dark:text-amber-100'
-            : 'border-amber-400 bg-amber-50 text-amber-800 animate-pulse dark:bg-amber-950/40 dark:text-amber-200'
-          : 'border-gray-200 text-gray-400 dark:border-gray-700 dark:text-gray-500'
+            ? 'scale-[1.02] border-[#d3a445] bg-[#f6ecd8] text-[#8a6420] ring-4 ring-[#d3a445]/30 dark:bg-[#3d321a] dark:text-[#e3c987]'
+            : 'animate-pulse border-[#d3a445]/80 bg-[#f6ecd8]/70 text-[#8a6420] dark:bg-[#3d321a]/60 dark:text-[#e3c987]'
+          : 'border-carvao-200 text-carvao-300 dark:border-carvao-600 dark:text-carvao-500'
       }`}
     >
       {ativa
-        ? '⬇️ Solte aqui para TIRAR da mesa (mesa fica livre)'
+        ? '⬇ Solte aqui para tirar da mesa — a mesa fica livre'
         : 'Arraste um casal até aqui para tirá-lo da mesa'}
     </div>
   );
@@ -739,12 +770,12 @@ function MesaChip({
     disabled: !reservaArrastavel,
   });
 
-  // Banquetas de apoio (bar/barra fria): pretas, sem arrastar nem soltar.
+  // Banquetas de apoio (bar/barra fria): grafite, sem arrastar nem soltar.
   if (pos.pequena) {
     return (
       <button
         onClick={aoClicar}
-        className={`absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[5px] text-[9px] font-black shadow ${MESA_COR.bloqueada}`}
+        className={`absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-md text-[9px] font-bold shadow-sm ring-1 ring-white/10 ${MESA_COR.bloqueada}`}
         style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
         title={`Mesa ${numero} — apoio (bloqueada)`}
       >
@@ -756,11 +787,11 @@ function MesaChip({
   if (!mesa) {
     return (
       <div
-        className="absolute flex h-12 w-20 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-lg border-2 border-dashed border-white/80 text-center text-white sm:w-24"
+        className="absolute flex h-12 w-20 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/70 text-center text-white sm:w-24"
         style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
         title={`Mesa ${numero} — não cadastrada no banco`}
       >
-        <span className="text-[11px] font-black leading-none">{numero}</span>
+        <span className="text-[11px] font-extrabold leading-none">{numero}</span>
         <span className="text-[8px] font-semibold leading-tight">falta no banco</span>
       </div>
     );
@@ -770,12 +801,12 @@ function MesaChip({
     ? recebimento === 'livre'
       ? droppable.isOver
         ? 'ring-4 ring-white scale-110 z-20'
-        : 'ring-2 ring-brand-300/90 animate-pulse z-10'
+        : 'ring-2 ring-white/80 animate-pulse z-10'
       : recebimento === 'troca'
         ? droppable.isOver
-          ? 'ring-4 ring-amber-300 scale-110 z-20'
-          : 'ring-2 ring-amber-400/90 z-10'
-        : 'opacity-40'
+          ? 'ring-4 ring-[#e8c573] scale-110 z-20'
+          : 'ring-2 ring-[#e8c573]/90 z-10'
+        : 'opacity-35 saturate-50'
     : '';
 
   return (
@@ -787,28 +818,28 @@ function MesaChip({
       {...draggable.listeners}
       {...draggable.attributes}
       onClick={aoClicar}
-      className={`absolute flex h-12 w-20 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-lg px-1 shadow-md transition sm:w-24 ${MESA_COR[info.estado]} ${destaque} ${draggable.isDragging ? 'opacity-30' : ''}`}
+      className={`absolute flex h-12 w-20 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-xl px-1 shadow-[0_2px_8px_rgba(14,16,19,0.28)] ring-1 ring-black/10 transition-all duration-150 sm:w-24 ${MESA_COR[info.estado]} ${destaque} ${draggable.isDragging ? 'opacity-30' : ''}`}
       style={{ left: `${pos.x}%`, top: `${pos.y}%`, touchAction: 'manipulation' }}
       title={`Mesa ${numero} — ${MESA_ESTADO_LABEL[info.estado]}`}
     >
-      <span className="text-[11px] font-black leading-none">{numero}</span>
+      <span className="text-[11px] font-extrabold leading-none drop-shadow-sm">{numero}</span>
       {info.reserva ? (
         <>
           <span className="w-full truncate text-center text-[8px] font-bold leading-tight">
             {info.reserva.origem === 'passante' && '🚶 '}
             {info.reserva.nome}
           </span>
-          <span className="text-[8px] font-semibold leading-none opacity-90">
+          <span className="text-[7.5px] font-semibold uppercase leading-none tracking-wide opacity-85">
             {TURNO_LABEL[info.reserva.turno]} · {MESA_ESTADO_LABEL[info.estado]}
           </span>
         </>
       ) : (
-        <span className="text-[8px] font-semibold leading-none opacity-90">
+        <span className="text-[7.5px] font-semibold uppercase leading-none tracking-wide opacity-85">
           {MESA_ESTADO_LABEL[info.estado]}
         </span>
       )}
       {arrastandoAlgo && recebimento === 'troca' && (
-        <span className="absolute -right-1 -top-1 rounded bg-amber-400 px-1 text-[8px] font-black text-amber-950">
+        <span className="absolute -right-1.5 -top-1.5 rounded-full bg-[#e8c573] px-1.5 py-0.5 text-[8px] font-extrabold uppercase tracking-wide text-[#5c4310] shadow-sm">
           troca
         </span>
       )}
@@ -842,7 +873,7 @@ function MesaCard({
 
   if (!mesa) {
     return (
-      <div className="flex min-h-[92px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 p-2 text-center text-gray-400 dark:border-gray-600">
+      <div className="flex min-h-[92px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-carvao-200 p-2 text-center text-carvao-300 dark:border-carvao-600 dark:text-carvao-500">
         <span className="text-lg font-black">{numero}</span>
         <span className="text-[10px] font-semibold leading-tight">falta no banco</span>
       </div>
@@ -897,7 +928,7 @@ function MesaCard({
   );
 }
 
-/* ---------- Card de casal na lista lateral (arrastável) ---------- */
+/* ---------- Grupo + card de casal na lista lateral (arrastável) ---------- */
 function GrupoCasais({
   titulo,
   cor,
@@ -905,6 +936,7 @@ function GrupoCasais({
   aoClicar,
 }: {
   titulo: string;
+  /** Classe bg-* do ponto de acento do grupo. */
   cor: string;
   reservas: Reserva[];
   aoClicar: (r: Reserva) => void;
@@ -912,16 +944,29 @@ function GrupoCasais({
   if (reservas.length === 0) return null;
   return (
     <div>
-      <h3 className={`mb-1.5 text-xs font-black uppercase tracking-wide ${cor}`}>
-        {titulo} · {reservas.length}
+      <h3 className="mb-2 flex items-center gap-2 px-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-carvao-400 dark:text-carvao-300">
+        <span className={`h-2 w-2 rounded-full ${cor}`} aria-hidden />
+        {titulo}
+        <span className="rounded-full bg-carvao-100 px-2 py-0.5 text-[10px] font-bold text-carvao-500 dark:bg-carvao-700 dark:text-carvao-200">
+          {reservas.length}
+        </span>
       </h3>
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         {reservas.map((r) => (
           <CardCasal key={r.id} reserva={r} aoClicar={() => aoClicar(r)} />
         ))}
       </div>
     </div>
   );
+}
+
+/** Acento do card conforme a situação do casal. */
+function acentoCasal(r: Reserva): string {
+  if (r.status === 'sentado') return CASAL_ACENTO.sentado;
+  if (r.status === 'chegou') return CASAL_ACENTO.chegou;
+  if (r.status === 'finalizada') return CASAL_ACENTO.finalizada;
+  if (r.status === 'cancelada' || r.status === 'no_show') return CASAL_ACENTO.encerrada;
+  return r.table_id ? CASAL_ACENTO.definida : CASAL_ACENTO.aguardando;
 }
 
 function CardCasal({ reserva, aoClicar }: { reserva: Reserva; aoClicar: () => void }) {
@@ -939,30 +984,37 @@ function CardCasal({ reserva, aoClicar }: { reserva: Reserva; aoClicar: () => vo
       {...attributes}
       onClick={aoClicar}
       role="button"
-      className={`flex cursor-grab items-center justify-between gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm transition active:cursor-grabbing dark:border-gray-700 dark:bg-gray-800 ${
+      className={`flex cursor-grab items-center gap-3 rounded-2xl bg-white p-3 shadow-suave ring-1 ring-carvao-200/70 transition-all duration-150 hover:ring-carvao-300 active:cursor-grabbing active:scale-[0.99] dark:bg-carvao-800 dark:ring-carvao-600/70 ${
         isDragging ? 'opacity-30' : ''
-      } ${arrastavel ? '' : 'opacity-60'}`}
+      } ${arrastavel ? '' : 'opacity-55'}`}
       style={{ touchAction: 'manipulation' }}
     >
-      <div className="min-w-0">
-        <div className="truncate font-bold">
-          {reserva.origem === 'passante' && '🚶 '}
+      <span className={`h-10 w-1 shrink-0 rounded-full ${acentoCasal(reserva)}`} aria-hidden />
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-[15px] font-bold leading-snug text-carvao-900 dark:text-areia-50">
+          {reserva.origem === 'passante' && <span title="Passante">🚶 </span>}
           {reserva.nome}
         </div>
-        <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400">
-          <span>
-            {TURNO_LABEL[reserva.turno]} · {reserva.mesa ? `Mesa ${reserva.mesa.numero}` : 'Sem mesa'} ·{' '}
-            {statusCurto(reserva)}
+        <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs font-semibold text-carvao-400 dark:text-carvao-300">
+          <span className="rounded-md bg-areia-100 px-1.5 py-0.5 font-bold text-carvao-600 dark:bg-carvao-700 dark:text-areia-200">
+            {TURNO_LABEL[reserva.turno]}
           </span>
+          <span>{reserva.mesa ? `Mesa ${reserva.mesa.numero}` : 'Sem mesa'}</span>
+          <span className="text-carvao-300 dark:text-carvao-500">·</span>
+          <span>{statusCurto(reserva)}</span>
           {reserva.origem === 'reserva' && (
-            <span className={`rounded-full px-2 py-0.5 ${PIX_BADGE[reserva.pix_status]}`}>
+            <span className={`rounded-full px-2 py-0.5 text-[11px] ${PIX_BADGE[reserva.pix_status]}`}>
               Pix {PIX_LABEL[reserva.pix_status]}
             </span>
           )}
           {reserva.observacao && <span title={reserva.observacao}>📝</span>}
         </div>
       </div>
-      {arrastavel && <span className="shrink-0 text-lg text-gray-300 dark:text-gray-500">⠿</span>}
+      {arrastavel && (
+        <span className="shrink-0 text-lg text-carvao-200 dark:text-carvao-500" aria-hidden>
+          ⠿
+        </span>
+      )}
     </div>
   );
 }
@@ -1053,11 +1105,11 @@ function PassanteModal({
             ))}
           </select>
         </div>
-        <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+        <p className="text-sm font-semibold text-carvao-400 dark:text-carvao-300">
           Passante não tem crédito Pix (R$ 0).
         </p>
         {erro && (
-          <p className="rounded-xl bg-red-100 px-4 py-3 text-sm font-semibold text-red-700 dark:bg-red-900/50 dark:text-red-200">
+          <p className="rounded-2xl bg-[#f5e2df] px-4 py-3 text-sm font-semibold text-[#8e3a31] dark:bg-[#3e2421] dark:text-[#e3a49c]">
             {erro}
           </p>
         )}

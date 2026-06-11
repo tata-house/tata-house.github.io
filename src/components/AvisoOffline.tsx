@@ -20,8 +20,9 @@ export function AvisoOffline() {
   if (online) return null;
 
   return (
-    <div className="sticky top-0 z-50 bg-red-600 px-4 py-2 text-center text-sm font-bold text-white print:hidden">
-      ⚠️ Sem conexão — os dados podem estar desatualizados. Alterações estão bloqueadas para evitar conflito de mesas.
+    <div className="sticky top-0 z-50 bg-[#7e342c] px-4 py-2.5 text-center text-sm font-semibold text-areia-50 print:hidden">
+      ⚠ Sem conexão — os dados podem estar desatualizados. Alterações estão bloqueadas para evitar
+      conflito de mesas.
     </div>
   );
 }

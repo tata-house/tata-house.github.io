@@ -73,45 +73,45 @@ export function AcoesReserva({
           <div className="flex flex-wrap items-center gap-2">
             <BadgeStatus status={reserva.status} />
             <BadgePix status={reserva.pix_status} />
-            <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold dark:bg-gray-700">
+            <span className="rounded-full bg-areia-100 px-3 py-1 text-sm font-semibold text-carvao-600 dark:bg-carvao-700 dark:text-areia-200">
               Turno {TURNO_LABEL[reserva.turno]}
             </span>
-            <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold dark:bg-gray-700">
+            <span className="rounded-full bg-areia-100 px-3 py-1 text-sm font-semibold text-carvao-600 dark:bg-carvao-700 dark:text-areia-200">
               {reserva.origem === 'passante' ? '🚶 Passante' : '📋 Reserva'}
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="rounded-xl bg-gray-50 p-3 dark:bg-gray-900">
-              <div className="text-gray-500 dark:text-gray-400">Mesa</div>
+            <div className="rounded-2xl bg-areia-100 p-3 dark:bg-carvao-800">
+              <div className="text-xs font-bold uppercase tracking-[0.1em] text-carvao-400 dark:text-carvao-300">Mesa</div>
               <div className="text-lg font-bold">
                 {reserva.mesa ? `${reserva.mesa.numero} · ${AREA_LABEL[reserva.mesa.area]}` : 'Sem mesa'}
               </div>
             </div>
-            <div className="rounded-xl bg-gray-50 p-3 dark:bg-gray-900">
-              <div className="text-gray-500 dark:text-gray-400">Telefone</div>
+            <div className="rounded-2xl bg-areia-100 p-3 dark:bg-carvao-800">
+              <div className="text-xs font-bold uppercase tracking-[0.1em] text-carvao-400 dark:text-carvao-300">Telefone</div>
               <div className="text-lg font-bold">{reserva.telefone || '—'}</div>
             </div>
-            <div className="rounded-xl bg-gray-50 p-3 dark:bg-gray-900">
-              <div className="text-gray-500 dark:text-gray-400">Crédito Pix</div>
+            <div className="rounded-2xl bg-areia-100 p-3 dark:bg-carvao-800">
+              <div className="text-xs font-bold uppercase tracking-[0.1em] text-carvao-400 dark:text-carvao-300">Crédito Pix</div>
               <div className="text-lg font-bold">
                 {reserva.credito_aplicado ? 'Já aplicado' : brl(reserva.credito_disponivel)}
               </div>
             </div>
-            <div className="rounded-xl bg-gray-50 p-3 dark:bg-gray-900">
-              <div className="text-gray-500 dark:text-gray-400">Pessoas</div>
+            <div className="rounded-2xl bg-areia-100 p-3 dark:bg-carvao-800">
+              <div className="text-xs font-bold uppercase tracking-[0.1em] text-carvao-400 dark:text-carvao-300">Pessoas</div>
               <div className="text-lg font-bold">{reserva.pessoas}</div>
             </div>
           </div>
 
           {reserva.observacao && (
-            <p className="rounded-xl bg-yellow-50 px-4 py-3 text-sm font-medium text-yellow-900 dark:bg-yellow-900/40 dark:text-yellow-100">
+            <p className="rounded-2xl bg-[#f6ecd8] px-4 py-3 text-sm font-medium text-[#8a6420] dark:bg-[#3d321a] dark:text-[#e3c987]">
               📝 {reserva.observacao}
             </p>
           )}
 
           {erro && (
-            <p className="rounded-xl bg-red-100 px-4 py-3 text-sm font-semibold text-red-700 dark:bg-red-900/50 dark:text-red-200">
+            <p className="rounded-2xl bg-[#f5e2df] px-4 py-3 text-sm font-semibold text-[#8e3a31] dark:bg-[#3e2421] dark:text-[#e3a49c]">
               {erro}
             </p>
           )}
@@ -151,7 +151,7 @@ export function AcoesReserva({
                 placeholder="0,00"
               />
               {reserva.credito_aplicado && (
-                <p className="text-sm font-semibold text-green-700 dark:text-green-300">
+                <p className="text-sm font-semibold text-[#1e6b44] dark:text-[#8fd4ae]">
                   Crédito de {brl(reserva.credito_disponivel)} será descontado.
                 </p>
               )}

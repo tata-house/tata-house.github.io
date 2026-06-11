@@ -1,6 +1,19 @@
 import type { Metadata, Viewport } from 'next';
+import { Fraunces, Manrope } from 'next/font/google';
 import { RegistroSw } from '@/components/RegistroSw';
 import './globals.css';
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  weight: ['400', '500', '600', '700', '800'],
+});
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-display',
+  weight: ['500', '600', '700'],
+});
 
 export const metadata: Metadata = {
   title: 'TATÁ Sushi — Operação Dia dos Namorados',
@@ -21,12 +34,12 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  themeColor: '#00b14f',
+  themeColor: '#15171b',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning className={`${manrope.variable} ${fraunces.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -34,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body>
+      <body className="font-sans">
         <RegistroSw />
         {children}
       </body>

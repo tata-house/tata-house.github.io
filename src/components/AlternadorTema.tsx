@@ -23,7 +23,7 @@ export function AlternadorTema() {
     <button
       onClick={alternar}
       aria-label="Alternar modo escuro"
-      className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-lg dark:bg-gray-700"
+      className="flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.05] text-base ring-1 ring-white/[0.07] transition hover:bg-white/10"
     >
       {escuro ? '☀️' : '🌙'}
     </button>

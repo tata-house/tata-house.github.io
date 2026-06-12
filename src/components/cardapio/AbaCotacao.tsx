@@ -1,0 +1,206 @@
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
+import { Botao, Cartao } from '@/components/ui';
+import { agruparCotacao, parsearCotacao } from '@/lib/cardapio/cotacao';
+import type { LinhaCotacao } from '@/lib/cardapio/cotacao';
+import { DADOS, formatarReais, normalizar } from '@/lib/cardapio/motor';
+
+const CHAVE_TEXTO = 'cardapio.v1.cotacao.texto';
+
+/**
+ * Cole a cotação da semana (WhatsApp/fornecedor) e o app extrai os preços,
+ * casa com o histórico e alimenta a sugestão de cardápio por custo-benefício.
+ */
+export function AbaCotacao({
+  definirPreco,
+}: {
+  definirPreco: (itemNorm: string, valor: number | null) => void;
+}) {
+  const [texto, setTexto] = useState('');
+  const [lido, setLido] = useState<LinhaCotacao[] | null>(null);
+  const [ignorados, setIgnorados] = useState<Set<string>>(new Set());
+  const [atribuicoes, setAtribuicoes] = useState<Record<number, string>>({});
+  const [aplicado, setAplicado] = useState(0);
+
+  useEffect(() => {
+    try {
+      setTexto(localStorage.getItem(CHAVE_TEXTO) ?? '');
+    } catch {
+      /* sem armazenamento: segue vazio */
+    }
+  }, []);
+
+  const ler = () => {
+    try {
+      localStorage.setItem(CHAVE_TEXTO, texto);
+    } catch {
+      /* armazenamento indisponível */
+    }
+    setLido(parsearCotacao(texto));
+    setIgnorados(new Set());
+    setAtribuicoes({});
+    setAplicado(0);
+  };
+
+  const { casados, soltos } = useMemo(() => {
+    if (!lido) return { casados: [], soltos: [] as LinhaCotacao[] };
+    // aplica as atribuições manuais dos itens soltos antes de agrupar
+    const nomesValidos = new Set(DADOS.itens.map((i) => i.n));
+    const linhas = lido.map((l, i) => {
+      const manual = atribuicoes[i];
+      return manual && nomesValidos.has(manual) ? { ...l, item: manual } : l;
+    });
+    return agruparCotacao(linhas);
+  }, [lido, atribuicoes]);
+
+  const selecionados = casados.filter((c) => !ignorados.has(c.item));
+
+  const aplicar = () => {
+    selecionados.forEach((c) => definirPreco(normalizar(c.item), c.preco));
+    setAplicado(selecionados.length);
+  };
+
+  const alternar = (item: string) =>
+    setIgnorados((s) => {
+      const novo = new Set(s);
+      if (novo.has(item)) novo.delete(item);
+      else novo.add(item);
+      return novo;
+    });
+
+  return (
+    <div className="space-y-4">
+      <Cartao className="space-y-3">
+        <p className="text-sm text-carvao-500 dark:text-carvao-300">
+          Cole abaixo a <strong>cotação da semana</strong> do jeito que ela chega no WhatsApp (pode colar
+          tudo de uma vez: frango, bovinos, suínos, hortifrúti…). O app lê os preços, fica com o{' '}
+          <strong>menor preço de cada item</strong> e usa isso para sugerir o cardápio com melhor
+          custo-benefício.
+        </p>
+        <textarea
+          rows={8}
+          value={texto}
+          onChange={(e) => setTexto(e.target.value)}
+          placeholder={'Ex.:\n7,00 Frango inteiro RF\nAcém Resf - Ribeiro *31,90*\nTiras de carnes\t\tR$ 43,00\nALHO KG 29,80'}
+          className="w-full rounded-2xl border border-carvao-200 bg-white px-4 py-3 font-mono text-xs leading-relaxed dark:border-carvao-600 dark:bg-carvao-900"
+        />
+        <Botao variante="primario" className="w-full" disabled={!texto.trim()} onClick={ler}>
+          🔍 Ler cotação
+        </Botao>
+      </Cartao>
+
+      {lido && (
+        <>
+          {casados.length === 0 ? (
+            <Cartao>
+              <p className="text-sm text-carvao-400">
+                Nenhum preço reconhecido. Confira se o texto tem valores no formato <code>12,34</code>.
+              </p>
+            </Cartao>
+          ) : (
+            <Cartao className="space-y-3 !p-0">
+              <div className="flex flex-wrap items-center justify-between gap-2 px-5 pt-4">
+                <h3 className="font-display text-lg font-semibold">
+                  {casados.length} itens reconhecidos
+                </h3>
+                <span className="text-xs font-semibold text-carvao-400">
+                  menor preço entre {lido.length} linhas lidas
+                </span>
+              </div>
+              <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
+                {casados.map((c) => {
+                  const fora = ignorados.has(c.item);
+                  return (
+                    <li
+                      key={c.item}
+                      className={`flex items-center justify-between gap-3 px-5 py-2.5 ${fora ? 'opacity-40' : ''}`}
+                    >
+                      <label className="flex min-w-0 cursor-pointer items-center gap-2.5">
+                        <input
+                          type="checkbox"
+                          checked={!fora}
+                          onChange={() => alternar(c.item)}
+                          className="h-4 w-4 shrink-0 accent-brand-600"
+                        />
+                        <span className="min-w-0">
+                          <span className="block truncate text-sm font-semibold">{c.item}</span>
+                          <span className="block text-[11px] text-carvao-400">
+                            {c.marca ? `${c.marca} · ` : ''}
+                            {c.ofertas > 1 ? `melhor de ${c.ofertas} ofertas` : '1 oferta'}
+                          </span>
+                        </span>
+                      </label>
+                      <span className="shrink-0 text-sm font-bold">
+                        {formatarReais(c.preco)}
+                        <span className="font-normal text-carvao-400">/{c.unid}</span>
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+              <div className="space-y-2 px-5 pb-4">
+                <Botao
+                  variante="sucesso"
+                  className="w-full"
+                  disabled={selecionados.length === 0}
+                  onClick={aplicar}
+                >
+                  💰 Aplicar {selecionados.length} preços à tabela
+                </Botao>
+                {aplicado > 0 && (
+                  <p className="text-center text-xs font-semibold text-brand-600">
+                    ✓ {aplicado} preços aplicados! Agora vá em 🍽️ Cardápio e toque em “✨ Sugerir semana” —
+                    a sugestão vai priorizar o melhor custo-benefício desta cotação.
+                  </p>
+                )}
+              </div>
+            </Cartao>
+          )}
+
+          {soltos.length > 0 && (
+            <Cartao className="space-y-2">
+              <h3 className="font-display text-lg font-semibold">
+                {soltos.length} linhas sem item correspondente
+              </h3>
+              <p className="text-xs text-carvao-400">
+                Produtos que não encontrei no histórico de compras. Se algum for usado no cardápio, digite o
+                nome do item ao lado (a lista sugere os conhecidos).
+              </p>
+              <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
+                {soltos.map((s) => {
+                  const idx = lido.indexOf(s);
+                  return (
+                    <li key={`${idx}-${s.nome}`} className="flex items-center justify-between gap-3 py-2">
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm">{s.nome}</span>
+                        <span className="block text-[11px] text-carvao-400">
+                          {formatarReais(s.preco)}
+                          {s.marca ? ` · ${s.marca}` : ''}
+                        </span>
+                      </span>
+                      <input
+                        list="itens-cotacao"
+                        placeholder="Casar com item…"
+                        value={atribuicoes[idx] ?? ''}
+                        onChange={(e) =>
+                          setAtribuicoes((a) => ({ ...a, [idx]: e.target.value }))
+                        }
+                        className="w-44 shrink-0 rounded-xl border border-carvao-200 bg-white px-2.5 py-1.5 text-xs dark:border-carvao-600 dark:bg-carvao-900"
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+              <datalist id="itens-cotacao">
+                {DADOS.itens.map((i) => (
+                  <option key={i.n} value={i.n} />
+                ))}
+              </datalist>
+            </Cartao>
+          )}
+        </>
+      )}
+    </div>
+  );
+}

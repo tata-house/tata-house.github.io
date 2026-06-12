@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { AlternadorTema } from '@/components/AlternadorTema';
 import { AbaCardapio } from '@/components/cardapio/AbaCardapio';
 import { AbaCompras } from '@/components/cardapio/AbaCompras';
+import { AbaCotacao } from '@/components/cardapio/AbaCotacao';
 import { AbaFluxo } from '@/components/cardapio/AbaFluxo';
 import { AbaPrecos } from '@/components/cardapio/AbaPrecos';
 import {
@@ -17,6 +18,7 @@ import {
 import type { Etapa, Papel } from '@/lib/cardapio/tipos';
 
 const ABAS = [
+  { id: 'cotacao', rotulo: '📋 Cotação' },
   { id: 'cardapio', rotulo: '🍽️ Cardápio' },
   { id: 'compras', rotulo: '🛒 Compras' },
   { id: 'fluxo', rotulo: '🚦 Acompanhar' },
@@ -152,6 +154,7 @@ export default function PaginaCardapios() {
           <p className="py-10 text-center text-sm text-carvao-400">Carregando semana…</p>
         ) : (
           <>
+            {aba === 'cotacao' && <AbaCotacao definirPreco={definirPreco} />}
             {aba === 'cardapio' && (
               <AbaCardapio
                 estado={estado}

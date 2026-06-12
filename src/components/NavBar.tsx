@@ -9,6 +9,7 @@ import { AlternadorTema } from './AlternadorTema';
 const LINKS = [
   { href: '/mapa', rotulo: 'Mapa de mesas', rotuloCurto: 'Mapa' },
   { href: '/caixa', rotulo: 'Caixa', rotuloCurto: 'Caixa' },
+  { href: '/relatorios', rotulo: 'Fechamento', rotuloCurto: 'Resumo' },
 ];
 
 export function NavBar() {

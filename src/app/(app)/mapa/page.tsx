@@ -37,7 +37,7 @@ import {
   type MesaEstado,
 } from '@/lib/constants';
 import { useDados } from '@/lib/data-context';
-import { hora } from '@/lib/format';
+import { formataMin, hora, linkWhatsApp, minutosDesde } from '@/lib/format';
 import { MESAS_OPERACIONAIS, ORDEM_MAPA, POSICAO_MESA, type PosMesa } from '@/lib/mapa-layout';
 import {
   comoRecebe,
@@ -46,7 +46,7 @@ import {
   type EstadoDaMesa,
   type Recebimento,
 } from '@/lib/mesa-estado';
-import type { Mesa, Reserva, Turno } from '@/lib/types';
+import type { Mesa, Reserva, ReservaStatus, Turno } from '@/lib/types';
 
 const LEGENDA: MesaEstado[] = ['livre', 'reservada', 'chegou', 'ocupada', 'limpeza', 'bloqueada'];
 const BLOQUEADA: EstadoDaMesa = { estado: 'bloqueada', reserva: null };
@@ -71,6 +71,19 @@ function statusCurto(r: Reserva): string {
   return r.table_id ? 'Mesa definida' : 'Aguardando';
 }
 
+const TURNO_HORA: Record<Turno, number> = { '19:00': 19, '21:00': 21, '22:00': 22 };
+
+/** Minutos de atraso de uma reserva que ainda não chegou (0 = sem atraso).
+ *  Conta a partir de 15 min depois do início do turno. */
+function minutosAtraso(r: Reserva): number {
+  if (r.origem !== 'reserva') return 0;
+  if (r.status !== 'confirmada' && r.status !== 'pre_reserva' && r.status !== 'pix_pendente') return 0;
+  const inicio = new Date();
+  inicio.setHours(TURNO_HORA[r.turno], 0, 0, 0);
+  const min = Math.floor((Date.now() - inicio.getTime()) / 60000);
+  return min >= 15 ? min : 0;
+}
+
 /** Turno sugerido pelo relógio: antes das 21h → 19h; antes das 22h → 21h. */
 function turnoPeloRelogio(): Turno {
   const h = new Date().getHours();
@@ -80,7 +93,7 @@ function turnoPeloRelogio(): Turno {
 }
 
 export default function MapaPage() {
-  const { mesas, reservas, carregando, erro, supabaseHost, recarregar } = useDados();
+  const { mesas, reservas, sentadoEm, carregando, erro, supabaseHost, recarregar } = useDados();
   // Cada horário tem o SEU mapa — nunca misturados. Começa no turno do relógio.
   const [turno, setTurno] = useState<Turno>('19:00');
   useEffect(() => {
@@ -208,6 +221,45 @@ export default function MapaPage() {
         return [];
     }
   }, [lista, filtroLista]);
+
+  // Placar do turno: leitura de relance para a hostess.
+  // (tique mantém o número de livres correto quando a mesa cinza expira)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const placar = useMemo(() => {
+    let livres = 0;
+    for (const n of MESAS_OPERACIONAIS) {
+      const m = porNumero.get(n);
+      if (m && (estadoDe.get(m.id)?.estado ?? 'bloqueada') === 'livre') livres++;
+    }
+    return {
+      livres,
+      aguardando: lista.aguardando.length,
+      sentados: lista.sentados.length,
+      fila: filaPassantes.length,
+    };
+  }, [porNumero, estadoDe, lista, filaPassantes, tique]);
+
+  // Mesa liberada + fila com gente => sugere o 1º da fila para a hostess.
+  const statusAnterior = useRef<Map<string, ReservaStatus>>(new Map());
+  useEffect(() => {
+    const prev = statusAnterior.current;
+    if (prev.size > 0 && filaPassantes.length > 0) {
+      const liberada = reservas.find((r) => {
+        const antes = prev.get(r.id);
+        return (
+          r.status === 'finalizada' && antes !== undefined && antes !== 'finalizada' && STATUS_ATIVOS.includes(antes) && r.mesa
+        );
+      });
+      if (liberada) {
+        const primeiro = filaPassantes[0];
+        setAviso({
+          tipo: 'ok',
+          texto: `Mesa ${liberada.mesa?.numero} liberada — 1º da fila: ${primeiro.nome} (⏱ ${formataMin(minutosDesde(primeiro.data_criacao))})`,
+        });
+      }
+    }
+    statusAnterior.current = new Map(reservas.map((r) => [r.id, r.status]));
+  }, [reservas, filaPassantes]);
 
   // Após um arraste, o navegador ainda dispara um "click" no elemento de origem;
   // este guarda evita que o modal abra sem querer logo depois de soltar.
@@ -406,6 +458,14 @@ export default function MapaPage() {
           sentados de outro horário aparecem na mesa até o caixa liberar.
         </p>
 
+        {/* Placar do turno — leitura de relance */}
+        <div className="grid max-w-xl grid-cols-4 gap-2">
+          <PlacarItem cor="bg-[#34906a]" rotulo="Livres" valor={placar.livres} />
+          <PlacarItem cor="bg-[#d3a445]" rotulo="Aguardando" valor={placar.aguardando} />
+          <PlacarItem cor="bg-[#b04c41]" rotulo="Sentados" valor={placar.sentados} />
+          <PlacarItem cor="bg-[#92713a]" rotulo="Fila" valor={placar.fila} />
+        </div>
+
         <div className="flex flex-wrap gap-1.5">
           {LEGENDA.map((e) => (
             <span
@@ -484,6 +544,11 @@ export default function MapaPage() {
                       pos={POSICAO_MESA[numero]}
                       mesa={mesa}
                       info={info}
+                      sentadoDesde={
+                        info.reserva?.status === 'sentado'
+                          ? (sentadoEm[info.reserva.id] ?? info.reserva.atualizado_em)
+                          : null
+                      }
                       recebimento={mesa && arrastando ? comoRecebe(mesa, reservas, arrastando) : 'bloqueado'}
                       arrastandoAlgo={!!arrastando}
                       aoClicar={() => {
@@ -746,6 +811,19 @@ export default function MapaPage() {
   );
 }
 
+/* ---------- Placar do turno ---------- */
+function PlacarItem({ cor, rotulo, valor }: { cor: string; rotulo: string; valor: number }) {
+  return (
+    <div className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 shadow-suave ring-1 ring-carvao-200/70 dark:bg-carvao-850 dark:ring-carvao-700">
+      <span className={`h-2 w-2 shrink-0 rounded-full ${cor}`} aria-hidden />
+      <span className="text-lg font-extrabold leading-none tabular-nums">{valor}</span>
+      <span className="truncate text-[10px] font-bold uppercase tracking-wide text-carvao-400 dark:text-carvao-300">
+        {rotulo}
+      </span>
+    </div>
+  );
+}
+
 /* ---------- Zona "tirar da mesa": solte um casal aqui e a mesa fica livre ---------- */
 function ZonaSemMesa({ ativa }: { ativa: boolean }) {
   const { setNodeRef, isOver } = useDroppable({ id: 'sem-mesa', data: { semMesa: true } });
@@ -773,6 +851,7 @@ function MesaChip({
   pos,
   mesa,
   info,
+  sentadoDesde = null,
   recebimento,
   arrastandoAlgo,
   aoClicar,
@@ -781,6 +860,8 @@ function MesaChip({
   pos: PosMesa;
   mesa: Mesa | null;
   info: EstadoDaMesa;
+  /** Desde quando o casal está sentado (cronômetro de permanência). */
+  sentadoDesde?: string | null;
   recebimento: Recebimento;
   arrastandoAlgo: boolean;
   aoClicar: () => void;
@@ -857,7 +938,10 @@ function MesaChip({
             {info.reserva.nome}
           </span>
           <span className="text-[7.5px] font-semibold uppercase leading-none tracking-wide opacity-85">
-            {TURNO_LABEL[info.reserva.turno]} · {MESA_ESTADO_LABEL[info.estado]}
+            {TURNO_LABEL[info.reserva.turno]} ·{' '}
+            {info.estado === 'ocupada' && sentadoDesde
+              ? `⏱ ${formataMin(minutosDesde(sentadoDesde))}`
+              : MESA_ESTADO_LABEL[info.estado]}
           </span>
         </>
       ) : (
@@ -959,9 +1043,8 @@ function MesaCard({
 
 /** Tempo desde a chegada do passante (minutos/horas). */
 function tempoNaLoja(r: Reserva): { texto: string; minutos: number } {
-  const minutos = Math.max(0, Math.floor((Date.now() - new Date(r.data_criacao).getTime()) / 60000));
-  if (minutos < 60) return { texto: `${minutos} min`, minutos };
-  return { texto: `${Math.floor(minutos / 60)}h ${String(minutos % 60).padStart(2, '0')}min`, minutos };
+  const minutos = minutosDesde(r.data_criacao);
+  return { texto: formataMin(minutos), minutos };
 }
 
 function FilaEspera({ fila, aoClicar }: { fila: Reserva[]; aoClicar: (r: Reserva) => void }) {
@@ -1119,9 +1202,27 @@ function CardCasal({ reserva, aoClicar }: { reserva: Reserva; aoClicar: () => vo
               Pix {PIX_LABEL[reserva.pix_status]}
             </span>
           )}
+          {minutosAtraso(reserva) > 0 && (
+            <span className="rounded-full bg-[#f5e2df] px-2 py-0.5 text-[11px] font-extrabold text-[#8e3a31] dark:bg-[#3e2421] dark:text-[#e3a49c]">
+              atrasado {formataMin(minutosAtraso(reserva))}
+            </span>
+          )}
           {reserva.observacao && <span title={reserva.observacao}>📝</span>}
         </div>
       </div>
+      {reserva.telefone && (
+        <a
+          href={linkWhatsApp(reserva.telefone)}
+          target="_blank"
+          rel="noreferrer"
+          title={`WhatsApp: ${reserva.telefone}`}
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e0efe6] text-base transition hover:scale-105 dark:bg-[#1c3528]"
+        >
+          💬
+        </a>
+      )}
       {arrastavel && (
         <span className="shrink-0 text-lg text-carvao-200 dark:text-carvao-500" aria-hidden>
           ⠿

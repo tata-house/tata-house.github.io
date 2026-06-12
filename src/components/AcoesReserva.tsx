@@ -18,7 +18,7 @@ import { AREA_LABEL, STATUS_ATIVOS, TURNO_LABEL } from '@/lib/constants';
 import { useDados } from '@/lib/data-context';
 import { mesasLivres } from '@/lib/mesa-estado';
 import type { Reserva } from '@/lib/types';
-import { brl } from '@/lib/format';
+import { brl, linkWhatsApp } from '@/lib/format';
 import { BadgePix, BadgeStatus, Botao, Modal, estiloInput, estiloRotulo } from './ui';
 import { FormularioReserva } from './FormularioReserva';
 
@@ -90,7 +90,18 @@ export function AcoesReserva({
             </div>
             <div className="rounded-2xl bg-areia-100 p-3 dark:bg-carvao-800">
               <div className="text-xs font-bold uppercase tracking-[0.1em] text-carvao-400 dark:text-carvao-300">Telefone</div>
-              <div className="text-lg font-bold">{reserva.telefone || '—'}</div>
+              {reserva.telefone ? (
+                <a
+                  href={linkWhatsApp(reserva.telefone)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-1.5 text-lg font-bold text-[#1e6b44] underline-offset-2 hover:underline dark:text-[#8fd4ae]"
+                >
+                  💬 {reserva.telefone}
+                </a>
+              ) : (
+                <div className="text-lg font-bold">—</div>
+              )}
             </div>
             <div className="rounded-2xl bg-areia-100 p-3 dark:bg-carvao-800">
               <div className="text-xs font-bold uppercase tracking-[0.1em] text-carvao-400 dark:text-carvao-300">Crédito Pix</div>

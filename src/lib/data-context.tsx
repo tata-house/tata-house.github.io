@@ -15,6 +15,8 @@ import type { Mesa, Profile, Reserva } from './types';
 interface DataContextValue {
   reservas: Reserva[];
   mesas: Mesa[];
+  /** Hora em que cada reserva SENTOU pela última vez (evento 'sentada'). */
+  sentadoEm: Record<string, string>;
   perfil: Profile | null;
   carregando: boolean;
   /** Mensagem de erro do Supabase na última leitura (RLS, chave errada, rede...). */
@@ -35,6 +37,7 @@ const SUPABASE_HOST = (() => {
 const DataContext = createContext<DataContextValue>({
   reservas: [],
   mesas: [],
+  sentadoEm: {},
   perfil: null,
   carregando: true,
   erro: null,
@@ -45,6 +48,7 @@ const DataContext = createContext<DataContextValue>({
 export function DataProvider({ children }: { children: ReactNode }) {
   const [reservas, setReservas] = useState<Reserva[]>([]);
   const [mesas, setMesas] = useState<Mesa[]>([]);
+  const [sentadoEm, setSentadoEm] = useState<Record<string, string>>({});
   const [perfil, setPerfil] = useState<Profile | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
@@ -55,15 +59,27 @@ export function DataProvider({ children }: { children: ReactNode }) {
     carregandoRef.current = true;
     try {
       const supabase = getSupabase();
-      const [resReservas, resMesas] = await Promise.all([
+      const [resReservas, resMesas, resSentadas] = await Promise.all([
         supabase
           .from('reservations')
           .select('*, mesa:tables(*)')
           .order('data_criacao', { ascending: true }),
         supabase.from('tables').select('*').order('numero'),
+        supabase
+          .from('reservation_events')
+          .select('reservation_id, criado_em')
+          .eq('tipo', 'sentada')
+          .order('criado_em', { ascending: true }),
       ]);
       if (resReservas.data) setReservas(resReservas.data as Reserva[]);
       if (resMesas.data) setMesas(resMesas.data as Mesa[]);
+      if (resSentadas.data) {
+        const m: Record<string, string> = {};
+        for (const e of resSentadas.data as { reservation_id: string; criado_em: string }[]) {
+          m[e.reservation_id] = e.criado_em; // ordenado asc: fica a última
+        }
+        setSentadoEm(m);
+      }
       const falha = resMesas.error ?? resReservas.error;
       setErro(falha ? falha.message : null);
     } catch (e) {
@@ -107,7 +123,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   return (
     <DataContext.Provider
-      value={{ reservas, mesas, perfil, carregando, erro, supabaseHost: SUPABASE_HOST, recarregar }}
+      value={{ reservas, mesas, sentadoEm, perfil, carregando, erro, supabaseHost: SUPABASE_HOST, recarregar }}
     >
       {children}
     </DataContext.Provider>

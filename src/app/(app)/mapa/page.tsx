@@ -20,6 +20,7 @@ import {
   criarReserva,
   desfazerMovimento,
   moverMesaComTroca,
+  sentarCliente,
   tirarDaMesa,
   type MovimentoMesa,
 } from '@/lib/actions';
@@ -36,6 +37,7 @@ import {
   type MesaEstado,
 } from '@/lib/constants';
 import { useDados } from '@/lib/data-context';
+import { hora } from '@/lib/format';
 import { MESAS_OPERACIONAIS, ORDEM_MAPA, POSICAO_MESA, type PosMesa } from '@/lib/mapa-layout';
 import {
   comoRecebe,
@@ -158,11 +160,13 @@ export default function MapaPage() {
   }, [mesas, reservas, turno, mesasAntigasOcupadas, tique]);
 
   // Lista lateral: SÓ os casais do horário selecionado, em grupos sem
-  // sobreposição (cada casal aparece UMA vez).
+  // sobreposição (cada casal aparece UMA vez). Passantes aguardando mesa
+  // NÃO entram aqui — eles têm a própria fila de espera.
   const lista = useMemo(() => {
     const termo = busca.trim().toLowerCase();
     const doTurno = reservas
       .filter((r) => r.turno === turno)
+      .filter((r) => !(r.origem === 'passante' && !r.table_id && STATUS_ATIVOS.includes(r.status)))
       .filter((r) => !termo || r.nome.toLowerCase().includes(termo))
       .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
     return {
@@ -177,6 +181,18 @@ export default function MapaPage() {
       encerrados: doTurno.filter((r) => r.status === 'no_show' || r.status === 'cancelada'),
     };
   }, [reservas, turno, busca]);
+
+  // Fila de espera dos passantes: TODOS os que aguardam mesa (qualquer
+  // turno — a fila é física, de quem está na loja), na ordem de chegada.
+  const filaPassantes = useMemo(() => {
+    const termo = busca.trim().toLowerCase();
+    return reservas
+      .filter((r) => r.origem === 'passante' && !r.table_id && STATUS_ATIVOS.includes(r.status))
+      .filter((r) => !termo || r.nome.toLowerCase().includes(termo))
+      .sort(
+        (a, b) => new Date(a.data_criacao).getTime() - new Date(b.data_criacao).getTime(),
+      );
+  }, [reservas, busca]);
 
   const listaFiltrada = useMemo(() => {
     switch (filtroLista) {
@@ -219,6 +235,10 @@ export default function MapaPage() {
 
   async function moverComRegistro(reserva: Reserva, mesa: Mesa) {
     const mov = await moverMesaComTroca(reserva, mesa);
+    // Passante saindo da fila de espera senta direto — ele já está na loja.
+    if (reserva.origem === 'passante' && reserva.status === 'chegou') {
+      await sentarCliente(reserva.id);
+    }
     setMovimentos((s) => [...s.slice(-9), mov]);
     await recarregar();
     const trocado = mov.retiradas[0];
@@ -530,6 +550,13 @@ export default function MapaPage() {
             </div>
             <ZonaSemMesa ativa={!!arrastando?.table_id} />
             <div className="max-h-[76vh] space-y-5 overflow-y-auto pb-24 pr-1 lg:pb-2">
+              {/* Fila de espera dos passantes — sempre visível, separada das reservas */}
+              {filaPassantes.length > 0 && (
+                <FilaEspera
+                  fila={filaPassantes}
+                  aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))}
+                />
+              )}
               {filtroLista === 'todos' ? (
                 <>
                   <GrupoCasais titulo="Aguardando mesa" cor={CASAL_ACENTO.aguardando} reservas={lista.aguardando} aoClicar={(r) => cliqueProtegido(() => setReservaSelecionada(r))} />
@@ -713,7 +740,7 @@ export default function MapaPage() {
       <PassanteModal
         aberto={novoPassante}
         aoFechar={() => setNovoPassante(false)}
-        aoSalvar={() => setAviso({ tipo: 'ok', texto: 'Passante adicionado ✓' })}
+        aoSalvar={() => setAviso({ tipo: 'ok', texto: 'Passante na fila de espera ✓' })}
       />
     </DndContext>
   );
@@ -928,6 +955,91 @@ function MesaCard({
   );
 }
 
+/* ---------- Fila de espera dos passantes (1º, 2º, 3º... + cronômetro) ---------- */
+
+/** Tempo desde a chegada do passante (minutos/horas). */
+function tempoNaLoja(r: Reserva): { texto: string; minutos: number } {
+  const minutos = Math.max(0, Math.floor((Date.now() - new Date(r.data_criacao).getTime()) / 60000));
+  if (minutos < 60) return { texto: `${minutos} min`, minutos };
+  return { texto: `${Math.floor(minutos / 60)}h ${String(minutos % 60).padStart(2, '0')}min`, minutos };
+}
+
+function FilaEspera({ fila, aoClicar }: { fila: Reserva[]; aoClicar: (r: Reserva) => void }) {
+  return (
+    <div className="rounded-2xl bg-[#f6ecd8]/60 p-2.5 ring-1 ring-[#d3a445]/30 dark:bg-[#3d321a]/50 dark:ring-[#d3a445]/20">
+      <h3 className="mb-2 flex items-center gap-2 px-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#8a6420] dark:text-[#e3c987]">
+        🚶 Fila de espera · passantes
+        <span className="rounded-full bg-[#d3a445]/20 px-2 py-0.5 text-[10px] font-bold">
+          {fila.length}
+        </span>
+      </h3>
+      <div className="space-y-2">
+        {fila.map((r, i) => (
+          <CardFila key={r.id} reserva={r} posicao={i + 1} aoClicar={() => aoClicar(r)} />
+        ))}
+      </div>
+      <p className="mt-2 px-1 text-[10px] font-semibold text-[#8a6420]/80 dark:text-[#e3c987]/70">
+        Quando chegar a vez, arraste o passante para uma mesa livre do mapa.
+      </p>
+    </div>
+  );
+}
+
+function CardFila({
+  reserva,
+  posicao,
+  aoClicar,
+}: {
+  reserva: Reserva;
+  posicao: number;
+  aoClicar: () => void;
+}) {
+  const { setNodeRef, listeners, attributes, isDragging } = useDraggable({
+    id: `fila-${reserva.id}`,
+    data: { reserva },
+  });
+  const espera = tempoNaLoja(reserva);
+  const demorou = espera.minutos >= 30;
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      onClick={aoClicar}
+      role="button"
+      className={`flex cursor-grab items-center gap-3 rounded-2xl bg-white p-3 shadow-suave ring-1 ring-[#d3a445]/40 transition-all duration-150 hover:ring-[#d3a445]/70 active:cursor-grabbing active:scale-[0.99] dark:bg-carvao-800 ${
+        isDragging ? 'opacity-30' : ''
+      }`}
+      style={{ touchAction: 'manipulation' }}
+    >
+      <span className="flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-full bg-carvao-900 text-areia-50 dark:bg-areia-100 dark:text-carvao-900">
+        <span className="text-[13px] font-extrabold leading-none">{posicao}º</span>
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-[15px] font-bold leading-snug text-carvao-900 dark:text-areia-50">
+          {reserva.nome}
+        </div>
+        <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 text-xs font-semibold text-carvao-400 dark:text-carvao-300">
+          <span>{reserva.pessoas} pessoa{reserva.pessoas === 1 ? '' : 's'}</span>
+          <span className="text-carvao-300 dark:text-carvao-500">·</span>
+          <span>chegou {hora(reserva.data_criacao)}</span>
+        </div>
+      </div>
+      <span
+        className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-extrabold tabular-nums ${
+          demorou
+            ? 'bg-[#f5e2df] text-[#8e3a31] dark:bg-[#3e2421] dark:text-[#e3a49c]'
+            : 'bg-areia-100 text-carvao-600 dark:bg-carvao-700 dark:text-areia-200'
+        }`}
+        title="Tempo de espera"
+      >
+        ⏱ {espera.texto}
+      </span>
+    </div>
+  );
+}
+
 /* ---------- Grupo + card de casal na lista lateral (arrastável) ---------- */
 function GrupoCasais({
   titulo,
@@ -1031,7 +1143,7 @@ function PassanteModal({
 }) {
   const { mesas, reservas, recarregar } = useDados();
   const [nome, setNome] = useState('');
-  const [turno, setTurno] = useState<Turno>('19:00');
+  const [turno, setTurno] = useState<Turno>(turnoPeloRelogio());
   const [tableId, setTableId] = useState('');
   const [pessoas, setPessoas] = useState('2');
   const [erro, setErro] = useState('');
@@ -1072,7 +1184,7 @@ function PassanteModal({
   }
 
   return (
-    <Modal titulo="Adicionar passante" aberto={aberto} aoFechar={aoFechar}>
+    <Modal titulo="Passante — fila de espera" aberto={aberto} aoFechar={aoFechar}>
       <div className="space-y-4">
         <div>
           <label className={estiloRotulo}>Nome (opcional)</label>
@@ -1097,7 +1209,7 @@ function PassanteModal({
         <div>
           <label className={estiloRotulo}>Mesa (opcional — pode arrastar depois)</label>
           <select className={estiloInput} value={tableId} onChange={(e) => setTableId(e.target.value)}>
-            <option value="">Sem mesa (aguardando)</option>
+            <option value="">Sem mesa — entra na fila de espera</option>
             {livres.map((m) => (
               <option key={m.id} value={m.id}>
                 Mesa {m.numero}
@@ -1106,7 +1218,7 @@ function PassanteModal({
           </select>
         </div>
         <p className="text-sm font-semibold text-carvao-400 dark:text-carvao-300">
-          Passante não tem crédito Pix (R$ 0).
+          Sem mesa, o passante entra na fila de espera (1º, 2º, 3º...) com cronômetro. Passante não tem crédito Pix (R$ 0).
         </p>
         {erro && (
           <p className="rounded-2xl bg-[#f5e2df] px-4 py-3 text-sm font-semibold text-[#8e3a31] dark:bg-[#3e2421] dark:text-[#e3a49c]">
@@ -1114,7 +1226,7 @@ function PassanteModal({
           </p>
         )}
         <Botao className="w-full" onClick={adicionar} disabled={salvando}>
-          {salvando ? 'Salvando...' : 'Adicionar passante'}
+          {salvando ? 'Salvando...' : 'Adicionar à fila'}
         </Botao>
       </div>
     </Modal>

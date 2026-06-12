@@ -16,17 +16,16 @@ export function Botao({
   variante?: 'primario' | 'secundario' | 'perigo' | 'sucesso' | 'alerta';
 }) {
   const estilos = {
-    primario:
-      'bg-carvao-900 text-areia-50 hover:bg-carvao-800 shadow-suave dark:bg-areia-100 dark:text-carvao-900 dark:hover:bg-white',
+    primario: 'bg-brand-700 text-white hover:bg-brand-800 shadow-suave',
     secundario:
-      'bg-white text-carvao-700 ring-1 ring-carvao-200 hover:bg-areia-100 hover:ring-carvao-300 dark:bg-carvao-800 dark:text-areia-100 dark:ring-carvao-600 dark:hover:bg-carvao-700',
+      'bg-white text-brand-700 ring-2 ring-brand-600/40 hover:bg-brand-50 hover:ring-brand-600 dark:bg-carvao-800 dark:text-brand-300 dark:ring-brand-500/40 dark:hover:bg-carvao-700',
     perigo: 'bg-[#b04c41] text-white hover:bg-[#9b4038] shadow-suave',
     sucesso: 'bg-brand-600 text-white hover:bg-brand-700 shadow-suave',
     alerta: 'bg-[#d18a3a] text-white hover:bg-[#bd7a2f] shadow-suave',
   };
   return (
     <button
-      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ouro-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 ${estilos[variante]} ${className}`}
+      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-[14px] font-extrabold uppercase tracking-wide transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ouro-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 ${estilos[variante]} ${className}`}
       {...props}
     />
   );

@@ -9,20 +9,24 @@ import { DADOS, formatarReais, normalizar } from '@/lib/cardapio/motor';
 const CHAVE_TEXTO = 'cardapio.v1.cotacao.texto';
 
 /**
- * Cole a cotação da semana (WhatsApp/fornecedor) e o app extrai os preços,
- * casa com o histórico e alimenta a sugestão de cardápio por custo-benefício.
+ * A cotação é a guia do cardápio: cole o texto da semana e o app extrai os
+ * preços. Itens conhecidos recebem o menor preço automaticamente; produtos
+ * novos podem ser cadastrados na hora — tudo cotado vira custo no app.
  */
 export function AbaCotacao({
   definirPreco,
   definirFornecedor,
+  cadastrarItem,
 }: {
   definirPreco: (itemNorm: string, valor: number | null) => void;
   definirFornecedor?: (itemNorm: string, marca: string | null) => void;
+  cadastrarItem?: (norm: string, nome: string, unid: string) => void;
 }) {
   const [texto, setTexto] = useState('');
   const [lido, setLido] = useState<LinhaCotacao[] | null>(null);
   const [ignorados, setIgnorados] = useState<Set<string>>(new Set());
-  const [atribuicoes, setAtribuicoes] = useState<Record<number, string>>({});
+  const [unidades, setUnidades] = useState<Record<number, string>>({});
+  const [cadastrados, setCadastrados] = useState<Set<number>>(new Set());
   const [aplicado, setAplicado] = useState(0);
 
   useEffect(() => {
@@ -41,20 +45,15 @@ export function AbaCotacao({
     }
     setLido(parsearCotacao(texto));
     setIgnorados(new Set());
-    setAtribuicoes({});
+    setUnidades({});
+    setCadastrados(new Set());
     setAplicado(0);
   };
 
-  const { casados, soltos } = useMemo(() => {
-    if (!lido) return { casados: [], soltos: [] as LinhaCotacao[] };
-    // aplica as atribuições manuais dos itens soltos antes de agrupar
-    const nomesValidos = new Set(DADOS.itens.map((i) => i.n));
-    const linhas = lido.map((l, i) => {
-      const manual = atribuicoes[i];
-      return manual && nomesValidos.has(manual) ? { ...l, item: manual } : l;
-    });
-    return agruparCotacao(linhas);
-  }, [lido, atribuicoes]);
+  const { casados, soltos } = useMemo(
+    () => (lido ? agruparCotacao(lido) : { casados: [], soltos: [] as LinhaCotacao[] }),
+    [lido],
+  );
 
   const selecionados = casados.filter((c) => !ignorados.has(c.item));
 
@@ -64,6 +63,15 @@ export function AbaCotacao({
       definirFornecedor?.(normalizar(c.item), c.marca);
     });
     setAplicado(selecionados.length);
+  };
+
+  const cadastrar = (idx: number, s: LinhaCotacao) => {
+    const norm = normalizar(s.nome);
+    const unid = unidades[idx] ?? s.unid ?? 'kg';
+    cadastrarItem?.(norm, s.nome, unid);
+    definirPreco(norm, s.preco);
+    definirFornecedor?.(norm, s.marca);
+    setCadastrados((c) => new Set(c).add(idx));
   };
 
   const alternar = (item: string) =>
@@ -78,10 +86,10 @@ export function AbaCotacao({
     <div className="space-y-4">
       <Cartao className="space-y-3">
         <p className="text-sm text-carvao-500 dark:text-carvao-300">
-          Cole abaixo a <strong>cotação da semana</strong> do jeito que ela chega no WhatsApp (pode colar
-          tudo de uma vez: frango, bovinos, suínos, hortifrúti…). O app lê os preços, fica com o{' '}
-          <strong>menor preço de cada item</strong> e usa isso para sugerir o cardápio com melhor
-          custo-benefício.
+          Cole abaixo a <strong>cotação da semana</strong> do jeito que ela chega no WhatsApp (pode colar tudo
+          de uma vez: frango, bovinos, suínos, hortifrúti…). A cotação é a <strong>guia do cardápio</strong>:
+          itens conhecidos recebem o menor preço automaticamente e produtos novos você{' '}
+          <strong>cadastra na hora</strong> — assim o custo da semana cobre praticamente tudo.
         </p>
         <textarea
           rows={8}
@@ -97,7 +105,7 @@ export function AbaCotacao({
 
       {lido && (
         <>
-          {casados.length === 0 ? (
+          {casados.length === 0 && soltos.length === 0 ? (
             <Cartao>
               <p className="text-sm text-carvao-400">
                 Nenhum preço reconhecido. Confira se o texto tem valores no formato <code>12,34</code>.
@@ -106,9 +114,7 @@ export function AbaCotacao({
           ) : (
             <Cartao className="space-y-3 !p-0">
               <div className="flex flex-wrap items-center justify-between gap-2 px-5 pt-4">
-                <h3 className="font-display text-lg font-semibold">
-                  {casados.length} itens reconhecidos
-                </h3>
+                <h3 className="font-display text-lg font-semibold">{casados.length} itens reconhecidos</h3>
                 <span className="text-xs font-semibold text-carvao-400">
                   menor preço entre {lido.length} linhas lidas
                 </span>
@@ -155,8 +161,8 @@ export function AbaCotacao({
                 </Botao>
                 {aplicado > 0 && (
                   <p className="text-center text-xs font-semibold text-brand-600">
-                    ✓ {aplicado} preços aplicados! Agora vá em 🍽️ Cardápio e toque em “✨ Sugerir semana” —
-                    a sugestão vai priorizar o melhor custo-benefício desta cotação.
+                    ✓ {aplicado} preços aplicados! Agora vá em 🍽️ Cardápio e toque em “✨ Sugerir” — a sugestão
+                    vai priorizar o melhor custo-benefício desta cotação.
                   </p>
                 )}
               </div>
@@ -165,43 +171,49 @@ export function AbaCotacao({
 
           {soltos.length > 0 && (
             <Cartao className="space-y-2">
-              <h3 className="font-display text-lg font-semibold">
-                {soltos.length} linhas sem item correspondente
-              </h3>
+              <h3 className="font-display text-lg font-semibold">{soltos.length} produtos novos na cotação</h3>
               <p className="text-xs text-carvao-400">
-                Produtos que não encontrei no histórico de compras. Se algum for usado no cardápio, digite o
-                nome do item ao lado (a lista sugere os conhecidos).
+                Ainda não existem no catálogo. Toque em <strong>Cadastrar</strong> para criar o item com o
+                preço cotado — ele entra na tabela de preços e no custo da semana.
               </p>
               <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
                 {soltos.map((s) => {
                   const idx = lido.indexOf(s);
+                  const feito = cadastrados.has(idx);
                   return (
                     <li key={`${idx}-${s.nome}`} className="flex items-center justify-between gap-3 py-2">
                       <span className="min-w-0">
-                        <span className="block truncate text-sm">{s.nome}</span>
+                        <span className="block truncate text-sm font-semibold">{s.nome}</span>
                         <span className="block text-[11px] text-carvao-400">
                           {formatarReais(s.preco)}
                           {s.marca ? ` · ${s.marca}` : ''}
                         </span>
                       </span>
-                      <input
-                        list="itens-cotacao"
-                        placeholder="Casar com item…"
-                        value={atribuicoes[idx] ?? ''}
-                        onChange={(e) =>
-                          setAtribuicoes((a) => ({ ...a, [idx]: e.target.value }))
-                        }
-                        className="w-44 shrink-0 rounded-xl border border-carvao-200 bg-white px-2.5 py-1.5 text-xs dark:border-carvao-600 dark:bg-carvao-900"
-                      />
+                      {feito ? (
+                        <span className="shrink-0 text-xs font-bold uppercase text-brand-600">✓ Cadastrado</span>
+                      ) : (
+                        <span className="flex shrink-0 items-center gap-1.5">
+                          <select
+                            value={unidades[idx] ?? s.unid ?? 'kg'}
+                            onChange={(e) => setUnidades((u) => ({ ...u, [idx]: e.target.value }))}
+                            className="rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-xs font-bold dark:border-carvao-600 dark:bg-carvao-900"
+                          >
+                            {DADOS.unidades.map((u) => (
+                              <option key={u}>{u}</option>
+                            ))}
+                          </select>
+                          <button
+                            onClick={() => cadastrar(idx, s)}
+                            className="rounded-full bg-brand-700 px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wide text-white hover:bg-brand-800"
+                          >
+                            ➕ Cadastrar
+                          </button>
+                        </span>
+                      )}
                     </li>
                   );
                 })}
               </ul>
-              <datalist id="itens-cotacao">
-                {DADOS.itens.map((i) => (
-                  <option key={i.n} value={i.n} />
-                ))}
-              </datalist>
             </Cartao>
           )}
         </>

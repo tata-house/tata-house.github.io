@@ -137,6 +137,35 @@ export function usePrecos() {
   return { precos, definirPreco };
 }
 
+/* ------------------- itens novos vindos da cotação -------------------- */
+
+export interface ItemExtra {
+  n: string; // nome como veio da cotação
+  u: string; // unidade de compra
+}
+
+/**
+ * Itens que não existiam no histórico e foram cadastrados direto da
+ * cotação — a cotação é a guia: tudo que chega cotado pode virar item.
+ */
+export function useItensExtras() {
+  const [itensExtras, setItensExtras] = useState<Record<string, ItemExtra>>({});
+
+  useEffect(() => {
+    setItensExtras(lerLocal('itensExtras', {}));
+  }, []);
+
+  const cadastrarItem = useCallback((norm: string, nome: string, unid: string) => {
+    setItensExtras((atual) => {
+      const novo = { ...atual, [norm]: { n: nome, u: unid } };
+      gravarLocal('itensExtras', novo);
+      return novo;
+    });
+  }, []);
+
+  return { itensExtras, cadastrarItem };
+}
+
 /** Fornecedor/marca mais barato por item (vem da cotação aplicada). */
 export function useFornecedores() {
   const [fornecedores, setFornecedores] = useState<Record<string, string>>({});

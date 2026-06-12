@@ -12,18 +12,22 @@ export function AbaPrecos({
   precos,
   definirPreco,
   fornecedores = {},
+  itensExtras = {},
 }: {
   precos: Record<string, number>;
   definirPreco: (itemNorm: string, valor: number | null) => void;
   fornecedores?: Record<string, string>;
+  itensExtras?: Record<string, { n: string; u: string }>;
 }) {
   const [busca, setBusca] = useState('');
 
   const itens = useMemo(() => {
+    const extras = Object.values(itensExtras).map((e) => ({ n: e.n, u: e.u, f: 0 }));
+    const todos = [...extras, ...DADOS.itens];
     const n = normalizar(busca);
-    const base = n ? DADOS.itens.filter((i) => normalizar(i.n).includes(n)) : DADOS.itens;
+    const base = n ? todos.filter((i) => normalizar(i.n).includes(n)) : todos;
     return base.slice(0, 60);
-  }, [busca]);
+  }, [busca, itensExtras]);
 
   const cadastrados = Object.keys(precos).length;
 
@@ -52,7 +56,7 @@ export function AbaPrecos({
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold">{i.n}</p>
                   <p className="text-[11px] text-carvao-400">
-                    {i.u} · usado {i.f}× no histórico
+                    {i.u} · {i.f > 0 ? `usado ${i.f}× no histórico` : 'novo — veio da cotação'}
                     {fornecedores[k] && (
                       <span className="font-semibold text-brand-600"> · ↓ {fornecedores[k]}</span>
                     )}

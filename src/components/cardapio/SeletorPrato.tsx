@@ -55,8 +55,8 @@ export function SeletorPrato({
             {rotulo}
           </span>
           <span
-            className={`block truncate text-[14px] font-semibold ${
-              valor ? 'text-carvao-900 dark:text-areia-100' : 'text-carvao-300 dark:text-carvao-500'
+            className={`block truncate text-[13px] font-extrabold uppercase tracking-wide ${
+              valor ? 'text-carvao-900 dark:text-areia-100' : 'font-semibold normal-case text-carvao-300 dark:text-carvao-500'
             }`}
           >
             {valor || 'Escolher…'}

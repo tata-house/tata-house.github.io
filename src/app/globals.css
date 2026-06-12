@@ -9,17 +9,23 @@ html {
 body {
   @apply bg-areia-50 text-carvao-900 antialiased dark:bg-carvao-950 dark:text-areia-100;
   font-feature-settings: 'ss01' on, 'cv05' on;
-  /* luz "papel washi": brilho dourado discreto no topo, verde da marca ao fundo */
+  /* energia da marca: verde TATÁ vivo iluminando o papel */
   background-image:
-    radial-gradient(1100px 460px at 85% -8%, rgba(176, 141, 79, 0.07), transparent 60%),
-    radial-gradient(900px 420px at -10% 110%, rgba(0, 177, 79, 0.05), transparent 55%);
+    radial-gradient(1100px 480px at 85% -8%, rgba(0, 177, 79, 0.12), transparent 60%),
+    radial-gradient(900px 460px at -10% 110%, rgba(44, 196, 104, 0.1), transparent 55%);
   background-attachment: fixed;
 }
 
 .dark body {
   background-image:
-    radial-gradient(1100px 460px at 85% -8%, rgba(176, 141, 79, 0.08), transparent 60%),
-    radial-gradient(900px 420px at -10% 110%, rgba(0, 177, 79, 0.06), transparent 55%);
+    radial-gradient(1100px 480px at 85% -8%, rgba(0, 177, 79, 0.14), transparent 60%),
+    radial-gradient(900px 460px at -10% 110%, rgba(44, 196, 104, 0.1), transparent 55%);
+}
+
+/* Identidade TATÁ: títulos sempre em caixa alta, com presença */
+.font-display {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 ::selection {

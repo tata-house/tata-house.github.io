@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { AlternadorTema } from '@/components/AlternadorTema';
+import { LogoTata } from '@/components/LogoTata';
 import { AbaCardapio } from '@/components/cardapio/AbaCardapio';
 import { AbaCompras } from '@/components/cardapio/AbaCompras';
 import { AbaCotacao } from '@/components/cardapio/AbaCotacao';
@@ -14,6 +15,7 @@ import {
   rotuloSemana,
   useAprendizado,
   useFornecedores,
+  useItensExtras,
   usePapel,
   usePrecos,
   useSemana,
@@ -58,6 +60,7 @@ export default function PaginaCardapios() {
   const { estado, atualizar, pronto } = useSemana(semanaId);
   const { precos, definirPreco } = usePrecos();
   const { fornecedores, definirFornecedor } = useFornecedores();
+  const { itensExtras, cadastrarItem } = useItensExtras();
   const { fatores, aprenderDeSemana } = useAprendizado();
   const { papel, setPapel } = usePapel();
 
@@ -70,21 +73,16 @@ export default function PaginaCardapios() {
   return (
     <>
       {/* Cabeçalho da marca */}
-      <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-carvao-950/95 text-areia-50 shadow-media backdrop-blur print:hidden">
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-ouro-500/50 to-transparent" />
-        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4">
+      <header className="sticky top-0 z-40 bg-gradient-to-r from-brand-800 via-brand-600 to-brand-800 text-white shadow-media print:hidden">
+        <div className="h-1 w-full bg-gradient-to-r from-ouro-600 via-ouro-300 to-ouro-600" />
+        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-4">
           <div className="flex items-center gap-3">
-            <span
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-600/15 ring-1 ring-brand-500/40"
-              aria-hidden
-            >
-              <span className="h-2.5 w-2.5 rounded-full bg-brand-500" />
-            </span>
+            <LogoTata className="h-11 w-11 shrink-0 text-brand-200 drop-shadow-[0_0_6px_rgba(150,234,183,0.55)]" />
             <div className="leading-tight">
-              <div className="whitespace-nowrap font-display text-[15px] font-semibold tracking-[0.16em] text-areia-50 sm:text-[17px] sm:tracking-[0.22em]">
+              <div className="whitespace-nowrap font-display text-[17px] font-bold tracking-[0.18em] sm:text-[19px] sm:tracking-[0.26em]">
                 TATÁ&nbsp;SUSHI
               </div>
-              <div className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.28em] text-areia-300/60">
+              <div className="whitespace-nowrap text-[10px] font-extrabold uppercase tracking-[0.3em] text-brand-200">
                 Cardápios da Equipe
               </div>
             </div>
@@ -97,8 +95,8 @@ export default function PaginaCardapios() {
         {/* Cabeçalho do módulo */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="font-display text-2xl font-semibold tracking-tight">
-              Semana
+            <h1 className="font-display text-2xl font-bold text-brand-800 dark:text-brand-300 sm:text-3xl">
+              Cardápio da Semana
               <span
                 className={`ml-2.5 inline-flex translate-y-[-2px] items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide ring-1 ${COR_ETAPA[estado.etapa]}`}
               >
@@ -124,7 +122,7 @@ export default function PaginaCardapios() {
             </select>
             <button
               onClick={() => setPosterAberto(true)}
-              className="min-h-10 whitespace-nowrap rounded-2xl bg-carvao-900 px-4 py-2 text-sm font-bold text-white shadow-suave transition hover:bg-carvao-800 dark:bg-areia-100 dark:text-carvao-900 dark:hover:bg-white"
+              className="min-h-10 whitespace-nowrap rounded-2xl bg-gradient-to-r from-brand-700 to-brand-600 px-4 py-2 text-sm font-extrabold uppercase tracking-wide text-white shadow-suave ring-1 ring-ouro-400/50 transition hover:from-brand-800 hover:to-brand-700"
             >
               🖼️ Pôster
             </button>
@@ -138,10 +136,10 @@ export default function PaginaCardapios() {
             <button
               key={p.id}
               onClick={() => setPapel(p.id)}
-              className={`rounded-full px-3 py-1.5 text-[12px] font-bold transition ${
+              className={`rounded-full px-3 py-1.5 text-[12px] font-extrabold uppercase tracking-wide transition ${
                 papel === p.id
-                  ? 'bg-carvao-900 text-white dark:bg-areia-100 dark:text-carvao-900'
-                  : 'bg-white text-carvao-500 ring-1 ring-carvao-200 hover:bg-areia-100 dark:bg-carvao-800 dark:text-areia-200 dark:ring-carvao-600'
+                  ? 'bg-brand-700 text-white shadow-suave'
+                  : 'bg-white text-carvao-500 ring-1 ring-carvao-200 hover:bg-brand-50 hover:text-brand-700 dark:bg-carvao-800 dark:text-areia-200 dark:ring-carvao-600'
               }`}
             >
               {p.rotulo}
@@ -155,10 +153,10 @@ export default function PaginaCardapios() {
             <button
               key={a.id}
               onClick={() => setAba(a.id)}
-              className={`min-h-10 grow whitespace-nowrap rounded-full px-4 text-[13px] font-bold transition ${
+              className={`min-h-10 grow whitespace-nowrap rounded-full px-4 text-[12px] font-extrabold uppercase tracking-wide transition ${
                 aba === a.id
-                  ? 'bg-carvao-900 text-white dark:bg-areia-100 dark:text-carvao-900'
-                  : 'text-carvao-500 hover:bg-areia-100 dark:text-areia-200 dark:hover:bg-carvao-700'
+                  ? 'bg-gradient-to-r from-brand-700 to-brand-600 text-white shadow-suave'
+                  : 'text-carvao-500 hover:bg-brand-50 hover:text-brand-700 dark:text-areia-200 dark:hover:bg-carvao-700'
               }`}
             >
               {a.rotulo}
@@ -171,7 +169,11 @@ export default function PaginaCardapios() {
         ) : (
           <>
             {aba === 'cotacao' && (
-              <AbaCotacao definirPreco={definirPreco} definirFornecedor={definirFornecedor} />
+              <AbaCotacao
+                definirPreco={definirPreco}
+                definirFornecedor={definirFornecedor}
+                cadastrarItem={cadastrarItem}
+              />
             )}
             {aba === 'cardapio' && (
               <AbaCardapio
@@ -179,6 +181,7 @@ export default function PaginaCardapios() {
                 atualizar={atualizar}
                 podeEditar={podeEditarCardapio}
                 precos={precos}
+                definirPreco={definirPreco}
               />
             )}
             {aba === 'compras' && (
@@ -201,7 +204,12 @@ export default function PaginaCardapios() {
               />
             )}
             {aba === 'precos' && (
-              <AbaPrecos precos={precos} definirPreco={definirPreco} fornecedores={fornecedores} />
+              <AbaPrecos
+                precos={precos}
+                definirPreco={definirPreco}
+                fornecedores={fornecedores}
+                itensExtras={itensExtras}
+              />
             )}
           </>
         )}

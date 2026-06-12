@@ -14,6 +14,7 @@ import {
   listaDoDia,
   custoDaLista,
   formatarReais,
+  normalizar,
 } from '@/lib/cardapio/motor';
 import type { DiaCardapio, EstadoSemana } from '@/lib/cardapio/tipos';
 import { SeletorPrato } from './SeletorPrato';
@@ -44,11 +45,13 @@ export function AbaCardapio({
   atualizar,
   podeEditar,
   precos,
+  definirPreco,
 }: {
   estado: EstadoSemana;
   atualizar: (fn: (e: EstadoSemana) => EstadoSemana) => void;
   podeEditar: boolean;
   precos: Record<string, number>;
+  definirPreco?: (itemNorm: string, valor: number | null) => void;
 }) {
   const avisos = validarSemana(estado.dias);
   const temPrecos = Object.keys(precos).length > 0;
@@ -76,6 +79,19 @@ export function AbaCardapio({
     },
     { total: 0, com: 0, itens: 0 },
   );
+
+  // itens da semana ainda sem preço — a cotação é a guia: tem que zerar isso
+  const semPreco = (() => {
+    const m = new Map<string, { item: string; unid: string }>();
+    estado.dias.forEach((d) => {
+      if (!d.principal) return;
+      listaDoDia(d).forEach((s) => {
+        const norm = normalizar(s.item);
+        if (!(precos[norm] > 0)) m.set(norm, { item: s.item, unid: s.unid });
+      });
+    });
+    return Array.from(m.entries());
+  })();
 
   return (
     <div className="space-y-4">
@@ -135,8 +151,45 @@ export function AbaCardapio({
         )}
         {!temPrecos && (
           <p className="text-xs text-carvao-400">
-            Cadastre preços na aba <strong>Preços</strong> para ver o custo estimado e otimizar a sugestão.
+            Cole a cotação da semana na aba <strong>Cotação</strong> para ver o custo estimado e otimizar a
+            sugestão.
           </p>
+        )}
+        {temPrecos && semPreco.length > 0 && (
+          <div className="rounded-2xl bg-ouro-300/15 p-3 ring-1 ring-ouro-400/30">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-ouro-600">
+              ⚠️ {semPreco.length} itens da semana ainda sem preço — complete para o custo cobrir tudo:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {semPreco.slice(0, 16).map(([norm, s]) => (
+                <span
+                  key={norm}
+                  className="flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold ring-1 ring-carvao-200 dark:bg-carvao-800 dark:ring-carvao-600"
+                >
+                  {s.item}
+                  <span className="text-carvao-400">R$</span>
+                  <input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    inputMode="decimal"
+                    placeholder="0,00"
+                    onBlur={(e) => {
+                      const v = Number(e.target.value);
+                      if (v > 0) definirPreco?.(norm, v);
+                    }}
+                    className="w-14 rounded-md border border-carvao-200 bg-white px-1 py-0.5 text-right text-[11px] font-bold dark:border-carvao-600 dark:bg-carvao-900"
+                  />
+                  <span className="text-carvao-400">/{s.unid}</span>
+                </span>
+              ))}
+              {semPreco.length > 16 && (
+                <span className="self-center text-[11px] text-carvao-400">
+                  +{semPreco.length - 16} na aba Preços
+                </span>
+              )}
+            </div>
+          </div>
         )}
       </Cartao>
 

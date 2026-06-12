@@ -199,6 +199,7 @@ export default function PaginaCardapios() {
                 estado={estado}
                 atualizar={atualizar}
                 papel={papel}
+                precos={precos}
                 fatores={fatores}
                 aprenderDeSemana={aprenderDeSemana}
               />

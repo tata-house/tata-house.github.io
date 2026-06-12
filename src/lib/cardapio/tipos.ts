@@ -44,6 +44,7 @@ export interface ItemManual {
 export interface StatusItem {
   compradoQtd?: number;
   compradoEm?: string; // data da compra (ISO yyyy-mm-dd)
+  precoPago?: number; // R$ por unidade efetivamente cobrado (vs. cotado)
   previsao?: string; // previsão de entrega
   recebidoQtd?: number;
   recebidoOk?: boolean;
@@ -68,6 +69,10 @@ export interface EstadoSemana {
   /** status[diaIdx][itemNormalizado] */
   status: Record<number, Record<string, StatusItem>>;
   obsCozinha: string;
+  /** refeições servidas de fato em cada dia (contagem das meninas) */
+  refeicoes?: Record<number, number>;
+  /** foto da nota fiscal do dia (dataURL comprimida) */
+  notas?: Record<number, string>;
 }
 
 export interface Aviso {

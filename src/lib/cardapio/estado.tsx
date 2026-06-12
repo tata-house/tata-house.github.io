@@ -12,11 +12,13 @@ import type { EstadoSemana, Papel } from './tipos';
 const PREFIXO = 'cardapio.v1.';
 
 export function semanaVazia(): EstadoSemana {
+  // curva real aprendida com as contagens de refeições (quando existir)
+  const medias = lerLocal<Record<number, RegistroAprendizado>>('mediaRefeicoes', {});
   return {
     versao: 1,
     orcamento: null,
-    dias: PESSOAS_PADRAO.map((pessoas) => ({
-      pessoas,
+    dias: PESSOAS_PADRAO.map((pessoas, i) => ({
+      pessoas: medias[i]?.n ? Math.round(medias[i].f) : pessoas,
       principal: '',
       guarnicaoFixa: 'Arroz e Feijão',
       guarnicao: '',
@@ -231,6 +233,19 @@ export function useAprendizado() {
       gravarLocal('aprendizado', novo);
       return novo;
     });
+
+    // a contagem real de refeições refina a curva de pessoas das próximas semanas
+    const medias = lerLocal<Record<number, RegistroAprendizado>>('mediaRefeicoes', {});
+    let mudou = false;
+    Object.entries(estado.refeicoes ?? {}).forEach(([diS, qtd]) => {
+      const di = Number(diS);
+      if (!(qtd > 0)) return;
+      const r = medias[di] ?? { f: qtd, n: 0 };
+      const n = Math.min(r.n, TETO_OBSERVACOES);
+      medias[di] = { f: (r.f * n + qtd) / (n + 1), n: r.n + 1 };
+      mudou = true;
+    });
+    if (mudou) gravarLocal('mediaRefeicoes', medias);
   }, []);
 
   return { fatores, aprenderDeSemana, totalAprendido: Object.keys(registros).length };

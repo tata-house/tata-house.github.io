@@ -1,7 +1,7 @@
 'use client';
 
 import { Botao, Cartao } from '@/components/ui';
-import { linhasDoDia } from '@/lib/cardapio/motor';
+import { DIAS_SEMANA, formatarReais, linhasDoDia } from '@/lib/cardapio/motor';
 import type { EstadoSemana, Etapa, Papel } from '@/lib/cardapio/tipos';
 
 const ETAPAS: { id: Etapa; rotulo: string; quem: string }[] = [
@@ -25,12 +25,14 @@ export function AbaFluxo({
   estado,
   atualizar,
   papel,
+  precos = {},
   fatores,
   aprenderDeSemana,
 }: {
   estado: EstadoSemana;
   atualizar: (fn: (e: EstadoSemana) => EstadoSemana) => void;
   papel: Papel;
+  precos?: Record<string, number>;
   fatores?: Record<string, number>;
   aprenderDeSemana?: (estado: EstadoSemana) => void;
 }) {
@@ -49,6 +51,21 @@ export function AbaFluxo({
     { itens: 0, comprados: 0, recebidos: 0 },
   );
   const diasMontados = estado.dias.filter((d) => d.principal).length;
+
+  // custo real da semana: usa o preço pago quando existir, senão o cotado
+  const custoSemana = estado.dias.reduce(
+    (t, _, di) =>
+      t +
+      linhasDoDia(estado, di, fatores).reduce((s, l) => {
+        const p = l.status.precoPago ?? precos[l.chave];
+        return p > 0 ? s + p * (l.status.compradoQtd ?? l.qtd) : s;
+      }, 0),
+    0,
+  );
+  const refeicoes = estado.refeicoes ?? {};
+  const totalRefeicoes = Object.values(refeicoes).reduce((a, b) => a + (b || 0), 0);
+  const custoPorRefeicao = totalRefeicoes > 0 && custoSemana > 0 ? custoSemana / totalRefeicoes : null;
+  const podeContar = papel === 'cozinha' || papel === 'gestor';
 
   const avancar = () => {
     if (!acao) return;
@@ -86,6 +103,54 @@ export function AbaFluxo({
           </Cartao>
         ))}
       </div>
+
+      {/* Contagem de refeições — feita pela cozinha no fim de cada dia */}
+      <Cartao className="space-y-3">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h3 className="font-display text-lg font-semibold">🍽️ Contagem de refeições</h3>
+          {custoPorRefeicao !== null && (
+            <span className="rounded-full bg-brand-500/10 px-3 py-1 text-sm font-extrabold text-brand-700 ring-1 ring-brand-500/30 dark:text-brand-300">
+              {formatarReais(custoPorRefeicao)} / refeição
+            </span>
+          )}
+        </div>
+        <p className="text-xs text-carvao-400">
+          Anote no fim de cada dia quantas refeições saíram. Isso vira o <strong>custo real por
+          refeição</strong> e ensina o app a prever o movimento das próximas semanas.
+        </p>
+        <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
+          {estado.dias.map((_, i) => (
+            <label key={i} className="text-center">
+              <span className="block text-[10px] font-extrabold uppercase tracking-wide text-carvao-400">
+                {DIAS_SEMANA[i].slice(0, 3)}
+              </span>
+              <input
+                type="number"
+                min={0}
+                disabled={!podeContar}
+                value={refeicoes[i] ?? ''}
+                placeholder="—"
+                onChange={(e) =>
+                  atualizar((s) => ({
+                    ...s,
+                    refeicoes: {
+                      ...(s.refeicoes ?? {}),
+                      [i]: e.target.value ? Number(e.target.value) : 0,
+                    },
+                  }))
+                }
+                className="mt-0.5 w-full rounded-xl border border-carvao-200 bg-white px-1 py-2 text-center text-sm font-bold disabled:opacity-50 dark:border-carvao-600 dark:bg-carvao-900"
+              />
+            </label>
+          ))}
+        </div>
+        {totalRefeicoes > 0 && (
+          <p className="text-xs font-semibold text-carvao-400">
+            {totalRefeicoes} refeições na semana
+            {custoSemana > 0 && <> · custo da semana ≈ {formatarReais(custoSemana)}</>}
+          </p>
+        )}
+      </Cartao>
 
       {/* Linha do tempo */}
       <Cartao className="space-y-0">

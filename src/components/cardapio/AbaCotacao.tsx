@@ -74,6 +74,18 @@ export function AbaCotacao({
     setCadastrados((c) => new Set(c).add(idx));
   };
 
+  const cadastrarTodos = () => {
+    if (!lido) return;
+    const novos = new Set(cadastrados);
+    soltos.forEach((s) => {
+      const idx = lido.indexOf(s);
+      if (novos.has(idx)) return;
+      cadastrar(idx, s);
+      novos.add(idx);
+    });
+    setCadastrados(novos);
+  };
+
   const alternar = (item: string) =>
     setIgnorados((s) => {
       const novo = new Set(s);
@@ -171,10 +183,20 @@ export function AbaCotacao({
 
           {soltos.length > 0 && (
             <Cartao className="space-y-2">
-              <h3 className="font-display text-lg font-semibold">{soltos.length} produtos novos na cotação</h3>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="font-display text-lg font-semibold">
+                  {soltos.length} produtos novos na cotação
+                </h3>
+                <button
+                  onClick={cadastrarTodos}
+                  className="rounded-full bg-brand-700 px-4 py-2 text-[12px] font-extrabold uppercase tracking-wide text-white shadow-suave hover:bg-brand-800"
+                >
+                  ➕ Cadastrar todos de uma vez
+                </button>
+              </div>
               <p className="text-xs text-carvao-400">
-                Ainda não existem no catálogo. Toque em <strong>Cadastrar</strong> para criar o item com o
-                preço cotado — ele entra na tabela de preços e no custo da semana.
+                Ainda não existem no catálogo. Cadastre todos com um toque (preço e fornecedor entram juntos)
+                ou um a um ajustando a unidade — tudo cotado vira custo no app.
               </p>
               <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
                 {soltos.map((s) => {

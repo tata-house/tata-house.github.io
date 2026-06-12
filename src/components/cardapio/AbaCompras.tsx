@@ -16,6 +16,25 @@ function hojeIso(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+/** Comprime a foto da nota para caber no armazenamento do navegador. */
+function comprimirImagem(file: File): Promise<string> {
+  return new Promise((resolver, rejeitar) => {
+    const img = new Image();
+    img.onload = () => {
+      const max = 1100;
+      const esc = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * esc);
+      c.height = Math.round(img.height * esc);
+      c.getContext('2d')?.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src);
+      resolver(c.toDataURL('image/jpeg', 0.72));
+    };
+    img.onerror = rejeitar;
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 export function AbaCompras({
   estado,
   atualizar,
@@ -90,6 +109,18 @@ export function AbaCompras({
         );
         const compradas = linhas.filter((l) => l.status.compradoEm).length;
         const recebidas = linhas.filter((l) => l.status.recebidoOk).length;
+        // conferência: preço pago acima do cotado ou recebido a menos que o pedido
+        const divergencias = linhas.filter(
+          (l) =>
+            (l.status.precoPago !== undefined &&
+              precos[l.chave] > 0 &&
+              l.status.precoPago > precos[l.chave] * 1.02) ||
+            (l.status.recebidoOk &&
+              l.status.recebidoQtd !== undefined &&
+              l.status.compradoQtd !== undefined &&
+              l.status.recebidoQtd < l.status.compradoQtd),
+        ).length;
+        const nota = estado.notas?.[di];
 
         return (
           <Cartao key={di} className="space-y-3">
@@ -103,6 +134,9 @@ export function AbaCompras({
               <p className="text-xs font-semibold text-carvao-400">
                 {compradas}/{linhas.length} comprados · {recebidas}/{linhas.length} recebidos
                 {custo.itensComPreco > 0 && <> · ≈ {formatarReais(custo.total)}</>}
+                {divergencias > 0 && (
+                  <span className="font-extrabold text-[#b04c41]"> · ⚠ {divergencias} divergências</span>
+                )}
               </p>
             </div>
 
@@ -162,9 +196,56 @@ export function AbaCompras({
                         </td>
                         <td className="whitespace-nowrap px-2 py-2">
                           {l.status.compradoEm ? (
-                            <span className="font-semibold text-brand-600">
-                              ✓ {l.status.compradoEm.slice(8, 10)}/{l.status.compradoEm.slice(5, 7)}
-                            </span>
+                            <div className="space-y-1">
+                              <span className="font-semibold text-brand-600">
+                                ✓ {l.status.compradoEm.slice(8, 10)}/{l.status.compradoEm.slice(5, 7)}
+                              </span>
+                              {podeComprar ? (
+                                <div className="flex items-center gap-1 text-[11px]">
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    step="0.1"
+                                    value={l.status.compradoQtd ?? ''}
+                                    placeholder="qtd"
+                                    title="Quantidade pedida"
+                                    onChange={(e) =>
+                                      setStatus(di, l.chave, { compradoQtd: Number(e.target.value) })
+                                    }
+                                    className="w-12 rounded-md border border-carvao-200 bg-white px-1 py-0.5 text-center font-bold dark:border-carvao-600 dark:bg-carvao-900"
+                                  />
+                                  <span className="text-carvao-400">R$</span>
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    step="0.01"
+                                    value={l.status.precoPago ?? ''}
+                                    placeholder="pago"
+                                    title="Preço pago por unidade"
+                                    onChange={(e) =>
+                                      setStatus(di, l.chave, {
+                                        precoPago: e.target.value ? Number(e.target.value) : undefined,
+                                      })
+                                    }
+                                    className="w-14 rounded-md border border-carvao-200 bg-white px-1 py-0.5 text-right font-bold dark:border-carvao-600 dark:bg-carvao-900"
+                                  />
+                                </div>
+                              ) : (
+                                l.status.precoPago !== undefined && (
+                                  <span className="block text-[10px] text-carvao-400">
+                                    {formatarQtd(l.status.compradoQtd ?? l.qtd)} {l.unid} ·{' '}
+                                    {formatarReais(l.status.precoPago)}/{l.unid}
+                                  </span>
+                                )
+                              )}
+                              {l.status.precoPago !== undefined &&
+                                precos[l.chave] > 0 &&
+                                l.status.precoPago > precos[l.chave] * 1.02 && (
+                                  <span className="block text-[10px] font-extrabold text-[#b04c41]">
+                                    ▲ acima do cotado ({formatarReais(precos[l.chave])})
+                                  </span>
+                                )}
+                            </div>
                           ) : podeComprar ? (
                             <button
                               onClick={() =>
@@ -194,7 +275,30 @@ export function AbaCompras({
                         </td>
                         <td className="whitespace-nowrap px-2 py-2">
                           {l.status.recebidoOk ? (
-                            <span className="font-semibold text-brand-600">✓ OK</span>
+                            <div className="space-y-0.5">
+                              <span className="font-semibold text-brand-600">✓ OK</span>
+                              {podeReceber && (
+                                <input
+                                  type="number"
+                                  min={0}
+                                  step="0.1"
+                                  value={l.status.recebidoQtd ?? ''}
+                                  title="Quantidade conferida no recebimento"
+                                  onChange={(e) =>
+                                    setStatus(di, l.chave, { recebidoQtd: Number(e.target.value) })
+                                  }
+                                  className="block w-12 rounded-md border border-carvao-200 bg-white px-1 py-0.5 text-center text-[11px] font-bold dark:border-carvao-600 dark:bg-carvao-900"
+                                />
+                              )}
+                              {l.status.recebidoQtd !== undefined &&
+                                l.status.compradoQtd !== undefined &&
+                                l.status.recebidoQtd < l.status.compradoQtd && (
+                                  <span className="block text-[10px] font-extrabold text-[#d18a3a]">
+                                    ⚠ veio {formatarQtd(l.status.recebidoQtd)} de{' '}
+                                    {formatarQtd(l.status.compradoQtd)}
+                                  </span>
+                                )}
+                            </div>
                           ) : podeReceber && l.status.compradoEm ? (
                             <button
                               onClick={() =>
@@ -233,14 +337,63 @@ export function AbaCompras({
               </div>
             )}
 
-            {podeAjustarQtd && (
-              <button
-                onClick={() => setNovoItemDia(di)}
-                className="text-sm font-semibold text-brand-600 hover:text-brand-700 print:hidden"
-              >
-                + Adicionar item extra
-              </button>
-            )}
+            <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
+              {podeAjustarQtd ? (
+                <button
+                  onClick={() => setNovoItemDia(di)}
+                  className="text-sm font-semibold text-brand-600 hover:text-brand-700"
+                >
+                  + Adicionar item extra
+                </button>
+              ) : (
+                <span />
+              )}
+
+              {/* Nota fiscal do dia: foto direto da câmera + conferência */}
+              {(podeComprar || podeReceber) &&
+                (nota ? (
+                  <span className="flex items-center gap-2">
+                    <a href={nota} target="_blank" rel="noreferrer" title="Abrir nota fiscal">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={nota}
+                        alt={`Nota fiscal de ${DIAS_SEMANA[di]}`}
+                        className="h-14 w-14 rounded-xl object-cover ring-2 ring-brand-500/50"
+                      />
+                    </a>
+                    <span className="text-[11px] font-bold uppercase text-brand-600">📎 Nota anexada</span>
+                    <button
+                      onClick={() =>
+                        atualizar((e) => {
+                          const notas = { ...(e.notas ?? {}) };
+                          delete notas[di];
+                          return { ...e, notas };
+                        })
+                      }
+                      aria-label="Remover nota fiscal"
+                      className="text-carvao-300 hover:text-[#b04c41]"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                ) : (
+                  <label className="cursor-pointer rounded-full bg-ouro-300/20 px-3.5 py-2 text-[11px] font-extrabold uppercase tracking-wide text-ouro-600 ring-1 ring-ouro-400/40 hover:bg-ouro-300/30">
+                    📸 Foto da nota fiscal
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      className="hidden"
+                      onChange={async (ev) => {
+                        const f = ev.target.files?.[0];
+                        if (!f) return;
+                        const dataUrl = await comprimirImagem(f);
+                        atualizar((e) => ({ ...e, notas: { ...(e.notas ?? {}), [di]: dataUrl } }));
+                      }}
+                    />
+                  </label>
+                ))}
+            </div>
           </Cartao>
         );
       })}

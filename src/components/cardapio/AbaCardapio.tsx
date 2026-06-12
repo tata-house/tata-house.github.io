@@ -8,6 +8,7 @@ import {
   proteinaDoPrato,
   ROTULO_PROTEINA,
   sugerirSemana,
+  sugerirSemanaCriativa,
   temHistoricoExato,
   validarSemana,
   listaDoDia,
@@ -58,8 +59,9 @@ export function AbaCardapio({
       dias: e.dias.map((d, j) => (j === i ? { ...d, ...patch } : d)),
     }));
 
-  const gerar = () => {
-    const sugestao = sugerirSemana(
+  const gerar = (criativo: boolean) => {
+    const fn = criativo ? sugerirSemanaCriativa : sugerirSemana;
+    const sugestao = fn(
       estado.dias.map((d) => d.pessoas),
       precos,
     );
@@ -97,10 +99,20 @@ export function AbaCardapio({
               className="w-full min-h-12 rounded-2xl border border-carvao-200 bg-white px-4 py-3 text-base dark:border-carvao-600 dark:bg-carvao-900"
             />
           </label>
-          <Botao variante="sucesso" disabled={!podeEditar} onClick={gerar} className="shrink-0">
-            ✨ Sugerir semana pelo histórico
-          </Botao>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            <Botao variante="sucesso" disabled={!podeEditar} onClick={() => gerar(false)}>
+              ✨ Sugerir pelo histórico
+            </Botao>
+            <Botao variante="secundario" disabled={!podeEditar} onClick={() => gerar(true)}>
+              🧪 Criar semana nova
+            </Botao>
+          </div>
         </div>
+        <p className="text-xs text-carvao-400">
+          <strong>✨ Histórico</strong>: combinações que a equipe já aprovou. <strong>🧪 Criar nova</strong>:
+          inventa pratos e combinações inéditas com a distribuição de alimentos da casa — e, com a cotação
+          aplicada, puxa para as proteínas mais baratas da semana.
+        </p>
         {temPrecos && custoSemana.com > 0 && (
           <p className="text-sm text-carvao-500 dark:text-carvao-300">
             Custo estimado da semana:{' '}

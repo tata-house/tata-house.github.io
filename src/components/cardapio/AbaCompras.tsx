@@ -8,57 +8,9 @@ import {
   custoDaLista,
   formatarQtd,
   formatarReais,
-  listaDoDia,
-  normalizar,
+  linhasDoDia,
 } from '@/lib/cardapio/motor';
 import type { EstadoSemana, Papel, StatusItem } from '@/lib/cardapio/tipos';
-
-export interface LinhaCompra {
-  chave: string; // item normalizado
-  item: string;
-  unid: string;
-  sugerida: number | null; // null = item manual
-  qtd: number;
-  manual: boolean;
-  status: StatusItem;
-}
-
-export function linhasDoDia(estado: EstadoSemana, diaIdx: number): LinhaCompra[] {
-  const dia = estado.dias[diaIdx];
-  const ajustes = estado.ajustes[diaIdx] ?? {};
-  const status = estado.status[diaIdx] ?? {};
-  const linhas: LinhaCompra[] = [];
-
-  if (dia.principal) {
-    for (const s of listaDoDia(dia)) {
-      const k = normalizar(s.item);
-      const aj = ajustes[k];
-      if (aj?.removido) continue;
-      linhas.push({
-        chave: k,
-        item: s.item,
-        unid: s.unid,
-        sugerida: s.qtd,
-        qtd: aj?.qtd ?? s.qtd,
-        manual: false,
-        status: status[k] ?? {},
-      });
-    }
-  }
-  (estado.manuais[diaIdx] ?? []).forEach((m, mi) => {
-    const k = `manual:${mi}:` + normalizar(m.item);
-    linhas.push({
-      chave: k,
-      item: m.item,
-      unid: m.unid,
-      sugerida: null,
-      qtd: m.qtd,
-      manual: true,
-      status: status[k] ?? {},
-    });
-  });
-  return linhas;
-}
 
 function hojeIso(): string {
   return new Date().toISOString().slice(0, 10);
@@ -69,11 +21,15 @@ export function AbaCompras({
   atualizar,
   papel,
   precos,
+  fornecedores = {},
+  fatores,
 }: {
   estado: EstadoSemana;
   atualizar: (fn: (e: EstadoSemana) => EstadoSemana) => void;
   papel: Papel;
   precos: Record<string, number>;
+  fornecedores?: Record<string, string>;
+  fatores?: Record<string, number>;
 }) {
   const [novoItemDia, setNovoItemDia] = useState<number | null>(null);
 
@@ -126,7 +82,7 @@ export function AbaCompras({
       </div>
 
       {estado.dias.map((dia, di) => {
-        const linhas = linhasDoDia(estado, di);
+        const linhas = linhasDoDia(estado, di, fatores);
         if (!dia.principal && linhas.length === 0) return null;
         const custo = custoDaLista(
           linhas.map((l) => ({ item: l.item, unid: l.unid, qtd: l.qtd })),
@@ -181,6 +137,11 @@ export function AbaCompras({
                           {l.sugerida !== null && l.qtd !== l.sugerida && (
                             <span className="ml-1.5 text-[10px] text-carvao-400">
                               (sugerido {formatarQtd(l.sugerida)})
+                            </span>
+                          )}
+                          {fornecedores[l.chave] && (
+                            <span className="block text-[10px] font-semibold text-brand-600">
+                              ↓ mais barato: {fornecedores[l.chave]}
                             </span>
                           )}
                         </td>

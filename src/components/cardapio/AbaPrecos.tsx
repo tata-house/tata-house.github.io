@@ -11,9 +11,11 @@ import { DADOS, normalizar } from '@/lib/cardapio/motor';
 export function AbaPrecos({
   precos,
   definirPreco,
+  fornecedores = {},
 }: {
   precos: Record<string, number>;
   definirPreco: (itemNorm: string, valor: number | null) => void;
+  fornecedores?: Record<string, string>;
 }) {
   const [busca, setBusca] = useState('');
 
@@ -51,6 +53,9 @@ export function AbaPrecos({
                   <p className="truncate text-sm font-semibold">{i.n}</p>
                   <p className="text-[11px] text-carvao-400">
                     {i.u} · usado {i.f}× no histórico
+                    {fornecedores[k] && (
+                      <span className="font-semibold text-brand-600"> · ↓ {fornecedores[k]}</span>
+                    )}
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-1.5 text-sm">

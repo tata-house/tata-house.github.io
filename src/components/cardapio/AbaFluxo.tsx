@@ -1,8 +1,8 @@
 'use client';
 
 import { Botao, Cartao } from '@/components/ui';
+import { linhasDoDia } from '@/lib/cardapio/motor';
 import type { EstadoSemana, Etapa, Papel } from '@/lib/cardapio/tipos';
-import { linhasDoDia } from './AbaCompras';
 
 const ETAPAS: { id: Etapa; rotulo: string; quem: string }[] = [
   { id: 'rascunho', rotulo: 'Montagem do cardápio', quem: 'Gestor' },
@@ -25,10 +25,14 @@ export function AbaFluxo({
   estado,
   atualizar,
   papel,
+  fatores,
+  aprenderDeSemana,
 }: {
   estado: EstadoSemana;
   atualizar: (fn: (e: EstadoSemana) => EstadoSemana) => void;
   papel: Papel;
+  fatores?: Record<string, number>;
+  aprenderDeSemana?: (estado: EstadoSemana) => void;
 }) {
   const idxAtual = ETAPAS.findIndex((e) => e.id === estado.etapa);
   const acao = ACAO_POR_ETAPA[estado.etapa];
@@ -36,7 +40,7 @@ export function AbaFluxo({
 
   const totais = estado.dias.reduce(
     (acc, _, di) => {
-      const linhas = linhasDoDia(estado, di);
+      const linhas = linhasDoDia(estado, di, fatores);
       acc.itens += linhas.length;
       acc.comprados += linhas.filter((l) => l.status.compradoEm).length;
       acc.recebidos += linhas.filter((l) => l.status.recebidoOk).length;
@@ -48,6 +52,8 @@ export function AbaFluxo({
 
   const avancar = () => {
     if (!acao) return;
+    // semana concluída: o app aprende com os ajustes de quantidade feitos
+    if (acao.proxima === 'concluido') aprenderDeSemana?.(estado);
     atualizar((e) => ({
       ...e,
       etapa: acao.proxima,

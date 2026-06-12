@@ -9,8 +9,10 @@ import type {
   DadosCardapio,
   DadosCombo,
   DiaCardapio,
+  EstadoSemana,
   ItemSugerido,
   Proteina,
+  StatusItem,
 } from './tipos';
 
 export const DADOS = dadosJson as unknown as DadosCardapio;
@@ -157,8 +159,10 @@ export function chaveDoDia(dia: DiaCardapio): string {
 /**
  * Gera a lista sugerida do dia: combinação exata do histórico quando existe;
  * senão soma os mapas de cada componente. Escala pela curva de pessoas.
+ * `fatores` é o aprendizado da casa: correções de quantidade que a cozinha
+ * fez em semanas passadas (ex.: arroz sempre ajustado p/ +15%).
  */
-export function listaDoDia(dia: DiaCardapio): ItemSugerido[] {
+export function listaDoDia(dia: DiaCardapio, fatores?: Record<string, number>): ItemSugerido[] {
   const fator = dia.pessoas > 0 ? dia.pessoas / DADOS.baseline : 1;
   const acc = new Map<string, { item: string; unid: string; qtd: number }>();
 
@@ -184,9 +188,65 @@ export function listaDoDia(dia: DiaCardapio): ItemSugerido[] {
   }
 
   return Array.from(acc.values())
-    .map(({ item, unid, qtd }) => ({ item, unid, qtd: arredondar(qtd * fator, unid) }))
+    .map(({ item, unid, qtd }) => {
+      const aprendido = fatores?.[normalizar(item)] ?? 1;
+      return { item, unid, qtd: arredondar(qtd * fator * aprendido, unid) };
+    })
     .filter((x) => x.qtd > 0)
     .sort((a, b) => a.item.localeCompare(b.item, 'pt-BR'));
+}
+
+/* --------------- linhas de compra do dia (auto + manuais) ------------- */
+
+export interface LinhaCompra {
+  chave: string; // item normalizado (ou manual:<idx>:nome)
+  item: string;
+  unid: string;
+  sugerida: number | null; // null = item manual
+  qtd: number;
+  manual: boolean;
+  status: StatusItem;
+}
+
+export function linhasDoDia(
+  estado: EstadoSemana,
+  diaIdx: number,
+  fatores?: Record<string, number>,
+): LinhaCompra[] {
+  const dia = estado.dias[diaIdx];
+  const ajustes = estado.ajustes[diaIdx] ?? {};
+  const status = estado.status[diaIdx] ?? {};
+  const linhas: LinhaCompra[] = [];
+
+  if (dia.principal) {
+    for (const s of listaDoDia(dia, fatores)) {
+      const k = normalizar(s.item);
+      const aj = ajustes[k];
+      if (aj?.removido) continue;
+      linhas.push({
+        chave: k,
+        item: s.item,
+        unid: s.unid,
+        sugerida: s.qtd,
+        qtd: aj?.qtd ?? s.qtd,
+        manual: false,
+        status: status[k] ?? {},
+      });
+    }
+  }
+  (estado.manuais[diaIdx] ?? []).forEach((m, mi) => {
+    const k = `manual:${mi}:` + normalizar(m.item);
+    linhas.push({
+      chave: k,
+      item: m.item,
+      unid: m.unid,
+      sugerida: null,
+      qtd: m.qtd,
+      manual: true,
+      status: status[k] ?? {},
+    });
+  });
+  return linhas;
 }
 
 /** O dia tem registro exato no histórico? (qualidade da sugestão) */
@@ -294,6 +354,128 @@ export function sugerirSemana(pessoas: number[], precos: Record<string, number>)
       nota += Math.min(combo?.occ ?? 0, 5);
       void d;
     });
+    if (nota > melhorNota) {
+      melhorNota = nota;
+      melhor = dias;
+    }
+  }
+  return melhor;
+}
+
+/* --------------- sugestão criativa (fora do histórico) ---------------- */
+
+/** Componentes que têm mapa de distribuição próprio (lista de compra gerável). */
+function opcoesComMapa(tipo: string, lista: string[]): string[] {
+  return lista.filter((op) => porTipoOpcao.has(`${tipo}|${normalizar(op)}`));
+}
+
+/** Custo por pessoa do mapa de um componente (para ranquear o que está barato). */
+function custoComponente(tipo: string, op: string, precos: Record<string, number>): number | null {
+  const itens = porTipoOpcao.get(`${tipo}|${normalizar(op)}`);
+  if (!itens) return null;
+  let total = 0;
+  let com = 0;
+  for (const { i, q } of itens) {
+    const p = precos[normalizar(i)];
+    if (p !== undefined && p > 0) {
+      total += p * q;
+      com++;
+    }
+  }
+  return com > 0 ? total / DADOS.baseline : null;
+}
+
+function sortear<T>(arr: T[]): T[] {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+/**
+ * Monta uma semana NOVA: recombina principais, guarnições, saladas e
+ * sobremesas que nunca apareceram juntos no histórico — culinária brasileira
+ * simples, com a distribuição de alimentos que a casa já usa. Com a cotação
+ * aplicada, puxa para as proteínas que estão baratas na semana.
+ */
+export function sugerirSemanaCriativa(
+  pessoas: number[],
+  precos: Record<string, number>,
+): DiaCardapio[] | null {
+  const principais = opcoesComMapa('principal', DADOS.listas.principais);
+  const guarnicoes = opcoesComMapa('guarnicao', DADOS.listas.guarnicoes);
+  const saladas = opcoesComMapa('salada', DADOS.listas.saladas);
+  const sobremesas = opcoesComMapa('sobremesa', DADOS.listas.sobremesas);
+  if (principais.length < 7) return null;
+
+  const temPrecos = Object.keys(precos).length > 3;
+
+  // ranking de custo dos principais: quem está barato na cotação sobe
+  const custoPrincipal = new Map<string, number>();
+  if (temPrecos) {
+    principais.forEach((p) => {
+      const c = custoComponente('principal', p, precos);
+      if (c !== null) custoPrincipal.set(normalizar(p), c);
+    });
+  }
+
+  let melhor: DiaCardapio[] | null = null;
+  let melhorNota = -Infinity;
+
+  for (let tent = 0; tent < 220; tent++) {
+    const poolP = sortear(principais);
+    const poolG = sortear(guarnicoes);
+    const poolS = sortear(saladas);
+    const poolSb = sortear(sobremesas);
+    const dias: DiaCardapio[] = [];
+    const usados = new Set<string>();
+    let suina = 0;
+    let frango = 0;
+    let anterior: Proteina | null = null;
+    let ok = true;
+
+    for (let d = 0; d < 7; d++) {
+      const faltam = 7 - d;
+      const cand = poolP.find((p) => {
+        const prot = proteinaDoPrato(p);
+        if (usados.has(normalizar(p))) return false;
+        if (prot === anterior && prot !== 'outros') return false;
+        if (prot === 'suina' && suina >= 2) return false;
+        if (prot === 'frango' && frango >= 4) return false;
+        if (prot !== 'frango' && frango + faltam - 1 < 3) return false;
+        return true;
+      });
+      if (!cand) {
+        ok = false;
+        break;
+      }
+      const prot = proteinaDoPrato(cand);
+      if (prot === 'suina') suina++;
+      if (prot === 'frango') frango++;
+      anterior = prot;
+      usados.add(normalizar(cand));
+      dias.push({
+        pessoas: pessoas[d] ?? DADOS.baseline,
+        principal: cand,
+        guarnicaoFixa: 'Arroz e Feijão',
+        guarnicao: poolG[d % Math.max(poolG.length, 1)] ?? '',
+        salada: poolS[d % Math.max(poolS.length, 1)] ?? '',
+        sobremesa: poolSb[d % Math.max(poolSb.length, 1)] ?? '',
+      });
+      poolP.splice(poolP.indexOf(cand), 1);
+    }
+    if (!ok || frango < 3) continue;
+
+    let nota = 0;
+    let novas = 0;
+    dias.forEach((dia) => {
+      if (temPrecos) {
+        const c = custoDaLista(listaDoDia(dia), precos);
+        if (c.itensComPreco > 0) nota -= (c.total / Math.max(dia.pessoas, 1)) * 10;
+        const cp = custoPrincipal.get(normalizar(dia.principal));
+        if (cp !== undefined) nota -= cp * 5; // peso extra na proteína barata
+      }
+      if (!temHistoricoExato(dia)) novas++;
+    });
+    nota += novas * 2; // criativo de verdade: combinações inéditas pontuam
+
     if (nota > melhorNota) {
       melhorNota = nota;
       melhor = dias;

@@ -7,10 +7,13 @@ import { AbaCompras } from '@/components/cardapio/AbaCompras';
 import { AbaCotacao } from '@/components/cardapio/AbaCotacao';
 import { AbaFluxo } from '@/components/cardapio/AbaFluxo';
 import { AbaPrecos } from '@/components/cardapio/AbaPrecos';
+import { PosterSemana } from '@/components/cardapio/PosterSemana';
 import {
   idSemanaIso,
   idsSemanas,
   rotuloSemana,
+  useAprendizado,
+  useFornecedores,
   usePapel,
   usePrecos,
   useSemana,
@@ -51,11 +54,18 @@ const COR_ETAPA: Record<Etapa, string> = {
 export default function PaginaCardapios() {
   const [semanaId, setSemanaId] = useState(() => idSemanaIso(new Date()));
   const [aba, setAba] = useState<(typeof ABAS)[number]['id']>('cardapio');
+  const [posterAberto, setPosterAberto] = useState(false);
   const { estado, atualizar, pronto } = useSemana(semanaId);
   const { precos, definirPreco } = usePrecos();
+  const { fornecedores, definirFornecedor } = useFornecedores();
+  const { fatores, aprenderDeSemana } = useAprendizado();
   const { papel, setPapel } = usePapel();
 
   const podeEditarCardapio = papel === 'gestor' && (estado.etapa === 'rascunho' || estado.etapa === 'cozinha');
+
+  if (posterAberto) {
+    return <PosterSemana estado={estado} semanaId={semanaId} aoFechar={() => setPosterAberto(false)} />;
+  }
 
   return (
     <>
@@ -112,6 +122,12 @@ export default function PaginaCardapios() {
                 </option>
               ))}
             </select>
+            <button
+              onClick={() => setPosterAberto(true)}
+              className="min-h-10 whitespace-nowrap rounded-2xl bg-carvao-900 px-4 py-2 text-sm font-bold text-white shadow-suave transition hover:bg-carvao-800 dark:bg-areia-100 dark:text-carvao-900 dark:hover:bg-white"
+            >
+              🖼️ Pôster
+            </button>
           </div>
         </div>
 
@@ -154,7 +170,9 @@ export default function PaginaCardapios() {
           <p className="py-10 text-center text-sm text-carvao-400">Carregando semana…</p>
         ) : (
           <>
-            {aba === 'cotacao' && <AbaCotacao definirPreco={definirPreco} />}
+            {aba === 'cotacao' && (
+              <AbaCotacao definirPreco={definirPreco} definirFornecedor={definirFornecedor} />
+            )}
             {aba === 'cardapio' && (
               <AbaCardapio
                 estado={estado}
@@ -164,10 +182,27 @@ export default function PaginaCardapios() {
               />
             )}
             {aba === 'compras' && (
-              <AbaCompras estado={estado} atualizar={atualizar} papel={papel} precos={precos} />
+              <AbaCompras
+                estado={estado}
+                atualizar={atualizar}
+                papel={papel}
+                precos={precos}
+                fornecedores={fornecedores}
+                fatores={fatores}
+              />
             )}
-            {aba === 'fluxo' && <AbaFluxo estado={estado} atualizar={atualizar} papel={papel} />}
-            {aba === 'precos' && <AbaPrecos precos={precos} definirPreco={definirPreco} />}
+            {aba === 'fluxo' && (
+              <AbaFluxo
+                estado={estado}
+                atualizar={atualizar}
+                papel={papel}
+                fatores={fatores}
+                aprenderDeSemana={aprenderDeSemana}
+              />
+            )}
+            {aba === 'precos' && (
+              <AbaPrecos precos={precos} definirPreco={definirPreco} fornecedores={fornecedores} />
+            )}
           </>
         )}
       </main>

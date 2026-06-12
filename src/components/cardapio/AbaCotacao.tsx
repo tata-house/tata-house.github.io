@@ -14,8 +14,10 @@ const CHAVE_TEXTO = 'cardapio.v1.cotacao.texto';
  */
 export function AbaCotacao({
   definirPreco,
+  definirFornecedor,
 }: {
   definirPreco: (itemNorm: string, valor: number | null) => void;
+  definirFornecedor?: (itemNorm: string, marca: string | null) => void;
 }) {
   const [texto, setTexto] = useState('');
   const [lido, setLido] = useState<LinhaCotacao[] | null>(null);
@@ -57,7 +59,10 @@ export function AbaCotacao({
   const selecionados = casados.filter((c) => !ignorados.has(c.item));
 
   const aplicar = () => {
-    selecionados.forEach((c) => definirPreco(normalizar(c.item), c.preco));
+    selecionados.forEach((c) => {
+      definirPreco(normalizar(c.item), c.preco);
+      definirFornecedor?.(normalizar(c.item), c.marca);
+    });
     setAplicado(selecionados.length);
   };
 

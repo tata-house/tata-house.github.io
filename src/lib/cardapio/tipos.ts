@@ -6,7 +6,7 @@ export type Categoria = 'principal' | 'guarnicaoFixa' | 'guarnicao' | 'salada' |
 
 export type Proteina = 'bovina' | 'frango' | 'suina' | 'peixe' | 'ovo' | 'outros';
 
-export type Papel = 'gestor' | 'cozinha' | 'compras' | 'recebimento';
+export type Papel = 'gestor' | 'cozinha' | 'compras' | 'recebimento' | 'administrador';
 
 export type Etapa = 'rascunho' | 'cozinha' | 'compras' | 'recebimento' | 'concluido';
 
@@ -129,3 +129,111 @@ export interface DadosCardapio {
   excluir: string[];
   unidades: string[];
 }
+
+/* =====================================================================
+   Camada corporativa — estoque, desperdício, aceitação, preço, auditoria,
+   eventos de demanda e organização (multi-tenant). Todos persistidos em
+   localStorage no protótipo, com formato pronto para migrar ao Supabase.
+   ===================================================================== */
+
+/* ----- Módulo 2: estoque inteligente ----- */
+export interface ItemEstoque {
+  item: string; // nome de exibição
+  unid: string;
+  qtd: number; // saldo atual
+  minimo: number; // gatilho de alerta de estoque baixo (0 = sem alerta)
+  atualizadoEm: string; // ISO
+}
+/** chave = item normalizado */
+export type Estoque = Record<string, ItemEstoque>;
+
+export interface MovEstoque {
+  norm: string;
+  item: string;
+  unid: string;
+  delta: number; // + entrada, − saída/baixa
+  motivo: 'entrada' | 'baixa' | 'ajuste' | 'recebimento';
+  em: string;
+  papel: Papel;
+  ref?: string; // semana/observação
+}
+
+/* ----- Módulo 3: controle de desperdício ----- */
+export interface RegistroDesperdicio {
+  id: string;
+  dia: number; // 0=segunda … 6=domingo
+  prato: string;
+  produzido: number;
+  consumido: number;
+  unid: 'porções' | 'kg';
+  motivo?: string;
+  em: string;
+}
+
+/* ----- Módulo 4: índice de aceitação dos pratos ----- */
+export interface RegistroAceitacao {
+  prato: string; // nome de exibição (última grafia vista)
+  bom: number;
+  ok: number;
+  ruim: number;
+  somaNotas: number; // soma das notas 1–5 (para média)
+  n: number; // nº de avaliações com nota
+  atualizadoEm: string;
+}
+/** chave = prato normalizado */
+export type Aceitacao = Record<string, RegistroAceitacao>;
+
+/* ----- Módulo 5: radar de preços (histórico por item) ----- */
+export interface PontoPreco {
+  valor: number;
+  em: string; // ISO
+}
+/** chave = item normalizado → série temporal de preços */
+export type HistoricoPrecos = Record<string, PontoPreco[]>;
+
+/* ----- Módulo 6: previsão de demanda (eventos manuais) ----- */
+export interface EventoDemanda {
+  id: string;
+  data: string; // yyyy-mm-dd
+  rotulo: string;
+  fator: number; // multiplicador da demanda (0 = fechado, 1.2 = +20%)
+}
+
+/* ----- Módulo 9: auditoria e segurança ----- */
+export interface RegistroAuditoria {
+  em: string; // ISO datetime
+  papel: Papel;
+  acao: string; // verbo curto: "alterou preço", "aprovou etapa"…
+  alvo: string; // sobre o quê
+  de?: string | number | null;
+  para?: string | number | null;
+  semana?: string;
+}
+
+/* ----- Módulo 10: organização / multi-tenant (preparação Supabase) ----- */
+export interface Empresa {
+  id: string;
+  nome: string;
+  criadaEm: string;
+}
+export interface Unidade {
+  id: string;
+  empresaId: string;
+  nome: string;
+}
+export interface Usuario {
+  id: string;
+  nome: string;
+  email: string;
+  papel: Papel;
+  unidadeId: string;
+}
+export type Permissao =
+  | 'cardapio:editar'
+  | 'cardapio:aprovar'
+  | 'compras:gerenciar'
+  | 'recebimento:registrar'
+  | 'estoque:gerenciar'
+  | 'precos:editar'
+  | 'auditoria:ver'
+  | 'config:gerenciar';

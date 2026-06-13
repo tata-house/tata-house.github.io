@@ -6,8 +6,20 @@
    ===================================================================== */
 
 import { useCallback, useEffect, useState } from 'react';
-import { linhasDoDia, PESSOAS_PADRAO } from './motor';
-import type { EstadoSemana, Papel } from './tipos';
+import { linhasDoDia, normalizar, PESSOAS_PADRAO } from './motor';
+import type {
+  Aceitacao,
+  Estoque,
+  EventoDemanda,
+  HistoricoPrecos,
+  ItemEstoque,
+  MovEstoque,
+  EstadoSemana,
+  Papel,
+  RegistroAceitacao,
+  RegistroAuditoria,
+  RegistroDesperdicio,
+} from './tipos';
 
 const PREFIXO = 'cardapio.v1.';
 
@@ -50,6 +62,56 @@ function gravarLocal(chave: string, valor: unknown) {
   } catch {
     /* armazenamento cheio/indisponível: protótipo segue em memória */
   }
+}
+
+/* =====================================================================
+   Auditoria global (Módulo 9) — qualquer parte do app registra ações
+   relevantes aqui; a aba de Auditoria escuta via assinatura simples.
+   ===================================================================== */
+
+let cacheAuditoria: RegistroAuditoria[] | null = null;
+const ouvintesAuditoria = new Set<() => void>();
+
+function carregarAuditoria(): RegistroAuditoria[] {
+  if (cacheAuditoria === null) cacheAuditoria = lerLocal<RegistroAuditoria[]>('auditoria', []);
+  return cacheAuditoria;
+}
+
+/** Papel ativo no momento (mantido em sincronia por usePapel) p/ carimbar logs. */
+let papelAtual: Papel = 'gestor';
+
+export function registrarAuditoria(reg: Omit<RegistroAuditoria, 'em' | 'papel'> & { em?: string; papel?: Papel }) {
+  const completo: RegistroAuditoria = {
+    em: reg.em ?? new Date().toISOString(),
+    papel: reg.papel ?? papelAtual,
+    acao: reg.acao,
+    alvo: reg.alvo,
+    de: reg.de,
+    para: reg.para,
+    semana: reg.semana,
+  };
+  const lista = [completo, ...carregarAuditoria()].slice(0, 800);
+  cacheAuditoria = lista;
+  gravarLocal('auditoria', lista);
+  ouvintesAuditoria.forEach((f) => f());
+}
+
+export function useAuditoria() {
+  const [, forcar] = useState(0);
+  useEffect(() => {
+    const f = () => forcar((x) => x + 1);
+    ouvintesAuditoria.add(f);
+    f(); // garante leitura no cliente
+    return () => {
+      ouvintesAuditoria.delete(f);
+    };
+  }, []);
+  const limpar = useCallback(() => {
+    cacheAuditoria = [];
+    gravarLocal('auditoria', []);
+    ouvintesAuditoria.forEach((f) => f());
+  }, []);
+  return { registros: carregarAuditoria(), limpar };
 }
 
 function ddmm(d: Date): string {
@@ -106,6 +168,11 @@ export function idSemanaIso(data: Date): string {
   return `${d.getUTCFullYear()}-S${String(semana).padStart(2, '0')}`;
 }
 
+/** Lê o documento de uma semana sem montar hook (para indicadores mensais). */
+export function lerSemana(semanaId: string): EstadoSemana {
+  return lerLocal('semana.' + semanaId, semanaVazia());
+}
+
 export function useSemana(semanaId: string) {
   const [estado, setEstado] = useState<EstadoSemana>(semanaVazia);
   const [pronto, setPronto] = useState(false);
@@ -136,17 +203,44 @@ export function usePrecos() {
     setPrecos(lerLocal('precos', {}));
   }, []);
 
-  const definirPreco = useCallback((itemNorm: string, valor: number | null) => {
+  const definirPreco = useCallback((itemNorm: string, valor: number | null, nome?: string) => {
     setPrecos((atual) => {
+      const anterior = atual[itemNorm];
       const novo = { ...atual };
       if (valor === null || Number.isNaN(valor) || valor <= 0) delete novo[itemNorm];
       else novo[itemNorm] = valor;
       gravarLocal('precos', novo);
+
+      // só registra quando o valor realmente mudou
+      if (valor !== null && valor > 0 && valor !== anterior) {
+        // histórico para o radar de preços (Módulo 5)
+        const hist = lerLocal<HistoricoPrecos>('historicoPrecos', {});
+        const serie = hist[itemNorm] ?? [];
+        serie.push({ valor, em: new Date().toISOString() });
+        hist[itemNorm] = serie.slice(-40);
+        gravarLocal('historicoPrecos', hist);
+        // trilha de auditoria (Módulo 9)
+        registrarAuditoria({
+          acao: 'alterou preço',
+          alvo: nome ?? itemNorm,
+          de: anterior ?? null,
+          para: valor,
+        });
+      }
       return novo;
     });
   }, []);
 
   return { precos, definirPreco };
+}
+
+/** Série temporal de preços por item (alimenta o radar). */
+export function useHistoricoPrecos() {
+  const [historico, setHistorico] = useState<HistoricoPrecos>({});
+  useEffect(() => {
+    setHistorico(lerLocal('historicoPrecos', {}));
+  }, []);
+  return historico;
 }
 
 /* ------------------- itens novos vindos da cotação -------------------- */
@@ -188,10 +282,14 @@ export function useFornecedores() {
 
   const definirFornecedor = useCallback((itemNorm: string, marca: string | null) => {
     setFornecedores((atual) => {
+      const anterior = atual[itemNorm];
       const novo = { ...atual };
       if (!marca) delete novo[itemNorm];
       else novo[itemNorm] = marca;
       gravarLocal('fornecedores', novo);
+      if (marca && marca !== anterior) {
+        registrarAuditoria({ acao: 'definiu fornecedor', alvo: itemNorm, de: anterior ?? null, para: marca });
+      }
       return novo;
     });
   }, []);
@@ -265,13 +363,212 @@ export function usePapel() {
   const [papel, setPapelEstado] = useState<Papel>('gestor');
 
   useEffect(() => {
-    setPapelEstado(lerLocal<Papel>('papel', 'gestor'));
+    const p = lerLocal<Papel>('papel', 'gestor');
+    papelAtual = p;
+    setPapelEstado(p);
   }, []);
 
   const setPapel = useCallback((p: Papel) => {
+    papelAtual = p;
     setPapelEstado(p);
     gravarLocal('papel', p);
   }, []);
 
   return { papel, setPapel };
+}
+
+/* =====================================================================
+   Módulo 2 — Estoque inteligente (saldo global por item + movimentos).
+   ===================================================================== */
+
+export function useEstoque() {
+  const [estoque, setEstoque] = useState<Estoque>({});
+  const [pronto, setPronto] = useState(false);
+
+  useEffect(() => {
+    setEstoque(lerLocal('estoque', {}));
+    setPronto(true);
+  }, []);
+
+  /** Aplica um movimento (entrada +, baixa −, ajuste/recebimento) e audita. */
+  const movimentar = useCallback((mov: Omit<MovEstoque, 'em' | 'papel'>) => {
+    setEstoque((atual) => {
+      const k = mov.norm;
+      const prev: ItemEstoque = atual[k] ?? {
+        item: mov.item,
+        unid: mov.unid,
+        qtd: 0,
+        minimo: 0,
+        atualizadoEm: new Date().toISOString(),
+      };
+      const novoSaldo = Math.max(0, Math.round((prev.qtd + mov.delta) * 1000) / 1000);
+      const novo: Estoque = {
+        ...atual,
+        [k]: { ...prev, item: mov.item || prev.item, unid: mov.unid || prev.unid, qtd: novoSaldo, atualizadoEm: new Date().toISOString() },
+      };
+      gravarLocal('estoque', novo);
+
+      const log = lerLocal<MovEstoque[]>('estoqueMov', []);
+      log.unshift({ ...mov, em: new Date().toISOString(), papel: papelAtual });
+      gravarLocal('estoqueMov', log.slice(0, 600));
+
+      registrarAuditoria({
+        acao: mov.motivo === 'baixa' ? 'baixa de estoque' : 'movimentou estoque',
+        alvo: mov.item,
+        de: prev.qtd,
+        para: novoSaldo,
+      });
+      return novo;
+    });
+  }, []);
+
+  const definirMinimo = useCallback((norm: string, item: string, unid: string, minimo: number) => {
+    setEstoque((atual) => {
+      const prev = atual[norm] ?? { item, unid, qtd: 0, minimo: 0, atualizadoEm: new Date().toISOString() };
+      const novo = { ...atual, [norm]: { ...prev, item, unid, minimo: Math.max(0, minimo), atualizadoEm: new Date().toISOString() } };
+      gravarLocal('estoque', novo);
+      return novo;
+    });
+  }, []);
+
+  /** Define o saldo absoluto (contagem física), registrando a diferença. */
+  const definirSaldo = useCallback((norm: string, item: string, unid: string, saldo: number) => {
+    setEstoque((atual) => {
+      const prev = atual[norm];
+      const anterior = prev?.qtd ?? 0;
+      const novoSaldo = Math.max(0, saldo);
+      const novo: Estoque = {
+        ...atual,
+        [norm]: { item, unid, qtd: novoSaldo, minimo: prev?.minimo ?? 0, atualizadoEm: new Date().toISOString() },
+      };
+      gravarLocal('estoque', novo);
+      if (novoSaldo !== anterior) {
+        registrarAuditoria({ acao: 'ajustou estoque', alvo: item, de: anterior, para: novoSaldo });
+      }
+      return novo;
+    });
+  }, []);
+
+  return { estoque, pronto, movimentar, definirMinimo, definirSaldo };
+}
+
+/* =====================================================================
+   Módulo 3 — Controle de desperdício (registros por semana).
+   ===================================================================== */
+
+export function useDesperdicio(semanaId: string) {
+  const [registros, setRegistros] = useState<RegistroDesperdicio[]>([]);
+
+  useEffect(() => {
+    setRegistros(lerLocal('desperdicio.' + semanaId, []));
+  }, [semanaId]);
+
+  const adicionar = useCallback(
+    (r: Omit<RegistroDesperdicio, 'id' | 'em'>) => {
+      setRegistros((atual) => {
+        const novo = [
+          ...atual,
+          { ...r, id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, em: new Date().toISOString() },
+        ];
+        gravarLocal('desperdicio.' + semanaId, novo);
+        registrarAuditoria({ acao: 'registrou desperdício', alvo: r.prato, para: Math.max(0, r.produzido - r.consumido), semana: semanaId });
+        return novo;
+      });
+    },
+    [semanaId],
+  );
+
+  const remover = useCallback(
+    (id: string) => {
+      setRegistros((atual) => {
+        const novo = atual.filter((r) => r.id !== id);
+        gravarLocal('desperdicio.' + semanaId, novo);
+        return novo;
+      });
+    },
+    [semanaId],
+  );
+
+  return { registros, adicionar, remover };
+}
+
+/** Lê os registros de desperdício de qualquer semana (para indicadores). */
+export function lerDesperdicio(semanaId: string): RegistroDesperdicio[] {
+  return lerLocal('desperdicio.' + semanaId, []);
+}
+
+/* =====================================================================
+   Módulo 4 — Índice de aceitação dos pratos (global por prato).
+   ===================================================================== */
+
+export function useAceitacao() {
+  const [aceitacao, setAceitacao] = useState<Aceitacao>({});
+
+  useEffect(() => {
+    setAceitacao(lerLocal('aceitacao', {}));
+  }, []);
+
+  const avaliar = useCallback((prato: string, voto: 'bom' | 'ok' | 'ruim') => {
+    const k = normalizar(prato);
+    if (!k) return;
+    const nota = voto === 'bom' ? 5 : voto === 'ok' ? 3 : 1;
+    setAceitacao((atual) => {
+      const prev: RegistroAceitacao = atual[k] ?? { prato, bom: 0, ok: 0, ruim: 0, somaNotas: 0, n: 0, atualizadoEm: '' };
+      const novo: Aceitacao = {
+        ...atual,
+        [k]: {
+          prato,
+          bom: prev.bom + (voto === 'bom' ? 1 : 0),
+          ok: prev.ok + (voto === 'ok' ? 1 : 0),
+          ruim: prev.ruim + (voto === 'ruim' ? 1 : 0),
+          somaNotas: prev.somaNotas + nota,
+          n: prev.n + 1,
+          atualizadoEm: new Date().toISOString(),
+        },
+      };
+      gravarLocal('aceitacao', novo);
+      return novo;
+    });
+  }, []);
+
+  return { aceitacao, avaliar };
+}
+
+/* =====================================================================
+   Módulo 6 — Eventos de demanda (manuais / feriados configuráveis).
+   ===================================================================== */
+
+export function useEventos() {
+  const [eventos, setEventos] = useState<EventoDemanda[]>([]);
+
+  useEffect(() => {
+    setEventos(lerLocal('eventos', []));
+  }, []);
+
+  const adicionar = useCallback((e: Omit<EventoDemanda, 'id'>) => {
+    setEventos((atual) => {
+      const novo = [...atual, { ...e, id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}` }];
+      gravarLocal('eventos', novo);
+      return novo;
+    });
+  }, []);
+
+  const remover = useCallback((id: string) => {
+    setEventos((atual) => {
+      const novo = atual.filter((e) => e.id !== id);
+      gravarLocal('eventos', novo);
+      return novo;
+    });
+  }, []);
+
+  return { eventos, adicionar, remover };
+}
+
+export function lerEventos(): EventoDemanda[] {
+  return lerLocal('eventos', []);
+}
+
+/** Média de refeições aprendida por dia da semana (0=seg … 6=dom). */
+export function lerMediaRefeicoes(): Record<number, { f: number; n: number }> {
+  return lerLocal('mediaRefeicoes', {});
 }

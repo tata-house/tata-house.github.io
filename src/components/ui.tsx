@@ -83,3 +83,114 @@ export const estiloInput =
 
 export const estiloRotulo =
   'mb-1.5 block text-xs font-bold uppercase tracking-[0.12em] text-carvao-400 dark:text-carvao-300';
+
+/* ---------------------------------------------------------------------
+   Primitivos de leitura gerencial (dashboard, indicadores, rankings).
+   --------------------------------------------------------------------- */
+
+const TOM_PILULA = {
+  neutro: 'bg-carvao-100 text-carvao-600 ring-carvao-200 dark:bg-carvao-700 dark:text-areia-200 dark:ring-carvao-600',
+  verde: 'bg-brand-500/12 text-brand-700 ring-brand-500/30 dark:text-brand-300',
+  ouro: 'bg-ouro-400/15 text-[#8a6a2e] ring-ouro-400/30 dark:text-ouro-300',
+  vermelho: 'bg-[#b04c41]/12 text-[#b04c41] ring-[#b04c41]/30 dark:text-[#e89a90]',
+  azul: 'bg-[#2d6f8e]/12 text-[#2d6f8e] ring-[#2d6f8e]/30 dark:text-[#7cb8d4]',
+} as const;
+
+export function Pilula({
+  children,
+  tom = 'neutro',
+  className = '',
+}: {
+  children: ReactNode;
+  tom?: keyof typeof TOM_PILULA;
+  className?: string;
+}) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wide ring-1 ${TOM_PILULA[tom]} ${className}`}
+    >
+      {children}
+    </span>
+  );
+}
+
+export function Kpi({
+  rotulo,
+  valor,
+  detalhe,
+  tom = 'neutro',
+  icone,
+}: {
+  rotulo: string;
+  valor: ReactNode;
+  detalhe?: ReactNode;
+  tom?: keyof typeof TOM_PILULA;
+  icone?: ReactNode;
+}) {
+  const barra = {
+    neutro: 'from-carvao-300 to-carvao-400',
+    verde: 'from-brand-500 to-brand-600',
+    ouro: 'from-ouro-300 to-ouro-500',
+    vermelho: 'from-[#c96a5f] to-[#b04c41]',
+    azul: 'from-[#4d92b0] to-[#2d6f8e]',
+  }[tom];
+  return (
+    <div className="relative overflow-hidden rounded-3xl border border-carvao-100 bg-white p-4 shadow-suave dark:border-carvao-700/70 dark:bg-carvao-850">
+      <span className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${barra}`} />
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-carvao-400">{rotulo}</p>
+        {icone && <span className="text-base leading-none opacity-70">{icone}</span>}
+      </div>
+      <p className="mt-1 font-display text-[26px] font-bold leading-none text-carvao-900 dark:text-areia-50">{valor}</p>
+      {detalhe && <p className="mt-1.5 text-[11px] font-semibold text-carvao-400">{detalhe}</p>}
+    </div>
+  );
+}
+
+export function EstadoVazio({
+  icone = '✨',
+  titulo,
+  texto,
+  acao,
+}: {
+  icone?: ReactNode;
+  titulo: string;
+  texto?: string;
+  acao?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-2 rounded-3xl border border-dashed border-carvao-200 bg-white/60 px-6 py-12 text-center dark:border-carvao-700 dark:bg-carvao-850/60">
+      <span className="text-4xl">{icone}</span>
+      <p className="font-display text-lg font-semibold text-carvao-700 dark:text-areia-100">{titulo}</p>
+      {texto && <p className="max-w-sm text-sm text-carvao-400">{texto}</p>}
+      {acao && <div className="mt-2">{acao}</div>}
+    </div>
+  );
+}
+
+export function BarraMini({ valor, tom = 'verde' }: { valor: number; tom?: keyof typeof TOM_PILULA }) {
+  const cor = {
+    neutro: 'bg-carvao-300',
+    verde: 'bg-brand-500',
+    ouro: 'bg-ouro-400',
+    vermelho: 'bg-[#b04c41]',
+    azul: 'bg-[#2d6f8e]',
+  }[tom];
+  return (
+    <div className="h-2 w-full overflow-hidden rounded-full bg-carvao-100 dark:bg-carvao-700">
+      <div className={`h-full rounded-full ${cor} transition-all`} style={{ width: `${Math.max(0, Math.min(100, valor * 100))}%` }} />
+    </div>
+  );
+}
+
+export function Secao({ titulo, acao, children }: { titulo: ReactNode; acao?: ReactNode; children?: ReactNode }) {
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="font-display text-lg font-semibold text-carvao-800 dark:text-areia-100">{titulo}</h2>
+        {acao}
+      </div>
+      {children}
+    </div>
+  );
+}

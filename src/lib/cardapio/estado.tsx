@@ -52,17 +52,27 @@ function gravarLocal(chave: string, valor: unknown) {
   }
 }
 
-/** Identificadores das semanas operáveis (mês corrente + próximas). */
-export function rotuloSemana(id: string): string {
-  const [ano, sem] = id.split('-S');
-  return `Semana ${sem} · ${ano}`;
+function ddmm(d: Date): string {
+  return `${String(d.getUTCDate()).padStart(2, '0')}/${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+}
+
+/** Período da semana: "09/06 a 15/06" (sempre segunda → domingo). */
+export function periodoSemana(id: string): string {
+  const datas = datasDaSemana(id);
+  return `${ddmm(datas[0])} a ${ddmm(datas[6])}`;
+}
+
+/** Rótulo amigável: "Semana 1 · 09/06 a 15/06". */
+export function rotuloSemana(id: string, numero?: number): string {
+  const base = numero ? `Semana ${numero} · ` : '';
+  return `${base}${periodoSemana(id)}`;
 }
 
 export function idsSemanas(): string[] {
   const hoje = new Date();
   const ids: string[] = [];
-  // 6 semanas: a atual, 1 anterior e 4 à frente (ISO week)
-  for (let off = -1; off <= 4; off++) {
+  // semana atual + 7 semanas à frente (planejamento sempre de seg a dom)
+  for (let off = 0; off <= 7; off++) {
     const d = new Date(hoje);
     d.setDate(d.getDate() + off * 7);
     ids.push(idSemanaIso(d));

@@ -12,6 +12,7 @@ import { PosterSemana } from '@/components/cardapio/PosterSemana';
 import {
   idSemanaIso,
   idsSemanas,
+  periodoSemana,
   rotuloSemana,
   useAprendizado,
   useFornecedores,
@@ -64,6 +65,9 @@ export default function PaginaCardapios() {
   const { fatores, aprenderDeSemana } = useAprendizado();
   const { papel, setPapel } = usePapel();
 
+  const semanas = idsSemanas();
+  const idxSemana = semanas.indexOf(semanaId);
+
   const podeEditarCardapio = papel === 'gestor' && (estado.etapa === 'rascunho' || estado.etapa === 'cozinha');
 
   if (posterAberto) {
@@ -96,16 +100,15 @@ export default function PaginaCardapios() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="font-display text-2xl font-bold text-brand-800 dark:text-brand-300 sm:text-3xl">
-              Cardápio da Semana
+              Cardápio · Semana {idxSemana >= 0 ? idxSemana + 1 : ''}
               <span
                 className={`ml-2.5 inline-flex translate-y-[-2px] items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide ring-1 ${COR_ETAPA[estado.etapa]}`}
               >
                 {ROTULO_ETAPA[estado.etapa]}
               </span>
             </h1>
-            <p className="text-sm text-carvao-400">
-              Refeição dos funcionários — do orçamento à entrega, com o histórico de 405 dias trabalhando por
-              você.
+            <p className="text-sm font-semibold text-carvao-500 dark:text-carvao-300">
+              📅 {periodoSemana(semanaId)} <span className="font-normal text-carvao-400">(segunda a domingo)</span>
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -114,9 +117,10 @@ export default function PaginaCardapios() {
               onChange={(e) => setSemanaId(e.target.value)}
               className="min-h-10 rounded-2xl border border-carvao-200 bg-white px-3 py-2 text-sm font-semibold dark:border-carvao-600 dark:bg-carvao-900"
             >
-              {idsSemanas().map((id) => (
+              {semanas.map((id, i) => (
                 <option key={id} value={id}>
-                  {rotuloSemana(id)}
+                  {rotuloSemana(id, i + 1)}
+                  {i === 0 ? ' (atual)' : ''}
                 </option>
               ))}
             </select>

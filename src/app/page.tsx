@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { AlternadorTema } from '@/components/AlternadorTema';
-import { LogoTata } from '@/components/LogoTata';
 import { ToastHost } from '@/components/Toast';
 import { AbaAceitacao } from '@/components/cardapio/AbaAceitacao';
 import { AbaAuditoria } from '@/components/cardapio/AbaAuditoria';
@@ -35,6 +34,7 @@ import {
   usePrecos,
   useSemana,
 } from '@/lib/cardapio/estado';
+import { useLogo } from '@/lib/cardapio/logo';
 import { PAPEIS, pode } from '@/lib/cardapio/org';
 import type { Etapa } from '@/lib/cardapio/tipos';
 
@@ -80,6 +80,7 @@ export default function PaginaCardapios() {
   const { itensExtras, cadastrarItem } = useItensExtras();
   const { fatores, aprenderDeSemana } = useAprendizado();
   const { papel, setPapel } = usePapel();
+  const { logo } = useLogo();
   const { estoque, movimentar, definirMinimo, definirSaldo } = useEstoque();
   const { aceitacao, avaliar } = useAceitacao();
   const { eventos, adicionar: addEvento, remover: rmEvento } = useEventos();
@@ -104,7 +105,12 @@ export default function PaginaCardapios() {
         <div className="h-1 w-full bg-gradient-to-r from-ouro-600 via-ouro-300 to-ouro-600" />
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-4">
           <div className="flex items-center gap-3">
-            <LogoTata className="h-11 w-11 shrink-0 text-brand-200 drop-shadow-[0_0_6px_rgba(150,234,183,0.55)]" />
+            {logo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logo} alt="" className="h-10 w-auto max-w-[120px] shrink-0 object-contain" />
+            ) : (
+              <span className="h-9 w-1.5 shrink-0 rounded-full bg-gradient-to-b from-ouro-300 to-ouro-500" aria-hidden />
+            )}
             <div className="leading-tight">
               <div className="whitespace-nowrap font-display text-[17px] font-bold tracking-[0.18em] sm:text-[19px] sm:tracking-[0.26em]">
                 TATÁ&nbsp;SUSHI

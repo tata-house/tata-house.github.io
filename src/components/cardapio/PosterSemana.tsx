@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
-import { LogoTata } from '@/components/LogoTata';
+import { useEffect, useRef } from 'react';
+import { QrCode } from '@/components/QrCode';
 import { Botao } from '@/components/ui';
 import { datasDaSemana } from '@/lib/cardapio/estado';
+import { imagemParaDataUrl, useLogo } from '@/lib/cardapio/logo';
 import { proteinaDoPrato } from '@/lib/cardapio/motor';
 import type { EstadoSemana } from '@/lib/cardapio/tipos';
 
@@ -39,6 +40,20 @@ export function PosterSemana({
 }) {
   const datas = datasDaSemana(semanaId);
   const periodo = `${ddmm(datas[0])} ATÉ ${ddmm(datas[6])}`;
+  const urlAvaliar = (typeof window !== 'undefined' ? window.location.origin : '') + '/avaliar';
+  const { logo, setLogo } = useLogo();
+  const inputLogo = useRef<HTMLInputElement>(null);
+
+  const aoEscolherLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      setLogo(await imagemParaDataUrl(file));
+    } catch {
+      alert('Não consegui ler essa imagem. Tente um PNG ou JPG.');
+    }
+  };
 
   useEffect(() => {
     const esc = (e: KeyboardEvent) => e.key === 'Escape' && aoFechar();
@@ -56,9 +71,27 @@ export function PosterSemana({
         >
           ← Voltar ao app
         </button>
-        <Botao variante="sucesso" onClick={() => window.print()} className="!min-h-10 !px-5 !py-2 text-sm">
-          🖨️ Imprimir pôster
-        </Botao>
+        <div className="flex items-center gap-2">
+          <input ref={inputLogo} type="file" accept="image/*" onChange={aoEscolherLogo} className="hidden" />
+          <Botao
+            variante="secundario"
+            onClick={() => inputLogo.current?.click()}
+            className="!min-h-10 !px-4 !py-2 text-sm"
+          >
+            🖼️ {logo ? 'Trocar logo' : 'Enviar logo'}
+          </Botao>
+          {logo && (
+            <button
+              onClick={() => setLogo(null)}
+              className="text-xs font-bold uppercase tracking-wide text-carvao-400 hover:text-[#b04c41]"
+            >
+              Remover
+            </button>
+          )}
+          <Botao variante="sucesso" onClick={() => window.print()} className="!min-h-10 !px-5 !py-2 text-sm">
+            🖨️ Imprimir pôster
+          </Botao>
+        </div>
       </div>
 
       {/* Folha A4 */}
@@ -77,12 +110,17 @@ export function PosterSemana({
               </div>
             </div>
             <div className="flex shrink-0 flex-col items-center gap-1.5">
-              <LogoTata className="h-[88px] w-[88px] text-brand-500" />
-              <div className="text-center font-display text-[13px] font-bold tracking-[0.3em] text-brand-800">
-                TATÁ SUSHI
-              </div>
-              <div className="text-center text-[8px] font-extrabold uppercase tracking-[0.34em] text-ouro-600">
-                Cozinha da equipe
+              {logo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={logo} alt="" className="h-16 w-auto max-w-[140px] object-contain" />
+              ) : (
+                <div className="text-center font-display text-[15px] font-black tracking-[0.3em] text-brand-800">
+                  TATÁ SUSHI
+                </div>
+              )}
+              <QrCode url={urlAvaliar} size={96} className="ring-1 ring-brand-200" />
+              <div className="max-w-[110px] text-center text-[8px] font-extrabold uppercase leading-tight tracking-[0.18em] text-ouro-600">
+                Aponte a câmera e avalie o prato do dia
               </div>
             </div>
           </div>
@@ -161,11 +199,9 @@ export function PosterSemana({
         <footer className="px-9 pb-6">
           <div className="flex items-center justify-center gap-3">
             <span className="h-px grow bg-gradient-to-r from-transparent to-brand-600/50" aria-hidden />
-            <LogoTata className="h-6 w-6 text-brand-600" />
             <p className="whitespace-nowrap text-[10px] font-extrabold uppercase tracking-[0.26em] text-brand-800">
               Bom apetite, equipe TATÁ!
             </p>
-            <LogoTata className="h-6 w-6 text-brand-600" />
             <span className="h-px grow bg-gradient-to-l from-transparent to-brand-600/50" aria-hidden />
           </div>
           <p className="mt-2 text-center text-[9px] font-bold uppercase tracking-[0.2em] text-carvao-400">

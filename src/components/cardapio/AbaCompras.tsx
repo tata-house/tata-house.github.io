@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Botao, Cartao, Modal, estiloInput } from '@/components/ui';
+import { Botao, Cartao, Modal, Pilula, estiloInput } from '@/components/ui';
+import { Icone } from '@/components/Icones';
 import {
   DADOS,
   DIAS_SEMANA,
@@ -14,6 +15,10 @@ import type { EstadoSemana, Papel, StatusItem } from '@/lib/cardapio/tipos';
 
 function hojeIso(): string {
   return new Date().toISOString().slice(0, 10);
+}
+
+function ddmm(iso: string): string {
+  return `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
 }
 
 /** Comprime a foto da nota para caber no armazenamento do navegador. */
@@ -91,6 +96,27 @@ export function AbaCompras({
       manuais: { ...e.manuais, [dia]: (e.manuais[dia] ?? []).filter((_, i) => i !== idx) },
     }));
 
+  // ações em lote — sobre todos os itens do dia
+  const comprarTudo = (dia: number) =>
+    atualizar((e) => {
+      const st = { ...(e.status[dia] ?? {}) };
+      linhasDoDia(e, dia, fatores).forEach((l) => {
+        if (!st[l.chave]?.compradoEm) st[l.chave] = { ...(st[l.chave] ?? {}), compradoEm: hojeIso(), compradoQtd: l.qtd };
+      });
+      return { ...e, status: { ...e.status, [dia]: st } };
+    });
+
+  const receberTudo = (dia: number) =>
+    atualizar((e) => {
+      const st = { ...(e.status[dia] ?? {}) };
+      linhasDoDia(e, dia, fatores).forEach((l) => {
+        const s = st[l.chave];
+        if (s?.compradoEm && !s.recebidoOk)
+          st[l.chave] = { ...s, recebidoOk: true, recebidoQtd: s.compradoQtd ?? l.qtd };
+      });
+      return { ...e, status: { ...e.status, [dia]: st } };
+    });
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2 print:hidden">
@@ -108,7 +134,7 @@ export function AbaCompras({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="font-display text-lg font-semibold">📑 Notas fiscais</h3>
             {(podeComprar || podeReceber) && (
-              <label className="cursor-pointer rounded-full bg-ouro-300/20 px-3.5 py-2 text-[11px] font-extrabold uppercase tracking-wide text-ouro-600 ring-1 ring-ouro-400/40 hover:bg-ouro-300/30">
+              <label className="cursor-pointer rounded-full bg-ouro-300/20 px-3.5 py-2 text-[11px] font-bold uppercase tracking-wide text-ouro-600 ring-1 ring-ouro-400/40 hover:bg-ouro-300/30">
                 📸 Foto da nota fiscal
                 <input
                   type="file"
@@ -128,8 +154,8 @@ export function AbaCompras({
           </div>
           {(estado.notasFiscais ?? []).length === 0 ? (
             <p className="text-xs text-carvao-400">
-              Tire a foto da nota na hora do recebimento — o app pergunta a quais dias de compra ela se
-              refere e deixa tudo conferível.
+              Tire a foto da nota na hora do recebimento — o app pergunta a quais dias de compra ela se refere e
+              deixa tudo conferível.
             </p>
           ) : (
             <ul className="flex flex-wrap gap-3">
@@ -140,14 +166,10 @@ export function AbaCompras({
                 >
                   <a href={n.foto} target="_blank" rel="noreferrer" title="Abrir nota fiscal">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={n.foto}
-                      alt="Nota fiscal"
-                      className="h-14 w-14 rounded-xl object-cover ring-2 ring-brand-500/50"
-                    />
+                    <img src={n.foto} alt="Nota fiscal" className="h-14 w-14 rounded-xl object-cover ring-2 ring-brand-500/50" />
                   </a>
                   <span>
-                    <span className="block text-[11px] font-extrabold uppercase text-brand-600">
+                    <span className="block text-[11px] font-bold uppercase text-brand-600">
                       {n.dias.map((d) => DIAS_SEMANA[d].slice(0, 3)).join(' · ')}
                     </span>
                     <span className="block text-[10px] text-carvao-400">
@@ -157,15 +179,12 @@ export function AbaCompras({
                   {(podeComprar || podeReceber) && (
                     <button
                       onClick={() =>
-                        atualizar((e) => ({
-                          ...e,
-                          notasFiscais: (e.notasFiscais ?? []).filter((_, i) => i !== ni),
-                        }))
+                        atualizar((e) => ({ ...e, notasFiscais: (e.notasFiscais ?? []).filter((_, i) => i !== ni) }))
                       }
                       aria-label="Remover nota fiscal"
-                      className="text-carvao-300 hover:text-[#b04c41]"
+                      className="flex h-8 w-8 items-center justify-center rounded-full text-carvao-300 hover:bg-[#b04c41]/10 hover:text-[#b04c41]"
                     >
-                      ✕
+                      <Icone nome="fechar" tam={16} />
                     </button>
                   )}
                 </li>
@@ -176,19 +195,11 @@ export function AbaCompras({
       )}
 
       {/* Pergunta da nota: a quais dias se refere? */}
-      <Modal
-        titulo="Essa nota é de quais dias?"
-        aberto={fotoPendente !== null}
-        aoFechar={() => setFotoPendente(null)}
-      >
+      <Modal titulo="Essa nota é de quais dias?" aberto={fotoPendente !== null} aoFechar={() => setFotoPendente(null)}>
         {fotoPendente && (
           <div className="space-y-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={fotoPendente}
-              alt="Nota fiscal"
-              className="mx-auto max-h-44 rounded-2xl object-contain ring-1 ring-carvao-200"
-            />
+            <img src={fotoPendente} alt="Nota fiscal" className="mx-auto max-h-44 rounded-2xl object-contain ring-1 ring-carvao-200" />
             <p className="text-sm text-carvao-500 dark:text-carvao-300">
               Uma compra pode cobrir mais de um dia — marque todos os dias de cardápio que esta nota atende:
             </p>
@@ -227,10 +238,7 @@ export function AbaCompras({
                 const dias = Array.from(diasDaNota).sort((a, b) => a - b);
                 atualizar((e) => ({
                   ...e,
-                  notasFiscais: [
-                    ...(e.notasFiscais ?? []),
-                    { foto: fotoPendente, dias, em: new Date().toISOString() },
-                  ],
+                  notasFiscais: [...(e.notasFiscais ?? []), { foto: fotoPendente, dias, em: new Date().toISOString() }],
                 }));
                 setFotoPendente(null);
               }}
@@ -250,12 +258,9 @@ export function AbaCompras({
         );
         const compradas = linhas.filter((l) => l.status.compradoEm).length;
         const recebidas = linhas.filter((l) => l.status.recebidoOk).length;
-        // conferência: preço pago acima do cotado ou recebido a menos que o pedido
         const divergencias = linhas.filter(
           (l) =>
-            (l.status.precoPago !== undefined &&
-              precos[l.chave] > 0 &&
-              l.status.precoPago > precos[l.chave] * 1.02) ||
+            (l.status.precoPago !== undefined && precos[l.chave] > 0 && l.status.precoPago > precos[l.chave] * 1.02) ||
             (l.status.recebidoOk &&
               l.status.recebidoQtd !== undefined &&
               l.status.compradoQtd !== undefined &&
@@ -272,12 +277,10 @@ export function AbaCompras({
                   · {dia.principal || 'sem cardápio'} · {dia.pessoas} pessoas
                 </span>
               </h3>
-              <p className="text-xs font-semibold text-carvao-400">
+              <p className="text-xs font-semibold tabular-nums text-carvao-400">
                 {compradas}/{linhas.length} comprados · {recebidas}/{linhas.length} recebidos
                 {custo.itensComPreco > 0 && <> · ≈ {formatarReais(custo.total)}</>}
-                {divergencias > 0 && (
-                  <span className="font-extrabold text-[#b04c41]"> · ⚠ {divergencias} divergências</span>
-                )}
+                {divergencias > 0 && <span className="font-extrabold text-[#b04c41]"> · ⚠ {divergencias} divergências</span>}
                 {notasDoDia > 0 && (
                   <span className="font-bold text-brand-600">
                     {' '}
@@ -287,46 +290,62 @@ export function AbaCompras({
               </p>
             </div>
 
+            {/* ações em lote */}
+            {linhas.length > 0 && (podeComprar || podeReceber) && (
+              <div className="flex flex-wrap gap-2 print:hidden">
+                {podeComprar && compradas < linhas.length && (
+                  <button
+                    onClick={() => comprarTudo(di)}
+                    className="flex items-center gap-1.5 rounded-full bg-carvao-900 px-3 py-1.5 text-[12px] font-bold text-white dark:bg-areia-100 dark:text-carvao-900"
+                  >
+                    <Icone nome="check" tam={15} /> Comprar tudo
+                  </button>
+                )}
+                {podeReceber && compradas > 0 && recebidas < compradas && (
+                  <button
+                    onClick={() => receberTudo(di)}
+                    className="flex items-center gap-1.5 rounded-full bg-brand-600 px-3 py-1.5 text-[12px] font-bold text-white hover:bg-brand-700"
+                  >
+                    <Icone nome="compras" tam={15} /> Receber tudo
+                  </button>
+                )}
+              </div>
+            )}
+
             {linhas.length === 0 ? (
               <p className="text-sm text-carvao-400">Escolha o cardápio na aba anterior para gerar a lista.</p>
             ) : (
-              <div className="-mx-2 overflow-x-auto">
-                <table className="w-full min-w-[560px] text-sm">
-                  <thead>
-                    <tr className="text-left text-[10px] font-bold uppercase tracking-wider text-carvao-400">
-                      <th className="px-2 py-1.5">Item</th>
-                      <th className="px-2 py-1.5">Qtd</th>
-                      <th className="px-2 py-1.5">Comprado</th>
-                      <th className="px-2 py-1.5">Previsão</th>
-                      <th className="px-2 py-1.5">Recebido</th>
-                      <th className="px-2 py-1.5 print:hidden" />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {linhas.map((l) => (
-                      <tr
-                        key={l.chave}
-                        className="border-t border-carvao-100 dark:border-carvao-700/60"
-                      >
-                        <td className="px-2 py-2">
-                          <span className="font-semibold">{l.item}</span>
-                          {l.manual && (
-                            <span className="ml-1.5 rounded-full bg-ouro-300/20 px-1.5 py-0.5 text-[9px] font-bold uppercase text-ouro-600">
-                              extra
-                            </span>
-                          )}
-                          {l.sugerida !== null && l.qtd !== l.sugerida && (
-                            <span className="ml-1.5 text-[10px] text-carvao-400">
-                              (sugerido {formatarQtd(l.sugerida)})
-                            </span>
-                          )}
+              <div className="space-y-2">
+                {linhas.map((l) => {
+                  const acima =
+                    l.status.precoPago !== undefined &&
+                    precos[l.chave] > 0 &&
+                    l.status.precoPago > precos[l.chave] * 1.02;
+                  const veioMenos =
+                    l.status.recebidoOk &&
+                    l.status.recebidoQtd !== undefined &&
+                    l.status.compradoQtd !== undefined &&
+                    l.status.recebidoQtd < l.status.compradoQtd;
+                  return (
+                    <div
+                      key={l.chave}
+                      className="rounded-2xl bg-areia-50/70 p-3 ring-1 ring-carvao-100 dark:bg-carvao-900/40 dark:ring-carvao-700/60"
+                    >
+                      {/* item + quantidade + remover */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="flex flex-wrap items-center gap-1.5 text-sm font-semibold">
+                            {l.item}
+                            {l.manual && <Pilula tom="ouro">extra</Pilula>}
+                            {l.sugerida !== null && l.qtd !== l.sugerida && (
+                              <span className="text-[10px] font-normal text-carvao-400">(sugerido {formatarQtd(l.sugerida)})</span>
+                            )}
+                          </p>
                           {fornecedores[l.chave] && (
-                            <span className="block text-[10px] font-semibold text-brand-600">
-                              ↓ mais barato: {fornecedores[l.chave]}
-                            </span>
+                            <span className="block text-[10px] font-semibold text-brand-600">↓ mais barato: {fornecedores[l.chave]}</span>
                           )}
-                        </td>
-                        <td className="whitespace-nowrap px-2 py-2">
+                        </div>
+                        <div className="flex shrink-0 items-center gap-1.5">
                           {podeAjustarQtd && !l.manual ? (
                             <input
                               type="number"
@@ -334,19 +353,34 @@ export function AbaCompras({
                               step="0.1"
                               value={l.qtd}
                               onChange={(e) => setAjuste(di, l.chave, Number(e.target.value))}
-                              className="w-16 rounded-lg border border-carvao-200 bg-white px-1.5 py-1 text-center font-bold dark:border-carvao-600 dark:bg-carvao-900"
+                              className="h-9 w-16 rounded-lg border border-carvao-200 bg-white px-1.5 text-center font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                             />
                           ) : (
-                            <strong>{formatarQtd(l.qtd)}</strong>
-                          )}{' '}
-                          <span className="text-carvao-400">{l.unid}</span>
-                        </td>
-                        <td className="whitespace-nowrap px-2 py-2">
+                            <strong className="tabular-nums">{formatarQtd(l.qtd)}</strong>
+                          )}
+                          <span className="text-xs text-carvao-400">{l.unid}</span>
+                          {podeAjustarQtd && (
+                            <button
+                              onClick={() =>
+                                l.manual ? rmManual(di, Number(l.chave.split(':')[1])) : setAjuste(di, l.chave, null, true)
+                              }
+                              aria-label={`Remover ${l.item}`}
+                              className="flex h-8 w-8 items-center justify-center rounded-full text-carvao-300 hover:bg-[#b04c41]/10 hover:text-[#b04c41] print:hidden"
+                            >
+                              <Icone nome="fechar" tam={15} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* fluxo: comprado · previsão · recebido */}
+                      <div className="mt-2.5 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                        {/* Comprado */}
+                        <div className="rounded-xl bg-white p-2 ring-1 ring-carvao-100 dark:bg-carvao-850 dark:ring-carvao-700/60">
+                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-carvao-400">Comprado</p>
                           {l.status.compradoEm ? (
                             <div className="space-y-1">
-                              <span className="font-semibold text-brand-600">
-                                ✓ {l.status.compradoEm.slice(8, 10)}/{l.status.compradoEm.slice(5, 7)}
-                              </span>
+                              <span className="text-xs font-bold text-brand-600">✓ {ddmm(l.status.compradoEm)}</span>
                               {podeComprar ? (
                                 <div className="flex items-center gap-1 text-[11px]">
                                   <input
@@ -356,10 +390,8 @@ export function AbaCompras({
                                     value={l.status.compradoQtd ?? ''}
                                     placeholder="qtd"
                                     title="Quantidade pedida"
-                                    onChange={(e) =>
-                                      setStatus(di, l.chave, { compradoQtd: Number(e.target.value) })
-                                    }
-                                    className="w-12 rounded-md border border-carvao-200 bg-white px-1 py-0.5 text-center font-bold dark:border-carvao-600 dark:bg-carvao-900"
+                                    onChange={(e) => setStatus(di, l.chave, { compradoQtd: Number(e.target.value) })}
+                                    className="h-8 w-12 rounded-md border border-carvao-200 bg-white px-1 text-center font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                                   />
                                   <span className="text-carvao-400">R$</span>
                                   <input
@@ -370,60 +402,59 @@ export function AbaCompras({
                                     placeholder="pago"
                                     title="Preço pago por unidade"
                                     onChange={(e) =>
-                                      setStatus(di, l.chave, {
-                                        precoPago: e.target.value ? Number(e.target.value) : undefined,
-                                      })
+                                      setStatus(di, l.chave, { precoPago: e.target.value ? Number(e.target.value) : undefined })
                                     }
-                                    className="w-14 rounded-md border border-carvao-200 bg-white px-1 py-0.5 text-right font-bold dark:border-carvao-600 dark:bg-carvao-900"
+                                    className="h-8 w-14 rounded-md border border-carvao-200 bg-white px-1 text-right font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                                   />
                                 </div>
                               ) : (
                                 l.status.precoPago !== undefined && (
                                   <span className="block text-[10px] text-carvao-400">
-                                    {formatarQtd(l.status.compradoQtd ?? l.qtd)} {l.unid} ·{' '}
-                                    {formatarReais(l.status.precoPago)}/{l.unid}
+                                    {formatarQtd(l.status.compradoQtd ?? l.qtd)} {l.unid} · {formatarReais(l.status.precoPago)}/{l.unid}
                                   </span>
                                 )
                               )}
-                              {l.status.precoPago !== undefined &&
-                                precos[l.chave] > 0 &&
-                                l.status.precoPago > precos[l.chave] * 1.02 && (
-                                  <span className="block text-[10px] font-extrabold text-[#b04c41]">
-                                    ▲ acima do cotado ({formatarReais(precos[l.chave])})
-                                  </span>
-                                )}
+                              {acima && (
+                                <span className="block text-[10px] font-extrabold text-[#b04c41]">
+                                  ▲ acima do cotado ({formatarReais(precos[l.chave])})
+                                </span>
+                              )}
                             </div>
                           ) : podeComprar ? (
                             <button
-                              onClick={() =>
-                                setStatus(di, l.chave, { compradoEm: hojeIso(), compradoQtd: l.qtd })
-                              }
-                              className="rounded-full bg-carvao-900 px-2.5 py-1 text-[11px] font-bold text-white dark:bg-areia-100 dark:text-carvao-900 print:hidden"
+                              onClick={() => setStatus(di, l.chave, { compradoEm: hojeIso(), compradoQtd: l.qtd })}
+                              className="w-full rounded-lg bg-carvao-900 px-2 py-1.5 text-[11px] font-bold text-white dark:bg-areia-100 dark:text-carvao-900 print:hidden"
                             >
                               Marcar
                             </button>
                           ) : (
                             <span className="text-carvao-300">—</span>
                           )}
-                        </td>
-                        <td className="whitespace-nowrap px-2 py-2">
+                        </div>
+
+                        {/* Previsão */}
+                        <div className="rounded-xl bg-white p-2 ring-1 ring-carvao-100 dark:bg-carvao-850 dark:ring-carvao-700/60">
+                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-carvao-400">Previsão</p>
                           {podeComprar ? (
                             <input
                               type="date"
                               value={l.status.previsao ?? ''}
                               onChange={(e) => setStatus(di, l.chave, { previsao: e.target.value })}
-                              className="rounded-lg border border-carvao-200 bg-white px-1.5 py-1 text-xs dark:border-carvao-600 dark:bg-carvao-900"
+                              className="h-8 w-full rounded-md border border-carvao-200 bg-white px-1.5 text-xs dark:border-carvao-600 dark:bg-carvao-900"
                             />
                           ) : l.status.previsao ? (
-                            `${l.status.previsao.slice(8, 10)}/${l.status.previsao.slice(5, 7)}`
+                            <span className="text-xs font-semibold">{ddmm(l.status.previsao)}</span>
                           ) : (
                             <span className="text-carvao-300">—</span>
                           )}
-                        </td>
-                        <td className="whitespace-nowrap px-2 py-2">
+                        </div>
+
+                        {/* Recebido */}
+                        <div className="rounded-xl bg-white p-2 ring-1 ring-carvao-100 dark:bg-carvao-850 dark:ring-carvao-700/60">
+                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-carvao-400">Recebido</p>
                           {l.status.recebidoOk ? (
                             <div className="space-y-0.5">
-                              <span className="font-semibold text-brand-600">✓ OK</span>
+                              <span className="text-xs font-bold text-brand-600">✓ OK</span>
                               {podeReceber && (
                                 <input
                                   type="number"
@@ -431,65 +462,40 @@ export function AbaCompras({
                                   step="0.1"
                                   value={l.status.recebidoQtd ?? ''}
                                   title="Quantidade conferida no recebimento"
-                                  onChange={(e) =>
-                                    setStatus(di, l.chave, { recebidoQtd: Number(e.target.value) })
-                                  }
-                                  className="block w-12 rounded-md border border-carvao-200 bg-white px-1 py-0.5 text-center text-[11px] font-bold dark:border-carvao-600 dark:bg-carvao-900"
+                                  onChange={(e) => setStatus(di, l.chave, { recebidoQtd: Number(e.target.value) })}
+                                  className="block h-8 w-12 rounded-md border border-carvao-200 bg-white px-1 text-center text-[11px] font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                                 />
                               )}
-                              {l.status.recebidoQtd !== undefined &&
-                                l.status.compradoQtd !== undefined &&
-                                l.status.recebidoQtd < l.status.compradoQtd && (
-                                  <span className="block text-[10px] font-extrabold text-[#d18a3a]">
-                                    ⚠ veio {formatarQtd(l.status.recebidoQtd)} de{' '}
-                                    {formatarQtd(l.status.compradoQtd)}
-                                  </span>
-                                )}
+                              {veioMenos && (
+                                <span className="block text-[10px] font-extrabold text-[#d18a3a]">
+                                  ⚠ veio {formatarQtd(l.status.recebidoQtd!)} de {formatarQtd(l.status.compradoQtd!)}
+                                </span>
+                              )}
                             </div>
                           ) : podeReceber && l.status.compradoEm ? (
                             <button
-                              onClick={() =>
-                                setStatus(di, l.chave, {
-                                  recebidoOk: true,
-                                  recebidoQtd: l.status.compradoQtd ?? l.qtd,
-                                })
-                              }
-                              className="rounded-full bg-brand-600 px-2.5 py-1 text-[11px] font-bold text-white print:hidden"
+                              onClick={() => setStatus(di, l.chave, { recebidoOk: true, recebidoQtd: l.status.compradoQtd ?? l.qtd })}
+                              className="w-full rounded-lg bg-brand-600 px-2 py-1.5 text-[11px] font-bold text-white print:hidden"
                             >
                               Dar OK
                             </button>
                           ) : (
                             <span className="text-carvao-300">—</span>
                           )}
-                        </td>
-                        <td className="px-2 py-2 print:hidden">
-                          {podeAjustarQtd && (
-                            <button
-                              onClick={() =>
-                                l.manual
-                                  ? rmManual(di, Number(l.chave.split(':')[1]))
-                                  : setAjuste(di, l.chave, null, true)
-                              }
-                              aria-label={`Remover ${l.item}`}
-                              className="text-carvao-300 hover:text-[#b04c41]"
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
 
             {podeAjustarQtd && (
               <button
                 onClick={() => setNovoItemDia(di)}
-                className="text-sm font-semibold text-brand-600 hover:text-brand-700 print:hidden"
+                className="flex items-center gap-1 text-sm font-semibold text-brand-600 hover:text-brand-700 print:hidden"
               >
-                + Adicionar item extra
+                <Icone nome="somar" tam={16} /> Adicionar item extra
               </button>
             )}
           </Cartao>

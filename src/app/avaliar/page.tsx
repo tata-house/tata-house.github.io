@@ -9,6 +9,7 @@
    ===================================================================== */
 
 import { useEffect, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { idSemanaIso, useAceitacao, useSemana } from '@/lib/cardapio/estado';
 import { DIAS_SEMANA } from '@/lib/cardapio/motor';
 
@@ -57,8 +58,21 @@ export default function PaginaAvaliar() {
       {!pronto ? (
         <p className="text-brand-100">Carregando…</p>
       ) : votou ? (
-        <div className="flex flex-col items-center gap-3 animate-subir">
-          <span className="text-7xl">{votou}</span>
+        <div className="relative flex flex-col items-center gap-3 animate-subir">
+          <div className="pointer-events-none absolute left-1/2 top-6 -translate-x-1/2" aria-hidden>
+            {Array.from({ length: 16 }).map((_, i) => {
+              const cores = ['#00b14f', '#c8a96b', '#2cc468', '#e89a90', '#7cb8d4'];
+              const dx = (i - 8) * 13 + (i % 2 ? 7 : -7);
+              return (
+                <span
+                  key={i}
+                  className="absolute left-0 top-0 block h-2 w-2 rounded-sm animate-confete"
+                  style={{ background: cores[i % cores.length], animationDelay: `${(i % 5) * 40}ms`, '--tx': `${dx}px` } as CSSProperties}
+                />
+              );
+            })}
+          </div>
+          <span className="animate-estourar text-7xl">{votou}</span>
           <p className="font-display text-2xl font-bold">Obrigado pelo voto!</p>
           <p className="text-sm text-brand-100">Sua opinião ajuda a melhorar o cardápio. 💚</p>
         </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { BarraMini, Cartao, EstadoVazio, Kpi, Pilula, Secao } from '@/components/ui';
+import { BarraMini, Cartao, Contador, EstadoVazio, Kpi, Pilula, Secao } from '@/components/ui';
 import { DIAS_SEMANA, formatarQtd, formatarReais } from '@/lib/cardapio/motor';
 import {
   alertasEstoque,
@@ -60,31 +60,43 @@ export function AbaDashboard({
   return (
     <div className="space-y-5">
       {/* KPIs principais */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid animate-subir grid-cols-2 gap-3 lg:grid-cols-4">
         <Kpi
           rotulo="Refeições previstas"
-          valor={totalPrevisto || resumo.refeicoesPrevistas}
+          valor={<Contador valor={totalPrevisto || resumo.refeicoesPrevistas} />}
           detalhe="estimativa da semana"
           tom="azul"
           icone="🍽️"
         />
         <Kpi
           rotulo="Refeições reais"
-          valor={resumo.refeicoesReais || '—'}
+          valor={resumo.refeicoesReais ? <Contador valor={resumo.refeicoesReais} /> : '—'}
           detalhe={resumo.refeicoesReais ? 'contadas pela cozinha' : 'aguardando contagem'}
           tom="verde"
           icone="✅"
         />
         <Kpi
           rotulo="Custo / refeição"
-          valor={resumo.custoRefReal ?? resumo.custoRefEstimado ? formatarReais(resumo.custoRefReal ?? resumo.custoRefEstimado!) : '—'}
+          valor={
+            (resumo.custoRefReal ?? resumo.custoRefEstimado) ? (
+              <Contador valor={(resumo.custoRefReal ?? resumo.custoRefEstimado)!} formato={formatarReais} />
+            ) : (
+              '—'
+            )
+          }
           detalhe={resumo.custoRefReal ? 'real' : resumo.custoRefEstimado ? 'estimado' : 'lance os preços'}
           tom="ouro"
           icone="🎯"
         />
         <Kpi
           rotulo="Custo total semana"
-          valor={resumo.custoReal || resumo.custoEstimado ? formatarReais(resumo.custoReal || resumo.custoEstimado) : '—'}
+          valor={
+            resumo.custoReal || resumo.custoEstimado ? (
+              <Contador valor={resumo.custoReal || resumo.custoEstimado} formato={formatarReais} />
+            ) : (
+              '—'
+            )
+          }
           detalhe={resumo.custoReal ? 'realizado' : 'estimado pela cotação'}
           tom="neutro"
           icone="💰"
@@ -113,7 +125,9 @@ export function AbaDashboard({
       <Cartao className="overflow-hidden !p-0">
         <div className="bg-gradient-to-r from-brand-800 via-brand-700 to-brand-600 px-5 py-4 text-white">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-200">Valor gerado no mês</p>
-          <p className="font-display text-3xl font-bold">{formatarReais(roi.total)}</p>
+          <p className="font-display text-3xl font-bold">
+            <Contador valor={roi.total} formato={formatarReais} />
+          </p>
           <p className="text-xs font-semibold text-brand-100/80">
             economia estimada com gestão inteligente · {roi.semanas} semana(s) no mês
           </p>

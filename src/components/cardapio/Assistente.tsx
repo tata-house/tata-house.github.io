@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { PERGUNTAS_SUGERIDAS, responder, type ContextoAssistente } from '@/lib/cardapio/assistente';
+import { useMemo, useState } from 'react';
+import { PERGUNTAS_SUGERIDAS, insightProativo, responder, type ContextoAssistente } from '@/lib/cardapio/assistente';
 
 interface Fala {
   de: 'voce' | 'assistente';
@@ -15,6 +15,8 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
   const [falas, setFalas] = useState<Fala[]>([
     { de: 'assistente', texto: 'Oi! Sou o assistente do Tatá. Posso analisar custos, preços, aceitação e estoque. Pergunte ou escolha abaixo 👇' },
   ]);
+
+  const proativo = useMemo(() => insightProativo(contexto), [contexto]);
 
   const perguntar = (pergunta: string) => {
     const p = pergunta.trim();
@@ -32,6 +34,9 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
         className="fixed bottom-20 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-800 text-2xl text-white shadow-flutuante ring-2 ring-ouro-400/50 transition hover:scale-105 active:scale-95 lg:bottom-5 lg:right-5 print:hidden"
       >
         {aberto ? '✕' : '🤖'}
+        {proativo && !aberto && (
+          <span className="absolute right-1 top-1 h-3.5 w-3.5 rounded-full bg-ouro-400 ring-2 ring-white" aria-hidden />
+        )}
       </button>
 
       {aberto && (
@@ -45,6 +50,22 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
           </div>
 
           <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
+            {proativo && (
+              <div className="rounded-2xl bg-ouro-300/15 p-3 ring-1 ring-ouro-400/30">
+                <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-ouro-600">Sugestão do dia</p>
+                <p className="text-sm text-carvao-700 dark:text-areia-100">{proativo.texto}</p>
+                {proativo.itens && (
+                  <ul className="mt-1 space-y-0.5 text-[13px]">
+                    {proativo.itens.map((it, j) => (
+                      <li key={j} className="flex gap-1.5">
+                        <span className="text-ouro-500">•</span>
+                        <span>{it}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
             {falas.map((f, i) => (
               <div key={i} className={f.de === 'voce' ? 'text-right' : ''}>
                 <div

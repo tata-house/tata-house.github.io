@@ -4,6 +4,43 @@
 
 html {
   -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+/* Tokens semânticos (canais R G B para suportar /alpha do Tailwind).
+   Base pronta para os componentes migrarem do uso de cores cruas. */
+:root {
+  --superficie: 255 255 255;
+  --superficie-2: 243 239 231;
+  --linha: 210 213 218;
+  --texto: 21 23 27;
+  --texto-suave: 86 92 102;
+  --anel: 0 177 79;
+}
+.dark {
+  --superficie: 27 30 35;
+  --superficie-2: 21 23 27;
+  --linha: 48 52 59;
+  --texto: 243 239 231;
+  --texto-suave: 170 176 185;
+  --anel: 44 196 104;
+}
+
+/* Números sempre alinhados (leitura financeira). */
+.num,
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 body {
@@ -26,6 +63,7 @@ body {
 .font-display {
   text-transform: uppercase;
   letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
 }
 
 ::selection {

@@ -2,54 +2,24 @@
 
 /* =====================================================================
    Navegação inferior (mobile) — polegar-first. Agrupa as 12 abas em 5
-   áreas mentais. Vidro fosco sobre o conteúdo, respeitando a safe-area.
+   áreas mentais, com o set de ícones da casa. Vidro fosco sobre o
+   conteúdo, respeitando a safe-area.
    ===================================================================== */
 
-import type { ReactNode } from 'react';
+import { Icone, type NomeIcone } from './Icones';
 
 export interface Grupo {
-  id: string;
+  id: NomeIcone;
   rotulo: string;
   abas: string[];
-  icone: ReactNode;
 }
 
-const svg = (filhos: ReactNode) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="h-[22px] w-[22px]"
-    aria-hidden
-  >
-    {filhos}
-  </svg>
-);
-
 export const GRUPOS: Grupo[] = [
-  { id: 'painel', rotulo: 'Painel', abas: ['painel'], icone: svg(<><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V20h14V9.5" /></>) },
-  {
-    id: 'cardapio',
-    rotulo: 'Cardápio',
-    abas: ['cardapio', 'cotacao', 'simulador', 'precos'],
-    icone: svg(<><path d="M5 3v7a2 2 0 0 0 4 0V3" /><path d="M7 10v11" /><path d="M17 3c-1.6 0-3 2-3 5s1.4 4 3 4v9" /></>),
-  },
-  {
-    id: 'compras',
-    rotulo: 'Compras',
-    abas: ['compras', 'estoque', 'fluxo'],
-    icone: svg(<><circle cx="9" cy="20" r="1.4" /><circle cx="18" cy="20" r="1.4" /><path d="M2 3h3l2.2 11.2a1.5 1.5 0 0 0 1.5 1.2h8.1a1.5 1.5 0 0 0 1.5-1.2L21 7H6" /></>),
-  },
-  {
-    id: 'insights',
-    rotulo: 'Insights',
-    abas: ['aceitacao', 'desperdicio', 'radar'],
-    icone: svg(<><path d="M4 20V11" /><path d="M10 20V4" /><path d="M16 20v-6" /><path d="M21 20H3" /></>),
-  },
-  { id: 'mais', rotulo: 'Mais', abas: ['auditoria'], icone: svg(<><circle cx="5" cy="12" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="19" cy="12" r="1.5" /></>) },
+  { id: 'painel', rotulo: 'Painel', abas: ['painel'] },
+  { id: 'cardapio', rotulo: 'Cardápio', abas: ['cardapio', 'cotacao', 'simulador', 'precos'] },
+  { id: 'compras', rotulo: 'Compras', abas: ['compras', 'estoque', 'fluxo'] },
+  { id: 'insights', rotulo: 'Insights', abas: ['aceitacao', 'desperdicio', 'radar'] },
+  { id: 'mais', rotulo: 'Mais', abas: ['auditoria'] },
 ];
 
 export function BottomNav({
@@ -76,8 +46,12 @@ export function BottomNav({
                 ativo ? 'text-brand-600 dark:text-brand-400' : 'text-carvao-400'
               }`}
             >
-              <span className={`flex h-8 w-12 items-center justify-center rounded-full transition-colors ${ativo ? 'bg-brand-500/12' : ''}`}>
-                {g.icone}
+              <span
+                className={`flex h-8 w-12 items-center justify-center rounded-full transition-all ${
+                  ativo ? 'bg-brand-500/12' : ''
+                }`}
+              >
+                <Icone nome={g.id} tam={22} />
               </span>
               <span className="text-[10px] font-semibold tracking-tight">{g.rotulo}</span>
             </button>

@@ -50,6 +50,12 @@ const config: Config = {
           500: '#b08d4f',
           600: '#92713a',
         },
+        // Tokens semânticos (mapeados às CSS vars em globals.css)
+        superficie: 'rgb(var(--superficie) / <alpha-value>)',
+        'superficie-2': 'rgb(var(--superficie-2) / <alpha-value>)',
+        linha: 'rgb(var(--linha) / <alpha-value>)',
+        texto: 'rgb(var(--texto) / <alpha-value>)',
+        'texto-suave': 'rgb(var(--texto-suave) / <alpha-value>)',
       },
       fontFamily: {
         sans: [
@@ -77,10 +83,19 @@ const config: Config = {
           from: { opacity: '0' },
           to: { opacity: '1' },
         },
+        deslizar: {
+          from: { opacity: '0', transform: 'translateY(100%)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        brilho: {
+          '100%': { transform: 'translateX(100%)' },
+        },
       },
       animation: {
         subir: 'subir .28s cubic-bezier(.21,.8,.35,1) both',
         aparecer: 'aparecer .2s ease-out both',
+        deslizar: 'deslizar .3s cubic-bezier(.21,.8,.35,1) both',
+        brilho: 'brilho 1.4s infinite',
       },
     },
   },

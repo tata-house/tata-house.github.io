@@ -168,6 +168,37 @@ export function idSemanaIso(data: Date): string {
   return `${d.getUTCFullYear()}-S${String(semana).padStart(2, '0')}`;
 }
 
+/** Desloca uma semana ISO em N semanas (negativo = passado). Uso contínuo, sem limite. */
+export function deslocarSemana(id: string, deltaSemanas: number): string {
+  const seg = datasDaSemana(id)[0];
+  const d = new Date(seg);
+  d.setUTCDate(d.getUTCDate() + deltaSemanas * 7);
+  return idSemanaIso(new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+}
+
+/** Semanas que já têm cardápio (algum principal preenchido) — histórico real. */
+export function semanasComConteudo(): string[] {
+  if (typeof window === 'undefined') return [];
+  const prefixo = PREFIXO + 'semana.';
+  const ids: string[] = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k || !k.startsWith(prefixo)) continue;
+      const raw = localStorage.getItem(k);
+      if (raw && /"principal":"[^"]+"/.test(raw)) ids.push(k.slice(prefixo.length));
+    }
+  } catch {
+    /* indisponível */
+  }
+  return ids.sort();
+}
+
+/** Grava o documento de uma semana arbitrária (usado ao duplicar). */
+export function gravarSemana(id: string, estado: EstadoSemana) {
+  gravarLocal('semana.' + id, estado);
+}
+
 /** Lê o documento de uma semana sem montar hook (para indicadores mensais). */
 export function lerSemana(semanaId: string): EstadoSemana {
   return lerLocal('semana.' + semanaId, semanaVazia());

@@ -10,6 +10,7 @@ import {
   resumoSemana,
 } from '@/lib/cardapio/indicadores';
 import { analisarRadar, fraseAlerta } from '@/lib/cardapio/radar';
+import { useAuditoria } from '@/lib/cardapio/estado';
 import type { Aceitacao, Estoque, EstadoSemana, HistoricoPrecos } from '@/lib/cardapio/tipos';
 
 export function AbaDashboard({
@@ -37,6 +38,7 @@ export function AbaDashboard({
   const roi = useMemo(() => calcularRoi(new Date(), precos, historico, fatores), [precos, historico, fatores]);
   const radar = useMemo(() => analisarRadar(precos, historico).filter((r) => r.alerta), [precos, historico]);
   const baixos = useMemo(() => alertasEstoque(estoque), [estoque]);
+  const { registros } = useAuditoria();
 
   const melhorPrato = useMemo(() => {
     const r = Object.values(aceitacao)
@@ -192,7 +194,7 @@ export function AbaDashboard({
           </div>
           <p className="mt-3 text-[11px] text-carvao-400">
             Barras em verde usam a média aprendida com as contagens reais; em dourado, dias com evento configurado. Ajuste
-            eventos e feriados na aba Aceitação/Config.
+            eventos e feriados na aba Feedback.
           </p>
         </Cartao>
       </Secao>
@@ -208,7 +210,7 @@ export function AbaDashboard({
               <p className="text-xs text-carvao-400">nota {melhorPrato.media.toFixed(1)} de 5</p>
             </>
           ) : (
-            <p className="text-sm text-carvao-400">Sem avaliações ainda — registre na aba Aceitação.</p>
+            <p className="text-sm text-carvao-400">Sem avaliações ainda — registre na aba Feedback.</p>
           )}
         </Cartao>
         <Cartao className="space-y-2">
@@ -220,6 +222,27 @@ export function AbaDashboard({
           <p className="text-xs text-carvao-400">{resumo.itensRecebidos} já recebidos</p>
         </Cartao>
       </div>
+
+      {/* Auditoria resumida — últimos eventos */}
+      {registros.length > 0 && (
+        <Secao titulo="🛡️ Últimos eventos">
+          <Cartao className="!p-0">
+            <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
+              {registros.slice(0, 6).map((r, i) => (
+                <li key={i} className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
+                  <span className="min-w-0 truncate">
+                    <span className="font-semibold">{r.acao}</span>{' '}
+                    <span className="text-carvao-500 dark:text-areia-200">· {r.alvo}</span>
+                  </span>
+                  <span className="shrink-0 text-[11px] tabular-nums text-carvao-400">
+                    {new Date(r.em).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </Cartao>
+        </Secao>
+      )}
     </div>
   );
 }

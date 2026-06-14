@@ -38,6 +38,11 @@ export default function PaginaAvaliar() {
 
   const registrar = (voto: 'bom' | 'ok' | 'ruim', emoji: string) => {
     if (!prato) return;
+    try {
+      navigator.vibrate?.(15);
+    } catch {
+      /* sem suporte a vibração */
+    }
     avaliar(prato, voto);
     setVotou(emoji);
   };

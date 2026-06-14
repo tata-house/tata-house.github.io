@@ -29,13 +29,13 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
       <button
         onClick={() => setAberto((a) => !a)}
         aria-label="Assistente"
-        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-800 text-2xl text-white shadow-flutuante ring-2 ring-ouro-400/50 transition hover:scale-105 active:scale-95 print:hidden"
+        className="fixed bottom-20 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-800 text-2xl text-white shadow-flutuante ring-2 ring-ouro-400/50 transition hover:scale-105 active:scale-95 lg:bottom-5 lg:right-5 print:hidden"
       >
         {aberto ? '✕' : '🤖'}
       </button>
 
       {aberto && (
-        <div className="fixed bottom-24 right-5 z-50 flex max-h-[70vh] w-[min(92vw,380px)] flex-col overflow-hidden rounded-3xl bg-white shadow-flutuante ring-1 ring-carvao-200 animate-subir dark:bg-carvao-850 dark:ring-carvao-700 print:hidden">
+        <div className="fixed bottom-36 right-4 z-50 flex max-h-[70vh] w-[min(92vw,380px)] flex-col overflow-hidden rounded-3xl bg-white shadow-flutuante ring-1 ring-carvao-200 animate-subir lg:bottom-24 lg:right-5 dark:bg-carvao-850 dark:ring-carvao-700 print:hidden">
           <div className="flex items-center gap-2 bg-gradient-to-r from-brand-800 to-brand-600 px-4 py-3 text-white">
             <span className="text-xl">🤖</span>
             <div>

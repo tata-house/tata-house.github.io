@@ -54,6 +54,22 @@ export function AbaDesperdicio({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registros, custoRef]);
 
+  const removerComUndo = (r: RegistroDesperdicio) => {
+    remover(r.id);
+    toast('Sobra removida', 'info', {
+      rotulo: 'Desfazer',
+      fn: () =>
+        adicionar({
+          dia: r.dia,
+          prato: r.prato,
+          produzido: r.produzido,
+          consumido: r.consumido,
+          unid: r.unid,
+          motivo: r.motivo,
+        }),
+    });
+  };
+
   const lancar = () => {
     const p = prato.trim() || estado.dias[dia]?.principal || '';
     if (!p || !(Number(produzido) > 0)) {
@@ -186,7 +202,11 @@ export function AbaDesperdicio({
                     <div className="flex items-center gap-2">
                       <Pilula tom="ouro">{formatarQtd(Math.max(0, r.produzido - r.consumido))} sobra</Pilula>
                       {podeEditar && (
-                        <button onClick={() => remover(r.id)} className="text-carvao-300 hover:text-[#b04c41]" aria-label="Remover">
+                        <button
+                          onClick={() => removerComUndo(r)}
+                          className="flex h-9 w-9 items-center justify-center rounded-full text-carvao-300 hover:bg-[#b04c41]/10 hover:text-[#b04c41]"
+                          aria-label="Remover"
+                        >
                           ✕
                         </button>
                       )}

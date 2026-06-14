@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { toast } from '@/components/Toast';
 import { QrCode } from '@/components/QrCode';
+import { PlaquinhaQR } from './PlaquinhaQR';
 import { BarraMini, Botao, Cartao, EstadoVazio, Pilula, Secao, estiloInput, estiloRotulo } from '@/components/ui';
 import { DIAS_SEMANA, formatarQtd, normalizar } from '@/lib/cardapio/motor';
 import type { Aceitacao, EstadoSemana, EventoDemanda, RegistroDesperdicio } from '@/lib/cardapio/tipos';
@@ -33,6 +34,7 @@ export function AbaAceitacao({
   const [data, setData] = useState('');
   const [rotulo, setRotulo] = useState('');
   const [fator, setFator] = useState('1.2');
+  const [plaquinhaAberta, setPlaquinhaAberta] = useState(false);
 
   const ranking = useMemo(
     () =>
@@ -78,6 +80,7 @@ export function AbaAceitacao({
 
   return (
     <div className="space-y-5">
+      <PlaquinhaQR aberto={plaquinhaAberta} aoFechar={() => setPlaquinhaAberta(false)} url={urlAvaliar} />
       {/* Pesquisa por QR — funcionários avaliam o prato do dia */}
       <Secao titulo="📱 Pesquisa por QR">
         <Cartao className="flex flex-col items-center gap-4 sm:flex-row">
@@ -91,10 +94,13 @@ export function AbaAceitacao({
               href={urlAvaliar}
               target="_blank"
               rel="noreferrer"
-              className="inline-block break-all text-xs font-semibold text-brand-600 underline dark:text-brand-300"
+              className="block break-all text-xs font-semibold text-brand-600 underline dark:text-brand-300"
             >
               {urlAvaliar}
             </a>
+            <Botao variante="secundario" className="!min-h-10 !px-4 !py-2 text-sm" onClick={() => setPlaquinhaAberta(true)}>
+              🖼️ Plaquinha para imprimir
+            </Botao>
           </div>
         </Cartao>
       </Secao>

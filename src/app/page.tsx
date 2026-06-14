@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { AlternadorTema } from '@/components/AlternadorTema';
 import { BottomNav, GRUPOS } from '@/components/BottomNav';
 import { ToastHost } from '@/components/Toast';
-import { Skeleton } from '@/components/ui';
+import { Icone } from '@/components/Icones';
+import { BottomSheet, Skeleton } from '@/components/ui';
 import { AbaAceitacao } from '@/components/cardapio/AbaAceitacao';
 import { AbaAuditoria } from '@/components/cardapio/AbaAuditoria';
 import { AbaCardapio } from '@/components/cardapio/AbaCardapio';
@@ -92,6 +93,7 @@ export default function PaginaCardapios() {
   const [semanaId, setSemanaId] = useState(() => idSemanaIso(new Date()));
   const [aba, setAba] = useState<AbaId>('painel');
   const [posterAberto, setPosterAberto] = useState(false);
+  const [semanaSheet, setSemanaSheet] = useState(false);
 
   const { estado, atualizar, pronto } = useSemana(semanaId);
   const { precos, definirPreco } = usePrecos();
@@ -148,12 +150,13 @@ export default function PaginaCardapios() {
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <label className="relative">
+            <label className="relative flex items-center">
               <span className="sr-only">Papel</span>
+              <Icone nome="usuario" tam={15} className="pointer-events-none absolute left-2.5 text-white/70" />
               <select
                 value={papel}
                 onChange={(e) => setPapel(e.target.value as Papel)}
-                className="appearance-none rounded-full bg-white/15 py-1.5 pl-3 pr-7 text-xs font-semibold text-white ring-1 ring-white/25 focus:outline-none focus:ring-2 focus:ring-ouro-300"
+                className="appearance-none rounded-full bg-white/15 py-1.5 pl-8 pr-7 text-xs font-semibold text-white ring-1 ring-white/25 focus:outline-none focus:ring-2 focus:ring-ouro-300"
               >
                 {PAPEIS.map((p) => (
                   <option key={p.id} value={p.id} className="text-carvao-900">
@@ -161,9 +164,7 @@ export default function PaginaCardapios() {
                   </option>
                 ))}
               </select>
-              <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-white/70" aria-hidden>
-                ▼
-              </span>
+              <Icone nome="baixo" tam={14} className="pointer-events-none absolute right-2 text-white/70" />
             </label>
             <AlternadorTema />
           </div>
@@ -187,33 +188,37 @@ export default function PaginaCardapios() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {/* Stepper de semana — navegação por polegar */}
+            {/* Stepper de semana — navegação por polegar; toque no rótulo abre a lista */}
             <div className="flex items-center rounded-2xl border border-carvao-200 bg-white p-1 dark:border-carvao-600 dark:bg-carvao-900">
               <button
                 onClick={() => irSemana(-1)}
                 disabled={idxSemana <= 0}
                 aria-label="Semana anterior"
-                className="flex h-9 w-9 items-center justify-center rounded-xl text-xl text-carvao-500 transition hover:bg-carvao-100 disabled:opacity-30 dark:hover:bg-carvao-800"
+                className="flex h-9 w-9 items-center justify-center rounded-xl text-carvao-500 transition hover:bg-carvao-100 disabled:opacity-30 dark:hover:bg-carvao-800"
               >
-                ‹
+                <Icone nome="anterior" tam={18} />
               </button>
-              <span className="min-w-[80px] select-none text-center text-sm font-bold">
+              <button
+                onClick={() => setSemanaSheet(true)}
+                className="flex min-w-[92px] items-center justify-center gap-1.5 rounded-xl px-1 py-1 text-sm font-bold transition hover:bg-carvao-100 dark:hover:bg-carvao-800"
+              >
+                <Icone nome="calendario" tam={15} className="text-carvao-400" />
                 {idxSemana >= 0 ? `Semana ${idxSemana + 1}` : '—'}
-              </span>
+              </button>
               <button
                 onClick={() => irSemana(1)}
                 disabled={idxSemana >= semanas.length - 1}
                 aria-label="Próxima semana"
-                className="flex h-9 w-9 items-center justify-center rounded-xl text-xl text-carvao-500 transition hover:bg-carvao-100 disabled:opacity-30 dark:hover:bg-carvao-800"
+                className="flex h-9 w-9 items-center justify-center rounded-xl text-carvao-500 transition hover:bg-carvao-100 disabled:opacity-30 dark:hover:bg-carvao-800"
               >
-                ›
+                <Icone nome="proximo" tam={18} />
               </button>
             </div>
             <button
               onClick={() => setPosterAberto(true)}
               className="flex h-11 min-h-11 items-center gap-1.5 whitespace-nowrap rounded-2xl bg-gradient-to-r from-brand-700 to-brand-600 px-4 text-sm font-bold text-white shadow-suave ring-1 ring-ouro-400/50 transition hover:from-brand-800 hover:to-brand-700"
             >
-              🖼️ <span className="hidden sm:inline">Pôster</span>
+              <Icone nome="imagem" tam={18} /> <span className="hidden sm:inline">Pôster</span>
             </button>
           </div>
         </div>
@@ -372,6 +377,28 @@ export default function PaginaCardapios() {
           </>
         )}
       </main>
+
+      <BottomSheet titulo="Escolher semana" aberto={semanaSheet} aoFechar={() => setSemanaSheet(false)}>
+        <div className="space-y-1">
+          {semanas.map((id, i) => (
+            <button
+              key={id}
+              onClick={() => {
+                setSemanaId(id);
+                setSemanaSheet(false);
+              }}
+              className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-semibold transition ${
+                id === semanaId
+                  ? 'bg-brand-50 text-brand-700 ring-1 ring-brand-500/30 dark:bg-carvao-700 dark:text-brand-300'
+                  : 'hover:bg-carvao-50 dark:hover:bg-carvao-800'
+              }`}
+            >
+              <span>{rotuloSemana(id, i + 1)}</span>
+              {i === 0 && <span className="text-[11px] font-bold text-brand-600 dark:text-brand-400">atual</span>}
+            </button>
+          ))}
+        </div>
+      </BottomSheet>
 
       <BottomNav grupoAtivo={grupoAtivo.id} aoSelecionar={(g) => setAba((GRUPOS.find((x) => x.id === g) ?? GRUPOS[0]).abas[0] as AbaId)} />
       <Assistente contexto={{ estado, semanaId, precos, historico, fornecedores, aceitacao, estoque, fatores }} />

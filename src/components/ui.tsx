@@ -1,6 +1,7 @@
 'use client';
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { Icone } from './Icones';
 
 /* =====================================================================
    Mini design system TATÁ Sushi — Cardápios da Equipe
@@ -141,7 +142,7 @@ export function Kpi({
         <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-carvao-500 dark:text-carvao-300">{rotulo}</p>
         {icone && <span className="text-base leading-none opacity-70">{icone}</span>}
       </div>
-      <p className="mt-1 font-display text-[26px] font-bold leading-none text-carvao-900 dark:text-areia-50">{valor}</p>
+      <p className="mt-1 font-display text-[26px] font-bold leading-none text-carvao-900 tabular-nums dark:text-areia-50">{valor}</p>
       {detalhe && <p className="mt-1.5 text-[11px] font-semibold text-carvao-400">{detalhe}</p>}
     </div>
   );
@@ -195,7 +196,85 @@ export function Secao({ titulo, acao, children }: { titulo: ReactNode; acao?: Re
   );
 }
 
-/** Placeholder de carregamento (performance percebida). */
+/** Placeholder de carregamento com brilho (performance percebida). */
 export function Skeleton({ className = '' }: { className?: string }) {
-  return <div className={`animate-pulse rounded-2xl bg-carvao-100 dark:bg-carvao-800/80 ${className}`} />;
+  return (
+    <div className={`relative overflow-hidden rounded-2xl bg-carvao-100 dark:bg-carvao-800/80 ${className}`}>
+      <div className="absolute inset-0 -translate-x-full animate-brilho bg-gradient-to-r from-transparent via-white/40 to-transparent dark:via-white/5" />
+    </div>
+  );
+}
+
+/** Folha inferior — modal mobile-first que sobe de baixo, com pegador. */
+export function BottomSheet({
+  titulo,
+  aberto,
+  aoFechar,
+  children,
+}: {
+  titulo?: string;
+  aberto: boolean;
+  aoFechar: () => void;
+  children: ReactNode;
+}) {
+  if (!aberto) return null;
+  return (
+    <div
+      className="fixed inset-0 z-[55] flex items-end justify-center bg-carvao-950/55 backdrop-blur-[2px] animate-aparecer sm:items-center sm:p-6"
+      onClick={aoFechar}
+    >
+      <div
+        className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-5 shadow-flutuante animate-deslizar dark:bg-carvao-850 sm:rounded-3xl"
+        style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-carvao-200 dark:bg-carvao-600" />
+        {titulo && (
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="font-display text-xl font-semibold">{titulo}</h2>
+            <button
+              onClick={aoFechar}
+              aria-label="Fechar"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-areia-100 text-carvao-500 transition hover:bg-areia-200 dark:bg-carvao-700 dark:text-areia-200"
+            >
+              <Icone nome="fechar" tam={18} />
+            </button>
+          </div>
+        )}
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/** Controle numérico − valor + (sem teclado; alvos de 44px). */
+export function Stepper({
+  valor,
+  aoMudar,
+  min = 0,
+  passo = 1,
+  sufixo,
+}: {
+  valor: number;
+  aoMudar: (v: number) => void;
+  min?: number;
+  passo?: number;
+  sufixo?: string;
+}) {
+  const bt =
+    'flex h-11 w-11 items-center justify-center rounded-xl text-carvao-600 transition hover:bg-carvao-100 active:scale-95 disabled:opacity-30 dark:text-areia-200 dark:hover:bg-carvao-700';
+  return (
+    <div className="inline-flex items-center gap-1 rounded-2xl border border-carvao-200 bg-white p-1 dark:border-carvao-600 dark:bg-carvao-900">
+      <button type="button" className={bt} onClick={() => aoMudar(Math.max(min, valor - passo))} disabled={valor <= min} aria-label="Diminuir">
+        <Icone nome="subtrair" tam={18} />
+      </button>
+      <span className="min-w-[3ch] px-1 text-center text-base font-bold tabular-nums">
+        {valor}
+        {sufixo ? <span className="ml-0.5 text-xs font-semibold text-carvao-400">{sufixo}</span> : null}
+      </span>
+      <button type="button" className={bt} onClick={() => aoMudar(valor + passo)} aria-label="Aumentar">
+        <Icone nome="somar" tam={18} />
+      </button>
+    </div>
+  );
 }

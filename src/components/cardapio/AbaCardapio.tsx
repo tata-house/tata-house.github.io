@@ -1,6 +1,7 @@
 'use client';
 
-import { Cartao, Botao } from '@/components/ui';
+import { Botao, Cartao, Pilula, Stepper } from '@/components/ui';
+import { Icone } from '@/components/Icones';
 import {
   DADOS,
   DIAS_SEMANA,
@@ -16,7 +17,7 @@ import {
   formatarReais,
   normalizar,
 } from '@/lib/cardapio/motor';
-import type { DiaCardapio, EstadoSemana } from '@/lib/cardapio/tipos';
+import type { DiaCardapio, EstadoSemana, Proteina } from '@/lib/cardapio/tipos';
 import { SeletorPrato } from './SeletorPrato';
 
 const COR_PROTEINA: Record<string, string> = {
@@ -26,6 +27,16 @@ const COR_PROTEINA: Record<string, string> = {
   peixe: 'bg-[#2d6f8e]/10 text-[#2d6f8e] ring-[#2d6f8e]/25 dark:text-[#7cb8d4]',
   ovo: 'bg-ouro-400/10 text-ouro-600 ring-ouro-400/25 dark:text-ouro-300',
   outros: 'bg-carvao-400/10 text-carvao-500 ring-carvao-400/25 dark:text-carvao-300',
+};
+
+/** Cor sólida do acento lateral por proteína. */
+const ACENTO_PROTEINA: Record<Proteina, string> = {
+  bovina: '#8a3b34',
+  frango: '#b07c1e',
+  suina: '#b05a7e',
+  peixe: '#2d6f8e',
+  ovo: '#c8a96b',
+  outros: '#aab0b9',
 };
 
 function BadgeProteina({ prato }: { prato: string }) {
@@ -80,6 +91,18 @@ export function AbaCardapio({
     { total: 0, com: 0, itens: 0 },
   );
 
+  // medidor de regras (rotação de proteínas)
+  const prots = estado.dias.map((d) => (d.principal ? proteinaDoPrato(d.principal) : null));
+  const frango = prots.filter((p) => p === 'frango').length;
+  const suina = prots.filter((p) => p === 'suina').length;
+  const diasMontados = prots.filter(Boolean).length;
+  const erros = avisos.filter((a) => a.nivel === 'erro').length;
+  const alertas = avisos.filter((a) => a.nivel === 'alerta').length;
+
+  const totalPessoas = estado.dias.filter((d) => d.principal).reduce((a, d) => a + d.pessoas, 0);
+  const custoRef = totalPessoas > 0 && custoSemana.total > 0 ? custoSemana.total / totalPessoas : null;
+  const dentroOrcamento = estado.orcamento ? custoSemana.total <= estado.orcamento : null;
+
   // itens da semana ainda sem preço — a cotação é a guia: tem que zerar isso
   const semPreco = (() => {
     const m = new Map<string, { item: string; unid: string }>();
@@ -95,145 +118,104 @@ export function AbaCardapio({
 
   return (
     <div className="space-y-4">
-      {/* Orçamento + gerador */}
-      <Cartao className="space-y-3">
-        <div className="flex flex-wrap items-end gap-3">
-          <label className="grow">
-            <span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-carvao-400">
-              Orçamento da semana (R$)
-            </span>
-            <input
-              type="number"
-              inputMode="decimal"
-              min={0}
-              disabled={!podeEditar}
-              value={estado.orcamento ?? ''}
-              placeholder="Informado pelo setor de compras"
-              onChange={(e) =>
-                atualizar((s) => ({ ...s, orcamento: e.target.value ? Number(e.target.value) : null }))
-              }
-              className="w-full min-h-12 rounded-2xl border border-carvao-200 bg-white px-4 py-3 text-base dark:border-carvao-600 dark:bg-carvao-900"
-            />
-          </label>
-          <div className="flex shrink-0 flex-wrap gap-2">
-            <Botao variante="sucesso" disabled={!podeEditar} onClick={() => gerar(false)}>
-              ✨ Sugerir pelo histórico
-            </Botao>
-            <Botao variante="secundario" disabled={!podeEditar} onClick={() => gerar(true)}>
-              🧪 Criar semana nova
-            </Botao>
-          </div>
-        </div>
-        <p className="text-xs text-carvao-400">
-          <strong>✨ Histórico</strong>: combinações que a equipe já aprovou. <strong>🧪 Criar nova</strong>:
-          inventa pratos e combinações inéditas com a distribuição de alimentos da casa — e, com a cotação
-          aplicada, puxa para as proteínas mais baratas da semana.
-        </p>
-        {temPrecos && custoSemana.com > 0 && (
-          <p className="text-sm text-carvao-500 dark:text-carvao-300">
-            Custo estimado da semana:{' '}
-            <strong className="text-carvao-800 dark:text-areia-100">{formatarReais(custoSemana.total)}</strong>
-            {estado.orcamento ? (
-              <span
-                className={
-                  custoSemana.total <= estado.orcamento ? 'text-brand-600' : 'font-bold text-[#b04c41]'
-                }
-              >
-                {' '}
-                · {custoSemana.total <= estado.orcamento ? 'dentro do orçamento' : 'acima do orçamento'} (
-                {formatarReais(estado.orcamento)})
-              </span>
-            ) : null}{' '}
-            <span className="text-carvao-400">
-              — com base em {custoSemana.com} de {custoSemana.itens} itens com preço cadastrado
-            </span>
-          </p>
-        )}
-        {!temPrecos && (
-          <p className="text-xs text-carvao-400">
-            Cole a cotação da semana na aba <strong>Cotação</strong> para ver o custo estimado e otimizar a
-            sugestão.
-          </p>
-        )}
-        {temPrecos && semPreco.length > 0 && (
-          <div className="rounded-2xl bg-ouro-300/15 p-3 ring-1 ring-ouro-400/30">
-            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-ouro-600">
-              ⚠️ {semPreco.length} itens da semana ainda sem preço — complete para o custo cobrir tudo:
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {semPreco.slice(0, 16).map(([norm, s]) => (
-                <span
-                  key={norm}
-                  className="flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold ring-1 ring-carvao-200 dark:bg-carvao-800 dark:ring-carvao-600"
-                >
-                  {s.item}
-                  <span className="text-carvao-400">R$</span>
-                  <input
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    inputMode="decimal"
-                    placeholder="0,00"
-                    onBlur={(e) => {
-                      const v = Number(e.target.value);
-                      if (v > 0) definirPreco?.(norm, v);
-                    }}
-                    className="w-14 rounded-md border border-carvao-200 bg-white px-1 py-0.5 text-right text-[11px] font-bold dark:border-carvao-600 dark:bg-carvao-900"
-                  />
-                  <span className="text-carvao-400">/{s.unid}</span>
-                </span>
-              ))}
-              {semPreco.length > 16 && (
-                <span className="self-center text-[11px] text-carvao-400">
-                  +{semPreco.length - 16} na aba Preços
-                </span>
+      {/* Resumo vivo — acompanha a rolagem dos dias */}
+      <div className="sticky top-[60px] z-30 -mx-4 bg-areia-50/85 px-4 py-2 backdrop-blur-md dark:bg-carvao-950/85">
+        <Cartao className="!p-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-baseline gap-3">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-carvao-400">Custo / refeição</p>
+                <p className="font-display text-2xl font-bold leading-none tabular-nums text-carvao-900 dark:text-areia-50">
+                  {custoRef ? formatarReais(custoRef) : '—'}
+                </p>
+              </div>
+              {custoSemana.total > 0 && (
+                <p className="text-xs font-semibold text-carvao-400">
+                  semana {formatarReais(custoSemana.total)}
+                  {dentroOrcamento !== null && (
+                    <span className={dentroOrcamento ? 'text-brand-600' : 'font-bold text-[#b04c41]'}>
+                      {' '}
+                      · {dentroOrcamento ? 'no orçamento' : 'acima'}
+                    </span>
+                  )}
+                </p>
               )}
             </div>
+            {podeEditar && (
+              <div className="flex shrink-0 gap-2">
+                <Botao variante="sucesso" className="!min-h-10 !px-3 !py-2 text-[13px]" onClick={() => gerar(false)}>
+                  <Icone nome="raio" tam={16} /> Sugerir
+                </Botao>
+                <Botao variante="secundario" className="!min-h-10 !px-3 !py-2 text-[13px]" onClick={() => gerar(true)}>
+                  Nova
+                </Botao>
+              </div>
+            )}
           </div>
-        )}
-      </Cartao>
+          {/* medidor de regras */}
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+            <Pilula tom={frango >= 3 && frango <= 4 ? 'verde' : 'ouro'}>Frango {frango}/4</Pilula>
+            <Pilula tom={suina <= 2 ? 'verde' : 'vermelho'}>Suína {suina}/2</Pilula>
+            {erros > 0 ? (
+              <Pilula tom="vermelho">
+                {erros} {erros === 1 ? 'erro' : 'erros'}
+              </Pilula>
+            ) : alertas > 0 ? (
+              <Pilula tom="ouro">
+                {alertas} {alertas === 1 ? 'alerta' : 'alertas'}
+              </Pilula>
+            ) : diasMontados === 7 ? (
+              <Pilula tom="verde">✓ Regras ok</Pilula>
+            ) : (
+              <Pilula tom="neutro">{diasMontados}/7 dias</Pilula>
+            )}
+          </div>
+        </Cartao>
+      </div>
 
-      {/* Validador de regras */}
-      {avisos.length > 0 && (
-        <Cartao className="space-y-1.5">
-          {avisos.map((a, i) => (
-            <p
-              key={i}
-              className={`flex items-start gap-2 text-sm font-medium ${
-                a.nivel === 'erro'
-                  ? 'text-[#b04c41]'
-                  : a.nivel === 'alerta'
-                    ? 'text-[#9a6c17] dark:text-[#e3b45c]'
-                    : 'text-brand-600'
-              }`}
-            >
-              <span aria-hidden>{a.nivel === 'erro' ? '⛔' : a.nivel === 'alerta' ? '⚠️' : '✅'}</span>
-              {a.msg}
-            </p>
-          ))}
+      {/* Detalhe das regras quebradas */}
+      {avisos.some((a) => a.nivel !== 'ok') && (
+        <Cartao className="space-y-1.5 !py-3">
+          {avisos
+            .filter((a) => a.nivel !== 'ok')
+            .map((a, i) => (
+              <p
+                key={i}
+                className={`flex items-start gap-2 text-sm font-medium ${
+                  a.nivel === 'erro' ? 'text-[#b04c41]' : 'text-[#9a6c17] dark:text-[#e3b45c]'
+                }`}
+              >
+                <span aria-hidden>{a.nivel === 'erro' ? '⛔' : '⚠️'}</span>
+                {a.msg}
+              </p>
+            ))}
         </Cartao>
       )}
 
       {/* Dias */}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-3 lg:grid-cols-2">
         {estado.dias.map((dia, i) => {
           const lista = dia.principal ? listaDoDia(dia) : [];
           const custo = custoDaLista(lista, precos);
+          const prot = dia.principal ? proteinaDoPrato(dia.principal) : 'outros';
           return (
-            <Cartao key={i} className="space-y-2.5">
+            <Cartao key={i} className="space-y-2.5 overflow-hidden">
+              <div
+                className="-mx-5 -mt-5 h-1.5"
+                style={{ background: dia.principal ? ACENTO_PROTEINA[prot] : 'transparent' }}
+                aria-hidden
+              />
               <div className="flex items-center justify-between gap-2">
                 <h3 className="font-display text-lg font-semibold">{DIAS_SEMANA[i]}</h3>
-                <label className="flex items-center gap-1.5 text-sm text-carvao-500">
-                  <span aria-hidden>👥</span>
-                  <input
-                    type="number"
+                <div className="flex items-center gap-1.5">
+                  <Icone nome="usuario" tam={15} className="text-carvao-400" />
+                  <Stepper
+                    valor={dia.pessoas}
                     min={1}
-                    disabled={!podeEditar}
-                    value={dia.pessoas}
-                    onChange={(e) => setDia(i, { pessoas: Number(e.target.value) || PESSOAS_PADRAO[i] })}
-                    className="w-16 rounded-xl border border-carvao-200 bg-white px-2 py-1 text-center text-sm font-bold dark:border-carvao-600 dark:bg-carvao-900"
+                    passo={5}
+                    aoMudar={(v) => podeEditar && setDia(i, { pessoas: v || PESSOAS_PADRAO[i] })}
                   />
-                </label>
+                </div>
               </div>
 
               <SeletorPrato
@@ -291,6 +273,68 @@ export function AbaCardapio({
           );
         })}
       </div>
+
+      {/* Orçamento + itens sem preço */}
+      <Cartao className="space-y-3">
+        <label className="block">
+          <span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-carvao-400">
+            Orçamento da semana (R$)
+          </span>
+          <input
+            type="number"
+            inputMode="decimal"
+            min={0}
+            disabled={!podeEditar}
+            value={estado.orcamento ?? ''}
+            placeholder="Informado pelo setor de compras"
+            onChange={(e) => atualizar((s) => ({ ...s, orcamento: e.target.value ? Number(e.target.value) : null }))}
+            className="w-full min-h-12 rounded-2xl border border-carvao-200 bg-white px-4 py-3 text-base tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
+          />
+        </label>
+        {!temPrecos && (
+          <p className="text-xs text-carvao-400">
+            Cole a cotação da semana na aba <strong>Cotação</strong> para ver o custo estimado e otimizar a sugestão.
+          </p>
+        )}
+        {temPrecos && semPreco.length > 0 && (
+          <div className="rounded-2xl bg-ouro-300/15 p-3 ring-1 ring-ouro-400/30">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-ouro-600">
+              ⚠️ {semPreco.length} itens da semana ainda sem preço — complete para o custo cobrir tudo:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {semPreco.slice(0, 16).map(([norm, s]) => (
+                <span
+                  key={norm}
+                  className="flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold ring-1 ring-carvao-200 dark:bg-carvao-800 dark:ring-carvao-600"
+                >
+                  {s.item}
+                  <span className="text-carvao-400">R$</span>
+                  <input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    inputMode="decimal"
+                    placeholder="0,00"
+                    onBlur={(e) => {
+                      const v = Number(e.target.value);
+                      if (v > 0) definirPreco?.(norm, v);
+                    }}
+                    className="w-14 rounded-md border border-carvao-200 bg-white px-1 py-0.5 text-right text-[11px] font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
+                  />
+                  <span className="text-carvao-400">/{s.unid}</span>
+                </span>
+              ))}
+              {semPreco.length > 16 && (
+                <span className="self-center text-[11px] text-carvao-400">+{semPreco.length - 16} na aba Preços</span>
+              )}
+            </div>
+          </div>
+        )}
+        <p className="text-xs text-carvao-400">
+          <strong>Sugerir</strong>: combinações que a equipe já aprovou no histórico. <strong>Nova</strong>: inventa
+          combinações inéditas com a distribuição da casa e, com a cotação aplicada, puxa para as proteínas mais baratas.
+        </p>
+      </Cartao>
     </div>
   );
 }

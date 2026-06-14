@@ -25,7 +25,10 @@ export type NomeIcone =
   | 'alerta'
   | 'busca'
   | 'calendario'
-  | 'raio';
+  | 'raio'
+  | 'cotacao'
+  | 'simulador'
+  | 'feedback';
 
 const CAMINHOS: Record<NomeIcone, ReactNode> = {
   painel: (
@@ -103,6 +106,28 @@ const CAMINHOS: Record<NomeIcone, ReactNode> = {
     </>
   ),
   raio: <path d="M13 2 4 14h7l-1 8 9-12h-7z" />,
+  cotacao: (
+    <>
+      <path d="M8 4h8a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" />
+      <path d="M9.5 3.5h5V5h-5z" />
+      <path d="M9.5 10h5M9.5 14h5" />
+    </>
+  ),
+  simulador: (
+    <>
+      <path d="M12 3v18" />
+      <path d="M5 7h14" />
+      <path d="M7 7l-3 6h6z" />
+      <path d="M17 7l-3 6h6z" />
+      <path d="M8 21h8" />
+    </>
+  ),
+  feedback: (
+    <>
+      <path d="M21 11.5a8 8 0 0 1-11.7 7.1L4 20l1.4-4.2A8 8 0 1 1 21 11.5z" />
+      <path d="M9 11h.01M15 11h.01M9.2 14a3 3 0 0 0 5.6 0" />
+    </>
+  ),
 };
 
 export function Icone({

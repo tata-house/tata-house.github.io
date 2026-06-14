@@ -1,9 +1,9 @@
 'use client';
 
 /* =====================================================================
-   Navegação inferior (mobile) — polegar-first. Agrupa as 12 abas em 5
-   áreas mentais, com o set de ícones da casa. Vidro fosco sobre o
-   conteúdo, respeitando a safe-area.
+   Navegação inferior (mobile) — polegar-first. As 6 áreas principais,
+   com o set de ícones da casa. Vidro fosco sobre o conteúdo, respeitando
+   a safe-area.
    ===================================================================== */
 
 import { Icone, type NomeIcone } from './Icones';
@@ -16,10 +16,11 @@ export interface Grupo {
 
 export const GRUPOS: Grupo[] = [
   { id: 'painel', rotulo: 'Painel', abas: ['painel'] },
-  { id: 'cardapio', rotulo: 'Cardápio', abas: ['cardapio', 'cotacao', 'simulador', 'precos'] },
-  { id: 'compras', rotulo: 'Compras', abas: ['compras', 'estoque', 'fluxo'] },
-  { id: 'insights', rotulo: 'Insights', abas: ['aceitacao', 'desperdicio', 'radar'] },
-  { id: 'mais', rotulo: 'Mais', abas: ['auditoria'] },
+  { id: 'cotacao', rotulo: 'Cotação', abas: ['cotacao'] },
+  { id: 'cardapio', rotulo: 'Cardápio', abas: ['cardapio'] },
+  { id: 'simulador', rotulo: 'Simular', abas: ['simulador'] },
+  { id: 'compras', rotulo: 'Compras', abas: ['compras'] },
+  { id: 'feedback', rotulo: 'Feedback', abas: ['feedback'] },
 ];
 
 export function BottomNav({
@@ -34,7 +35,7 @@ export function BottomNav({
       className="fixed inset-x-0 bottom-0 z-40 border-t border-carvao-200/70 bg-white/85 backdrop-blur-xl lg:hidden dark:border-carvao-700/70 dark:bg-carvao-900/85 print:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      <div className="mx-auto flex max-w-md items-stretch justify-between px-2">
+      <div className="mx-auto flex max-w-md items-stretch justify-between px-1">
         {GRUPOS.map((g) => {
           const ativo = g.id === grupoAtivo;
           return (
@@ -47,11 +48,11 @@ export function BottomNav({
               }`}
             >
               <span
-                className={`flex h-8 w-12 items-center justify-center rounded-full transition-all ${
+                className={`flex h-8 w-11 items-center justify-center rounded-full transition-all ${
                   ativo ? 'bg-brand-500/12' : ''
                 }`}
               >
-                <Icone nome={g.id} tam={22} />
+                <Icone nome={g.id} tam={21} />
               </span>
               <span className="text-[10px] font-semibold tracking-tight">{g.rotulo}</span>
             </button>

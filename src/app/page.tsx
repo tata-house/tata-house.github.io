@@ -7,7 +7,6 @@ import { ToastHost, toast } from '@/components/Toast';
 import { Icone } from '@/components/Icones';
 import { BottomSheet, Skeleton } from '@/components/ui';
 import { AbaAceitacao } from '@/components/cardapio/AbaAceitacao';
-import { AbaAuditoria } from '@/components/cardapio/AbaAuditoria';
 import { AbaCardapio } from '@/components/cardapio/AbaCardapio';
 import { AbaCompras } from '@/components/cardapio/AbaCompras';
 import { AbaCotacao } from '@/components/cardapio/AbaCotacao';
@@ -48,32 +47,19 @@ const ABAS = [
   { id: 'cotacao', rotulo: '📋 Cotação' },
   { id: 'cardapio', rotulo: '🍽️ Cardápio' },
   { id: 'simulador', rotulo: '⚖️ Simulador' },
-  { id: 'estoque', rotulo: '📦 Estoque' },
   { id: 'compras', rotulo: '🛒 Compras' },
-  { id: 'fluxo', rotulo: '🚦 Acompanhar' },
-  { id: 'desperdicio', rotulo: '♻️ Desperdício' },
-  { id: 'aceitacao', rotulo: '👍 Aceitação' },
-  { id: 'precos', rotulo: '💰 Preços' },
-  { id: 'radar', rotulo: '📡 Radar' },
-  { id: 'auditoria', rotulo: '🛡️ Auditoria' },
+  { id: 'feedback', rotulo: '👍 Feedback' },
 ] as const;
 
 type AbaId = (typeof ABAS)[number]['id'];
+type SecaoCompras = 'comprar' | 'estoque' | 'precos' | 'radar';
 
-const ABA_LABEL: Record<string, string> = {
-  painel: 'Painel',
-  cotacao: 'Cotação',
-  cardapio: 'Cardápio',
-  simulador: 'Simulador',
-  estoque: 'Estoque',
-  compras: 'Compras',
-  fluxo: 'Acompanhar',
-  desperdicio: 'Desperdício',
-  aceitacao: 'Aceitação',
-  precos: 'Preços',
-  radar: 'Radar',
-  auditoria: 'Auditoria',
-};
+const SECOES_COMPRAS: { id: SecaoCompras; rotulo: string }[] = [
+  { id: 'comprar', rotulo: 'Comprar' },
+  { id: 'estoque', rotulo: 'Estoque' },
+  { id: 'precos', rotulo: 'Preços' },
+  { id: 'radar', rotulo: 'Radar' },
+];
 
 const ROTULO_ETAPA: Record<Etapa, string> = {
   rascunho: 'Rascunho',
@@ -96,6 +82,7 @@ export default function PaginaCardapios() {
   const [aba, setAba] = useState<AbaId>('painel');
   const [posterAberto, setPosterAberto] = useState(false);
   const [semanaSheet, setSemanaSheet] = useState(false);
+  const [secaoCompras, setSecaoCompras] = useState<SecaoCompras>('comprar');
 
   const { estado, atualizar, pronto } = useSemana(semanaId);
   const { precos, definirPreco } = usePrecos();
@@ -113,7 +100,6 @@ export default function PaginaCardapios() {
   const semanaAtualId = idSemanaIso(new Date());
 
   const grupoAtivo = GRUPOS.find((g) => g.abas.includes(aba)) ?? GRUPOS[0];
-  const subAbas = grupoAtivo.abas;
 
   const irSemana = (delta: number) => setSemanaId(deslocarSemana(semanaId, delta));
 
@@ -269,25 +255,6 @@ export default function PaginaCardapios() {
           ))}
         </nav>
 
-        {/* Sub-navegação da área — mobile */}
-        {subAbas.length > 1 && (
-          <div className="flex gap-1 overflow-x-auto rounded-2xl bg-carvao-100/70 p-1 lg:hidden dark:bg-carvao-800/70 print:hidden">
-            {subAbas.map((id) => (
-              <button
-                key={id}
-                onClick={() => setAba(id as AbaId)}
-                className={`min-h-9 flex-1 whitespace-nowrap rounded-xl px-3 text-[13px] font-semibold transition ${
-                  aba === id
-                    ? 'bg-white text-brand-700 shadow-suave dark:bg-carvao-700 dark:text-brand-300'
-                    : 'text-carvao-500 dark:text-areia-200'
-                }`}
-              >
-                {ABA_LABEL[id]}
-              </button>
-            ))}
-          </div>
-        )}
-
         {!pronto ? (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -300,19 +267,31 @@ export default function PaginaCardapios() {
           </div>
         ) : (
           <>
+            {/* PAINEL — visão geral + acompanhar (etapa + contagem) + auditoria resumida */}
             {aba === 'painel' && (
-              <AbaDashboard
-                estado={estado}
-                semanaId={semanaId}
-                precos={precos}
-                fatores={fatores}
-                estoque={estoque}
-                historico={historico}
-                aceitacao={aceitacao}
-                fornecedores={fornecedores}
-                irPara={(a) => setAba(a as AbaId)}
-              />
+              <div className="space-y-6">
+                <AbaDashboard
+                  estado={estado}
+                  semanaId={semanaId}
+                  precos={precos}
+                  fatores={fatores}
+                  estoque={estoque}
+                  historico={historico}
+                  aceitacao={aceitacao}
+                  fornecedores={fornecedores}
+                  irPara={(a) => setAba(a as AbaId)}
+                />
+                <AbaFluxo
+                  estado={estado}
+                  atualizar={atualizar}
+                  papel={papel}
+                  precos={precos}
+                  fatores={fatores}
+                  aprenderDeSemana={aprenderDeSemana}
+                />
+              </div>
             )}
+
             {aba === 'cotacao' && (
               <AbaCotacao
                 definirPreco={definirPreco}
@@ -321,6 +300,7 @@ export default function PaginaCardapios() {
                 itensExtras={itensExtras}
               />
             )}
+
             {aba === 'cardapio' && (
               <AbaCardapio
                 estado={estado}
@@ -330,6 +310,7 @@ export default function PaginaCardapios() {
                 definirPreco={definirPreco}
               />
             )}
+
             {aba === 'simulador' && (
               <AbaSimulador
                 estado={estado}
@@ -339,70 +320,84 @@ export default function PaginaCardapios() {
                 podeEditar={podeEditarCardapio}
               />
             )}
-            {aba === 'estoque' && (
-              <AbaEstoque
-                estado={estado}
-                fatores={fatores}
-                estoque={estoque}
-                movimentar={movimentar}
-                definirMinimo={definirMinimo}
-                definirSaldo={definirSaldo}
-                podeEditar={podeEstoque}
-              />
-            )}
+
+            {/* COMPRAS — comprar/receber · estoque · preços · radar (seções) */}
             {aba === 'compras' && (
-              <AbaCompras
-                estado={estado}
-                atualizar={atualizar}
-                papel={papel}
-                precos={precos}
-                fornecedores={fornecedores}
-                fatores={fatores}
-              />
+              <div className="space-y-4">
+                <div className="flex gap-1 overflow-x-auto rounded-2xl bg-carvao-100/70 p-1 dark:bg-carvao-800/70">
+                  {SECOES_COMPRAS.map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => setSecaoCompras(s.id)}
+                      className={`min-h-9 flex-1 whitespace-nowrap rounded-xl px-3 text-[13px] font-semibold transition ${
+                        secaoCompras === s.id
+                          ? 'bg-white text-brand-700 shadow-suave dark:bg-carvao-700 dark:text-brand-300'
+                          : 'text-carvao-500 dark:text-areia-200'
+                      }`}
+                    >
+                      {s.rotulo}
+                    </button>
+                  ))}
+                </div>
+                {secaoCompras === 'comprar' && (
+                  <AbaCompras
+                    estado={estado}
+                    atualizar={atualizar}
+                    papel={papel}
+                    precos={precos}
+                    fornecedores={fornecedores}
+                    fatores={fatores}
+                  />
+                )}
+                {secaoCompras === 'estoque' && (
+                  <AbaEstoque
+                    estado={estado}
+                    fatores={fatores}
+                    estoque={estoque}
+                    movimentar={movimentar}
+                    definirMinimo={definirMinimo}
+                    definirSaldo={definirSaldo}
+                    podeEditar={podeEstoque}
+                  />
+                )}
+                {secaoCompras === 'precos' && (
+                  <AbaPrecos
+                    precos={precos}
+                    definirPreco={definirPreco}
+                    fornecedores={fornecedores}
+                    itensExtras={itensExtras}
+                  />
+                )}
+                {secaoCompras === 'radar' && (
+                  <AbaRadar precos={precos} historico={historico} fornecedores={fornecedores} />
+                )}
+              </div>
             )}
-            {aba === 'fluxo' && (
-              <AbaFluxo
-                estado={estado}
-                atualizar={atualizar}
-                papel={papel}
-                precos={precos}
-                fatores={fatores}
-                aprenderDeSemana={aprenderDeSemana}
-              />
+
+            {/* FEEDBACK — aceitação dos pratos + desperdício + QR */}
+            {aba === 'feedback' && (
+              <div className="space-y-6">
+                <AbaAceitacao
+                  estado={estado}
+                  aceitacao={aceitacao}
+                  avaliar={avaliar}
+                  eventos={eventos}
+                  addEvento={addEvento}
+                  rmEvento={rmEvento}
+                  desperdicio={desperdicio}
+                  podeEditar={podeAvaliar}
+                />
+                <AbaDesperdicio
+                  estado={estado}
+                  precos={precos}
+                  fatores={fatores}
+                  registros={desperdicio}
+                  adicionar={addDesperdicio}
+                  remover={rmDesperdicio}
+                  podeEditar={podeEstoque}
+                />
+              </div>
             )}
-            {aba === 'desperdicio' && (
-              <AbaDesperdicio
-                estado={estado}
-                precos={precos}
-                fatores={fatores}
-                registros={desperdicio}
-                adicionar={addDesperdicio}
-                remover={rmDesperdicio}
-                podeEditar={podeEstoque}
-              />
-            )}
-            {aba === 'aceitacao' && (
-              <AbaAceitacao
-                estado={estado}
-                aceitacao={aceitacao}
-                avaliar={avaliar}
-                eventos={eventos}
-                addEvento={addEvento}
-                rmEvento={rmEvento}
-                desperdicio={desperdicio}
-                podeEditar={podeAvaliar}
-              />
-            )}
-            {aba === 'precos' && (
-              <AbaPrecos
-                precos={precos}
-                definirPreco={definirPreco}
-                fornecedores={fornecedores}
-                itensExtras={itensExtras}
-              />
-            )}
-            {aba === 'radar' && <AbaRadar precos={precos} historico={historico} fornecedores={fornecedores} />}
-            {aba === 'auditoria' && <AbaAuditoria papel={papel} />}
           </>
         )}
       </main>

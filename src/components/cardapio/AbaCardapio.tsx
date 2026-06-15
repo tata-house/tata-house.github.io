@@ -26,6 +26,7 @@ import { SeletorPrato } from './SeletorPrato';
 import { OperacaoDia } from './OperacaoDia';
 import { ChefIA } from './ChefIA';
 import { PrevisaoPresenca } from './PrevisaoPresenca';
+import { ComoFazer } from './ComoFazer';
 
 /** Junta pratos com receita (primeiro) e as opções históricas, sem repetir. */
 function mesclarOpcoes(receitas: string[], base: string[]): string[] {
@@ -349,6 +350,9 @@ export function AbaCardapio({
                       receita ou complete os itens na lista de compras.
                     </p>
                   )}
+                  <div>
+                    <ComoFazer prato={dia.principal} />
+                  </div>
                 </>
               )}
             </Cartao>

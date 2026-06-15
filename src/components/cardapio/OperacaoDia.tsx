@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { Cartao } from '@/components/ui';
 import { DIAS_SEMANA, formatarQtd, linhasDoDia } from '@/lib/cardapio/motor';
 import type { EstadoSemana } from '@/lib/cardapio/tipos';
+import { ComoFazer } from './ComoFazer';
 
 /** Índice do dia de hoje na semana (segunda = 0 … domingo = 6). */
 function hojeIdx(): number {
@@ -118,25 +119,30 @@ export function OperacaoDia({
                 {produzir.map(([rot, nome]) => {
                   const feito = feitos.has(rot);
                   return (
-                    <button
+                    <div
                       key={rot}
-                      onClick={() => toggleFeito(rot)}
-                      className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-left ring-1 transition ${
-                        feito ? 'bg-brand-500/20 ring-brand-400/40' : 'bg-white/10 ring-white/15 hover:bg-white/15'
+                      className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 ring-1 transition ${
+                        feito ? 'bg-brand-500/20 ring-brand-400/40' : 'bg-white/10 ring-white/15'
                       }`}
                     >
-                      <span
-                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${
-                          feito ? 'bg-brand-500 text-white' : 'bg-white/15 text-transparent'
-                        }`}
-                      >
-                        ✓
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block text-[10px] font-bold uppercase tracking-wide text-brand-200">{rot}</span>
-                        <span className={`block text-[15px] font-semibold ${feito ? 'text-brand-100 line-through' : ''}`}>{nome}</span>
-                      </span>
-                    </button>
+                      <button onClick={() => toggleFeito(rot)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
+                        <span
+                          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${
+                            feito ? 'bg-brand-500 text-white' : 'bg-white/15 text-transparent'
+                          }`}
+                        >
+                          ✓
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-[10px] font-bold uppercase tracking-wide text-brand-200">{rot}</span>
+                          <span className={`block text-[15px] font-semibold ${feito ? 'text-brand-100 line-through' : ''}`}>{nome}</span>
+                        </span>
+                      </button>
+                      <ComoFazer
+                        prato={nome}
+                        className="shrink-0 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-bold text-white ring-1 ring-white/20 transition hover:bg-white/25"
+                      />
+                    </div>
                   );
                 })}
               </section>

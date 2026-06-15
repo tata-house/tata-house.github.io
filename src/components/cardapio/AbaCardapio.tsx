@@ -27,6 +27,7 @@ import { OperacaoDia } from './OperacaoDia';
 import { ChefIA } from './ChefIA';
 import { PrevisaoPresenca } from './PrevisaoPresenca';
 import { ComoFazer } from './ComoFazer';
+import { AntiMonotonia } from './AntiMonotonia';
 
 /** Junta pratos com receita (primeiro) e as opções históricas, sem repetir. */
 function mesclarOpcoes(receitas: string[], base: string[]): string[] {
@@ -245,6 +246,9 @@ export function AbaCardapio({
             ))}
         </Cartao>
       )}
+
+      {/* Monotonia percebida — repetição de textura ou acompanhamentos */}
+      <AntiMonotonia estado={estado} />
 
       {/* Chef IA — análise inteligente do cardápio */}
       <ChefIA estado={estado} precos={precos} />

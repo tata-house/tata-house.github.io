@@ -42,6 +42,8 @@ export function AbaSimulador({
   const [alternativa, setAlternativa] = useState<{ rotulo: string; dias: DiaCardapio[] } | null>(null);
   const { estimativas } = useEstimativas();
   const historico = useHistoricoPrecos();
+  const [precoVar, setPrecoVar] = useState(0);
+  const [pessoasDelta, setPessoasDelta] = useState(0);
 
   const pessoas = estado.dias.map((d) => d.pessoas);
 
@@ -88,6 +90,21 @@ export function AbaSimulador({
       ),
     [estado.dias, precos, estimativasEfetivas, fatores], // eslint-disable-line react-hooks/exhaustive-deps
   );
+
+  // "E se…" — cenário hipotético: variação de preço de mercado e de pessoas/dia.
+  const cenarioSeEu = useMemo(() => {
+    const fator = 1 + precoVar / 100;
+    let total = 0;
+    let pessoasTot = 0;
+    estado.dias.forEach((d) => {
+      if (!d.principal) return;
+      const p = Math.max(1, d.pessoas + pessoasDelta);
+      pessoasTot += p;
+      const itens = listaDoDia({ ...d, pessoas: p }, fatores).map((s) => ({ norm: normalizar(s.item), qtd: s.qtd }));
+      total += custoTipado(itens, precos, estimativasEfetivas).total * fator;
+    });
+    return { total, ref: pessoasTot > 0 ? total / pessoasTot : 0, pessoas: pessoasTot };
+  }, [estado.dias, precoVar, pessoasDelta, precos, estimativasEfetivas, fatores]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const economia = alt ? (atual.custoRef - alt.custoRef) * Math.max(atual.pessoas, alt.pessoas) : 0;
   const economiaMes = economia * 4.3;
@@ -185,6 +202,85 @@ export function AbaSimulador({
           )}
         </div>
       )}
+
+      {/* Simulador de cenários — "E se…" */}
+      <Secao titulo="🔮 E se… (cenários)">
+        <Cartao className="space-y-3">
+          <div>
+            <label className="flex items-center justify-between text-sm font-semibold">
+              <span>Preço de mercado</span>
+              <span className="tabular-nums text-brand-700 dark:text-brand-300">
+                {precoVar > 0 ? '+' : ''}
+                {precoVar}%
+              </span>
+            </label>
+            <input
+              type="range"
+              min={-30}
+              max={50}
+              step={5}
+              value={precoVar}
+              onChange={(e) => setPrecoVar(Number(e.target.value))}
+              className="mt-1 w-full accent-brand-600"
+            />
+          </div>
+          <div>
+            <label className="flex items-center justify-between text-sm font-semibold">
+              <span>Pessoas por dia</span>
+              <span className="tabular-nums text-brand-700 dark:text-brand-300">
+                {pessoasDelta > 0 ? '+' : ''}
+                {pessoasDelta}
+              </span>
+            </label>
+            <input
+              type="range"
+              min={-30}
+              max={60}
+              step={5}
+              value={pessoasDelta}
+              onChange={(e) => setPessoasDelta(Number(e.target.value))}
+              className="mt-1 w-full accent-brand-600"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-2xl bg-areia-50/70 p-3 ring-1 ring-carvao-100 dark:bg-carvao-900/40 dark:ring-carvao-700/60">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-carvao-400">Custo / refeição</p>
+              <p className="font-display text-xl font-bold tabular-nums">{formatarReais(cenarioSeEu.ref)}</p>
+              {atual.custoRef > 0 && (
+                <p className={`text-[11px] font-bold ${cenarioSeEu.ref > atual.custoRef ? 'text-[#b04c41]' : 'text-brand-600'}`}>
+                  {cenarioSeEu.ref >= atual.custoRef ? '▲ +' : '▼ '}
+                  {formatarReais(Math.abs(cenarioSeEu.ref - atual.custoRef))} vs atual
+                </p>
+              )}
+            </div>
+            <div className="rounded-2xl bg-areia-50/70 p-3 ring-1 ring-carvao-100 dark:bg-carvao-900/40 dark:ring-carvao-700/60">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-carvao-400">Custo total semana</p>
+              <p className="font-display text-xl font-bold tabular-nums">{formatarReais(cenarioSeEu.total)}</p>
+              {atual.custo > 0 && (
+                <p className={`text-[11px] font-bold ${cenarioSeEu.total > atual.custo ? 'text-[#b04c41]' : 'text-brand-600'}`}>
+                  {cenarioSeEu.total >= atual.custo ? '▲ +' : '▼ '}
+                  {formatarReais(Math.abs(cenarioSeEu.total - atual.custo))} vs atual
+                </p>
+              )}
+            </div>
+          </div>
+          {(precoVar !== 0 || pessoasDelta !== 0) && (
+            <button
+              onClick={() => {
+                setPrecoVar(0);
+                setPessoasDelta(0);
+              }}
+              className="text-xs font-semibold text-carvao-400 hover:text-carvao-600"
+            >
+              ↺ Limpar cenário
+            </button>
+          )}
+          <p className="text-[11px] text-carvao-400">
+            Arraste para simular alta de preço ou mudança no movimento. Recalcula na hora — <strong>não altera</strong> o
+            cardápio.
+          </p>
+        </Cartao>
+      </Secao>
 
       <div className="flex flex-wrap gap-2">
         <Botao onClick={() => gerar('economica')} className="flex-1">

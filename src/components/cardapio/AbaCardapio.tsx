@@ -25,6 +25,7 @@ import type { DiaCardapio, EstadoSemana, Proteina } from '@/lib/cardapio/tipos';
 import { SeletorPrato } from './SeletorPrato';
 import { OperacaoDia } from './OperacaoDia';
 import { ChefIA } from './ChefIA';
+import { PrevisaoPresenca } from './PrevisaoPresenca';
 
 /** Junta pratos com receita (primeiro) e as opções históricas, sem repetir. */
 function mesclarOpcoes(receitas: string[], base: string[]): string[] {
@@ -246,6 +247,9 @@ export function AbaCardapio({
 
       {/* Chef IA — análise inteligente do cardápio */}
       <ChefIA estado={estado} precos={precos} />
+
+      {/* Previsão de presença — gêmeo digital da demanda */}
+      <PrevisaoPresenca estado={estado} atualizar={atualizar} podeEditar={podeEditar} />
 
       {/* Dias */}
       <div className="grid gap-3 lg:grid-cols-2">

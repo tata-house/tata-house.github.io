@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AlternadorTema } from '@/components/AlternadorTema';
 import { BottomNav, GRUPOS } from '@/components/BottomNav';
 import { ToastHost, toast } from '@/components/Toast';
@@ -39,8 +39,10 @@ import {
   useSemana,
 } from '@/lib/cardapio/estado';
 import { useLogo } from '@/lib/cardapio/logo';
-import { PAPEIS, pode } from '@/lib/cardapio/org';
-import type { Etapa, Papel } from '@/lib/cardapio/tipos';
+import { useLogin, abasDoPapel } from '@/lib/cardapio/login';
+import { Login } from '@/components/Login';
+import { pode } from '@/lib/cardapio/org';
+import type { Etapa } from '@/lib/cardapio/tipos';
 
 const ABAS = [
   { id: 'painel', rotulo: '📊 Painel' },
@@ -89,7 +91,8 @@ export default function PaginaCardapios() {
   const { fornecedores, definirFornecedor } = useFornecedores();
   const { itensExtras, cadastrarItem } = useItensExtras();
   const { fatores, aprenderDeSemana } = useAprendizado();
-  const { papel, setPapel } = usePapel();
+  const { papel } = usePapel();
+  const { perfil, perfilId, pronto: loginPronto, sair } = useLogin();
   const { logo } = useLogo();
   const { estoque, movimentar, definirMinimo, definirSaldo } = useEstoque();
   const { aceitacao, avaliar } = useAceitacao();
@@ -99,6 +102,11 @@ export default function PaginaCardapios() {
 
   const semanaAtualId = idSemanaIso(new Date());
 
+  const abasPermitidas = useMemo(() => abasDoPapel(papel), [papel]);
+  const gruposVisiveis = useMemo(
+    () => GRUPOS.filter((g) => g.abas.some((a) => abasPermitidas.includes(a as AbaId))),
+    [abasPermitidas],
+  );
   const grupoAtivo = GRUPOS.find((g) => g.abas.includes(aba)) ?? GRUPOS[0];
 
   const irSemana = (delta: number) => setSemanaId(deslocarSemana(semanaId, delta));
@@ -139,6 +147,14 @@ export default function PaginaCardapios() {
   const podeEstoque = pode(papel, 'estoque:gerenciar');
   const podeAvaliar = pode(papel, 'cardapio:editar');
 
+  // se a aba atual não é permitida ao perfil, vai para a primeira liberada
+  useEffect(() => {
+    if (!abasPermitidas.includes(aba)) setAba(abasPermitidas[0] as AbaId);
+  }, [abasPermitidas, aba]);
+
+  if (!loginPronto) return null;
+  if (!perfilId) return <Login />;
+
   if (posterAberto) {
     return <PosterSemana estado={estado} semanaId={semanaId} aoFechar={() => setPosterAberto(false)} />;
   }
@@ -166,22 +182,19 @@ export default function PaginaCardapios() {
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <label className="relative flex items-center">
-              <span className="sr-only">Papel</span>
-              <Icone nome="usuario" tam={15} className="pointer-events-none absolute left-2.5 text-white/70" />
-              <select
-                value={papel}
-                onChange={(e) => setPapel(e.target.value as Papel)}
-                className="appearance-none rounded-full bg-white/15 py-1.5 pl-8 pr-7 text-xs font-semibold text-white ring-1 ring-white/25 focus:outline-none focus:ring-2 focus:ring-ouro-300"
-              >
-                {PAPEIS.map((p) => (
-                  <option key={p.id} value={p.id} className="text-carvao-900">
-                    {p.rotulo}
-                  </option>
-                ))}
-              </select>
-              <Icone nome="baixo" tam={14} className="pointer-events-none absolute right-2 text-white/70" />
-            </label>
+            <span className="hidden items-center gap-1.5 rounded-full bg-white/15 py-1.5 pl-3 pr-3 text-xs font-semibold text-white ring-1 ring-white/25 sm:flex">
+              <Icone nome="usuario" tam={14} className="text-white/70" />
+              {perfil?.rotulo ?? 'Perfil'}
+            </span>
+            <button
+              onClick={() => {
+                sair();
+                if (typeof window !== 'undefined') window.location.reload();
+              }}
+              className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/25 transition hover:bg-white/25"
+            >
+              Sair
+            </button>
             <AlternadorTema />
           </div>
         </div>
@@ -240,7 +253,7 @@ export default function PaginaCardapios() {
 
         {/* Navegação completa — desktop */}
         <nav className="hidden gap-1 overflow-x-auto rounded-full bg-white p-1 ring-1 ring-carvao-200 lg:flex dark:bg-carvao-800 dark:ring-carvao-600 print:hidden">
-          {ABAS.map((a) => (
+          {ABAS.filter((a) => abasPermitidas.includes(a.id)).map((a) => (
             <button
               key={a.id}
               onClick={() => setAba(a.id)}
@@ -458,7 +471,7 @@ export default function PaginaCardapios() {
         </div>
       </BottomSheet>
 
-      <BottomNav grupoAtivo={grupoAtivo.id} aoSelecionar={(g) => setAba((GRUPOS.find((x) => x.id === g) ?? GRUPOS[0]).abas[0] as AbaId)} />
+      <BottomNav grupos={gruposVisiveis} grupoAtivo={grupoAtivo.id} aoSelecionar={(g) => setAba((GRUPOS.find((x) => x.id === g) ?? GRUPOS[0]).abas[0] as AbaId)} />
       <Assistente contexto={{ estado, semanaId, precos, historico, fornecedores, aceitacao, estoque, fatores }} />
       <ToastHost />
     </>

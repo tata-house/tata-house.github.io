@@ -5,6 +5,7 @@ import { toast } from '@/components/Toast';
 import { Botao, Cartao, EstadoVazio, Kpi, Pilula, Secao, estiloInput, estiloRotulo } from '@/components/ui';
 import { DIAS_SEMANA, formatarQtd, formatarReais } from '@/lib/cardapio/motor';
 import { resumoSemana } from '@/lib/cardapio/indicadores';
+import { RadarDesperdicio } from '@/components/cardapio/RadarDesperdicio';
 import type { EstadoSemana, RegistroDesperdicio } from '@/lib/cardapio/tipos';
 
 export function AbaDesperdicio({
@@ -98,6 +99,8 @@ export function AbaDesperdicio({
         <Kpi rotulo="Custo perdido" valor={custoRef ? formatarReais(totalCusto) : '—'} detalhe={custoRef ? 'estimado' : 'defina custo/refeição'} tom="vermelho" icone="💸" />
         <Kpi rotulo="Taxa de sobra" valor={`${Math.round(taxa * 100)}%`} detalhe="do que foi produzido" tom={taxa > 0.1 ? 'vermelho' : 'verde'} icone="📉" />
       </div>
+
+      <RadarDesperdicio estado={estado} precos={precos} fatores={fatores} registros={registros} />
 
       {podeEditar && (
         <Secao titulo="➕ Registrar sobra do dia">

@@ -26,9 +26,11 @@ export const GRUPOS: Grupo[] = [
 export function BottomNav({
   grupoAtivo,
   aoSelecionar,
+  grupos = GRUPOS,
 }: {
   grupoAtivo: string;
   aoSelecionar: (grupoId: string) => void;
+  grupos?: Grupo[];
 }) {
   return (
     <nav
@@ -36,7 +38,7 @@ export function BottomNav({
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="mx-auto flex max-w-md items-stretch justify-between px-1">
-        {GRUPOS.map((g) => {
+        {grupos.map((g) => {
           const ativo = g.id === grupoAtivo;
           return (
             <button

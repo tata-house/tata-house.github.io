@@ -11,6 +11,8 @@ import {
 } from '@/lib/cardapio/indicadores';
 import { analisarRadar, fraseAlerta } from '@/lib/cardapio/radar';
 import { useAuditoria } from '@/lib/cardapio/estado';
+import { CentroDecisoes } from './CentroDecisoes';
+import { Configuracoes } from './Configuracoes';
 import type { Aceitacao, Estoque, EstadoSemana, HistoricoPrecos } from '@/lib/cardapio/tipos';
 
 export function AbaDashboard({
@@ -122,6 +124,14 @@ export function AbaDashboard({
           }
         />
       )}
+
+      <CentroDecisoes
+        estado={estado}
+        precos={precos}
+        historico={historico}
+        estoque={estoque}
+        aceitacao={aceitacao}
+      />
 
       {/* ROI do mês */}
       <Cartao className="overflow-hidden !p-0">
@@ -243,6 +253,8 @@ export function AbaDashboard({
           </Cartao>
         </Secao>
       )}
+
+      <Configuracoes />
     </div>
   );
 }

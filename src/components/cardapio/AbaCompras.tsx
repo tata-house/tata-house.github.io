@@ -12,6 +12,7 @@ import {
   linhasDoDia,
 } from '@/lib/cardapio/motor';
 import type { EstadoSemana, Papel, StatusItem } from '@/lib/cardapio/tipos';
+import { ListaCompras } from './ListaCompras';
 
 function hojeIso(): string {
   return new Date().toISOString().slice(0, 10);
@@ -58,6 +59,7 @@ export function AbaCompras({
   const [novoItemDia, setNovoItemDia] = useState<number | null>(null);
   const [fotoPendente, setFotoPendente] = useState<string | null>(null);
   const [diasDaNota, setDiasDaNota] = useState<Set<number>>(new Set());
+  const [modo, setModo] = useState<'lista' | 'detalhado'>('lista');
 
   const podeAjustarQtd = papel === 'gestor' || papel === 'cozinha';
   const podeComprar = papel === 'compras' || papel === 'gestor';
@@ -127,6 +129,32 @@ export function AbaCompras({
           🖨️ Imprimir
         </Botao>
       </div>
+
+      {/* Alterna entre lista compacta (conferência) e visão detalhada */}
+      <div className="flex gap-1 rounded-2xl bg-carvao-100/70 p-1 print:hidden dark:bg-carvao-800/70">
+        {(
+          [
+            ['lista', '📋 Lista'],
+            ['detalhado', '🧾 Detalhado'],
+          ] as const
+        ).map(([id, rot]) => (
+          <button
+            key={id}
+            onClick={() => setModo(id)}
+            className={`min-h-9 flex-1 rounded-xl px-3 text-[13px] font-semibold transition ${
+              modo === id
+                ? 'bg-white text-brand-700 shadow-suave dark:bg-carvao-700 dark:text-brand-300'
+                : 'text-carvao-500 dark:text-areia-200'
+            }`}
+          >
+            {rot}
+          </button>
+        ))}
+      </div>
+
+      {modo === 'lista' && (
+        <ListaCompras estado={estado} fatores={fatores} atualizar={atualizar} podeComprar={podeComprar} />
+      )}
 
       {/* Notas fiscais da semana — uma compra pode cobrir vários dias */}
       {(podeComprar || podeReceber || (estado.notasFiscais ?? []).length > 0) && (
@@ -249,7 +277,8 @@ export function AbaCompras({
         )}
       </Modal>
 
-      {estado.dias.map((dia, di) => {
+      {modo === 'detalhado' &&
+        estado.dias.map((dia, di) => {
         const linhas = linhasDoDia(estado, di, fatores);
         if (!dia.principal && linhas.length === 0) return null;
         const custo = custoDaLista(

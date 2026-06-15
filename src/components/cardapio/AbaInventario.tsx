@@ -37,6 +37,10 @@ export function AbaInventario({
   const [mes, setMes] = useState(mesAtual());
   const [itens, setItens] = useState<Record<string, ItemInventario>>({});
   const [busca, setBusca] = useState('');
+  const [novoNome, setNovoNome] = useState('');
+  const [novaUnid, setNovaUnid] = useState('kg');
+  const [novaQtd, setNovaQtd] = useState('');
+  const [novaCat, setNovaCat] = useState('');
 
   // (re)carrega a contagem do mês ao abrir ou trocar o mês
   useEffect(() => {
@@ -81,6 +85,28 @@ export function AbaInventario({
     setItens((a) => ({ ...a, [norm]: { ...a[norm], contado: v === '' ? null : Number(v) } }));
   const setObs = (norm: string, v: string) =>
     setItens((a) => ({ ...a, [norm]: { ...a[norm], obs: v } }));
+
+  // Item 12: cadastrar um produto novo durante a contagem — entra no estoque
+  // (definirSaldo) e já aparece na lista do inventário do mês.
+  const cadastrarProduto = () => {
+    const nome = novoNome.trim();
+    if (!nome) {
+      toast('Informe o nome do produto', 'erro');
+      return;
+    }
+    const k = normalizar(nome);
+    const unid = novaUnid.trim() || 'kg';
+    const q = Number(novaQtd) > 0 ? Number(novaQtd) : 0;
+    definirSaldo(k, nome, unid, q);
+    setItens((a) => ({
+      ...a,
+      [k]: { item: nome, unid, esperado: q, contado: q > 0 ? q : null, obs: novaCat.trim() ? `Categoria: ${novaCat.trim()}` : a[k]?.obs },
+    }));
+    toast(`Produto “${nome}” cadastrado e adicionado ao estoque`);
+    setNovoNome('');
+    setNovaQtd('');
+    setNovaCat('');
+  };
 
   const montar = (status: Inventario['status']): Inventario => {
     const agora = new Date().toISOString();
@@ -161,11 +187,55 @@ export function AbaInventario({
           </Cartao>
         )}
 
+        {podeEditar && (
+          <Cartao className="space-y-2">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-carvao-400">➕ Cadastrar produto</p>
+            <div className="flex flex-wrap gap-2">
+              <input
+                className={`${estiloInput} min-w-0 flex-1`}
+                placeholder="Nome do produto"
+                value={novoNome}
+                onChange={(e) => setNovoNome(e.target.value)}
+              />
+              <input
+                className={`${estiloInput} w-20`}
+                placeholder="un."
+                value={novaUnid}
+                onChange={(e) => setNovaUnid(e.target.value)}
+              />
+              <input
+                type="number"
+                min={0}
+                step="0.1"
+                inputMode="decimal"
+                className={`${estiloInput} w-24`}
+                placeholder="qtd"
+                value={novaQtd}
+                onChange={(e) => setNovaQtd(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <input
+                className={`${estiloInput} min-w-0 flex-1`}
+                placeholder="categoria (opcional)"
+                value={novaCat}
+                onChange={(e) => setNovaCat(e.target.value)}
+              />
+              <Botao onClick={cadastrarProduto} className="!min-h-10 !px-4 !py-2 text-sm">
+                Cadastrar
+              </Botao>
+            </div>
+            <p className="text-[11px] text-carvao-400">
+              O produto entra no estoque e já aparece na contagem deste mês.
+            </p>
+          </Cartao>
+        )}
+
         {Object.keys(itens).length === 0 ? (
           <EstadoVazio
             icone="📦"
             titulo="Sem itens para contar"
-            texto="Cadastre itens no estoque (entradas) para que apareçam aqui no inventário."
+            texto="Cadastre um produto acima, ou registre entradas no estoque, para que apareçam aqui no inventário."
           />
         ) : (
           <>

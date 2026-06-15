@@ -4,6 +4,7 @@
    ===================================================================== */
 
 import dadosJson from './dados.json';
+import { receitaDoPrato } from './receitas';
 import type {
   Aviso,
   DadosCardapio,
@@ -230,15 +231,25 @@ export function listaDoDia(dia: DiaCardapio, fatores?: Record<string, number>): 
     else acc.set(k, { item: nome, unid, qtd: q });
   };
 
-  const combo = porChave.get(normalizar(chaveDoDia(dia)));
+  // Receita do principal tem prioridade: garante ingredientes corretos e
+  // determinísticos. Sem receita no principal, segue o histórico (combo/mapa).
+  const principalComReceita = !!receitaDoPrato(dia.principal);
+  const combo = principalComReceita ? undefined : porChave.get(normalizar(chaveDoDia(dia)));
   if (combo) {
     combo.itens.forEach(({ i, q, u }) => adiciona(i, q, u));
   } else {
     for (const [tipo, campo] of TIPOS) {
       const opcao = dia[campo];
       if (!opcao || typeof opcao !== 'string') continue;
-      const itens = porTipoOpcao.get(`${tipo}|${normalizar(opcao)}`);
-      itens?.forEach(({ i, q, u }) => adiciona(i, q, u));
+      const receita = receitaDoPrato(opcao);
+      if (receita) {
+        // receita é por pessoa; o acumulador trabalha na base (baseline) e
+        // multiplica por `fator` no fim → some porPessoa * baseline.
+        receita.ingredientes.forEach((ing) => adiciona(ing.item, ing.porPessoa * DADOS.baseline, ing.unid));
+      } else {
+        const itens = porTipoOpcao.get(`${tipo}|${normalizar(opcao)}`);
+        itens?.forEach(({ i, q, u }) => adiciona(i, q, u));
+      }
     }
   }
 
@@ -286,6 +297,25 @@ export function listaDoDia(dia: DiaCardapio, fatores?: Record<string, number>): 
     })
     .filter((x) => x.qtd > 0)
     .sort((a, b) => a.item.localeCompare(b.item, 'pt-BR'));
+}
+
+/**
+ * De onde vêm os ingredientes do prato principal do dia — usado para alertar
+ * quando a lista é só estimada (sem receita nem histórico coerente).
+ *  - 'receita'  : tem receita explícita (ideal).
+ *  - 'combo'    : combinação exata já vista no histórico.
+ *  - 'mapa'     : opção mapeada no histórico.
+ *  - 'estimado' : sem nenhuma das anteriores → ingredientes chutados.
+ *  - 'vazio'    : sem prato principal.
+ */
+export type FonteIngredientes = 'receita' | 'combo' | 'mapa' | 'estimado' | 'vazio';
+
+export function fonteIngredientes(dia: DiaCardapio): FonteIngredientes {
+  if (!dia.principal) return 'vazio';
+  if (receitaDoPrato(dia.principal)) return 'receita';
+  if (porChave.get(normalizar(chaveDoDia(dia)))) return 'combo';
+  if (porTipoOpcao.get(`principal|${normalizar(dia.principal)}`)) return 'mapa';
+  return 'estimado';
 }
 
 /* --------------- linhas de compra do dia (auto + manuais) ------------- */

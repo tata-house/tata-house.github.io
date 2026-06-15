@@ -27,7 +27,7 @@ export function Botao({
   };
   return (
     <button
-      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-[14px] font-bold tracking-tight transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ouro-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 ${estilos[variante]} ${className}`}
+      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-[14px] font-bold tracking-tight transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ouro-400 hover:-translate-y-px active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transform-none ${estilos[variante]} ${className}`}
       {...props}
     />
   );
@@ -36,7 +36,7 @@ export function Botao({
 export function Cartao({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <div
-      className={`rounded-3xl border border-carvao-100 bg-white p-5 shadow-suave dark:border-carvao-700/70 dark:bg-carvao-850 ${className}`}
+      className={`rounded-3xl border border-carvao-100 bg-white p-5 shadow-suave transition-shadow duration-200 dark:border-carvao-700/70 dark:bg-carvao-850 ${className}`}
     >
       {children}
     </div>
@@ -137,8 +137,8 @@ export function Kpi({
     azul: 'from-[#4d92b0] to-[#2d6f8e]',
   }[tom];
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-carvao-100 bg-white p-4 shadow-suave dark:border-carvao-700/70 dark:bg-carvao-850">
-      <span className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${barra}`} />
+    <div className="group relative overflow-hidden rounded-3xl border border-carvao-100 bg-white p-4 shadow-suave transition-all duration-200 hover:-translate-y-0.5 hover:shadow-flutuante motion-reduce:transform-none motion-reduce:transition-none dark:border-carvao-700/70 dark:bg-carvao-850">
+      <span className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r transition-all duration-200 group-hover:h-1.5 ${barra}`} />
       <div className="flex items-start justify-between gap-2">
         <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-carvao-500 dark:text-carvao-300">{rotulo}</p>
         {icone && <span className="text-base leading-none opacity-70">{icone}</span>}

@@ -1,15 +1,9 @@
-import React from 'react';
 'use client';
 
+import React from 'react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { PIX_BADGE, PIX_LABEL, STATUS_BADGE, STATUS_LABEL } from '@/lib/constants';
 import type { PixStatus, ReservaStatus } from '@/lib/types';
-
-/* =====================================================================
-   Mini design system TATÁ Sushi — operação Dia dos Namorados
-   Tom: hospitalidade premium, grafite + areia + verde da marca.
-   Tablet-first: alvos de toque ≥ 48px, cantos generosos, sombras suaves.
-   ===================================================================== */
 
 export function Botao({
   variante = 'primario',
@@ -19,10 +13,8 @@ export function Botao({
   variante?: 'primario' | 'secundario' | 'perigo' | 'sucesso' | 'alerta';
 }) {
   const estilos = {
-    primario:
-      'bg-carvao-900 text-areia-50 hover:bg-carvao-800 shadow-suave dark:bg-areia-100 dark:text-carvao-900 dark:hover:bg-white',
-    secundario:
-      'bg-white text-carvao-700 ring-1 ring-carvao-200 hover:bg-areia-100 hover:ring-carvao-300 dark:bg-carvao-800 dark:text-areia-100 dark:ring-carvao-600 dark:hover:bg-carvao-700',
+    primario: 'bg-carvao-900 text-areia-50 hover:bg-carvao-800 shadow-suave dark:bg-areia-100 dark:text-carvao-900 dark:hover:bg-white',
+    secundario: 'bg-white text-carvao-700 ring-1 ring-carvao-200 hover:bg-areia-100 hover:ring-carvao-300 dark:bg-carvao-800 dark:text-areia-100 dark:ring-carvao-600 dark:hover:bg-carvao-700',
     perigo: 'bg-[#b04c41] text-white hover:bg-[#9b4038] shadow-suave',
     sucesso: 'bg-brand-600 text-white hover:bg-brand-700 shadow-suave',
     alerta: 'bg-[#d18a3a] text-white hover:bg-[#bd7a2f] shadow-suave',
@@ -37,19 +29,15 @@ export function Botao({
 
 export function Cartao({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div
-      className={`rounded-3xl border border-carvao-100 bg-white p-5 shadow-suave dark:border-carvao-700/70 dark:bg-carvao-850 ${className}`}
-    >
+    <div className={`rounded-3xl border border-carvao-100 bg-white p-5 shadow-suave dark:border-carvao-700/70 dark:bg-carvao-850 ${className}`}>
       {children}
     </div>
   );
 }
 
-function Pilula({ classe, children }: { classe: string; children: ReactNode }) {
+export function Pilula({ classe, children }: { classe: string; children: ReactNode }) {
   return (
-    <span
-      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-bold ${classe}`}
-    >
+    <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-bold ${classe}`}>
       <i className="h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-60" aria-hidden />
       {children}
     </span>
@@ -65,33 +53,17 @@ export function BadgePix({ status }: { status: PixStatus }) {
 }
 
 export function Modal({
-  titulo,
-  aberto,
-  aoFechar,
-  children,
+  titulo, aberto, aoFechar, children,
 }: {
-  titulo: string;
-  aberto: boolean;
-  aoFechar: () => void;
-  children: ReactNode;
+  titulo: string; aberto: boolean; aoFechar: () => void; children: ReactNode;
 }) {
   if (!aberto) return null;
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-carvao-950/55 backdrop-blur-[2px] animate-aparecer sm:items-center sm:p-6"
-      onClick={aoFechar}
-    >
-      <div
-        className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 shadow-flutuante animate-subir dark:bg-carvao-850 sm:rounded-3xl"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-carvao-950/55 backdrop-blur-[2px] animate-aparecer sm:items-center sm:p-6" onClick={aoFechar}>
+      <div className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 shadow-flutuante animate-subir dark:bg-carvao-850 sm:rounded-3xl" onClick={(e) => e.stopPropagation()}>
         <div className="mb-5 flex items-center justify-between gap-3">
           <h2 className="font-display text-2xl font-semibold tracking-tight">{titulo}</h2>
-          <button
-            onClick={aoFechar}
-            aria-label="Fechar"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-areia-100 text-base text-carvao-500 transition hover:bg-areia-200 hover:text-carvao-800 dark:bg-carvao-700 dark:text-areia-200 dark:hover:bg-carvao-600"
-          >
+          <button onClick={aoFechar} aria-label="Fechar" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-areia-100 text-base text-carvao-500 transition hover:bg-areia-200 hover:text-carvao-800 dark:bg-carvao-700 dark:text-areia-200 dark:hover:bg-carvao-600">
             ✕
           </button>
         </div>
@@ -101,21 +73,11 @@ export function Modal({
   );
 }
 
-export const estiloInput =
-  'w-full min-h-12 rounded-2xl border border-carvao-200 bg-white px-4 py-3 text-base text-carvao-900 placeholder:text-carvao-300 transition focus:border-carvao-400 focus:outline-none focus:ring-2 focus:ring-carvao-900/10 dark:border-carvao-600 dark:bg-carvao-900 dark:text-areia-100 dark:placeholder:text-carvao-500 dark:focus:border-carvao-400 dark:focus:ring-white/10';
+export const estiloInput = 'w-full min-h-12 rounded-2xl border border-carvao-200 bg-white px-4 py-3 text-base text-carvao-900 placeholder:text-carvao-300 transition focus:border-carvao-400 focus:outline-none focus:ring-2 focus:ring-carvao-900/10 dark:border-carvao-600 dark:bg-carvao-900 dark:text-areia-100 dark:placeholder:text-carvao-500 dark:focus:border-carvao-400 dark:focus:ring-white/10';
 
-export const estiloRotulo =
-  'mb-1.5 block text-xs font-bold uppercase tracking-[0.12em] text-carvao-400 dark:text-carvao-300';
-  export function Pilula({ classe, children }: { classe: string; children: React.ReactNode }) {
-  return (
-    <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-bold ${classe}`}>
-      <i className="h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-60" aria-hidden />
-      {children}
-    </span>
-  );
-}
+export const estiloRotulo = 'mb-1.5 block text-xs font-bold uppercase tracking-[0.12em] text-carvao-400 dark:text-carvao-300';
 
-export function Secao({ titulo, children, className = '' }: { titulo?: string; children: React.ReactNode; className?: string }) {
+export function Secao({ titulo, children, className = '' }: { titulo?: string; children: ReactNode; className?: string }) {
   return (
     <section className={`mb-6 ${className}`}>
       {titulo && <h2 className="mb-3 text-xs font-bold uppercase tracking-widest text-carvao-400">{titulo}</h2>}
@@ -165,7 +127,7 @@ export function Skeleton({ className = '' }: { className?: string }) {
   return <div className={`animate-pulse rounded-2xl bg-carvao-100 dark:bg-carvao-700 ${className}`} />;
 }
 
-export function BottomSheet({ aberto, aoFechar, children }: { aberto: boolean; aoFechar: () => void; children: React.ReactNode }) {
+export function BottomSheet({ aberto, aoFechar, children }: { aberto: boolean; aoFechar: () => void; children: ReactNode }) {
   if (!aberto) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-carvao-950/55 backdrop-blur-[2px]" onClick={aoFechar}>

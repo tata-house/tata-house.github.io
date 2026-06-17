@@ -101,6 +101,9 @@ export function ChefIA({
     const pratoValido = (nome: string): boolean => {
       const n = normalizar(nome);
       if (VETO_PRINCIPAL.has(n)) return false;
+      // só sugere pratos com receita completa e adequados ao refeitório
+      const r = receitaDoPrato(nome);
+      if (r && r.adequacaoRefeitorio < 60) return false;
       const ac = aceitacao[n];
       if (ac && ac.n >= 3 && ac.somaNotas / ac.n < 2) return false;
       return true;

@@ -5,7 +5,31 @@
    ===================================================================== */
 
 import { normalizar } from './motor';
+import { receitaDoPrato } from './receitas';
 import type { DiaCardapio } from './tipos';
+
+/** Índice de saúde (0–100) a partir dos macros por porção. */
+function saudavelDeMacros(n: {
+  kcal: number;
+  prot: number;
+  carb: number;
+  gord: number;
+  fibra: number;
+  sodio: number;
+}): number {
+  let s = 100;
+  if (n.kcal > 520) s -= 14;
+  else if (n.kcal > 460) s -= 8;
+  else if (n.kcal < 230) s -= 4;
+  if (n.sodio > 850) s -= 20;
+  else if (n.sodio > 650) s -= 10;
+  if (n.gord > 28) s -= 14;
+  else if (n.gord > 20) s -= 6;
+  if (n.prot >= 30) s += 6;
+  else if (n.prot < 12) s -= 8;
+  if (n.fibra >= 5) s += 6;
+  return Math.max(20, Math.min(100, s));
+}
 
 export interface InfoNutricional {
   prato: string;
@@ -60,8 +84,26 @@ const TABELA: Record<string, Omit<InfoNutricional, 'prato'>> = {
 
 export function infoNutricional(prato: string | null | undefined): InfoNutricional | null {
   if (!prato) return null;
+
+  // Fonte primária: a nutrição embutida na receita (biblioteca enriquecida).
+  const r = receitaDoPrato(prato);
+  if (r?.nutricao) {
+    const nu = r.nutricao;
+    return {
+      prato,
+      porcao: r.rendimentoPorcaoG ? `${r.rendimentoPorcaoG}g` : '—',
+      kcal: nu.kcal,
+      proteinas: nu.prot,
+      carboidratos: nu.carb,
+      gorduras: nu.gord,
+      fibras: nu.fibra,
+      sodio: nu.sodio,
+      indiceSaudavel: saudavelDeMacros(nu),
+    };
+  }
+
   const n = normalizar(prato);
-  // busca exata
+  // busca exata (tabela legada, para pratos sem receita)
   const exato = TABELA[n];
   if (exato) return { prato, ...exato };
   // busca parcial (primeiro match)

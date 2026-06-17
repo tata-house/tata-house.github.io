@@ -31,16 +31,10 @@ import { AntiMonotonia } from './AntiMonotonia';
 import { TermometroAlmoco } from './TermometroAlmoco';
 import { IndicadorNutricional } from './IndicadorNutricional';
 
-/** Junta pratos com receita (primeiro) e as opções históricas, sem repetir. */
-function mesclarOpcoes(receitas: string[], base: string[]): string[] {
-  const vistos = new Set(receitas.map((r) => normalizar(r)));
-  return [...receitas, ...base.filter((o) => !vistos.has(normalizar(o)))];
-}
-
-const OPC_PRINCIPAIS = mesclarOpcoes(RECEITAS_POR_CATEGORIA.principal, DADOS.listas.principais);
-const OPC_GUARNICOES = mesclarOpcoes(RECEITAS_POR_CATEGORIA.guarnicao, DADOS.listas.guarnicoes);
-const OPC_SALADAS = mesclarOpcoes(RECEITAS_POR_CATEGORIA.salada, DADOS.listas.saladas);
-const OPC_SOBREMESAS = mesclarOpcoes(RECEITAS_POR_CATEGORIA.sobremesa, DADOS.listas.sobremesas);
+const OPC_PRINCIPAIS = RECEITAS_POR_CATEGORIA.principal;
+const OPC_GUARNICOES = RECEITAS_POR_CATEGORIA.guarnicao;
+const OPC_SALADAS = RECEITAS_POR_CATEGORIA.salada;
+const OPC_SOBREMESAS = RECEITAS_POR_CATEGORIA.sobremesa;
 
 const COR_PROTEINA: Record<string, string> = {
   bovina: 'bg-[#8a3b34]/10 text-[#8a3b34] ring-[#8a3b34]/25 dark:text-[#e0867c]',

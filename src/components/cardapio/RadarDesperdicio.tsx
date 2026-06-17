@@ -1,0 +1,175 @@
+'use client';
+
+/* =====================================================================
+   Radar de desperdício preditivo — aprende, semana a semana, quanto cada
+   prato costuma sobrar e antecipa o desperdício dos pratos planejados para
+   esta semana. Não é um relatório do passado: é uma previsão acionável
+   ("produza ~X% a menos") antes de cozinhar. Tudo local e determinístico.
+   ===================================================================== */
+
+import { useEffect, useMemo, useState } from 'react';
+import { Cartao, Pilula, Secao } from '@/components/cardapio/ui';
+import { DIAS_SEMANA, formatarReais, normalizar } from '@/lib/cardapio/motor';
+import { resumoSemana } from '@/lib/cardapio/indicadores';
+import { lerDesperdicio, semanasComConteudo } from '@/lib/cardapio/estado';
+import type { EstadoSemana, RegistroDesperdicio } from '@/lib/cardapio/tipos';
+
+interface Padrao {
+  prato: string; // rótulo original (último visto)
+  ocasioes: number; // quantas vezes foi servido/registrado
+  produzido: number;
+  sobra: number;
+  taxa: number; // sobra / produzido (0..1)
+}
+
+interface Previsao {
+  dia: number;
+  prato: string;
+  taxa: number;
+  ocasioes: number;
+  cortePct: number; // quanto produzir a menos (%)
+  custoEvitado: number; // por refeição × pessoas × taxa
+}
+
+export function RadarDesperdicio({
+  estado,
+  precos,
+  fatores,
+  registros,
+}: {
+  estado: EstadoSemana;
+  precos: Record<string, number>;
+  fatores?: Record<string, number>;
+  registros: RegistroDesperdicio[];
+}) {
+  const [padroes, setPadroes] = useState<Map<string, Padrao>>(new Map());
+
+  // Aprende com todo o histórico de sobras (todas as semanas com cardápio).
+  useEffect(() => {
+    const m = new Map<string, Padrao>();
+    const semanas = semanasComConteudo();
+    semanas.forEach((sid) => {
+      lerDesperdicio(sid).forEach((r) => {
+        const k = normalizar(r.prato);
+        if (!k) return;
+        const prev = m.get(k) ?? { prato: r.prato, ocasioes: 0, produzido: 0, sobra: 0, taxa: 0 };
+        prev.prato = r.prato;
+        prev.ocasioes += 1;
+        prev.produzido += r.produzido;
+        prev.sobra += Math.max(0, r.produzido - r.consumido);
+        m.set(k, prev);
+      });
+    });
+    m.forEach((p) => {
+      p.taxa = p.produzido > 0 ? p.sobra / p.produzido : 0;
+    });
+    setPadroes(m);
+    // recomputa quando as sobras da semana atual mudam (cobre o fluxo de edição)
+  }, [registros]);
+
+  const resumo = useMemo(() => resumoSemana(estado, precos, fatores), [estado, precos, fatores]);
+  const custoRef = resumo.custoRefReal ?? resumo.custoRefEstimado ?? 0;
+
+  // Previsões para os pratos planejados nesta semana.
+  const previsoes = useMemo<Previsao[]>(() => {
+    const out: Previsao[] = [];
+    estado.dias.forEach((d, dia) => {
+      if (!d.principal) return;
+      const p = padroes.get(normalizar(d.principal));
+      if (!p || p.ocasioes < 2 || p.taxa < 0.08) return; // só prevê com histórico e sobra relevante
+      const cortePct = Math.min(40, Math.round(p.taxa * 100));
+      out.push({
+        dia,
+        prato: d.principal,
+        taxa: p.taxa,
+        ocasioes: p.ocasioes,
+        cortePct,
+        custoEvitado: custoRef * d.pessoas * p.taxa,
+      });
+    });
+    return out.sort((a, b) => b.taxa - a.taxa);
+  }, [estado.dias, padroes, custoRef]);
+
+  // Lista de observação: pratos historicamente perdulários fora desta semana.
+  const naSemana = new Set(estado.dias.map((d) => normalizar(d.principal)).filter(Boolean));
+  const observar = useMemo(
+    () =>
+      Array.from(padroes.values())
+        .filter((p) => p.ocasioes >= 2 && p.taxa >= 0.12 && !naSemana.has(normalizar(p.prato)))
+        .sort((a, b) => b.taxa - a.taxa)
+        .slice(0, 4),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [padroes, estado.dias],
+  );
+
+  const custoEvitavel = previsoes.reduce((a, p) => a + p.custoEvitado, 0);
+
+  if (padroes.size === 0) return null; // sem histórico ainda
+
+  const confianca = (n: number) => (n >= 5 ? 'alta' : n >= 3 ? 'média' : 'baixa');
+
+  return (
+    <Secao
+      titulo="🛰️ Radar preditivo de desperdício"
+      acao={
+        custoEvitavel > 0 ? (
+          <Pilula tom="verde">evita ~{formatarReais(custoEvitavel)}/sem</Pilula>
+        ) : (
+          <Pilula tom="azul">{padroes.size} pratos aprendidos</Pilula>
+        )
+      }
+    >
+      {previsoes.length === 0 ? (
+        <Cartao className="space-y-1">
+          <p className="text-sm font-semibold text-brand-700 dark:text-brand-300">
+            ✅ Nenhum risco previsto para os pratos desta semana.
+          </p>
+          <p className="text-[11px] text-carvao-400">
+            O radar aprendeu com {padroes.size} prato(s) do histórico. Os pratos planejados não têm padrão de sobra
+            relevante.
+          </p>
+        </Cartao>
+      ) : (
+        <div className="space-y-2">
+          {previsoes.map((p) => (
+            <Cartao key={p.dia} className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold">
+                  <span className="text-[10px] font-bold uppercase text-carvao-400">{DIAS_SEMANA[p.dia].slice(0, 3)}</span>{' '}
+                  {p.prato}
+                </p>
+                <p className="text-[12px] text-carvao-500 dark:text-areia-200">
+                  Costuma sobrar <strong>~{Math.round(p.taxa * 100)}%</strong> — produza{' '}
+                  <strong>~{p.cortePct}% a menos</strong>
+                  {custoRef ? <> e evite ~{formatarReais(p.custoEvitado)}</> : null}.
+                </p>
+                <p className="text-[10px] text-carvao-400">
+                  confiança {confianca(p.ocasioes)} · {p.ocasioes} registro(s)
+                </p>
+              </div>
+              <Pilula tom={p.taxa >= 0.2 ? 'vermelho' : 'ouro'}>−{p.cortePct}%</Pilula>
+            </Cartao>
+          ))}
+        </div>
+      )}
+
+      {observar.length > 0 && (
+        <Cartao className="space-y-1.5 bg-areia-50/60 dark:bg-carvao-900/40">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-carvao-400">👁️ Vigiar quando voltarem</p>
+          <ul className="space-y-1 text-[12px]">
+            {observar.map((p) => (
+              <li key={p.prato} className="flex items-center justify-between gap-2">
+                <span className="truncate">{p.prato}</span>
+                <Pilula tom="ouro">~{Math.round(p.taxa * 100)}% de sobra</Pilula>
+              </li>
+            ))}
+          </ul>
+        </Cartao>
+      )}
+
+      <p className="text-[10px] text-carvao-400">
+        Previsões aprendidas dos seus lançamentos de sobra. Quanto mais você registrar, mais preciso fica.
+      </p>
+    </Secao>
+  );
+}

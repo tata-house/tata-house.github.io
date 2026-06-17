@@ -10,6 +10,7 @@ const LINKS = [
   { href: '/mapa', rotulo: 'Mapa de mesas', rotuloCurto: 'Mapa' },
   { href: '/caixa', rotulo: 'Caixa', rotuloCurto: 'Caixa' },
   { href: '/relatorios', rotulo: 'Fechamento', rotuloCurto: 'Resumo' },
+  { href: '/cardapio', rotulo: 'Cardápio da equipe', rotuloCurto: 'Cardápio' },
 ];
 
 export function NavBar() {

@@ -64,7 +64,7 @@ export function ConciliacaoSemana({
 
     /* ---- 1. Preço acima do histórico ---- */
     const alertasPreco: AlertaPreco[] = [];
-    for (const k of vistos) {
+    for (const k of Array.from(vistos)) {
       const precoAtual = precos[k];
       if (!precoAtual) continue;
       const hist = historico[k] ?? [];

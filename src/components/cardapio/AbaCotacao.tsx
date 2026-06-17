@@ -96,6 +96,26 @@ export function AbaCotacao({
       return novo;
     });
 
+  /* Importa arquivo CSV, TXT ou Excel (convertido via FileReader) */
+  const importarArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const conteudo = ev.target?.result as string;
+      if (!conteudo) return;
+      // Normaliza separadores e converte para formato texto livre
+      const linhas = conteudo
+        .split(/\r?\n/)
+        .map((l) => l.replace(/\t|;/g, ' ').trim())
+        .filter(Boolean);
+      const novoTexto = linhas.join('\n');
+      setTexto((prev) => (prev ? prev + '\n' + novoTexto : novoTexto));
+    };
+    reader.readAsText(file, 'UTF-8');
+  };
+
   return (
     <div className="space-y-4">
       <Cartao className="space-y-3">
@@ -105,6 +125,21 @@ export function AbaCotacao({
           itens conhecidos recebem o menor preço automaticamente e produtos novos você{' '}
           <strong>cadastra na hora</strong> — assim o custo da semana cobre praticamente tudo.
         </p>
+
+        {/* Upload de arquivo */}
+        <div className="flex items-center gap-3">
+          <label className="cursor-pointer rounded-full border border-dashed border-carvao-300 px-4 py-2 text-[12px] font-bold text-carvao-500 transition hover:border-brand-400 hover:text-brand-600 dark:border-carvao-600 dark:text-carvao-400">
+            📂 Importar arquivo (CSV / TXT)
+            <input
+              type="file"
+              accept=".csv,.txt,.tsv"
+              className="hidden"
+              onChange={importarArquivo}
+            />
+          </label>
+          <span className="text-[11px] text-carvao-400">O conteúdo é adicionado à área de texto</span>
+        </div>
+
         <textarea
           rows={8}
           value={texto}

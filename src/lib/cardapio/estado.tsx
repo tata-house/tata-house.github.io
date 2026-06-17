@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { linhasDoDia, normalizar, PESSOAS_PADRAO } from './motor';
 import type {
   Aceitacao,
+  ChefFeedback,
   Estoque,
   EventoDemanda,
   HistoricoPrecos,
@@ -602,4 +603,33 @@ export function lerEventos(): EventoDemanda[] {
 /** Média de refeições aprendida por dia da semana (0=seg … 6=dom). */
 export function lerMediaRefeicoes(): Record<number, { f: number; n: number }> {
   return lerLocal('mediaRefeicoes', {});
+}
+
+/* =====================================================================
+   Chef IA — feedback das sugestões (👍/👎) + histórico de recomendações
+   ===================================================================== */
+
+export function useChefFeedback() {
+  const [feedbacks, setFeedbacks] = useState<ChefFeedback[]>([]);
+
+  useEffect(() => {
+    setFeedbacks(lerLocal('chefFeedback', []));
+  }, []);
+
+  const registrar = useCallback((fb: Omit<ChefFeedback, 'id' | 'em'>) => {
+    setFeedbacks((atual) => {
+      const novo = [
+        { ...fb, id: `${Date.now()}-${Math.random().toString(36).slice(2, 5)}`, em: new Date().toISOString() },
+        ...atual,
+      ].slice(0, 300);
+      gravarLocal('chefFeedback', novo);
+      return novo;
+    });
+  }, []);
+
+  const vetados = new Set(
+    feedbacks.filter((f) => f.voto === 'ruim').map((f) => f.hash),
+  );
+
+  return { feedbacks, registrar, vetados };
 }

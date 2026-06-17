@@ -28,7 +28,10 @@ export type NomeIcone =
   | 'raio'
   | 'cotacao'
   | 'simulador'
-  | 'feedback';
+  | 'feedback'
+  | 'chefIA'
+  | 'gerencial'
+  | 'exportar';
 
 const CAMINHOS: Record<NomeIcone, ReactNode> = {
   painel: (
@@ -126,6 +129,27 @@ const CAMINHOS: Record<NomeIcone, ReactNode> = {
     <>
       <path d="M21 11.5a8 8 0 0 1-11.7 7.1L4 20l1.4-4.2A8 8 0 1 1 21 11.5z" />
       <path d="M9 11h.01M15 11h.01M9.2 14a3 3 0 0 0 5.6 0" />
+    </>
+  ),
+  chefIA: (
+    <>
+      <path d="M12 2a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5V11h-4V9.5C8.8 8.8 8 7.5 8 6a4 4 0 0 1 4-4z" />
+      <path d="M9 11H7a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h1" />
+      <path d="M15 11h2a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-1" />
+      <rect x="9" y="13" width="6" height="6" rx="1" />
+      <path d="M10 19v2M14 19v2" />
+    </>
+  ),
+  gerencial: (
+    <>
+      <rect x="3" y="4" width="18" height="14" rx="2" />
+      <path d="M7 8h10M7 12h6M7 16h4" />
+    </>
+  ),
+  exportar: (
+    <>
+      <path d="M12 3v12M8 11l4 4 4-4" />
+      <path d="M5 18h14" />
     </>
   ),
 };

@@ -31,6 +31,26 @@ export interface ItemSugerido {
 export interface AjusteItem {
   qtd?: number;
   removido?: boolean;
+  unidOverride?: string;
+  obs?: string;
+}
+
+/** Feedback do usuário sobre uma sugestão do Chef IA. */
+export interface ChefFeedback {
+  id: string;
+  hash: string;
+  voto: 'bom' | 'ruim';
+  motivo?: string;
+  em: string;
+}
+
+/** Item identificado numa nota fiscal fotografada. */
+export interface ItemNota {
+  produto: string;
+  qtd: number;
+  unid: string;
+  precoUnit: number;
+  fornecedor?: string;
 }
 
 /** Item digitado fora da lógica automática. */

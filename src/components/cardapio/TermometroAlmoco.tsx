@@ -90,7 +90,7 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
         <div className="flex items-start gap-2 rounded-xl bg-[#b04c41]/10 px-3 py-2.5 ring-1 ring-[#b04c41]/25">
           <span aria-hidden className="mt-0.5 text-base">⚠️</span>
           <p className="text-sm font-bold text-[#b04c41]">
-            {Math.round(taxaRuimRecente * 100)}% de “Não gostei” nos últimos 30 min ({janela.length} votos) — verifique o prato antes do próximo serviço
+            {Math.round(taxaRuimRecente * 100)}% de "Não gostei" nos últimos 30 min ({janela.length} votos) — verifique o prato antes do próximo serviço
           </p>
         </div>
       )}

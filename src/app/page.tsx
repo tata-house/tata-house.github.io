@@ -16,7 +16,8 @@ import { AbaEstoque } from '@/components/cardapio/AbaEstoque';
 import { AbaFluxo } from '@/components/cardapio/AbaFluxo';
 import { AbaPrecos } from '@/components/cardapio/AbaPrecos';
 import { AbaRadar } from '@/components/cardapio/AbaRadar';
-import { AbaSimulador } from '@/components/cardapio/AbaSimulador';
+import { CentralGerencial } from '@/components/cardapio/CentralGerencial';
+import { ChefIATab } from '@/components/cardapio/ChefIATab';
 import { Assistente } from '@/components/cardapio/Assistente';
 import { PosterSemana } from '@/components/cardapio/PosterSemana';
 import {
@@ -48,9 +49,10 @@ const ABAS = [
   { id: 'painel', rotulo: '📊 Painel' },
   { id: 'cotacao', rotulo: '📋 Cotação' },
   { id: 'cardapio', rotulo: '🍽️ Cardápio' },
-  { id: 'simulador', rotulo: '⚖️ Simulador' },
+  { id: 'chefIA', rotulo: '🤖 Chef IA' },
   { id: 'compras', rotulo: '🛒 Compras' },
   { id: 'feedback', rotulo: '👍 Feedback' },
+  { id: 'gerencial', rotulo: '📈 Gerencial' },
 ] as const;
 
 type AbaId = (typeof ABAS)[number]['id'];
@@ -324,13 +326,19 @@ export default function PaginaCardapios() {
               />
             )}
 
-            {aba === 'simulador' && (
-              <AbaSimulador
+            {aba === 'chefIA' && (
+              <ChefIATab estado={estado} precos={precos} semanaId={semanaId} />
+            )}
+
+            {aba === 'gerencial' && (
+              <CentralGerencial
                 estado={estado}
-                atualizar={atualizar}
+                semanaId={semanaId}
                 precos={precos}
+                historico={historico}
+                aceitacao={aceitacao}
+                fornecedores={fornecedores}
                 fatores={fatores}
-                podeEditar={podeEditarCardapio}
               />
             )}
 

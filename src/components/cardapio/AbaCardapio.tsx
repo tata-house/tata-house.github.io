@@ -29,6 +29,7 @@ import { PrevisaoPresenca } from './PrevisaoPresenca';
 import { ComoFazer } from './ComoFazer';
 import { AntiMonotonia } from './AntiMonotonia';
 import { TermometroAlmoco } from './TermometroAlmoco';
+import { IndicadorNutricional } from './IndicadorNutricional';
 
 /** Junta pratos com receita (primeiro) e as opções históricas, sem repetir. */
 function mesclarOpcoes(receitas: string[], base: string[]): string[] {
@@ -254,8 +255,11 @@ export function AbaCardapio({
       {/* Monotonia percebida — repetição de textura ou acompanhamentos */}
       <AntiMonotonia estado={estado} />
 
-      {/* Chef IA — análise inteligente do cardápio */}
+      {/* Chef IA — análise inteligente do cardápio (resumo; aba dedicada tem visão completa) */}
       <ChefIA estado={estado} precos={precos} />
+
+      {/* Índice nutricional estimado da semana */}
+      <IndicadorNutricional dias={estado.dias} />
 
       {/* Previsão de presença — gêmeo digital da demanda */}
       <PrevisaoPresenca estado={estado} atualizar={atualizar} podeEditar={podeEditar} />

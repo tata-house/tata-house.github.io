@@ -18,9 +18,10 @@ export const GRUPOS: Grupo[] = [
   { id: 'painel', rotulo: 'Painel', abas: ['painel'] },
   { id: 'cotacao', rotulo: 'Cotação', abas: ['cotacao'] },
   { id: 'cardapio', rotulo: 'Cardápio', abas: ['cardapio'] },
-  { id: 'simulador', rotulo: 'Simular', abas: ['simulador'] },
+  { id: 'chefIA', rotulo: 'Chef IA', abas: ['chefIA'] },
   { id: 'compras', rotulo: 'Compras', abas: ['compras'] },
   { id: 'feedback', rotulo: 'Feedback', abas: ['feedback'] },
+  { id: 'gerencial', rotulo: 'Gerencial', abas: ['gerencial'] },
 ];
 
 export function BottomNav({

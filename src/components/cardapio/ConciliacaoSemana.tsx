@@ -11,8 +11,11 @@
 
 import { useMemo } from 'react';
 import { useHistoricoPrecos } from '@/lib/cardapio/estado';
-import { linhasDoDia, formatarQtd, formatarReais } from '@/lib/cardapio/motor';
+import { linhasDoDia, custoDaLista, formatarQtd, formatarReais } from '@/lib/cardapio/motor';
 import type { EstadoSemana } from '@/lib/cardapio/tipos';
+
+const CUSTO_MIN_POR_REFEICAO = 2;
+const CUSTO_MAX_POR_REFEICAO = 50;
 
 type AlertaPreco = {
   item: string;
@@ -39,6 +42,27 @@ export function ConciliacaoSemana({
   precos: Record<string, number>;
 }) {
   const historico = useHistoricoPrecos();
+
+  const alertaCustoIrreal = useMemo(() => {
+    let totalCusto = 0;
+    let totalPessoas = 0;
+    for (let di = 0; di < 7; di++) {
+      const dia = estado.dias[di];
+      if (!dia.principal) continue;
+      const linhas = linhasDoDia(estado, di);
+      const c = custoDaLista(linhas.map((l) => ({ item: l.item, unid: l.unid, qtd: l.qtd })), precos);
+      // só conta dias onde pelo menos metade dos itens tem preço
+      if (c.itensComPreco > 0 && c.itensComPreco >= linhas.length * 0.4) {
+        totalCusto += c.total;
+        totalPessoas += Math.max(dia.pessoas, 1);
+      }
+    }
+    if (totalPessoas === 0) return null;
+    const custoMedio = totalCusto / totalPessoas;
+    if (custoMedio < CUSTO_MIN_POR_REFEICAO) return { tipo: 'baixo' as const, valor: custoMedio };
+    if (custoMedio > CUSTO_MAX_POR_REFEICAO) return { tipo: 'alto' as const, valor: custoMedio };
+    return null;
+  }, [estado, precos]);
 
   const { alertasPreco, alertasQtd, custoExcessoTotal } = useMemo(() => {
     /* ---- acumula por chave (item normalizado) ---- */
@@ -108,13 +132,37 @@ export function ConciliacaoSemana({
     return { alertasPreco, alertasQtd, custoExcessoTotal };
   }, [estado, precos, historico]);
 
-  if (alertasPreco.length === 0 && alertasQtd.length === 0) return null;
+  if (alertasPreco.length === 0 && alertasQtd.length === 0 && !alertaCustoIrreal) return null;
 
   return (
     <div className="space-y-4 rounded-2xl bg-carvao-50 p-4 ring-1 ring-carvao-200 dark:bg-carvao-900/60 dark:ring-carvao-700/60">
       <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-carvao-400">
         🔍 Conciliação automática
       </p>
+
+      {/* Custo por refeição fora da faixa plausível */}
+      {alertaCustoIrreal && (
+        <section>
+          <div className={`flex items-start gap-3 rounded-xl px-3 py-2.5 ring-1 ${
+            alertaCustoIrreal.tipo === 'baixo'
+              ? 'bg-blue-500/8 ring-blue-400/30'
+              : 'bg-[#b04c41]/8 ring-[#b04c41]/25'
+          }`}>
+            <span className="mt-0.5 text-lg">{alertaCustoIrreal.tipo === 'baixo' ? '⚠️' : '🔴'}</span>
+            <div className="min-w-0 flex-1">
+              <p className={`text-[13px] font-semibold ${alertaCustoIrreal.tipo === 'baixo' ? 'text-blue-700 dark:text-blue-300' : 'text-[#b04c41]'}`}>
+                Custo por refeição {alertaCustoIrreal.tipo === 'baixo' ? 'muito baixo' : 'muito alto'}
+              </p>
+              <p className="text-[11px] text-carvao-400">
+                Média calculada: {formatarReais(alertaCustoIrreal.valor)}/refeição —{' '}
+                {alertaCustoIrreal.tipo === 'baixo'
+                  ? `abaixo de ${formatarReais(CUSTO_MIN_POR_REFEICAO)}. Verifique se os preços dos principais itens foram cadastrados.`
+                  : `acima de ${formatarReais(CUSTO_MAX_POR_REFEICAO)}. Confirme os preços ou revise as quantidades.`}
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Preço acima do histórico */}
       {alertasPreco.length > 0 && (

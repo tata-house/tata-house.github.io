@@ -567,6 +567,55 @@ export function useAceitacao() {
 }
 
 /* =====================================================================
+   Preferência: mostrar/ocultar insumos básicos na lista de compras.
+   ===================================================================== */
+
+export function useMostrarBasicos() {
+  const [mostrarBasicos, setMostrarBasicosEstado] = useState(false);
+
+  useEffect(() => {
+    setMostrarBasicosEstado(lerLocal('mostrarBasicos', false));
+  }, []);
+
+  const setMostrarBasicos = useCallback((v: boolean) => {
+    setMostrarBasicosEstado(v);
+    gravarLocal('mostrarBasicos', v);
+  }, []);
+
+  return { mostrarBasicos, setMostrarBasicos };
+}
+
+/* =====================================================================
+   Pesquisa de satisfação detalhada — qualidade, variedade, atendimento
+   e comentário livre. Separada do índice de aceitação (que mede prato).
+   ===================================================================== */
+
+export interface RegistroSatisfacao {
+  id: string;
+  prato: string;
+  qualidade: 'bom' | 'ok' | 'ruim';
+  variedade: 'bom' | 'ok' | 'ruim';
+  atendimento: 'bom' | 'ok' | 'ruim';
+  comentario?: string;
+  em: string;
+}
+
+export function registrarSatisfacao(r: Omit<RegistroSatisfacao, 'id' | 'em'>) {
+  const registro: RegistroSatisfacao = {
+    ...r,
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    em: new Date().toISOString(),
+  };
+  const lista = [registro, ...lerLocal<RegistroSatisfacao[]>('satisfacao', [])].slice(0, 1000);
+  gravarLocal('satisfacao', lista);
+  return registro;
+}
+
+export function lerSatisfacao(): RegistroSatisfacao[] {
+  return lerLocal<RegistroSatisfacao[]>('satisfacao', []);
+}
+
+/* =====================================================================
    Módulo 6 — Eventos de demanda (manuais / feriados configuráveis).
    ===================================================================== */
 

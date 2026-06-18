@@ -11,7 +11,7 @@ import {
   formatarReais,
   linhasDoDia,
 } from '@/lib/cardapio/motor';
-import { registrarAuditoria } from '@/lib/cardapio/estado';
+import { registrarAuditoria, useMostrarBasicos } from '@/lib/cardapio/estado';
 import type { EstadoSemana, Papel, StatusItem } from '@/lib/cardapio/tipos';
 import { ListaCompras } from './ListaCompras';
 import { ConciliacaoSemana } from './ConciliacaoSemana';
@@ -58,6 +58,7 @@ export function AbaCompras({
   fornecedores?: Record<string, string>;
   fatores?: Record<string, number>;
 }) {
+  const { mostrarBasicos, setMostrarBasicos } = useMostrarBasicos();
   const [novoItemDia, setNovoItemDia] = useState<number | null>(null);
   const [fotoPendente, setFotoPendente] = useState<string | null>(null);
   const [diasDaNota, setDiasDaNota] = useState<Set<number>>(new Set());
@@ -175,7 +176,7 @@ export function AbaCompras({
   const comprarTudo = (dia: number) =>
     atualizar((e) => {
       const st = { ...(e.status[dia] ?? {}) };
-      linhasDoDia(e, dia, fatores).forEach((l) => {
+      linhasDoDia(e, dia, fatores, { mostrarBasicos }).forEach((l) => {
         if (!st[l.chave]?.compradoEm) st[l.chave] = { ...(st[l.chave] ?? {}), compradoEm: hojeIso(), compradoQtd: l.qtd };
       });
       return { ...e, status: { ...e.status, [dia]: st } };
@@ -184,7 +185,7 @@ export function AbaCompras({
   const receberTudo = (dia: number) =>
     atualizar((e) => {
       const st = { ...(e.status[dia] ?? {}) };
-      linhasDoDia(e, dia, fatores).forEach((l) => {
+      linhasDoDia(e, dia, fatores, { mostrarBasicos }).forEach((l) => {
         const s = st[l.chave];
         if (s?.compradoEm && !s.recebidoOk)
           st[l.chave] = { ...s, recebidoOk: true, recebidoQtd: s.compradoQtd ?? l.qtd };
@@ -225,6 +226,20 @@ export function AbaCompras({
         ))}
       </div>
 
+      {/* Toggle: mostrar/ocultar insumos básicos (sal, óleo, alho, etc.) */}
+      <div className="flex items-center justify-end print:hidden">
+        <button
+          onClick={() => setMostrarBasicos(!mostrarBasicos)}
+          className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide ring-1 transition ${
+            mostrarBasicos
+              ? 'bg-ouro-300/20 text-ouro-700 ring-ouro-400/40 hover:bg-ouro-300/30 dark:text-ouro-300'
+              : 'bg-carvao-100/60 text-carvao-400 ring-carvao-200/60 hover:bg-carvao-100 dark:bg-carvao-800/60 dark:ring-carvao-700/60'
+          }`}
+        >
+          🧂 {mostrarBasicos ? 'Ocultar básicos' : 'Mostrar básicos'}
+        </button>
+      </div>
+
       {modo === 'lista' && (
         <ListaCompras
           estado={estado}
@@ -232,6 +247,7 @@ export function AbaCompras({
           atualizar={atualizar}
           podeComprar={podeComprar}
           podeEditar={podeAjustarQtd}
+          mostrarBasicos={mostrarBasicos}
           onAjuste={(dia, chave, qtd, removido, obs, unid) => setAjuste(dia, chave, qtd, removido, obs, unid)}
           onAddManual={addManual}
           onRmManual={rmManual}

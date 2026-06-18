@@ -2,64 +2,141 @@
 
 /* =====================================================================
    Pesquisa de satisfação do prato do dia (Módulo de feedback / QR).
-   Página pública e enxuta: o funcionário abre pelo QR do pôster e avalia
-   o prato de hoje com um toque. Os votos alimentam a aba Aceitação.
-   Modelo quiosque (um tablet na saída) no protótipo; a agregação entre
-   vários celulares vem com o Supabase (ver ROADMAP, fase 5).
+   Campos: qualidade, variedade, atendimento e comentário livre.
+   O voto de qualidade alimenta o índice de aceitação existente.
+   Envio simples, sem login.
    ===================================================================== */
 
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { idSemanaIso, useAceitacao, useSemana } from '@/lib/cardapio/estado';
+import { registrarSatisfacao } from '@/lib/cardapio/estado';
 import { DIAS_SEMANA } from '@/lib/cardapio/motor';
 import { registrarVotoDia } from '@/lib/cardapio/termometro';
 
-const VOTOS: { v: 'bom' | 'ok' | 'ruim'; emoji: string; rotulo: string; cor: string }[] = [
-  { v: 'bom', emoji: '😋', rotulo: 'Gostei', cor: 'from-brand-500 to-brand-700' },
-  { v: 'ok', emoji: '😐', rotulo: 'Mais ou menos', cor: 'from-ouro-400 to-ouro-600' },
-  { v: 'ruim', emoji: '👎', rotulo: 'Não gostei', cor: 'from-[#c96a5f] to-[#b04c41]' },
+type Voto = 'bom' | 'ok' | 'ruim';
+
+const OPCOES: { v: Voto; emoji: string; rotulo: string }[] = [
+  { v: 'bom', emoji: '😋', rotulo: 'Ótimo' },
+  { v: 'ok',  emoji: '😐', rotulo: 'Regular' },
+  { v: 'ruim', emoji: '👎', rotulo: 'Ruim' },
 ];
+
+const COR_VOTO: Record<Voto, string> = {
+  bom:  'bg-brand-500/20 ring-brand-500/50 text-brand-700 dark:text-brand-200',
+  ok:   'bg-ouro-400/20 ring-ouro-400/50 text-ouro-700 dark:text-ouro-200',
+  ruim: 'bg-[#c96a5f]/20 ring-[#c96a5f]/40 text-[#b04c41] dark:text-[#e89a90]',
+};
+
+function BotaoVoto({
+  op,
+  selecionado,
+  onClick,
+}: {
+  op: (typeof OPCOES)[number];
+  selecionado: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex flex-1 flex-col items-center gap-1 rounded-2xl px-3 py-3 ring-1 transition active:scale-95 ${
+        selecionado
+          ? COR_VOTO[op.v]
+          : 'bg-white/10 ring-white/20 hover:bg-white/20 text-white'
+      }`}
+    >
+      <span className="text-3xl">{op.emoji}</span>
+      <span className="text-[11px] font-bold uppercase tracking-wide">{op.rotulo}</span>
+    </button>
+  );
+}
+
+function SecaoAvaliacao({
+  titulo,
+  valor,
+  onChange,
+}: {
+  titulo: string;
+  valor: Voto | null;
+  onChange: (v: Voto) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <p className="text-[12px] font-extrabold uppercase tracking-[0.2em] text-brand-200">{titulo}</p>
+      <div className="flex gap-2">
+        {OPCOES.map((op) => (
+          <BotaoVoto
+            key={op.v}
+            op={op}
+            selecionado={valor === op.v}
+            onClick={() => onChange(op.v)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function PaginaAvaliar() {
   const hoje = new Date();
   const semanaId = idSemanaIso(hoje);
-  const diaIdx = (hoje.getDay() + 6) % 7; // 0 = segunda … 6 = domingo
+  const diaIdx = (hoje.getDay() + 6) % 7;
 
   const { estado, pronto } = useSemana(semanaId);
   const { avaliar } = useAceitacao();
-  const [votou, setVotou] = useState<string | null>(null);
+  const [enviado, setEnviado] = useState(false);
 
-  const dia = estado.dias[diaIdx];
+  const [qualidade,   setQualidade]   = useState<Voto | null>(null);
+  const [variedade,   setVariedade]   = useState<Voto | null>(null);
+  const [atendimento, setAtendimento] = useState<Voto | null>(null);
+  const [comentario,  setComentario]  = useState('');
+
+  const dia   = estado.dias[diaIdx];
   const prato = dia?.principal?.trim();
 
   useEffect(() => {
-    if (!votou) return;
-    const t = setTimeout(() => setVotou(null), 4000);
+    if (!enviado) return;
+    const t = setTimeout(() => setEnviado(false), 5000);
     return () => clearTimeout(t);
-  }, [votou]);
+  }, [enviado]);
 
-  const registrar = (voto: 'bom' | 'ok' | 'ruim', emoji: string) => {
-    if (!prato) return;
-    try {
-      navigator.vibrate?.(15);
-    } catch {
-      /* sem suporte a vibração */
-    }
-    avaliar(prato, voto);
-    registrarVotoDia(prato, voto);
-    setVotou(emoji);
+  const podeSalvar = qualidade !== null;
+
+  const enviar = () => {
+    if (!prato || !qualidade) return;
+    try { navigator.vibrate?.(15); } catch { /* sem suporte */ }
+
+    // alimenta o índice de aceitação existente com a nota de qualidade
+    avaliar(prato, qualidade);
+    registrarVotoDia(prato, qualidade);
+
+    // registra a pesquisa completa
+    registrarSatisfacao({
+      prato,
+      qualidade,
+      variedade:   variedade   ?? qualidade,
+      atendimento: atendimento ?? qualidade,
+      comentario:  comentario.trim() || undefined,
+    });
+
+    setEnviado(true);
+    setQualidade(null);
+    setVariedade(null);
+    setAtendimento(null);
+    setComentario('');
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-8 bg-gradient-to-b from-brand-800 via-brand-700 to-brand-900 px-6 py-10 text-center text-white">
       <div className="space-y-1">
         <div className="font-display text-sm font-bold uppercase tracking-[0.4em] text-brand-200">Tatá House</div>
-        <div className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-ouro-300">Como foi o almoço de hoje?</div>
+        <div className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-ouro-300">Avalie o almoço de hoje</div>
       </div>
 
       {!pronto ? (
         <p className="text-brand-100">Carregando…</p>
-      ) : votou ? (
+      ) : enviado ? (
         <div className="relative flex flex-col items-center gap-3 animate-subir">
           <div className="pointer-events-none absolute left-1/2 top-6 -translate-x-1/2" aria-hidden>
             {Array.from({ length: 16 }).map((_, i) => {
@@ -74,8 +151,8 @@ export default function PaginaAvaliar() {
               );
             })}
           </div>
-          <span className="animate-estourar text-7xl">{votou}</span>
-          <p className="font-display text-2xl font-bold">Obrigado pelo voto!</p>
+          <span className="animate-estourar text-7xl">😊</span>
+          <p className="font-display text-2xl font-bold">Obrigado pelo feedback!</p>
           <p className="text-sm text-brand-100">Sua opinião ajuda a melhorar o cardápio. 💚</p>
         </div>
       ) : !prato ? (
@@ -85,12 +162,13 @@ export default function PaginaAvaliar() {
           <p className="text-sm text-brand-100">Volte na hora do almoço para avaliar o prato do dia.</p>
         </div>
       ) : (
-        <>
-          <div className="space-y-2">
+        <div className="w-full max-w-md space-y-6">
+          {/* Cabeçalho do prato */}
+          <div className="space-y-1">
             <p className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-brand-200">
               {DIAS_SEMANA[diaIdx]} · prato do dia
             </p>
-            <h1 className="max-w-2xl font-display text-4xl font-black uppercase leading-tight sm:text-5xl">{prato}</h1>
+            <h1 className="font-display text-3xl font-black uppercase leading-tight sm:text-4xl">{prato}</h1>
             {[dia.guarnicao, dia.salada].filter(Boolean).length > 0 && (
               <p className="text-sm font-semibold uppercase tracking-wide text-brand-100">
                 {[dia.guarnicao, dia.salada].filter(Boolean).join(' · ')}
@@ -98,20 +176,41 @@ export default function PaginaAvaliar() {
             )}
           </div>
 
-          <div className="flex w-full max-w-md flex-col gap-3">
-            {VOTOS.map((b) => (
-              <button
-                key={b.v}
-                onClick={() => registrar(b.v, b.emoji)}
-                className={`flex items-center justify-center gap-3 rounded-3xl bg-gradient-to-r ${b.cor} px-6 py-5 text-xl font-extrabold uppercase tracking-wide shadow-flutuante ring-1 ring-white/20 transition active:scale-95`}
-              >
-                <span className="text-4xl">{b.emoji}</span>
-                {b.rotulo}
-              </button>
-            ))}
+          {/* Seções de avaliação */}
+          <div className="space-y-5 rounded-3xl bg-white/10 p-5 ring-1 ring-white/20 text-left">
+            <SecaoAvaliacao titulo="🍛 Qualidade da comida *" valor={qualidade} onChange={setQualidade} />
+            <SecaoAvaliacao titulo="🥗 Variedade do cardápio" valor={variedade} onChange={setVariedade} />
+            <SecaoAvaliacao titulo="🤝 Atendimento" valor={atendimento} onChange={setAtendimento} />
+
+            {/* Comentário livre */}
+            <div className="space-y-2">
+              <p className="text-[12px] font-extrabold uppercase tracking-[0.2em] text-brand-200">
+                💬 Comentário livre
+              </p>
+              <textarea
+                value={comentario}
+                onChange={(e) => setComentario(e.target.value)}
+                placeholder="Sugestão, elogio ou crítica… (opcional)"
+                rows={3}
+                className="w-full resize-none rounded-xl bg-white/10 px-3 py-2.5 text-sm text-white placeholder:text-brand-200/50 ring-1 ring-white/20 focus:outline-none focus:ring-white/40"
+              />
+            </div>
           </div>
-          <p className="text-[11px] text-brand-200/70">Toque na carinha que combina com o que você achou.</p>
-        </>
+
+          <p className="text-[10px] text-brand-200/60">* Campo obrigatório</p>
+
+          <button
+            onClick={enviar}
+            disabled={!podeSalvar}
+            className={`w-full rounded-3xl px-6 py-5 text-lg font-extrabold uppercase tracking-wide shadow-flutuante ring-1 ring-white/20 transition active:scale-95 ${
+              podeSalvar
+                ? 'bg-gradient-to-r from-brand-500 to-brand-700 text-white'
+                : 'cursor-not-allowed bg-white/10 text-white/40'
+            }`}
+          >
+            Enviar avaliação
+          </button>
+        </div>
       )}
     </main>
   );

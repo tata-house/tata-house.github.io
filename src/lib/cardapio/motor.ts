@@ -218,13 +218,17 @@ const PROTEINA_PADRAO: Partial<Record<Proteina, { item: string; unid: string }>>
  * apareça na lista, mesmo que o histórico esteja incompleto.
  * Escala pela curva de pessoas. `fatores` é o aprendizado da casa.
  */
-export function listaDoDia(dia: DiaCardapio, fatores?: Record<string, number>): ItemSugerido[] {
+export interface OpcoesLista {
+  mostrarBasicos?: boolean;
+}
+
+export function listaDoDia(dia: DiaCardapio, fatores?: Record<string, number>, opts?: OpcoesLista): ItemSugerido[] {
   const fator = dia.pessoas > 0 ? dia.pessoas / DADOS.baseline : 1;
   const acc = new Map<string, { item: string; unid: string; qtd: number }>();
 
   const adiciona = (nome: string, q: number, u: string | null) => {
     const k = normalizar(nome);
-    if (!k || excluidos.has(k)) return;
+    if (!k || (!opts?.mostrarBasicos && excluidos.has(k))) return;
     const unid = u || unidadePadrao.get(k) || 'un';
     const atual = acc.get(k);
     if (atual) atual.qtd = Math.max(atual.qtd, q);
@@ -260,7 +264,7 @@ export function listaDoDia(dia: DiaCardapio, fatores?: Record<string, number>): 
       const it = itemDoTexto(parte);
       if (!it) continue;
       const k = normalizar(it.n);
-      if (acc.has(k) || excluidos.has(k)) continue;
+      if (acc.has(k) || (!opts?.mostrarBasicos && excluidos.has(k))) continue;
       // já existe um item mais específico? ("Frango inteiro" cobre "Frango")
       const toks = tokensTexto(it.n);
       const coberto = Array.from(acc.values()).some((v) => {
@@ -334,6 +338,7 @@ export function linhasDoDia(
   estado: EstadoSemana,
   diaIdx: number,
   fatores?: Record<string, number>,
+  opts?: OpcoesLista,
 ): LinhaCompra[] {
   const dia = estado.dias[diaIdx];
   const ajustes = estado.ajustes[diaIdx] ?? {};
@@ -341,7 +346,7 @@ export function linhasDoDia(
   const linhas: LinhaCompra[] = [];
 
   if (dia.principal) {
-    for (const s of listaDoDia(dia, fatores)) {
+    for (const s of listaDoDia(dia, fatores, opts)) {
       const k = normalizar(s.item);
       const aj = ajustes[k];
       if (aj?.removido) continue;
@@ -378,6 +383,17 @@ export function temHistoricoExato(dia: DiaCardapio): boolean {
 
 /* ----------------------- custo estimado ------------------------------ */
 
+/**
+ * Converte quantidade para a unidade base do preço (kg ou lt).
+ * Preços são sempre armazenados por kg ou lt; quantidades em g/ml
+ * precisam ser divididas por 1000 antes da multiplicação.
+ */
+export function converterParaUnidadeBase(qtd: number, unid: string): number {
+  if (unid === 'g') return qtd / 1000;
+  if (unid === 'ml') return qtd / 1000;
+  return qtd;
+}
+
 export interface CustoDia {
   total: number;
   itensComPreco: number;
@@ -390,10 +406,10 @@ export function custoDaLista(
 ): CustoDia {
   let total = 0;
   let com = 0;
-  itens.forEach(({ item, qtd }) => {
+  itens.forEach(({ item, unid, qtd }) => {
     const p = precos[normalizar(item)];
     if (p !== undefined && p > 0) {
-      total += p * qtd;
+      total += p * converterParaUnidadeBase(qtd, unid);
       com++;
     }
   });

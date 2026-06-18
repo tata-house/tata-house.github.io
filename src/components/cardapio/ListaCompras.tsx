@@ -27,6 +27,7 @@ export function ListaCompras({
   atualizar,
   podeComprar,
   podeEditar = false,
+  mostrarBasicos = false,
   onAjuste,
   onAddManual,
   onRmManual,
@@ -37,6 +38,7 @@ export function ListaCompras({
   atualizar: (fn: (e: EstadoSemana) => EstadoSemana) => void;
   podeComprar: boolean;
   podeEditar?: boolean;
+  mostrarBasicos?: boolean;
   onAjuste?: (dia: number, chave: string, qtd: number | null, removido?: boolean, obs?: string, unid?: string) => void;
   onAddManual?: (dia: number, item: string, unid: string, qtd: number) => void;
   onRmManual?: (dia: number, idx: number) => void;
@@ -65,13 +67,13 @@ export function ListaCompras({
   const dias = useMemo(
     () =>
       estado.dias.map((dia, di) => {
-        const todas = linhasDoDia(estado, di, fatores);
+        const todas = linhasDoDia(estado, di, fatores, { mostrarBasicos });
         const linhas = n ? todas.filter((l) => normalizar(l.item).includes(n)) : todas;
         const comprados = todas.filter((l) => l.status.compradoEm).length;
         const servido = [dia.principal, dia.guarnicaoFixa, dia.guarnicao, dia.salada, dia.sobremesa].filter(Boolean);
         return { di, dia, linhas, total: todas.length, comprados, servido };
       }),
-    [estado, fatores, n],
+    [estado, fatores, n, mostrarBasicos],
   );
 
   const algumDia = dias.some((d) => d.dia.principal || d.total > 0);

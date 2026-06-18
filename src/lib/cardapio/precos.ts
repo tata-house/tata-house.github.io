@@ -7,6 +7,7 @@
    ===================================================================== */
 
 import { DADOS, normalizar, converterParaUnidadeBase } from './motor';
+import { PRECOS_COMPRAS, UNIDADES_COMPRAS } from './precos-compras';
 import type { HistoricoPrecos } from './tipos';
 
 export type TipoPreco = 'real' | 'estimado' | 'sem';
@@ -36,25 +37,50 @@ export function resolverPreco(
   return { valor: 0, tipo: 'sem' };
 }
 
+/** Normaliza unidades para comparação: g/kg→kg, ml/l→l, resto→un. */
+function unidadeBase(u: string): string {
+  const s = u.toLowerCase();
+  if (s === 'g' || s === 'kg') return 'kg';
+  if (s === 'ml' || s === 'l') return 'l';
+  return 'un';
+}
+
 /**
- * Estimativa de mercado interna: média do histórico do próprio item; na
- * ausência, média dos preços reais de itens com a mesma unidade. É a base
- * "manual/histórica" — o ponto de troca para IA real é `estimarPrecoIA`.
+ * Estimativa de mercado interna — três camadas, da mais para a menos precisa:
+ * 1. Histórico local registrado pelo usuário (entradas manuais anteriores).
+ * 2. Média dos preços reais das planilhas de compras (Maio+Junho/2026) de
+ *    itens com a mesma unidade — base muito mais realista que a heurística
+ *    anterior.
+ * 3. Média dos preços manuais de DADOS.itens com mesma unidade (fallback).
  */
 export function estimarPreco(
   norm: string,
   precos: Record<string, number>,
   historico: HistoricoPrecos,
 ): number | null {
+  // 1. Histórico de preços registrado manualmente
   const serie = historico[norm];
   if (serie && serie.length) return Math.round(media(serie.map((p) => p.valor)) * 100) / 100;
 
+  // 2 + 3. Média por unidade combinando planilhas reais + preços manuais
   const u = unidadeDe.get(norm);
   if (u) {
-    const mesmos = DADOS.itens
-      .filter((it) => it.u === u && precos[normalizar(it.n)] > 0)
+    const ub = unidadeBase(u);
+
+    // Preços reais das planilhas de compras (mais confiáveis)
+    const dasCompras = Object.entries(PRECOS_COMPRAS)
+      .filter(([k, v]) => v > 0 && unidadeBase(UNIDADES_COMPRAS[k] ?? '') === ub)
+      .map(([, v]) => v);
+
+    // Preços manuais informados para itens de DADOS com mesma unidade
+    const dosDados = DADOS.itens
+      .filter((it) => unidadeBase(it.u) === ub && precos[normalizar(it.n)] > 0)
       .map((it) => precos[normalizar(it.n)]);
-    if (mesmos.length >= 2) return Math.round(media(mesmos) * 100) / 100;
+
+    const setTodos = new Set([...dasCompras, ...dosDados]);
+    const todos = Array.from(setTodos);
+    if (todos.length >= 2) return Math.round(media(todos) * 100) / 100;
+    if (todos.length === 1) return Math.round(todos[0] * 100) / 100;
   }
   return null;
 }

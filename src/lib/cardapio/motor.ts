@@ -46,13 +46,13 @@ export function normalizar(s: string | null | undefined): string {
 const REGRAS_PROTEINA: [Proteina, RegExp][] = [
   [
     'frango',
-    /\bfrango|coxa|sobrecoxa|sobre coxa|galinha|asinha|\basa\b|chester|passarinho/,
+    /\bfrango|coxa|sobrecoxa|sobre coxa|galinha|asinha|\basa\b|chester|passarinho|filezinho|sassami|file de peito|xadrez/,
   ],
   [
     'suina',
     /suin|porco|bisteca|lombo|pernil|costelinha|calabresa|toscana|feijoada|panceta|barriga|joelho/,
   ],
-  ['peixe', /peixe|tilapia|merluza|sardinha|bacalhau|pescad|file de panga/],
+  ['peixe', /peixe|tilapia|merluza|sardinha|bacalhau|pescad|file de panga|moqueca|ca[cç][aã]o/],
   ['ovo', /\bovo\b|\bovos\b|omelete/],
   [
     'bovina',

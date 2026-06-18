@@ -7,6 +7,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { linhasDoDia, normalizar, PESSOAS_PADRAO } from './motor';
+import { PRECOS_COMPRAS } from './precos-compras';
 import type {
   Aceitacao,
   ChefFeedback,
@@ -232,7 +233,9 @@ export function usePrecos() {
   const [precos, setPrecos] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    setPrecos(lerLocal('precos', {}));
+    // PRECOS_COMPRAS (planilhas de compras) como base; entradas manuais têm prioridade.
+    const local = lerLocal('precos', {});
+    setPrecos({ ...PRECOS_COMPRAS, ...local });
   }, []);
 
   const definirPreco = useCallback((itemNorm: string, valor: number | null, nome?: string) => {

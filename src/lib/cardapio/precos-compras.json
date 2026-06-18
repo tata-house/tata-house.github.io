@@ -1,0 +1,3473 @@
+{
+  "geradoEm": "2026-06-18",
+  "fontes": [
+    "Maio26",
+    "Junho26"
+  ],
+  "precos": {
+    "abacaxi": 7.4,
+    "abobora japonesa": 4.93,
+    "abobrinha italiana": 7.4,
+    "acelga": 7.6,
+    "acem em cubo": 34.5,
+    "acem moido": 49.9008,
+    "acucar fd": 3.2,
+    "adocante": 8.58,
+    "agua para reuniao cx": 45.98,
+    "alcool acendedor para rechaud": 45.22,
+    "alecrim": 42.8667,
+    "alface americana": 16.8786,
+    "alface crespa": 15.3,
+    "alface lisa": 16.8833,
+    "alho descascado": 26.82,
+    "amendoin para reuniao": 4.655,
+    "ana maria tempero": 25.0,
+    "arroz c 5kg": 18.78,
+    "azeite": 25.09,
+    "bacon": 27.4994,
+    "banana da terra": 9.69,
+    "batata": 11.84,
+    "batata congelada": 114.92,
+    "batata palha": 14.21,
+    "beterraba": 6.99,
+    "biscoito reuniao": 7.622,
+    "bisteca suina": 15.5,
+    "bolacha maizena": 20.02,
+    "bombom lacta sonho de valsa": 63.1,
+    "bombom nestle": 63.1,
+    "bonificacao": 27.4733,
+    "brocolis": 20.0,
+    "cafe em po": 210.0,
+    "caldo de carne": 25.0,
+    "caldo de galinha": 25.0,
+    "cappucino": 18.0,
+    "catchup": 22.89,
+    "cebola branca": 6.23,
+    "cenoura": 11.1,
+    "chimichurri": 25.0,
+    "chocolate talento": 8.28,
+    "chuchu": 6.58,
+    "coco ralado": 31.01,
+    "coentro": 39.0,
+    "colorau": 25.0,
+    "costela": 22.8998,
+    "couve manteiga": 15.0,
+    "coxa e sobre coxa": 7.9,
+    "creme de leite culinario": 10.35,
+    "curau pronto": 25.92,
+    "ervas finas": 25.0,
+    "farinha de mandioca crua": 28.13,
+    "farinha de trigo fd": 4.71,
+    "farinha para empanar": 18.72,
+    "feijao": 9.25,
+    "feijao fradinho": 8.59,
+    "feijao preto": 6.29,
+    "file de frango": 12.5,
+    "filtro coador de cafe": 3.34,
+    "flan": 37.63,
+    "frango a passarinho": 9.98,
+    "fuba": 8.36,
+    "gelatina sabores": 12.9,
+    "goiaba": 14.5,
+    "leite": 5.51,
+    "leite condensado": 80.3,
+    "lemon pepper": 25.0,
+    "linguica calabresa": 50.14,
+    "linguica toscana": 15.99,
+    "lombo suino": 18.49,
+    "louro": 25.0,
+    "macarrao espaguete": 3.09,
+    "maionese": 25.51,
+    "maisena fd": 11.13,
+    "mandioca": 7.0,
+    "massa para lasanha": 7.75,
+    "melancia": 4.9,
+    "melao": 7.97,
+    "milho verde lt": 23.5,
+    "molho barbecue": 31.26,
+    "molho de pimenta": 12.58,
+    "molho de tomate kg": 9.98,
+    "molho ingles": 8.33,
+    "molho shoyu": 9.31,
+    "mostarda": 20.89,
+    "mussarela": 32.8999,
+    "oleo de soja": 46.79,
+    "ovo de c 30 unid": 28.12,
+    "paprica": 25.0,
+    "pepino": 13.16,
+    "pernil suino": 17.4999,
+    "pimentao verde": 12.5,
+    "pudim pronto": 22.16,
+    "pure em po": 41.73,
+    "queijo parmesao": 34.39,
+    "refrescos": 7.49,
+    "repolho branco": 5.0,
+    "repolho roxo": 7.6,
+    "sal": 21.24,
+    "salsa desidratada": 72.0,
+    "tempero baiano": 25.0,
+    "tomate": 19.15,
+    "total": 0.0,
+    "vinagre": 16.89
+  },
+  "unidades": {
+    "abacaxi": "KG",
+    "abobora japonesa": "KG",
+    "abobrinha italiana": "KG",
+    "acelga": "KG",
+    "acem em cubo": "KG",
+    "acem moido": "KG",
+    "acucar fd": "FD",
+    "adocante": "UN",
+    "agua para reuniao cx": "CX",
+    "alcool acendedor para rechaud": "UN",
+    "alecrim": "KG",
+    "alface americana": "KG",
+    "alface crespa": "KG",
+    "alface lisa": "KG",
+    "alho descascado": "KG",
+    "amendoin para reuniao": "UN",
+    "ana maria tempero": "KG",
+    "arroz c 5kg": "KG",
+    "azeite": "UN",
+    "bacon": "KG",
+    "banana da terra": "KG",
+    "batata": "KG",
+    "batata congelada": "KG",
+    "batata palha": "KG",
+    "beterraba": "KG",
+    "biscoito reuniao": "UN",
+    "bisteca suina": "KG",
+    "bolacha maizena": "UN",
+    "bombom lacta sonho de valsa": "UN",
+    "bombom nestle": "UN",
+    "bonificacao": "UN",
+    "brocolis": "KG",
+    "cafe em po": "KG",
+    "caldo de carne": "KG",
+    "caldo de galinha": "KG",
+    "cappucino": "UN",
+    "catchup": "L",
+    "cebola branca": "KG",
+    "cenoura": "KG",
+    "chimichurri": "KG",
+    "chocolate talento": "UN",
+    "chuchu": "KG",
+    "coco ralado": "UN",
+    "coentro": "KG",
+    "colorau": "KG",
+    "costela": "KG",
+    "couve manteiga": "KG",
+    "coxa e sobre coxa": "KG",
+    "creme de leite culinario": "L",
+    "curau pronto": "KG",
+    "ervas finas": "KG",
+    "farinha de mandioca crua": "UN",
+    "farinha de trigo fd": "FD",
+    "farinha para empanar": "UN",
+    "feijao": "KG",
+    "feijao fradinho": "KG",
+    "feijao preto": "KG",
+    "file de frango": "KG",
+    "filtro coador de cafe": "CX",
+    "flan": "KG",
+    "frango a passarinho": "KG",
+    "fuba": "UN",
+    "gelatina sabores": "KG",
+    "goiaba": "KG",
+    "leite": "UN",
+    "leite condensado": "L",
+    "lemon pepper": "KG",
+    "linguica calabresa": "KG",
+    "linguica toscana": "KG",
+    "lombo suino": "KG",
+    "louro": "KG",
+    "macarrao espaguete": "UN",
+    "maionese": "KG",
+    "maisena fd": "FD",
+    "mandioca": "KG",
+    "massa para lasanha": "UN",
+    "melancia": "KG",
+    "melao": "KG",
+    "milho verde lt": "KG",
+    "molho barbecue": "UN",
+    "molho de pimenta": "L",
+    "molho de tomate kg": "KG",
+    "molho ingles": "UN",
+    "molho shoyu": "L",
+    "mostarda": "L",
+    "mussarela": "KG",
+    "oleo de soja": "UN",
+    "ovo de c 30 unid": "UN",
+    "paprica": "KG",
+    "pepino": "KG",
+    "pernil suino": "KG",
+    "pimentao verde": "KG",
+    "pudim pronto": "KG",
+    "pure em po": "KG",
+    "queijo parmesao": "KG",
+    "refrescos": "KG",
+    "repolho branco": "KG",
+    "repolho roxo": "KG",
+    "sal": "UN",
+    "salsa desidratada": "KG",
+    "tempero baiano": "KG",
+    "tomate": "KG",
+    "total": "UN",
+    "vinagre": "UN"
+  },
+  "historico": {
+    "abobora japonesa": [
+      {
+        "data": "2026-05-02",
+        "valor": 4.93,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-23",
+        "valor": 4.93,
+        "qtd": 8.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 4.93,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "farinha de mandioca crua": [
+      {
+        "data": "2026-05-11",
+        "valor": 28.13,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-16",
+        "valor": 28.13,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 28.13,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 28.13,
+        "qtd": 2.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 28.13,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "alface americana": [
+      {
+        "data": "2026-05-20",
+        "valor": 16.8824,
+        "qtd": 2.04,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-09",
+        "valor": 16.8786,
+        "qtd": 2.8,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "batata congelada": [
+      {
+        "data": "2026-05-06",
+        "valor": 113.22,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-11",
+        "valor": 114.92,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 114.92,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "mandioca": [
+      {
+        "data": "2026-05-12",
+        "valor": 7.0,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 3.31,
+        "qtd": 9.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-26",
+        "valor": 7.0,
+        "qtd": 14.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 7.0,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-09",
+        "valor": 7.0,
+        "qtd": 12.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "pimentao verde": [
+      {
+        "data": "2026-05-02",
+        "valor": 12.5,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 12.5,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-08",
+        "valor": 12.5,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 12.5,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "tomate": [
+      {
+        "data": "2026-05-02",
+        "valor": 14.8,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-05",
+        "valor": 14.8,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 14.8,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-08",
+        "valor": 14.8,
+        "qtd": 9.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-13",
+        "valor": 19.15,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-15",
+        "valor": 19.15,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-19",
+        "valor": 19.15,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 19.15,
+        "qtd": 8.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-23",
+        "valor": 19.15,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-25",
+        "valor": 19.15,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-26",
+        "valor": 19.15,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 19.15,
+        "qtd": 8.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-05",
+        "valor": 19.15,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-09",
+        "valor": 19.15,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-12",
+        "valor": 19.15,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-15",
+        "valor": 19.15,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "alho descascado": [
+      {
+        "data": "2026-05-04",
+        "valor": 26.82,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 26.82,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-12",
+        "valor": 26.82,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-14",
+        "valor": 26.82,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 26.82,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-21",
+        "valor": 26.82,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 27.0,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-15",
+        "valor": 26.82,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "cebola branca": [
+      {
+        "data": "2026-05-02",
+        "valor": 5.06,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-04",
+        "valor": 5.06,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-05",
+        "valor": 5.06,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-08",
+        "valor": 6.23,
+        "qtd": 24.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-15",
+        "valor": 6.23,
+        "qtd": 13.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 6.23,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-25",
+        "valor": 6.23,
+        "qtd": 12.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-30",
+        "valor": 6.23,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 6.23,
+        "qtd": 7.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 6.23,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-04",
+        "valor": 6.23,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-09",
+        "valor": 6.23,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "cenoura": [
+      {
+        "data": "2026-05-02",
+        "valor": 11.1,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-05",
+        "valor": 11.1,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 11.1,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-08",
+        "valor": 11.1,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-12",
+        "valor": 11.1,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-15",
+        "valor": 11.1,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 11.1,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-23",
+        "valor": 11.1,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-25",
+        "valor": 11.1,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-26",
+        "valor": 11.1,
+        "qtd": 9.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-27",
+        "valor": 11.1,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-30",
+        "valor": 11.1,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 11.1,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "abacaxi": [
+      {
+        "data": "2026-05-05",
+        "valor": 7.4,
+        "qtd": 5.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 7.4,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-08",
+        "valor": 7.4,
+        "qtd": 5.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-11",
+        "valor": 7.4,
+        "qtd": 4.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-13",
+        "valor": 7.4,
+        "qtd": 14.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-19",
+        "valor": 7.4,
+        "qtd": 13.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 7.4,
+        "qtd": 4.6,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-25",
+        "valor": 7.4,
+        "qtd": 5.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "melao": [
+      {
+        "data": "2026-05-05",
+        "valor": 7.97,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-13",
+        "valor": 7.97,
+        "qtd": 12.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 7.97,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-25",
+        "valor": 7.97,
+        "qtd": 13.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-30",
+        "valor": 7.97,
+        "qtd": 12.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "file de frango": [
+      {
+        "data": "2026-05-02",
+        "valor": 12.7,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-05",
+        "valor": 12.5,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 13.1,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-08",
+        "valor": 14.7715,
+        "qtd": 40.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-12",
+        "valor": 12.8,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-14",
+        "valor": 12.19,
+        "qtd": 40.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 12.8,
+        "qtd": 40.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-23",
+        "valor": 11.99,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 12.5,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 12.5,
+        "qtd": 40.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 12.5,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "arroz c 5kg": [
+      {
+        "data": "2026-05-07",
+        "valor": 16.19,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-12",
+        "valor": 20.1,
+        "qtd": 8.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 20.0,
+        "qtd": 5.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-22",
+        "valor": 18.46,
+        "qtd": 12.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-27",
+        "valor": 20.0,
+        "qtd": 12.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 20.0,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 15.9,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-08",
+        "valor": 19.89,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 18.78,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "creme de leite culinario": [
+      {
+        "data": "2026-05-06",
+        "valor": 10.2,
+        "qtd": 6.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-11",
+        "valor": 10.35,
+        "qtd": 6.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-13",
+        "valor": 9.59,
+        "qtd": 6.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-16",
+        "valor": 10.35,
+        "qtd": 8.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 10.35,
+        "qtd": 4.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-28",
+        "valor": 10.35,
+        "qtd": 6.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 10.35,
+        "qtd": 12.0,
+        "unid": "L",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-13",
+        "valor": 10.35,
+        "qtd": 6.0,
+        "unid": "L",
+        "mes": "Junho26"
+      }
+    ],
+    "gelatina sabores": [
+      {
+        "data": "2026-05-11",
+        "valor": 14.11,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-16",
+        "valor": 14.11,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 12.9,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-28",
+        "valor": 12.9,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 12.9,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 12.9,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-13",
+        "valor": 12.9,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "leite condensado": [
+      {
+        "data": "2026-05-02",
+        "valor": 79.11,
+        "qtd": 1.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-06",
+        "valor": 37.49,
+        "qtd": 3.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-11",
+        "valor": 80.3,
+        "qtd": 2.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-18",
+        "valor": 80.3,
+        "qtd": 1.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 80.3,
+        "qtd": 1.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 80.3,
+        "qtd": 1.0,
+        "unid": "L",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 80.3,
+        "qtd": 1.0,
+        "unid": "L",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-13",
+        "valor": 80.3,
+        "qtd": 1.0,
+        "unid": "L",
+        "mes": "Junho26"
+      }
+    ],
+    "leite": [
+      {
+        "data": "2026-05-20",
+        "valor": 5.61,
+        "qtd": 12.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-08",
+        "valor": 5.51,
+        "qtd": 12.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "milho verde lt": [
+      {
+        "data": "2026-05-20",
+        "valor": 23.5,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 23.5,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 23.5,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "oleo de soja": [
+      {
+        "data": "2026-05-05",
+        "valor": 6.91,
+        "qtd": 20.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 6.87,
+        "qtd": 12.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-28",
+        "valor": 46.8753,
+        "qtd": 38.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 6.6,
+        "qtd": 24.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 21.3033,
+        "qtd": 60.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-05",
+        "valor": 46.79,
+        "qtd": 15.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-08",
+        "valor": 6.39,
+        "qtd": 18.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-09",
+        "valor": 46.79,
+        "qtd": 10.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-10",
+        "valor": 46.79,
+        "qtd": 10.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-16",
+        "valor": 46.79,
+        "qtd": 6.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "pure em po": [
+      {
+        "data": "2026-05-02",
+        "valor": 41.11,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-11",
+        "valor": 41.73,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 41.73,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-28",
+        "valor": 41.73,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 41.73,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 41.73,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "mussarela": [
+      {
+        "data": "2026-05-11",
+        "valor": 35.0211,
+        "qtd": 4.26,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-20",
+        "valor": 32.9007,
+        "qtd": 4.23,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 32.8999,
+        "qtd": 4.414,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "beterraba": [
+      {
+        "data": "2026-05-07",
+        "valor": 6.99,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-12",
+        "valor": 6.99,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-21",
+        "valor": 6.99,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-26",
+        "valor": 6.99,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-10",
+        "valor": 6.99,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-12",
+        "valor": 6.99,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "salsa desidratada": [
+      {
+        "data": "2026-05-21",
+        "valor": 72.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "caldo de carne": [
+      {
+        "data": "2026-05-04",
+        "valor": 54.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 54.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-14",
+        "valor": 54.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-21",
+        "valor": 54.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 54.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 25.0,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 25.0,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "caldo de galinha": [
+      {
+        "data": "2026-05-04",
+        "valor": 54.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 54.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-14",
+        "valor": 54.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-21",
+        "valor": 54.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 54.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 25.0,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "chimichurri": [
+      {
+        "data": "2026-05-04",
+        "valor": 90.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 90.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-21",
+        "valor": 90.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 90.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 25.0,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "colorau": [
+      {
+        "data": "2026-05-04",
+        "valor": 36.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 36.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-21",
+        "valor": 36.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 25.0,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "acem moido": [
+      {
+        "data": "2026-05-19",
+        "valor": 49.9008,
+        "qtd": 5.039,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "repolho roxo": [
+      {
+        "data": "2026-05-05",
+        "valor": 7.6,
+        "qtd": 3.3,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-19",
+        "valor": 7.6,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "lemon pepper": [
+      {
+        "data": "2026-05-04",
+        "valor": 90.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 90.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-21",
+        "valor": 90.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 25.0,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "ana maria tempero": [
+      {
+        "data": "2026-05-04",
+        "valor": 63.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 63.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-14",
+        "valor": 63.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 63.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 25.0,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "bombom nestle": [
+      {
+        "data": "2026-05-14",
+        "valor": 21.7562,
+        "qtd": 13.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-10",
+        "valor": 63.1,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "cafe em po": [
+      {
+        "data": "2026-05-06",
+        "valor": 4.0167,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 239.9,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-14",
+        "valor": 243.5,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-22",
+        "valor": 25.09,
+        "qtd": 14.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-08",
+        "valor": 24.09,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-09",
+        "valor": 210.0,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "abobrinha italiana": [
+      {
+        "data": "2026-05-15",
+        "valor": 7.4,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "azeite": [
+      {
+        "data": "2026-05-07",
+        "valor": 25.89,
+        "qtd": 3.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-16",
+        "valor": 83.55,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-18",
+        "valor": 27.99,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-22",
+        "valor": 26.14,
+        "qtd": 2.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-28",
+        "valor": 25.2933,
+        "qtd": 3.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 26.1,
+        "qtd": 4.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 59.9,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-08",
+        "valor": 25.89,
+        "qtd": 4.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 25.09,
+        "qtd": 3.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "bolacha maizena": [
+      {
+        "data": "2026-05-06",
+        "valor": 45.805,
+        "qtd": 4.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-16",
+        "valor": 20.02,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      }
+    ],
+    "coco ralado": [
+      {
+        "data": "2026-05-06",
+        "valor": 30.55,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-11",
+        "valor": 31.01,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-16",
+        "valor": 31.01,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-28",
+        "valor": 31.01,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 31.01,
+        "qtd": 2.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-13",
+        "valor": 31.01,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "molho de tomate kg": [
+      {
+        "data": "2026-05-06",
+        "valor": 9.83,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-11",
+        "valor": 9.98,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-16",
+        "valor": 9.98,
+        "qtd": 5.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-28",
+        "valor": 9.98,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 9.98,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 9.98,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "molho shoyu": [
+      {
+        "data": "2026-05-02",
+        "valor": 9.17,
+        "qtd": 2.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-16",
+        "valor": 9.31,
+        "qtd": 1.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-28",
+        "valor": 12.88,
+        "qtd": 1.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 9.31,
+        "qtd": 2.0,
+        "unid": "L",
+        "mes": "Junho26"
+      }
+    ],
+    "pudim pronto": [
+      {
+        "data": "2026-05-02",
+        "valor": 20.5,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-16",
+        "valor": 20.81,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 22.16,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 22.16,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "refrescos": [
+      {
+        "data": "2026-05-02",
+        "valor": 9.755,
+        "qtd": 16.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-06",
+        "valor": 4.4729,
+        "qtd": 41.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-16",
+        "valor": 9.4717,
+        "qtd": 12.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-18",
+        "valor": 8.02,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-28",
+        "valor": 7.49,
+        "qtd": 14.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 7.49,
+        "qtd": 24.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 7.49,
+        "qtd": 18.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-13",
+        "valor": 7.49,
+        "qtd": 12.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "vinagre": [
+      {
+        "data": "2026-05-07",
+        "valor": 2.19,
+        "qtd": 6.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-16",
+        "valor": 16.89,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 1.89,
+        "qtd": 5.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 16.89,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 16.89,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "sal": [
+      {
+        "data": "2026-05-16",
+        "valor": 21.24,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      }
+    ],
+    "bacon": [
+      {
+        "data": "2026-05-11",
+        "valor": 25.9408,
+        "qtd": 3.21,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-18",
+        "valor": 25.9401,
+        "qtd": 10.01,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 25.9406,
+        "qtd": 4.21,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 25.9402,
+        "qtd": 3.845,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-13",
+        "valor": 27.4994,
+        "qtd": 4.499,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "linguica calabresa": [
+      {
+        "data": "2026-05-11",
+        "valor": 50.14,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-18",
+        "valor": 131.44,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 131.44,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 131.44,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-13",
+        "valor": 50.14,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "alface lisa": [
+      {
+        "data": "2026-05-05",
+        "valor": 16.8813,
+        "qtd": 1.6,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-08",
+        "valor": 16.8786,
+        "qtd": 1.4,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-12",
+        "valor": 16.8769,
+        "qtd": 0.65,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-19",
+        "valor": 16.8833,
+        "qtd": 1.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "couve manteiga": [
+      {
+        "data": "2026-05-19",
+        "valor": 15.0,
+        "qtd": 5.7,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-25",
+        "valor": 15.0,
+        "qtd": 2.66,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "pepino": [
+      {
+        "data": "2026-05-05",
+        "valor": 11.1,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-13",
+        "valor": 11.1,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-19",
+        "valor": 11.1,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-23",
+        "valor": 13.16,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "ervas finas": [
+      {
+        "data": "2026-05-04",
+        "valor": 72.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 72.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-21",
+        "valor": 72.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 25.0,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "paprica": [
+      {
+        "data": "2026-05-04",
+        "valor": 45.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 45.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-21",
+        "valor": 45.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 25.0,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "flan": [
+      {
+        "data": "2026-05-28",
+        "valor": 37.63,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-13",
+        "valor": 37.63,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "acem em cubo": [
+      {
+        "data": "2026-05-02",
+        "valor": 31.9902,
+        "qtd": 20.189,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 31.9001,
+        "qtd": 19.52,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-13",
+        "valor": 33.2003,
+        "qtd": 15.005,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-22",
+        "valor": 30.9002,
+        "qtd": 23.139,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-27",
+        "valor": 46.9802,
+        "qtd": 20.68,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-28",
+        "valor": 34.5,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 30.8999,
+        "qtd": 24.18,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 34.5,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-12",
+        "valor": 34.5,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "feijao": [
+      {
+        "data": "2026-05-06",
+        "valor": 7.09,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-13",
+        "valor": 7.09,
+        "qtd": 30.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-22",
+        "valor": 9.71,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-27",
+        "valor": 9.71,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 9.71,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-10",
+        "valor": 10.49,
+        "qtd": 30.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-15",
+        "valor": 9.25,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "cappucino": [
+      {
+        "data": "2026-05-04",
+        "valor": 18.0,
+        "qtd": 8.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-06",
+        "valor": 22.88,
+        "qtd": 3.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-27",
+        "valor": 18.0,
+        "qtd": 8.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      }
+    ],
+    "alcool acendedor para rechaud": [
+      {
+        "data": "2026-05-08",
+        "valor": 45.22,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-27",
+        "valor": 45.22,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 45.22,
+        "qtd": 2.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-10",
+        "valor": 45.22,
+        "qtd": 3.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "chocolate talento": [
+      {
+        "data": "2026-05-28",
+        "valor": 8.28,
+        "qtd": 10.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      }
+    ],
+    "chuchu": [
+      {
+        "data": "2026-05-02",
+        "valor": 4.93,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-26",
+        "valor": 6.17,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-09",
+        "valor": 6.58,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "maionese": [
+      {
+        "data": "2026-05-28",
+        "valor": 25.51,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 25.51,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "molho ingles": [
+      {
+        "data": "2026-05-02",
+        "valor": 7.46,
+        "qtd": 2.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-28",
+        "valor": 8.33,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      }
+    ],
+    "costela": [
+      {
+        "data": "2026-05-29",
+        "valor": 36.9801,
+        "qtd": 30.11,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 29.9003,
+        "qtd": 30.3,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-09",
+        "valor": 22.8998,
+        "qtd": 12.08,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "bonificacao": [
+      {
+        "data": "2026-05-29",
+        "valor": 27.4733,
+        "qtd": 3.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      }
+    ],
+    "batata": [
+      {
+        "data": "2026-05-02",
+        "valor": 7.83,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-08",
+        "valor": 7.83,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-23",
+        "valor": 11.84,
+        "qtd": 5.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-26",
+        "valor": 11.84,
+        "qtd": 8.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-30",
+        "valor": 11.84,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-05",
+        "valor": 11.84,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-09",
+        "valor": 11.84,
+        "qtd": 8.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-15",
+        "valor": 11.84,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "acelga": [
+      {
+        "data": "2026-05-02",
+        "valor": 7.6,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-06",
+        "valor": 7.6,
+        "qtd": 1.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 7.6,
+        "qtd": 2.8,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-23",
+        "valor": 7.6,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-30",
+        "valor": 7.6,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-05",
+        "valor": 7.6,
+        "qtd": 5.5,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-10",
+        "valor": 7.6,
+        "qtd": 2.2,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "tempero baiano": [
+      {
+        "data": "2026-05-04",
+        "valor": 75.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-07",
+        "valor": 75.0,
+        "qtd": 0.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-21",
+        "valor": 75.0,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 25.0,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "coxa e sobre coxa": [
+      {
+        "data": "2026-05-22",
+        "valor": 7.9,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "acucar fd": [
+      {
+        "data": "2026-05-22",
+        "valor": 3.2,
+        "qtd": 2.0,
+        "unid": "FD",
+        "mes": "Maio26"
+      }
+    ],
+    "farinha de trigo fd": [
+      {
+        "data": "2026-05-06",
+        "valor": 4.69,
+        "qtd": 2.0,
+        "unid": "FD",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-22",
+        "valor": 4.71,
+        "qtd": 1.0,
+        "unid": "FD",
+        "mes": "Maio26"
+      }
+    ],
+    "filtro coador de cafe": [
+      {
+        "data": "2026-05-07",
+        "valor": 3.39,
+        "qtd": 6.0,
+        "unid": "CX",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-10",
+        "valor": 3.34,
+        "qtd": 6.0,
+        "unid": "CX",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-22",
+        "valor": 3.34,
+        "qtd": 8.0,
+        "unid": "CX",
+        "mes": "Maio26"
+      }
+    ],
+    "macarrao espaguete": [
+      {
+        "data": "2026-05-06",
+        "valor": 3.09,
+        "qtd": 10.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-22",
+        "valor": 2.61,
+        "qtd": 5.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 2.92,
+        "qtd": 10.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-08",
+        "valor": 2.79,
+        "qtd": 10.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-15",
+        "valor": 2.61,
+        "qtd": 10.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-16",
+        "valor": 3.09,
+        "qtd": 10.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "mostarda": [
+      {
+        "data": "2026-05-11",
+        "valor": 21.21,
+        "qtd": 1.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-22",
+        "valor": 10.9,
+        "qtd": 1.0,
+        "unid": "L",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 20.89,
+        "qtd": 1.0,
+        "unid": "L",
+        "mes": "Junho26"
+      }
+    ],
+    "melancia": [
+      {
+        "data": "2026-05-02",
+        "valor": 4.9,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-23",
+        "valor": 4.9,
+        "qtd": 19.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 4.9,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "alecrim": [
+      {
+        "data": "2026-05-23",
+        "valor": 42.8667,
+        "qtd": 0.15,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "linguica toscana": [
+      {
+        "data": "2026-05-14",
+        "valor": 14.49,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-23",
+        "valor": 13.59,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 15.99,
+        "qtd": 15.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "lombo suino": [
+      {
+        "data": "2026-05-23",
+        "valor": 18.49,
+        "qtd": 20.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "alface crespa": [
+      {
+        "data": "2026-05-02",
+        "valor": 15.3,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-12",
+        "valor": 15.3037,
+        "qtd": 1.35,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-25",
+        "valor": 15.3,
+        "qtd": 1.2,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "bisteca suina": [
+      {
+        "data": "2026-05-14",
+        "valor": 13.49,
+        "qtd": 15.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-01",
+        "valor": 25.2395,
+        "qtd": 8.31,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 16.99,
+        "qtd": 15.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 15.5,
+        "qtd": 5.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "ovo de c 30 unid": [
+      {
+        "data": "2026-05-04",
+        "valor": 28.12,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-05",
+        "valor": 28.12,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      }
+    ],
+    "pernil suino": [
+      {
+        "data": "2026-05-05",
+        "valor": 17.4999,
+        "qtd": 24.295,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "massa para lasanha": [
+      {
+        "data": "2026-05-05",
+        "valor": 6.8,
+        "qtd": 4.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-15",
+        "valor": 7.75,
+        "qtd": 7.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "batata palha": [
+      {
+        "data": "2026-05-06",
+        "valor": 13.49,
+        "qtd": 6.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-11",
+        "valor": 13.69,
+        "qtd": 3.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-02",
+        "valor": 13.69,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-13",
+        "valor": 14.21,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "curau pronto": [
+      {
+        "data": "2026-05-06",
+        "valor": 25.92,
+        "qtd": 2.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "fuba": [
+      {
+        "data": "2026-05-06",
+        "valor": 7.15,
+        "qtd": 2.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 8.36,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "coentro": [
+      {
+        "data": "2026-05-02",
+        "valor": 39.0,
+        "qtd": 0.1,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "feijao preto": [
+      {
+        "data": "2026-05-13",
+        "valor": 5.19,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-09",
+        "valor": 6.29,
+        "qtd": 10.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "adocante": [
+      {
+        "data": "2026-05-07",
+        "valor": 8.27,
+        "qtd": 4.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-05-10",
+        "valor": 7.12,
+        "qtd": 6.0,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": "2026-06-10",
+        "valor": 4.23,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 8.58,
+        "qtd": 2.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "brocolis": [
+      {
+        "data": "2026-05-07",
+        "valor": 20.0,
+        "qtd": 1.4,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "repolho branco": [
+      {
+        "data": "2026-05-07",
+        "valor": 5.0,
+        "qtd": 6.4,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "queijo parmesao": [
+      {
+        "data": "2026-05-08",
+        "valor": 34.39,
+        "qtd": 4.0,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "frango a passarinho": [
+      {
+        "data": "2026-05-08",
+        "valor": 9.98,
+        "qtd": 20.45,
+        "unid": "KG",
+        "mes": "Maio26"
+      }
+    ],
+    "total": [
+      {
+        "data": null,
+        "valor": 0.0,
+        "qtd": 1588.787,
+        "unid": "UN",
+        "mes": "Maio26"
+      },
+      {
+        "data": null,
+        "valor": 0.0,
+        "qtd": 916.288,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "amendoin para reuniao": [
+      {
+        "data": "2026-06-10",
+        "valor": 4.655,
+        "qtd": 6.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "biscoito reuniao": [
+      {
+        "data": "2026-06-10",
+        "valor": 7.622,
+        "qtd": 5.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "bombom lacta sonho de valsa": [
+      {
+        "data": "2026-06-10",
+        "valor": 63.1,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "feijao fradinho": [
+      {
+        "data": "2026-06-08",
+        "valor": 8.59,
+        "qtd": 5.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "banana da terra": [
+      {
+        "data": "2026-06-09",
+        "valor": 9.6899,
+        "qtd": 9.45,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-15",
+        "valor": 9.69,
+        "qtd": 8.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "molho de pimenta": [
+      {
+        "data": "2026-06-03",
+        "valor": 8.26,
+        "qtd": 2.0,
+        "unid": "L",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 8.26,
+        "qtd": 2.0,
+        "unid": "L",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-11",
+        "valor": 12.58,
+        "qtd": 2.0,
+        "unid": "L",
+        "mes": "Junho26"
+      }
+    ],
+    "catchup": [
+      {
+        "data": "2026-06-11",
+        "valor": 22.89,
+        "qtd": 1.0,
+        "unid": "L",
+        "mes": "Junho26"
+      }
+    ],
+    "agua para reuniao cx": [
+      {
+        "data": "2026-06-13",
+        "valor": 45.98,
+        "qtd": 2.0,
+        "unid": "CX",
+        "mes": "Junho26"
+      }
+    ],
+    "farinha para empanar": [
+      {
+        "data": "2026-06-02",
+        "valor": 18.72,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-06",
+        "valor": 18.72,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "molho barbecue": [
+      {
+        "data": "2026-06-02",
+        "valor": 31.26,
+        "qtd": 1.0,
+        "unid": "UN",
+        "mes": "Junho26"
+      }
+    ],
+    "louro": [
+      {
+        "data": "2026-06-01",
+        "valor": 45.9,
+        "qtd": 0.5,
+        "unid": "KG",
+        "mes": "Junho26"
+      },
+      {
+        "data": "2026-06-03",
+        "valor": 25.0,
+        "qtd": 1.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ],
+    "maisena fd": [
+      {
+        "data": "2026-06-06",
+        "valor": 11.13,
+        "qtd": 1.0,
+        "unid": "FD",
+        "mes": "Junho26"
+      }
+    ],
+    "goiaba": [
+      {
+        "data": "2026-06-05",
+        "valor": 14.5,
+        "qtd": 5.0,
+        "unid": "KG",
+        "mes": "Junho26"
+      }
+    ]
+  },
+  "comparativo": [
+    {
+      "item": "cafe em po",
+      "maio": 25.09,
+      "junho": 210.0,
+      "variacao": 736.99,
+      "unid": "KG"
+    },
+    {
+      "item": "bombom nestle",
+      "maio": 21.7562,
+      "junho": 63.1,
+      "variacao": 190.03,
+      "unid": "UN"
+    },
+    {
+      "item": "mostarda",
+      "maio": 10.9,
+      "junho": 20.89,
+      "variacao": 91.65,
+      "unid": "L"
+    },
+    {
+      "item": "lemon pepper",
+      "maio": 90.0,
+      "junho": 25.0,
+      "variacao": -72.22,
+      "unid": "KG"
+    },
+    {
+      "item": "chimichurri",
+      "maio": 90.0,
+      "junho": 25.0,
+      "variacao": -72.22,
+      "unid": "KG"
+    },
+    {
+      "item": "tempero baiano",
+      "maio": 75.0,
+      "junho": 25.0,
+      "variacao": -66.67,
+      "unid": "KG"
+    },
+    {
+      "item": "ervas finas",
+      "maio": 72.0,
+      "junho": 25.0,
+      "variacao": -65.28,
+      "unid": "KG"
+    },
+    {
+      "item": "linguica calabresa",
+      "maio": 131.44,
+      "junho": 50.14,
+      "variacao": -61.85,
+      "unid": "KG"
+    },
+    {
+      "item": "ana maria tempero",
+      "maio": 63.0,
+      "junho": 25.0,
+      "variacao": -60.32,
+      "unid": "KG"
+    },
+    {
+      "item": "caldo de carne",
+      "maio": 54.0,
+      "junho": 25.0,
+      "variacao": -53.7,
+      "unid": "KG"
+    },
+    {
+      "item": "caldo de galinha",
+      "maio": 54.0,
+      "junho": 25.0,
+      "variacao": -53.7,
+      "unid": "KG"
+    },
+    {
+      "item": "paprica",
+      "maio": 45.0,
+      "junho": 25.0,
+      "variacao": -44.44,
+      "unid": "KG"
+    },
+    {
+      "item": "costela",
+      "maio": 36.9801,
+      "junho": 22.8998,
+      "variacao": -38.08,
+      "unid": "KG"
+    },
+    {
+      "item": "colorau",
+      "maio": 36.0,
+      "junho": 25.0,
+      "variacao": -30.56,
+      "unid": "KG"
+    },
+    {
+      "item": "molho shoyu",
+      "maio": 12.88,
+      "junho": 9.31,
+      "variacao": -27.72,
+      "unid": "L"
+    },
+    {
+      "item": "feijao preto",
+      "maio": 5.19,
+      "junho": 6.29,
+      "variacao": 21.19,
+      "unid": "KG"
+    },
+    {
+      "item": "adocante",
+      "maio": 7.12,
+      "junho": 8.58,
+      "variacao": 20.51,
+      "unid": "UN"
+    },
+    {
+      "item": "macarrao espaguete",
+      "maio": 2.61,
+      "junho": 3.09,
+      "variacao": 18.39,
+      "unid": "UN"
+    },
+    {
+      "item": "linguica toscana",
+      "maio": 13.59,
+      "junho": 15.99,
+      "variacao": 17.66,
+      "unid": "KG"
+    },
+    {
+      "item": "fuba",
+      "maio": 7.15,
+      "junho": 8.36,
+      "variacao": 16.92,
+      "unid": "UN"
+    },
+    {
+      "item": "bisteca suina",
+      "maio": 13.49,
+      "junho": 15.5,
+      "variacao": 14.9,
+      "unid": "KG"
+    },
+    {
+      "item": "massa para lasanha",
+      "maio": 6.8,
+      "junho": 7.75,
+      "variacao": 13.97,
+      "unid": "UN"
+    },
+    {
+      "item": "chuchu",
+      "maio": 6.17,
+      "junho": 6.58,
+      "variacao": 6.65,
+      "unid": "KG"
+    },
+    {
+      "item": "pudim pronto",
+      "maio": 20.81,
+      "junho": 22.16,
+      "variacao": 6.49,
+      "unid": "KG"
+    },
+    {
+      "item": "arroz c 5kg",
+      "maio": 20.0,
+      "junho": 18.78,
+      "variacao": -6.1,
+      "unid": "KG"
+    },
+    {
+      "item": "bacon",
+      "maio": 25.9401,
+      "junho": 27.4994,
+      "variacao": 6.01,
+      "unid": "KG"
+    },
+    {
+      "item": "feijao",
+      "maio": 9.71,
+      "junho": 9.25,
+      "variacao": -4.74,
+      "unid": "KG"
+    },
+    {
+      "item": "file de frango",
+      "maio": 11.99,
+      "junho": 12.5,
+      "variacao": 4.25,
+      "unid": "KG"
+    },
+    {
+      "item": "batata palha",
+      "maio": 13.69,
+      "junho": 14.21,
+      "variacao": 3.8,
+      "unid": "KG"
+    },
+    {
+      "item": "leite",
+      "maio": 5.61,
+      "junho": 5.51,
+      "variacao": -1.78,
+      "unid": "UN"
+    }
+  ],
+  "gastoMensal": {
+    "maio": 51424.66,
+    "junho": 32030.72
+  }
+}

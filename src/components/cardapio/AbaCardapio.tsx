@@ -10,6 +10,7 @@ import {
   proteinaDoPrato,
   ROTULO_PROTEINA,
   sugerirSemana,
+  sugerirSemanaHistorica,
   sugerirSemanaCriativa,
   temHistoricoExato,
   validarSemana,
@@ -97,8 +98,13 @@ export function AbaCardapio({
       dias: e.dias.map((d, j) => (j === i ? { ...d, ...patch } : d)),
     }));
 
-  const gerar = (criativo: boolean) => {
-    const fn = criativo ? sugerirSemanaCriativa : sugerirSemana;
+  const gerar = (modo: 'historica' | 'economica' | 'criativa') => {
+    const fn =
+      modo === 'criativa'
+        ? sugerirSemanaCriativa
+        : modo === 'historica'
+          ? sugerirSemanaHistorica
+          : sugerirSemana;
     const sugestao = fn(
       estado.dias.map((d) => d.pessoas),
       precos,
@@ -192,10 +198,13 @@ export function AbaCardapio({
             </div>
             {podeEditar && (
               <div className="flex shrink-0 gap-2">
-                <Botao variante="sucesso" className="!min-h-10 !px-3 !py-2 text-[13px]" onClick={() => gerar(false)}>
+                <Botao variante="secundario" className="!min-h-10 !px-3 !py-2 text-[13px]" onClick={() => gerar('historica')}>
+                  📅 Cardápio Antigo
+                </Botao>
+                <Botao variante="sucesso" className="!min-h-10 !px-3 !py-2 text-[13px]" onClick={() => gerar('economica')}>
                   <Icone nome="raio" tam={16} /> Sugerir
                 </Botao>
-                <Botao variante="secundario" className="!min-h-10 !px-3 !py-2 text-[13px]" onClick={() => gerar(true)}>
+                <Botao variante="secundario" className="!min-h-10 !px-3 !py-2 text-[13px]" onClick={() => gerar('criativa')}>
                   Nova
                 </Botao>
               </div>
@@ -440,8 +449,7 @@ export function AbaCardapio({
           </div>
         )}
         <p className="text-xs text-carvao-400">
-          <strong>Sugerir</strong>: combinações que a equipe já aprovou no histórico. <strong>Nova</strong>: inventa
-          combinações inéditas com a distribuição da casa e, com a cotação aplicada, puxa para as proteínas mais baratas.
+          <strong>Cardápio Antigo</strong>: combos mais repetidos do histórico real (occ ≥ 2). <strong>Sugerir</strong>: combinações que a equipe já aprovou no histórico. <strong>Nova</strong>: inventa combinações inéditas com a distribuição da casa e, com a cotação aplicada, puxa para as proteínas mais baratas.
         </p>
       </Cartao>
     </div>

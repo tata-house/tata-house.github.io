@@ -48,7 +48,7 @@ export function AbaSimulador({
   const pessoas = estado.dias.map((d) => d.pessoas);
 
   const itensDoDia = (dia: DiaCardapio) =>
-    listaDoDia(dia, fatores).map((s) => ({ norm: normalizar(s.item), qtd: s.qtd }));
+    listaDoDia(dia, fatores).map((s) => ({ norm: normalizar(s.item), qtd: s.qtd, unid: s.unid }));
 
   // Item 11: preços de mercado automáticos. Hierarquia: preço real → estimativa
   // salva → média de mercado (histórico), calculada na hora. Só fica "sem preço"

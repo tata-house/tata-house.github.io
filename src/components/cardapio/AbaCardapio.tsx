@@ -121,7 +121,7 @@ export function AbaCardapio({
   const custoSemana = estado.dias.reduce(
     (acc, d) => {
       if (!d.principal) return acc;
-      const itens = listaDoDia(d).map((s) => ({ norm: normalizar(s.item), qtd: s.qtd }));
+      const itens = listaDoDia(d).map((s) => ({ norm: normalizar(s.item), qtd: s.qtd, unid: s.unid }));
       const c = custoTipado(itens, precos, estimativas);
       return {
         total: acc.total + c.total,
@@ -152,6 +152,7 @@ export function AbaCardapio({
     const todos = new Set<string>();
     estado.dias.forEach((d) => {
       if (!d.principal) return;
+      // usa listaDoDia para que semPreco/normsSemana reflitam a mesma base do custo
       listaDoDia(d).forEach((s) => {
         const norm = normalizar(s.item);
         todos.add(norm);
@@ -281,7 +282,7 @@ export function AbaCardapio({
         {estado.dias.map((dia, i) => {
           const lista = dia.principal ? listaDoDia(dia) : [];
           const custo = custoTipado(
-            lista.map((s) => ({ norm: normalizar(s.item), qtd: s.qtd })),
+            lista.map((s) => ({ norm: normalizar(s.item), qtd: s.qtd, unid: s.unid })),
             precos,
             estimativas,
           );
@@ -349,15 +350,15 @@ export function AbaCardapio({
               {dia.principal && (
                 <>
                   <p className="text-xs text-carvao-400">
-                    {fonte === 'receita' ? (
-                      <span className="font-semibold text-brand-600">● Receita cadastrada</span>
+                    {fonte === 'combo' ? (
+                      <span className="font-semibold text-brand-600">● Histórico operacional</span>
+                    ) : fonte === 'mapa' ? (
+                      <span className="font-semibold text-brand-600">● Histórico por componente</span>
+                    ) : fonte === 'receita' ? (
+                      <span className="font-semibold text-[#9a6c17] dark:text-[#e3b45c]">○ Receita (sem histórico)</span>
                     ) : fonte === 'estimado' ? (
                       <span className="font-semibold text-[#b04c41]">▲ Ingredientes estimados</span>
-                    ) : temHistoricoExato(dia) ? (
-                      <span className="font-semibold text-brand-600">● Combinação já usada antes</span>
-                    ) : (
-                      <span>○ Combinação nova — lista por componente</span>
-                    )}
+                    ) : null}
                     {' · '}
                     {lista.length} itens de compra
                     {custo.total > 0 && <> · ≈ {formatarReais(custo.total)}</>}

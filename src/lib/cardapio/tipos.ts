@@ -19,12 +19,23 @@ export interface DiaCardapio {
   sobremesa: string;
 }
 
+/**
+ * Origem de cada item da lista de compras.
+ * operacional_combo — saiu de um combo exato do dados.json
+ * operacional_mapa  — saiu de um mapa de componente do dados.json
+ * receita           — veio da biblioteca de receitas (gap-fill ou prato sem histórico)
+ * fallback          — completado por heurística de texto/proteína padrão
+ */
+export type FonteItem = 'operacional_combo' | 'operacional_mapa' | 'receita' | 'fallback';
+
 /** Item sugerido pelo motor para a compra de um dia. */
 export interface ItemSugerido {
   item: string;
   unid: string;
   /** Quantidade histórica (baseline de pessoas) já escalada para o dia. */
   qtd: number;
+  /** Rastreabilidade: de onde este item veio. */
+  fonte: FonteItem;
 }
 
 /** Ajuste manual feito por cima da sugestão (chave = item normalizado). */

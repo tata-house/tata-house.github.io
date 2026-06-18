@@ -238,6 +238,12 @@ export function ListaCompras({
                         <span className={`min-w-0 flex-1 text-sm ${comprado ? 'text-carvao-400 line-through' : 'font-medium'}`}>
                           {l.item}
                           {l.manual && <span className="ml-1 text-[10px] font-bold uppercase text-ouro-600">extra</span>}
+                          {!l.manual && l.fonte === 'receita' && (
+                            <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-ouro-600/70">rcta</span>
+                          )}
+                          {!l.manual && l.fonte === 'fallback' && (
+                            <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-carvao-400">est.</span>
+                          )}
                           {obs && <span className="ml-1 text-[11px] italic text-carvao-400">· 📝</span>}
                         </span>
                         <span className={`shrink-0 text-sm font-bold tabular-nums ${comprado ? 'text-carvao-400' : ''}`}>

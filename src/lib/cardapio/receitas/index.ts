@@ -88,6 +88,7 @@ export function itensDaReceita(prato: string, pessoas: number): ItemSugerido[] |
     item: ing.item,
     unid: ing.unid,
     qtd: ing.porPessoa * Math.max(pessoas, 0),
+    fonte: 'receita' as const,
   }));
 }
 

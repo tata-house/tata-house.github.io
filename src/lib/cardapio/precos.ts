@@ -6,7 +6,7 @@
    Funções puras, sem efeitos; a camada de UI só consome o resultado.
    ===================================================================== */
 
-import { DADOS, normalizar } from './motor';
+import { DADOS, normalizar, converterParaUnidadeBase } from './motor';
 import type { HistoricoPrecos } from './tipos';
 
 export type TipoPreco = 'real' | 'estimado' | 'sem';
@@ -79,9 +79,13 @@ export interface CustoTipado {
   semPreco: string[]; // norms sem preço (real nem estimado)
 }
 
-/** Soma o custo separando o que é real, estimado e o que falta precificar. */
+/**
+ * Soma o custo separando real, estimado e sem preço.
+ * Aceita `unid` opcionalmente — quando presente, converte g→kg e ml→lt
+ * antes de multiplicar pelo preço (que é sempre armazenado por kg ou lt).
+ */
 export function custoTipado(
-  itens: { norm: string; qtd: number }[],
+  itens: { norm: string; qtd: number; unid?: string }[],
   precos: Record<string, number>,
   estimativas: Record<string, number> = {},
 ): CustoTipado {
@@ -94,13 +98,14 @@ export function custoTipado(
     itensSemPreco: 0,
     semPreco: [],
   };
-  itens.forEach(({ norm, qtd }) => {
+  itens.forEach(({ norm, qtd, unid }) => {
+    const qtdBase = unid ? converterParaUnidadeBase(qtd, unid) : qtd;
     const r = resolverPreco(norm, precos, estimativas);
     if (r.tipo === 'real') {
-      c.real += r.valor * qtd;
+      c.real += r.valor * qtdBase;
       c.itensReais++;
     } else if (r.tipo === 'estimado') {
-      c.estimado += r.valor * qtd;
+      c.estimado += r.valor * qtdBase;
       c.itensEstimados++;
     } else {
       c.itensSemPreco++;

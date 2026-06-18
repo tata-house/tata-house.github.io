@@ -11,10 +11,13 @@ import type {
   DadosCombo,
   DiaCardapio,
   EstadoSemana,
+  FonteItem,
   ItemSugerido,
   Proteina,
   StatusItem,
 } from './tipos';
+
+export type { FonteItem };
 
 export const DADOS = dadosJson as unknown as DadosCardapio;
 
@@ -212,10 +215,14 @@ const PROTEINA_PADRAO: Partial<Record<Proteina, { item: string; unid: string }>>
 };
 
 /**
- * Gera a lista sugerida do dia: combinação exata do histórico quando existe;
- * senão soma os mapas de cada componente. Em seguida garante que tudo que
- * está DESCRITO no cardápio (proteína, salada, legume, verdura, sobremesa)
- * apareça na lista, mesmo que o histórico esteja incompleto.
+ * Gera a lista sugerida do dia com rastreabilidade de origem por item.
+ *
+ * Prioridade (dados operacionais sempre prevalecem sobre estimativas):
+ *   1. operacional_combo — combo exato (prato+acompanhamentos) do dados.json
+ *   2. operacional_mapa  — mapa por componente do dados.json (sem combo exato)
+ *   3. receita           — ingredientes da biblioteca de receitas (gap-fill)
+ *   4. fallback          — heurística de texto / proteína padrão
+ *
  * Escala pela curva de pessoas. `fatores` é o aprendizado da casa.
  */
 export interface OpcoesLista {
@@ -224,40 +231,65 @@ export interface OpcoesLista {
 
 export function listaDoDia(dia: DiaCardapio, fatores?: Record<string, number>, opts?: OpcoesLista): ItemSugerido[] {
   const fator = dia.pessoas > 0 ? dia.pessoas / DADOS.baseline : 1;
-  const acc = new Map<string, { item: string; unid: string; qtd: number }>();
+  const acc = new Map<string, { item: string; unid: string; qtd: number; fonte: FonteItem }>();
 
-  const adiciona = (nome: string, q: number, u: string | null) => {
+  const adiciona = (nome: string, q: number, u: string | null, fonte: FonteItem) => {
     const k = normalizar(nome);
     if (!k || (!opts?.mostrarBasicos && excluidos.has(k))) return;
     const unid = u || unidadePadrao.get(k) || 'un';
     const atual = acc.get(k);
-    if (atual) atual.qtd = Math.max(atual.qtd, q);
-    else acc.set(k, { item: nome, unid, qtd: q });
+    if (atual) {
+      // mantém o item; atualiza qtd pelo máximo; preserva fonte mais autoritativa
+      atual.qtd = Math.max(atual.qtd, q);
+      // hierarquia de fontes: combo > mapa > receita > fallback
+      const ordemFonte: FonteItem[] = ['operacional_combo', 'operacional_mapa', 'receita', 'fallback'];
+      if (ordemFonte.indexOf(fonte) < ordemFonte.indexOf(atual.fonte)) atual.fonte = fonte;
+    } else {
+      acc.set(k, { item: nome, unid, qtd: q, fonte });
+    }
   };
 
-  // Receita do principal tem prioridade: garante ingredientes corretos e
-  // determinísticos. Sem receita no principal, segue o histórico (combo/mapa).
-  const principalComReceita = !!receitaDoPrato(dia.principal);
-  const combo = principalComReceita ? undefined : porChave.get(normalizar(chaveDoDia(dia)));
+  /* ── 1. Fonte operacional: combo exato ─────────────────────────────── */
+  const combo = porChave.get(normalizar(chaveDoDia(dia)));
   if (combo) {
-    combo.itens.forEach(({ i, q, u }) => adiciona(i, q, u));
+    combo.itens.forEach(({ i, q, u }) => adiciona(i, q, u, 'operacional_combo'));
   } else {
+    /* ── 2. Fonte operacional: mapas por componente ─────────────────── */
+    let algumMapa = false;
     for (const [tipo, campo] of TIPOS) {
+      const opcao = dia[campo];
+      if (!opcao || typeof opcao !== 'string') continue;
+      const itens = porTipoOpcao.get(`${tipo}|${normalizar(opcao)}`);
+      if (itens && itens.length > 0) {
+        itens.forEach(({ i, q, u }) => adiciona(i, q, u, 'operacional_mapa'));
+        algumMapa = true;
+      }
+    }
+
+    /* ── 3. Gap-fill com receitas (itens ausentes após combo/mapa) ──── */
+    // Para cada componente do cardápio, a receita complementa o que não veio
+    // do histórico operacional — nunca substitui itens já presentes.
+    for (const [, campo] of TIPOS) {
       const opcao = dia[campo];
       if (!opcao || typeof opcao !== 'string') continue;
       const receita = receitaDoPrato(opcao);
       if (receita) {
-        // receita é por pessoa; o acumulador trabalha na base (baseline) e
-        // multiplica por `fator` no fim → some porPessoa * baseline.
-        receita.ingredientes.forEach((ing) => adiciona(ing.item, ing.porPessoa * DADOS.baseline, ing.unid));
-      } else {
-        const itens = porTipoOpcao.get(`${tipo}|${normalizar(opcao)}`);
-        itens?.forEach(({ i, q, u }) => adiciona(i, q, u));
+        receita.ingredientes.forEach((ing) => {
+          const k = normalizar(ing.item);
+          // só adiciona se ainda não está coberto pelo histórico operacional
+          if (!acc.has(k)) {
+            adiciona(ing.item, ing.porPessoa * DADOS.baseline, ing.unid, 'receita');
+          }
+        });
+        // se não havia nenhum mapa E não havia combo, a receita é a fonte primária
+        if (!algumMapa) {
+          // itens de receita já inseridos ficam com fonte 'receita' (correto)
+        }
       }
     }
   }
 
-  // 2ª passada: completa com os ingredientes citados no texto do cardápio
+  /* ── 4. Fallback: completa com ingredientes citados no texto ─────── */
   const completa = (texto: string, categoria: string) => {
     if (!texto) return;
     for (const parte of texto.split(/\s+com\s+|\s+e\s+|,|\+|·|\//i)) {
@@ -265,7 +297,6 @@ export function listaDoDia(dia: DiaCardapio, fatores?: Record<string, number>, o
       if (!it) continue;
       const k = normalizar(it.n);
       if (acc.has(k) || (!opts?.mostrarBasicos && excluidos.has(k))) continue;
-      // já existe um item mais específico? ("Frango inteiro" cobre "Frango")
       const toks = tokensTexto(it.n);
       const coberto = Array.from(acc.values()).some((v) => {
         const vt = new Set(tokensTexto(v.item));
@@ -273,7 +304,7 @@ export function listaDoDia(dia: DiaCardapio, fatores?: Record<string, number>, o
       });
       if (coberto) continue;
       const ehProt = it.u === 'kg' && proteinaDoPrato(it.n) !== 'outros';
-      adiciona(it.n, qtdPadraoPorPessoa(categoria, it.u, ehProt) * DADOS.baseline, it.u);
+      adiciona(it.n, qtdPadraoPorPessoa(categoria, it.u, ehProt) * DADOS.baseline, it.u, 'fallback');
     }
   };
   completa(dia.principal, 'principal');
@@ -289,36 +320,36 @@ export function listaDoDia(dia: DiaCardapio, fatores?: Record<string, number>, o
       const tem = Array.from(acc.values()).some((v) => proteinaDoPrato(v.item) === alvo);
       const padrao = PROTEINA_PADRAO[alvo];
       if (!tem && padrao) {
-        adiciona(padrao.item, qtdPadraoPorPessoa('principal', padrao.unid, padrao.unid === 'kg') * DADOS.baseline, padrao.unid);
+        adiciona(padrao.item, qtdPadraoPorPessoa('principal', padrao.unid, padrao.unid === 'kg') * DADOS.baseline, padrao.unid, 'fallback');
       }
     }
   }
 
   return Array.from(acc.values())
-    .map(({ item, unid, qtd }) => {
+    .map(({ item, unid, qtd, fonte }) => {
       const aprendido = fatores?.[normalizar(item)] ?? 1;
-      return { item, unid, qtd: arredondar(qtd * fator * aprendido, unid) };
+      return { item, unid, qtd: arredondar(qtd * fator * aprendido, unid), fonte };
     })
     .filter((x) => x.qtd > 0)
     .sort((a, b) => a.item.localeCompare(b.item, 'pt-BR'));
 }
 
 /**
- * De onde vêm os ingredientes do prato principal do dia — usado para alertar
- * quando a lista é só estimada (sem receita nem histórico coerente).
- *  - 'receita'  : tem receita explícita (ideal).
- *  - 'combo'    : combinação exata já vista no histórico.
- *  - 'mapa'     : opção mapeada no histórico.
- *  - 'estimado' : sem nenhuma das anteriores → ingredientes chutados.
+ * Fonte primária dos ingredientes do dia — reflete a nova prioridade:
+ * dados operacionais (combo/mapa) prevalecem sobre receitas.
+ *  - 'combo'    : combinação exata do histórico (melhor qualidade).
+ *  - 'mapa'     : mapa por componente do histórico.
+ *  - 'receita'  : receita da biblioteca (sem histórico operacional).
+ *  - 'estimado' : sem nenhuma fonte estruturada — ingredientes por heurística.
  *  - 'vazio'    : sem prato principal.
  */
 export type FonteIngredientes = 'receita' | 'combo' | 'mapa' | 'estimado' | 'vazio';
 
 export function fonteIngredientes(dia: DiaCardapio): FonteIngredientes {
   if (!dia.principal) return 'vazio';
-  if (receitaDoPrato(dia.principal)) return 'receita';
   if (porChave.get(normalizar(chaveDoDia(dia)))) return 'combo';
   if (porTipoOpcao.get(`principal|${normalizar(dia.principal)}`)) return 'mapa';
+  if (receitaDoPrato(dia.principal)) return 'receita';
   return 'estimado';
 }
 
@@ -331,6 +362,8 @@ export interface LinhaCompra {
   sugerida: number | null; // null = item manual
   qtd: number;
   manual: boolean;
+  /** Rastreabilidade: de onde este item veio. */
+  fonte: FonteItem | 'manual';
   status: StatusItem;
 }
 
@@ -357,6 +390,7 @@ export function linhasDoDia(
         sugerida: s.qtd,
         qtd: aj?.qtd ?? s.qtd,
         manual: false,
+        fonte: s.fonte,
         status: status[k] ?? {},
       });
     }
@@ -370,6 +404,7 @@ export function linhasDoDia(
       sugerida: null,
       qtd: m.qtd,
       manual: true,
+      fonte: 'manual',
       status: status[k] ?? {},
     });
   });

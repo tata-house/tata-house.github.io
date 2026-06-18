@@ -2,8 +2,7 @@
 
 /* =====================================================================
    Pesquisa de satisfação do prato do dia (Módulo de feedback / QR).
-   Campos: qualidade, variedade, atendimento e comentário livre.
-   O voto de qualidade alimenta o índice de aceitação existente.
+   Campo único: qualidade (alimenta o índice de aceitação existente).
    Envio simples, sem login.
    ===================================================================== */
 
@@ -87,10 +86,8 @@ export default function PaginaAvaliar() {
   const { avaliar } = useAceitacao();
   const [enviado, setEnviado] = useState(false);
 
-  const [qualidade,   setQualidade]   = useState<Voto | null>(null);
-  const [variedade,   setVariedade]   = useState<Voto | null>(null);
-  const [atendimento, setAtendimento] = useState<Voto | null>(null);
-  const [comentario,  setComentario]  = useState('');
+  const [qualidade, setQualidade] = useState<Voto | null>(null);
+  const [comentario, setComentario] = useState('');
 
   const dia   = estado.dias[diaIdx];
   const prato = dia?.principal?.trim();
@@ -111,19 +108,18 @@ export default function PaginaAvaliar() {
     avaliar(prato, qualidade);
     registrarVotoDia(prato, qualidade);
 
-    // registra a pesquisa completa
+    // registra a pesquisa — variedade e atendimento espelham qualidade
+    // para manter a estrutura de dados existente sem quebrar relatórios
     registrarSatisfacao({
       prato,
       qualidade,
-      variedade:   variedade   ?? qualidade,
-      atendimento: atendimento ?? qualidade,
+      variedade:   qualidade,
+      atendimento: qualidade,
       comentario:  comentario.trim() || undefined,
     });
 
     setEnviado(true);
     setQualidade(null);
-    setVariedade(null);
-    setAtendimento(null);
     setComentario('');
   };
 
@@ -131,7 +127,7 @@ export default function PaginaAvaliar() {
     <main className="flex min-h-screen flex-col items-center justify-center gap-8 bg-gradient-to-b from-brand-800 via-brand-700 to-brand-900 px-6 py-10 text-center text-white">
       <div className="space-y-1">
         <div className="font-display text-sm font-bold uppercase tracking-[0.4em] text-brand-200">Tatá House</div>
-        <div className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-ouro-300">Avalie o almoço de hoje</div>
+        <div className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-ouro-300">Diga como foi o almoço</div>
       </div>
 
       {!pronto ? (
@@ -176,11 +172,9 @@ export default function PaginaAvaliar() {
             )}
           </div>
 
-          {/* Seções de avaliação */}
+          {/* Avaliação única + comentário */}
           <div className="space-y-5 rounded-3xl bg-white/10 p-5 ring-1 ring-white/20 text-left">
-            <SecaoAvaliacao titulo="🍛 Qualidade da comida *" valor={qualidade} onChange={setQualidade} />
-            <SecaoAvaliacao titulo="🥗 Variedade do cardápio" valor={variedade} onChange={setVariedade} />
-            <SecaoAvaliacao titulo="🤝 Atendimento" valor={atendimento} onChange={setAtendimento} />
+            <SecaoAvaliacao titulo="Como está o prato de hoje?" valor={qualidade} onChange={setQualidade} />
 
             {/* Comentário livre */}
             <div className="space-y-2">
@@ -196,8 +190,6 @@ export default function PaginaAvaliar() {
               />
             </div>
           </div>
-
-          <p className="text-[10px] text-brand-200/60">* Campo obrigatório</p>
 
           <button
             onClick={enviar}

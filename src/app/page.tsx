@@ -19,6 +19,8 @@ import { AbaRadar } from '@/components/cardapio/AbaRadar';
 import { CentralGerencial } from '@/components/cardapio/CentralGerencial';
 import { Assistente } from '@/components/cardapio/Assistente';
 import { InteligenciaCard } from '@/components/cardapio/InteligenciaCard';
+import { BriefingCard } from '@/components/cardapio/BriefingCard';
+import { PrevisaoCard } from '@/components/cardapio/PrevisaoCard';
 import { PosterSemana } from '@/components/cardapio/PosterSemana';
 import {
   deslocarSemana,
@@ -284,6 +286,15 @@ export default function PaginaCardapios() {
             {/* PAINEL — visão geral + acompanhar (etapa + contagem) + auditoria resumida */}
             {aba === 'painel' && (
               <div className="space-y-6">
+                <BriefingCard
+                  estado={estado}
+                  semanaId={semanaId}
+                  precos={precos}
+                  aceitacao={aceitacao}
+                  estoque={estoque}
+                  historico={historico}
+                  fornecedores={fornecedores}
+                />
                 <AbaDashboard
                   estado={estado}
                   semanaId={semanaId}
@@ -294,6 +305,18 @@ export default function PaginaCardapios() {
                   aceitacao={aceitacao}
                   fornecedores={fornecedores}
                   irPara={(a) => setAba(a as AbaId)}
+                />
+                <PrevisaoCard
+                  semanaId={semanaId}
+                  onPessoasAtualizadas={(pessoasMap) =>
+                    atualizar((e) => ({
+                      ...e,
+                      dias: e.dias.map((d, i) => ({
+                        ...d,
+                        pessoas: pessoasMap[i] ?? d.pessoas,
+                      })),
+                    }))
+                  }
                 />
                 <InteligenciaCard
                   estado={estado}

@@ -8,6 +8,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { linhasDoDia, normalizar, PESSOAS_PADRAO } from './motor';
 import { PRECOS_COMPRAS } from './precos-compras';
+import {
+  fatorEfetivo,
+  registrarRazao,
+  registrarValor,
+  valorEfetivo,
+  ajustesRelevantes,
+  type RegistroAprendizado,
+  type AjusteAprendido,
+} from './memoria';
 import type {
   Aceitacao,
   ChefFeedback,
@@ -32,7 +41,7 @@ export function semanaVazia(): EstadoSemana {
     versao: 1,
     orcamento: null,
     dias: PESSOAS_PADRAO.map((pessoas, i) => ({
-      pessoas: medias[i]?.n ? Math.round(medias[i].f) : pessoas,
+      pessoas: valorEfetivo(medias[i]) ? Math.round(valorEfetivo(medias[i])!) : pessoas,
       principal: '',
       guarnicaoFixa: 'Arroz e Feijão',
       guarnicao: '',
@@ -334,17 +343,11 @@ export function useFornecedores() {
 
 /* ------------------- aprendizado de quantidades ----------------------- */
 
-interface RegistroAprendizado {
-  f: number; // fator médio (ajustado / sugerido)
-  n: number; // nº de observações (teto p/ continuar adaptando)
-}
-
-const TETO_OBSERVACOES = 8;
-
 /**
- * O app aprende com a operação: toda vez que uma semana é concluída, os
- * ajustes de quantidade feitos pela cozinha viram um fator por item que
- * corrige as próximas sugestões (média móvel, limitada a ±50%).
+ * Memória operacional permanente: toda semana concluída, os ajustes de
+ * quantidade feitos pela cozinha viram um fator por item que corrige as
+ * próximas sugestões. Usa mediana sobre janela móvel (robusta a outliers)
+ * com guarda de confiança — ver ./memoria.
  */
 export function useAprendizado() {
   const [registros, setRegistros] = useState<Record<string, RegistroAprendizado>>({});
@@ -353,10 +356,10 @@ export function useAprendizado() {
     setRegistros(lerLocal('aprendizado', {}));
   }, []);
 
-  // fatores prontos para usar na lista (limitados para nunca distorcer demais)
+  // fatores prontos para usar na lista (mediana + confiança, limitados)
   const fatores: Record<string, number> = {};
   for (const [k, r] of Object.entries(registros)) {
-    fatores[k] = Math.min(1.5, Math.max(0.5, r.f));
+    fatores[k] = fatorEfetivo(r);
   }
 
   const aprenderDeSemana = useCallback((estado: EstadoSemana) => {
@@ -367,10 +370,7 @@ export function useAprendizado() {
         for (const l of linhasDoDia(estado, di)) {
           if (l.manual || l.sugerida === null || l.sugerida <= 0) continue;
           if (l.qtd === l.sugerida || l.qtd <= 0) continue;
-          const razao = Math.min(3, Math.max(0.3, l.qtd / l.sugerida));
-          const r = novo[l.chave] ?? { f: 1, n: 0 };
-          const n = Math.min(r.n, TETO_OBSERVACOES);
-          novo[l.chave] = { f: (r.f * n + razao) / (n + 1), n: r.n + 1 };
+          novo[l.chave] = registrarRazao(novo[l.chave], l.qtd / l.sugerida);
         }
       });
       gravarLocal('aprendizado', novo);
@@ -383,15 +383,22 @@ export function useAprendizado() {
     Object.entries(estado.refeicoes ?? {}).forEach(([diS, qtd]) => {
       const di = Number(diS);
       if (!(qtd > 0)) return;
-      const r = medias[di] ?? { f: qtd, n: 0 };
-      const n = Math.min(r.n, TETO_OBSERVACOES);
-      medias[di] = { f: (r.f * n + qtd) / (n + 1), n: r.n + 1 };
+      medias[di] = registrarValor(medias[di], qtd);
       mudou = true;
     });
     if (mudou) gravarLocal('mediaRefeicoes', medias);
   }, []);
 
-  return { fatores, aprenderDeSemana, totalAprendido: Object.keys(registros).length };
+  // resumo da memória para o assistente/dossiê: itens que a casa
+  // consistentemente compra acima/abaixo da sugestão do motor
+  const ajustesAprendidos: AjusteAprendido[] = ajustesRelevantes(registros);
+
+  return {
+    fatores,
+    aprenderDeSemana,
+    ajustesAprendidos,
+    totalAprendido: Object.keys(registros).length,
+  };
 }
 
 export function usePapel() {

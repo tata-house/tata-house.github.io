@@ -14,6 +14,7 @@ import type {
   HistoricoPrecos,
   RegistroDesperdicio,
 } from './tipos';
+import type { AjusteAprendido } from './memoria';
 
 const DIAS_PT = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
@@ -62,6 +63,12 @@ export interface DossieTopCusto {
   pct: number; // % do custo total da semana
 }
 
+export interface DossieMemoria {
+  item: string;
+  fator: number; // <1 = casa compra menos que a sugestão; >1 = mais
+  n: number;
+}
+
 export interface DossieIA {
   semanaId: string;
   cardapio: DossieCardapioDia[];
@@ -75,6 +82,8 @@ export interface DossieIA {
   melhoresAceitacao: DossieAceitacao[];
   pioresAceitacao: DossieAceitacao[];
   topCusto: DossieTopCusto[];
+  /** Memória operacional: itens que a casa ajusta sistematicamente. */
+  memoria: DossieMemoria[];
   totalRefeicoesPrevistas: number;
   geradoEm: string;
 }
@@ -89,6 +98,7 @@ export function montarDossie(
   fornecedores: Record<string, string> = {},
   desperdicio: RegistroDesperdicio[] = [],
   historicoSemanas: { semanaId: string; estado: EstadoSemana }[] = [],
+  ajustesAprendidos: AjusteAprendido[] = [],
 ): DossieIA {
   // cardápio da semana
   const cardapio: DossieCardapioDia[] = estado.dias
@@ -194,6 +204,9 @@ export function montarDossie(
     melhoresAceitacao,
     pioresAceitacao,
     topCusto,
+    memoria: ajustesAprendidos
+      .slice(0, 8)
+      .map((a) => ({ item: a.norm, fator: a.fator, n: a.n })),
     totalRefeicoesPrevistas: resumo.refeicoesPrevistas,
     geradoEm: new Date().toISOString(),
   };

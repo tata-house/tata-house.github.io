@@ -307,6 +307,18 @@ export function CentralGerencial({
           </button>
         </Cartao>
       )}
+
+      {/* link para o manual */}
+      <a
+        href="/manual"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-2 rounded-2xl bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-700 ring-1 ring-brand-200/60 transition hover:bg-brand-100 dark:bg-carvao-800 dark:text-brand-300 dark:ring-carvao-600"
+      >
+        <span className="text-lg">📖</span>
+        Manual do sistema — guia completo para funcionários
+        <span className="text-brand-400">↗</span>
+      </a>
     </div>
   );
 }

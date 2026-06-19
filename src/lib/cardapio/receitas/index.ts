@@ -287,6 +287,197 @@ const ALIASES_RECEITA: Record<string, string> = {
   'lasanha de frango':                   'Lasanha à Bolonhesa',
   'lasanha de panela':                   'Lasanha à Bolonhesa',
   'lasanha de panela a bolonhesa':       'Lasanha à Bolonhesa',
+  // ── Guarnições: Arroz variantes ───────────────────────────────────────────
+  'arroz a grega':                             'Arroz à grega',
+  'arroz a grega - milho e salsa':             'Arroz à grega',
+  'arroz a grega - milho':                     'Arroz à grega',
+  'arroz a grega (cenoura, milho e salsa)':    'Arroz à grega',
+  'arroz a grega (milho e salsa)':             'Arroz à grega',
+  'arroz a grega( milho e salsa)':             'Arroz à grega',
+  'arroz com cenoura':                         'Arroz à grega',
+  'arroz com milho':                           'Arroz à grega',
+  'arroz com cenoura / farofa':                'Arroz à grega',
+  'arroz com cenoura e brocolis':              'Arroz com brócolis',
+  'arroz branco e repolho refogado':           'Arroz branco',
+  // ── Guarnições: Farofa variantes ─────────────────────────────────────────
+  'farofa completa':                           'Farofa de bacon',
+  'farofa de cenoura':                         'Farofa de bacon',
+  'farofa de temperada':                       'Farofa de bacon',
+  'farofa simples':                            'Farofa de bacon',
+  'farofa temperada':                          'Farofa de bacon',
+  'farofa temperado':                          'Farofa de bacon',
+  'farofa temperado / caldinho verde':         'Farofa de bacon',
+  'farofa de bacon com cenoura':               'Farofa de bacon',
+  // ── Guarnições: Batata variantes ─────────────────────────────────────────
+  'batata assada':                             'Batata rústica assada',
+  'batata rustica':                            'Batata rústica assada',
+  'batata rustica com alecrim':                'Batata rústica assada',
+  'batata doce em cubos assada com azeite e alecrim': 'Batata doce assada',
+  'batata doce chips':                         'Batata doce assada',
+  'chips batata doce':                         'Batata doce assada',
+  'chips de batata doce':                      'Batata doce assada',
+  'batata em conserva':                        'Batata sauté',
+  'batata frita na panela de pressao':         'Batata frita',
+  'fritas':                                    'Batata frita',
+  'batata e cenoura':                          'Batata e cenoura cozidas',
+  // ── Guarnições: Banana variantes ──────────────────────────────────────────
+  'banana da terra frita':                     'Banana frita',
+  // ── Guarnições: Brócolis / Couve-flor ────────────────────────────────────
+  'brocolis':                                  'Brócolis refogado',
+  'brocolis com couve- flor':                  'Brócolis refogado',
+  'brocolis com couve flor':                   'Brócolis refogado',
+  'brocolis com couve-flor':                   'Brócolis refogado',
+  'brocolis e couve flor refogado':            'Brócolis refogado',
+  'brocolis e cenoura refogado':               'Brócolis refogado',
+  // ── Guarnições: Berinjela ─────────────────────────────────────────────────
+  'berinjela empanada frita':                  'Berinjela empanada',
+  'berinjela empanada frita / farofa temperada': 'Berinjela empanada',
+  // ── Guarnições: Mandioca ─────────────────────────────────────────────────
+  'mandioca':                                  'Mandioca cozida',
+  // ── Guarnições: Purê variantes ────────────────────────────────────────────
+  'pure de abobora':                           'Purê de abóbora',
+  'pure de moranga':                           'Purê de abóbora',
+  'pure de batata':                            'Purê de batata',
+  'pure de batata (pronto)':                   'Purê de batata',
+  'pure de batata doce':                       'Purê de batata doce',
+  'pure de mandioca':                          'Purê de mandioca',
+  'creme de batata':                           'Creme de batata',
+  // ── Guarnições: Polenta / Angu ───────────────────────────────────────────
+  'polenta':                                   'Polenta cremosa',
+  'polenta cremosa':                           'Polenta cremosa',
+  'polenta frita':                             'Polenta frita',
+  // ── Guarnições: Pirão variantes ───────────────────────────────────────────
+  'pirao de costela':                          'Pirão',
+  // ── Guarnições: Macarrão variantes ───────────────────────────────────────
+  'macarrao':                                  'Macarrão alho e óleo',
+  'macarrao - molho a aparte tomate':          'Macarrão ao sugo',
+  'macarrao alho e oleo':                      'Macarrão alho e óleo',
+  'macarrao oleo e alho':                      'Macarrão alho e óleo',
+  'macarrao bolonhesa':                        'Macarrão ao sugo',
+  // ── Guarnições: Feijão variantes ─────────────────────────────────────────
+  'caldinho feijao':                           'Caldinho de feijão',
+  'caldinho de feijao':                        'Caldinho de feijão',
+  'feijao com abobora':                        'Feijão com abóbora',
+  'feijao tropeiro':                           'Feijão Tropeiro',
+  // ── Guarnições: Legumes variantes ────────────────────────────────────────
+  'abobora refogada':                          'Purê de abóbora',
+  'abobrinha refofada':                        'Abobrinha refogada',
+  'legumes (cenoura cozida e abobora assada)': 'Legumes cozidos',
+  'legumes salteados (batata doce assada e cenoura refogada)': 'Batata doce assada',
+  'couve refogada e farofa':                   'Couve refogada',
+  'cenoura com beterraba cozida':              'Cenoura com beterraba cozida',
+  // ── Guarnições: Repolho ───────────────────────────────────────────────────
+  'repolho refogado / farofa temperada':       'Repolho refogado',
+  // ── Guarnições: Salada de maionese como guarnicao ─────────────────────────
+  'salada de maionese':                        'Maionese de legumes',
+  'salada de repolho e cenoura ralada':        'Salada de repolho com cenoura',
+  // ── Sobremesas: Frutas naturais ───────────────────────────────────────────
+  'abacaxi':                                   'Fruta da estação porcionada',
+  'banana':                                    'Banana caramelizada',
+  'goiaba':                                    'Fruta da estação porcionada',
+  'maca':                                      'Fruta da estação porcionada',
+  'melancia':                                  'Fruta da estação porcionada',
+  'melao':                                     'Fruta da estação porcionada',
+  'mexerica':                                  'Fruta da estação porcionada',
+  // ── Sobremesas: Arroz doce / Canjica ─────────────────────────────────────
+  'arroz doce':                                'Arroz doce com canela',
+  'arroz de leite':                            'Arroz de leite com canela',
+  'canjica':                                   'Canjica branca',
+  // ── Sobremesas: Cocada / Curau ────────────────────────────────────────────
+  'cocada':                                    'Cocada cremosa',
+  'curau':                                     'Curau de milho verde',
+  // ── Sobremesas: Doce de banana ────────────────────────────────────────────
+  'doce de banana':                            'Doce de banana em calda',
+  // ── Sobremesas: Gelatina variantes ────────────────────────────────────────
+  'gelatina':                                  'Gelatina colorida',
+  'gelatina de abacaxi':                       'Gelatina colorida',
+  'gelatina de morango':                       'Gelatina colorida',
+  'gelatina colorida cremosa':                 'Gelatina com creme',
+  'gelatina cremosa':                          'Gelatina com creme',
+  // ── Sobremesas: Mousse variantes ──────────────────────────────────────────
+  'mousse de chocolate':                       'Mousse de chocolate',
+  'mousse de maracuja':                        'Mousse de maracujá',
+  // ── Sobremesas: Pudim variantes ───────────────────────────────────────────
+  'pudim':                                     'Pudim de leite condensado',
+  'pudim de leite':                            'Pudim de leite condensado',
+  'pudim de baunilha':                         'Flan de baunilha',
+  'pudim de corte (morango)':                  'Pudim de leite condensado',
+  'pudim de morango':                          'Pudim de leite condensado',
+  'napolitano (pudim morango e chocolate)':    'Pudim de leite condensado',
+  // ── Sobremesas: Pavê variantes ────────────────────────────────────────────
+  'pave de brigadeiro com baunilha':           'Pavê de bolacha',
+  // ── Sobremesas: Creme de frutas ───────────────────────────────────────────
+  'creme de framboesa gelado':                 'Creme de framboesa',
+  // ── Saladas: Alface variantes ─────────────────────────────────────────────
+  'alface':                                    'Salada de Alface com Tomate',
+  'alface + tomate':                           'Salada de Alface com Tomate',
+  'alface , tomate e pepino':                  'Salada de Alface com Tomate',
+  'alface americana com tomate':               'Salada de Alface com Tomate',
+  'alface americana e cebola roxa':            'Salada de Alface com Tomate',
+  'alface americana e pepino japones':         'Salada de Alface com Tomate',
+  'alface americana e tomate':                 'Salada de Alface com Tomate',
+  'alface americano ,tomate e pepino':         'Salada de Alface com Tomate',
+  'alface americano com manga':                'Salada tropical com manga',
+  'alface americano com tomate':               'Salada de Alface com Tomate',
+  'alface americano com tomate e cebola roxo a parte': 'Salada de Alface com Tomate',
+  'alface americano com tomate e pepino':      'Salada de Alface com Tomate',
+  'alface americano e tomate':                 'Salada de Alface com Tomate',
+  'alface americano, tomate':                  'Salada de Alface com Tomate',
+  'alface americano, tomate e cebola a parte': 'Salada de Alface com Tomate',
+  'alface americano, tomate e pepino':         'Salada de Alface com Tomate',
+  'alface com cenoura e cebola':               'Salada de Alface com Tomate',
+  'alface com manga':                          'Salada tropical com manga',
+  'alface com pepino e tomate':                'Salada de Alface com Tomate',
+  'alface com tomate':                         'Salada de Alface com Tomate',
+  'salada de alface + tomate':                 'Salada de Alface com Tomate',
+  'salada de alface, tomate e cebola em rodelas': 'Salada de Alface com Tomate',
+  // ── Saladas: Abobrinha variantes ──────────────────────────────────────────
+  'abobrinha':                                 'Salada de abobrinha',
+  'abobrinha com cenoura':                     'Salada de abobrinha',
+  'abobrinha refogada':                        'Salada de abobrinha',
+  'abobrinha, tomate e cebola':                'Salada de abobrinha',
+  'salada de abobrinha':                       'Salada de abobrinha',
+  // ── Saladas: Acelga variantes ─────────────────────────────────────────────
+  'acelga com cenoura':                        'Acelga refogada',
+  'acelga com manga':                          'Salada tropical com manga',
+  'acelga com tomate':                         'Acelga refogada',
+  // ── Saladas: Agrião variantes ─────────────────────────────────────────────
+  'agriao com tomate':                         'Salada verde com agrião',
+  'agriao com tomate e pepino':                'Salada verde com agrião',
+  'agriao, cebola e tomate salada':            'Salada verde com agrião',
+  // ── Saladas: Beterraba ────────────────────────────────────────────────────
+  'salada de beterraba com cenoura':           'Salada de beterraba',
+  'salada de cenours ralads/ tomate':          'Cenoura ralada temperada',
+  // ── Saladas: Chuchu ───────────────────────────────────────────────────────
+  'salada de chuchu':                          'Salada de chuchu',
+  // ── Saladas: Pepino ───────────────────────────────────────────────────────
+  'tomate com pepino':                         'Salada de pepino',
+  'tomate e pepino japones':                   'Salada de pepino',
+  // ── Saladas: Repolho variantes ───────────────────────────────────────────
+  'repolho com maca sobremesa: arroz doce':    'Salada de repolho com cenoura',
+  'repolho com manga':                         'Salada de repolho com manga',
+  'repolho e acelga':                          'Salada de repolho com cenoura',
+  'repolho e cenoura':                         'Salada de repolho com cenoura',
+  'repolho e cenoura ralada':                  'Salada de repolho com cenoura',
+  'repolho refogado' :                         'Repolho refogado',
+  'repolho roxo com cenoura':                  'Agridoce de repolho roxo',
+  'repolho roxo com cenoura ralada':           'Agridoce de repolho roxo',
+  'repolho roxo com tomate':                   'Agridoce de repolho roxo',
+  'repolho roxo com tomate e cebola':          'Agridoce de repolho roxo',
+  'repolho roxo comtomate':                    'Agridoce de repolho roxo',
+  'repolho roxo ralado com tomate':            'Agridoce de repolho roxo',
+  // ── Saladas: Rúcula ──────────────────────────────────────────────────────
+  'rucula com tomate':                         'Salada verde com rúcula',
+  'rucula e tomate':                           'Salada verde com rúcula',
+  // ── Saladas: Salpicão ────────────────────────────────────────────────────
+  'salpicao':                                  'Salpicão',
+  // ── Saladas: Salada verde ────────────────────────────────────────────────
+  'salada verde ( couve com alface)':          'Mix de folhas com dressing',
+  // ── Saladas: Vinagrete variantes ─────────────────────────────────────────
+  'vinagrete - tomate, cebola roxa e pimentao verde': 'Vinagrete',
+  'vinagrete ( tomate, cebola roxa e pimentao verde)': 'Vinagrete',
+  'vinagrete ( tomate, pimentao verde e cebola roxa)': 'Vinagrete',
+  'vinagrete( tomate/ cebola e pimentao verde)': 'Vinagrete',
 };
 
 /** Receita do prato (por nome), ou null.

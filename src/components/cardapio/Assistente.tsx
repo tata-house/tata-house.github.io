@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { PERGUNTAS_SUGERIDAS, insightProativo, responder, type ContextoAssistente } from '@/lib/cardapio/assistente';
+import { PERGUNTAS_SUGERIDAS, insightProativo, responder, responderAsync, type ContextoAssistente } from '@/lib/cardapio/assistente';
+import { montarDossieCompleto } from '@/lib/cardapio/estado';
 
 interface Fala {
   de: 'voce' | 'assistente';
@@ -12,18 +13,37 @@ interface Fala {
 export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
   const [aberto, setAberto] = useState(false);
   const [entrada, setEntrada] = useState('');
+  const [pensando, setPensando] = useState(false);
   const [falas, setFalas] = useState<Fala[]>([
     { de: 'assistente', texto: 'Oi! Sou o assistente da Tatá House. Posso analisar custos, preços, aceitação e estoque. Pergunte ou escolha abaixo 👇' },
   ]);
 
   const proativo = useMemo(() => insightProativo(contexto), [contexto]);
 
-  const perguntar = (pergunta: string) => {
+  const perguntar = async (pergunta: string) => {
     const p = pergunta.trim();
-    if (!p) return;
-    const r = responder(p, contexto);
-    setFalas((f) => [...f, { de: 'voce', texto: p }, { de: 'assistente', texto: r.texto, itens: r.itens }]);
+    if (!p || pensando) return;
+    setFalas((f) => [...f, { de: 'voce', texto: p }]);
     setEntrada('');
+    setPensando(true);
+    try {
+      const dossie = montarDossieCompleto({
+        semanaId: contexto.semanaId,
+        estado: contexto.estado,
+        precos: contexto.precos,
+        aceitacao: contexto.aceitacao,
+        estoque: contexto.estoque,
+        historico: contexto.historico,
+        fornecedores: contexto.fornecedores,
+      });
+      const r = await responderAsync(p, contexto, dossie);
+      setFalas((f) => [...f, { de: 'assistente', texto: r.texto, itens: r.itens }]);
+    } catch {
+      const r = responder(p, contexto);
+      setFalas((f) => [...f, { de: 'assistente', texto: r.texto, itens: r.itens }]);
+    } finally {
+      setPensando(false);
+    }
   };
 
   return (
@@ -89,6 +109,17 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
                 </div>
               </div>
             ))}
+            {pensando && (
+              <div className="text-left">
+                <div className="inline-block rounded-2xl bg-areia-100 px-3 py-2 text-sm text-carvao-500 dark:bg-carvao-700 dark:text-areia-300">
+                  <span className="inline-flex gap-1">
+                    <span className="animate-pulse">●</span>
+                    <span className="animate-pulse [animation-delay:150ms]">●</span>
+                    <span className="animate-pulse [animation-delay:300ms]">●</span>
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* sugestões rápidas */}
@@ -114,12 +145,14 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
             <input
               value={entrada}
               onChange={(e) => setEntrada(e.target.value)}
+              disabled={pensando}
               placeholder="Pergunte algo…"
-              className="min-h-10 flex-1 rounded-2xl border border-carvao-200 bg-white px-3 py-2 text-sm dark:border-carvao-600 dark:bg-carvao-900"
+              className="min-h-10 flex-1 rounded-2xl border border-carvao-200 bg-white px-3 py-2 text-sm disabled:opacity-60 dark:border-carvao-600 dark:bg-carvao-900"
             />
             <button
               type="submit"
-              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-700 text-white transition hover:bg-brand-800"
+              disabled={pensando}
+              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-700 text-white transition hover:bg-brand-800 disabled:opacity-60"
               aria-label="Enviar"
             >
               ➤

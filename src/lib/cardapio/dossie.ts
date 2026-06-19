@@ -15,6 +15,7 @@ import type {
   RegistroDesperdicio,
 } from './tipos';
 import type { AjusteAprendido } from './memoria';
+import type { DnaAlimentar } from './dna';
 
 const DIAS_PT = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
@@ -84,8 +85,17 @@ export interface DossieIA {
   topCusto: DossieTopCusto[];
   /** Memória operacional: itens que a casa ajusta sistematicamente. */
   memoria: DossieMemoria[];
+  /** DNA alimentar: perfil de preferências da casa (resumido). */
+  dna: DossieDna | null;
   totalRefeicoesPrevistas: number;
   geradoEm: string;
+}
+
+export interface DossieDna {
+  resumo: string;
+  proteinasPreferidas: { rotulo: string; pct: number; nota: number | null }[];
+  campeoes: string[];
+  problemas: string[];
 }
 
 export function montarDossie(
@@ -99,6 +109,7 @@ export function montarDossie(
   desperdicio: RegistroDesperdicio[] = [],
   historicoSemanas: { semanaId: string; estado: EstadoSemana }[] = [],
   ajustesAprendidos: AjusteAprendido[] = [],
+  dnaAlimentar: DnaAlimentar | null = null,
 ): DossieIA {
   // cardápio da semana
   const cardapio: DossieCardapioDia[] = estado.dias
@@ -207,6 +218,17 @@ export function montarDossie(
     memoria: ajustesAprendidos
       .slice(0, 8)
       .map((a) => ({ item: a.norm, fator: a.fator, n: a.n })),
+    dna: dnaAlimentar
+      ? {
+          resumo: dnaAlimentar.resumo,
+          proteinasPreferidas: dnaAlimentar.perfilProteinas
+            .filter((p) => p.proteina !== 'outros')
+            .slice(0, 4)
+            .map((p) => ({ rotulo: p.rotulo, pct: p.pct, nota: p.notaMedia })),
+          campeoes: dnaAlimentar.campeoes.slice(0, 5).map((c) => c.prato),
+          problemas: dnaAlimentar.problemas.slice(0, 4).map((p) => p.prato),
+        }
+      : null,
     totalRefeicoesPrevistas: resumo.refeicoesPrevistas,
     geradoEm: new Date().toISOString(),
   };

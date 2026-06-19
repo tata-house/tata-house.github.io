@@ -17,6 +17,8 @@ import {
   type RegistroAprendizado,
   type AjusteAprendido,
 } from './memoria';
+import { calcularDna, type DnaAlimentar } from './dna';
+import { montarDossie, type DossieIA } from './dossie';
 import type {
   Aceitacao,
   ChefFeedback,
@@ -537,6 +539,72 @@ export function useDesperdicio(semanaId: string) {
 /** Lê os registros de desperdício de qualquer semana (para indicadores). */
 export function lerDesperdicio(semanaId: string): RegistroDesperdicio[] {
   return lerLocal('desperdicio.' + semanaId, []);
+}
+
+/**
+ * Calcula o DNA alimentar da casa a partir de tudo que está persistido:
+ * histórico de cardápios + aceitação global + desperdício de cada semana.
+ * Função pura (lê localStorage) — pode rodar fora de componente.
+ */
+export function montarDnaAlimentar(): DnaAlimentar {
+  const ids = semanasComConteudo();
+  const semanas = ids.map((id) => ({ semanaId: id, estado: lerSemana(id) }));
+  const aceitacao = lerLocal<Aceitacao>('aceitacao', {});
+  const desperdicio = ids.flatMap((id) => lerDesperdicio(id));
+  return calcularDna(semanas, aceitacao, desperdicio);
+}
+
+/** Hook do DNA alimentar — recalcula no cliente quando monta. */
+export function useDna() {
+  const [dna, setDna] = useState<DnaAlimentar | null>(null);
+
+  useEffect(() => {
+    setDna(montarDnaAlimentar());
+  }, []);
+
+  const recalcular = useCallback(() => setDna(montarDnaAlimentar()), []);
+
+  return { dna, recalcular };
+}
+
+/**
+ * Monta o dossiê completo para o LLM, reunindo tudo que está persistido:
+ * estado da semana, custos, aceitação, estoque, histórico de preços,
+ * desperdício, semanas anteriores, memória operacional e DNA alimentar.
+ */
+export function montarDossieCompleto(args: {
+  semanaId: string;
+  estado: EstadoSemana;
+  precos: Record<string, number>;
+  aceitacao: Aceitacao;
+  estoque: Estoque;
+  historico: HistoricoPrecos;
+  fornecedores: Record<string, string>;
+}): DossieIA {
+  const { semanaId, estado, precos, aceitacao, estoque, historico, fornecedores } = args;
+  const ids = semanasComConteudo();
+  const anteriores = ids
+    .filter((id) => id < semanaId)
+    .sort()
+    .slice(-4)
+    .map((id) => ({ semanaId: id, estado: lerSemana(id) }));
+  const desperdicio = ids.flatMap((id) => lerDesperdicio(id));
+  const registros = lerLocal<Record<string, RegistroAprendizado>>('aprendizado', {});
+  const ajustes = ajustesRelevantes(registros);
+  const dna = montarDnaAlimentar();
+  return montarDossie(
+    semanaId,
+    estado,
+    precos,
+    aceitacao,
+    estoque,
+    historico,
+    fornecedores,
+    desperdicio,
+    anteriores,
+    ajustes,
+    dna,
+  );
 }
 
 /* =====================================================================

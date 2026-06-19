@@ -8,6 +8,7 @@ import { Icone } from '@/components/Icones';
 import { BottomSheet, Skeleton } from '@/components/ui';
 import { AbaAgora } from '@/components/cardapio/AbaAgora';
 import { AbaAceitacao } from '@/components/cardapio/AbaAceitacao';
+import { PlaquinhaQR } from '@/components/cardapio/PlaquinhaQR';
 import { AbaCardapio } from '@/components/cardapio/AbaCardapio';
 import { AbaCompras } from '@/components/cardapio/AbaCompras';
 import { AbaDesperdicio } from '@/components/cardapio/AbaDesperdicio';
@@ -247,6 +248,7 @@ export default function PaginaCardapios() {
   const [semanaId, setSemanaId] = useState(() => idSemanaIso(new Date()));
   const [aba, setAba] = useState<AbaId>('agora');
   const [posterAberto, setPosterAberto] = useState(false);
+  const [plaquinhaAberta, setPlaquinhaAberta] = useState(false);
   const [semanaSheet, setSemanaSheet] = useState(false);
   const [buscaAberta, setBuscaAberta] = useState(false);
   const [abaCompras, setAbaCompras] = useState<'lista' | 'estoque'>('lista');
@@ -339,6 +341,13 @@ export default function PaginaCardapios() {
 
   return (
     <>
+      {/* ── Plaquinha QR ─────────────────────────────────── */}
+      <PlaquinhaQR
+        aberto={plaquinhaAberta}
+        aoFechar={() => setPlaquinhaAberta(false)}
+        url={(typeof window !== 'undefined' ? window.location.origin : '') + '/avaliar'}
+      />
+
       {/* ── Busca global (overlay) ───────────────────────── */}
       {buscaAberta && (
         <BuscaGlobal buscar={buscarFn} aoFechar={() => setBuscaAberta(false)} />
@@ -446,6 +455,13 @@ export default function PaginaCardapios() {
             >
               <Icone nome="imagem" tam={16} />
               <span className="hidden sm:inline">Pôster</span>
+            </button>
+            <button
+              onClick={() => setPlaquinhaAberta(true)}
+              className="flex h-9 items-center gap-1.5 whitespace-nowrap rounded-lg border border-carvao-200 bg-white px-3 text-sm font-semibold text-carvao-600 transition hover:bg-carvao-50 dark:border-carvao-700 dark:bg-carvao-900 dark:text-areia-200"
+            >
+              <Icone nome="cotacao" tam={16} />
+              <span className="hidden sm:inline">Plaquinha</span>
             </button>
           </div>
         </div>

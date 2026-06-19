@@ -3,12 +3,16 @@
    Motor de respostas baseado em regras sobre os dados reais do sistema.
    A função `responder` é o ponto único de integração: trocar a
    implementação por uma chamada a IA externa no futuro não muda a UI.
+
+   Funções async (responderAsync / gerarBriefing) chamam /api/ia quando
+   há chave configurada; em caso de falha caem no modo baseado em regras.
    ===================================================================== */
 
 import { formatarQtd, formatarReais, normalizar, proteinaDoPrato } from './motor';
 import { consumoDaSemana, alertasEstoque } from './indicadores';
 import { analisarRadar, fraseAlerta } from './radar';
 import type { Aceitacao, Estoque, EstadoSemana, HistoricoPrecos } from './tipos';
+import type { DossieIA } from './dossie';
 
 export interface ContextoAssistente {
   estado: EstadoSemana;
@@ -153,4 +157,56 @@ export function insightProativo(ctx: ContextoAssistente): RespostaAssistente | n
     };
 
   return null;
+}
+
+/* ------------------------------------------------------------------ */
+/* Camada async — chama /api/ia, cai em regras se offline              */
+/* ------------------------------------------------------------------ */
+
+async function chamarIA(
+  tarefa: string,
+  dossie: DossieIA,
+  modo: 'pergunta' | 'briefing' | 'decisao' | 'alerta' = 'pergunta',
+): Promise<RespostaAssistente | null> {
+  try {
+    const res = await fetch('/api/ia', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tarefa, dossie, modo }),
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (json.offline) return null;
+    if (json.texto) return { texto: json.texto, itens: json.itens };
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Versão async de `responder`: tenta LLM via /api/ia, cai em regras.
+ * Use nos componentes que podem esperar pela IA.
+ */
+export async function responderAsync(
+  pergunta: string,
+  ctx: ContextoAssistente,
+  dossie: DossieIA,
+): Promise<RespostaAssistente> {
+  const iaResposta = await chamarIA(pergunta, dossie, 'pergunta');
+  if (iaResposta) return iaResposta;
+  return responder(pergunta, ctx);
+}
+
+/**
+ * Briefing diário (piloto automático). Retorna o alerta mais relevante
+ * com explicação gerada pelo LLM, ou cai em insightProativo.
+ */
+export async function gerarBriefing(
+  ctx: ContextoAssistente,
+  dossie: DossieIA,
+): Promise<RespostaAssistente | null> {
+  const iaResposta = await chamarIA('Gere o briefing operacional do dia.', dossie, 'briefing');
+  if (iaResposta) return iaResposta;
+  return insightProativo(ctx);
 }

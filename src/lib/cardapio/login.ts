@@ -34,7 +34,7 @@ function gravar(chave: string, valor: unknown) {
 }
 
 export type PerfilLogin = 'gerencia' | 'compras' | 'cozinha';
-export type AbaId = 'painel' | 'cotacao' | 'cardapio' | 'compras' | 'feedback' | 'gerencial';
+export type AbaId = 'agora' | 'semana' | 'compras' | 'feedback';
 
 export interface DefPerfil {
   id: PerfilLogin;
@@ -53,25 +53,25 @@ export const PERFIS: DefPerfil[] = [
     descricao: 'Acesso completo: painel, cardápio, custos, compras e configurações',
     icone: '👑',
     papel: 'administrador',
-    abas: ['painel', 'cotacao', 'cardapio', 'compras', 'feedback', 'gerencial'],
+    abas: ['agora', 'semana', 'compras', 'feedback'],
     pinPadrao: '1234',
   },
   {
     id: 'compras',
     rotulo: 'Compras',
-    descricao: 'Cotação, lista de compras, estoque, preços, nota fiscal e inventário',
+    descricao: 'Lista de compras, estoque, preços e nota fiscal',
     icone: '🛒',
     papel: 'compras',
-    abas: ['cotacao', 'compras'],
+    abas: ['compras'],
     pinPadrao: '1111',
   },
   {
     id: 'cozinha',
     rotulo: 'Cozinha / Conferência',
-    descricao: 'Cardápio, conferência, recebimento, inventário e feedback',
+    descricao: 'Cardápio, conferência, recebimento e feedback',
     icone: '👩‍🍳',
     papel: 'cozinha',
-    abas: ['cardapio', 'compras', 'feedback'],
+    abas: ['agora', 'semana', 'compras', 'feedback'],
     pinPadrao: '2222',
   },
 ];
@@ -83,13 +83,13 @@ export function perfilDe(id: PerfilLogin | null): DefPerfil | null {
 /** Abas visíveis para um papel (navegação muda conforme o login). */
 export function abasDoPapel(papel: Papel): AbaId[] {
   const mapa: Record<Papel, AbaId[]> = {
-    administrador: ['painel', 'cotacao', 'cardapio', 'compras', 'feedback', 'gerencial'],
-    gestor: ['painel', 'cotacao', 'cardapio', 'compras', 'feedback', 'gerencial'],
-    compras: ['cotacao', 'compras'],
-    cozinha: ['cardapio', 'compras', 'feedback'],
-    recebimento: ['compras'],
+    administrador: ['agora', 'semana', 'compras', 'feedback'],
+    gestor:        ['agora', 'semana', 'compras', 'feedback'],
+    compras:       ['compras'],
+    cozinha:       ['agora', 'semana', 'compras', 'feedback'],
+    recebimento:   ['compras'],
   };
-  return mapa[papel] ?? ['painel'];
+  return mapa[papel] ?? ['agora'];
 }
 
 function pinsAtuais(): Record<string, string> {

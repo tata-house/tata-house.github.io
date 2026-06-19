@@ -6,11 +6,11 @@ import { BottomNav, GRUPOS } from '@/components/BottomNav';
 import { ToastHost, toast } from '@/components/Toast';
 import { Icone } from '@/components/Icones';
 import { BottomSheet, Skeleton } from '@/components/ui';
+import { AbaAgora } from '@/components/cardapio/AbaAgora';
 import { AbaAceitacao } from '@/components/cardapio/AbaAceitacao';
 import { AbaCardapio } from '@/components/cardapio/AbaCardapio';
 import { AbaCompras } from '@/components/cardapio/AbaCompras';
 import { AbaCotacao } from '@/components/cardapio/AbaCotacao';
-import { AbaDashboard } from '@/components/cardapio/AbaDashboard';
 import { AbaDesperdicio } from '@/components/cardapio/AbaDesperdicio';
 import { AbaEstoque } from '@/components/cardapio/AbaEstoque';
 import { AbaFluxo } from '@/components/cardapio/AbaFluxo';
@@ -18,9 +18,6 @@ import { AbaPrecos } from '@/components/cardapio/AbaPrecos';
 import { AbaRadar } from '@/components/cardapio/AbaRadar';
 import { CentralGerencial } from '@/components/cardapio/CentralGerencial';
 import { Assistente } from '@/components/cardapio/Assistente';
-import { InteligenciaCard } from '@/components/cardapio/InteligenciaCard';
-import { BriefingCard } from '@/components/cardapio/BriefingCard';
-import { PrevisaoCard } from '@/components/cardapio/PrevisaoCard';
 import { PosterSemana } from '@/components/cardapio/PosterSemana';
 import {
   deslocarSemana,
@@ -47,47 +44,44 @@ import { Login } from '@/components/Login';
 import { pode } from '@/lib/cardapio/org';
 import type { Etapa } from '@/lib/cardapio/tipos';
 
+/* ── tipos de aba ────────────────────────────────────────── */
+
 const ABAS = [
-  { id: 'painel', rotulo: '📊 Painel' },
-  { id: 'cotacao', rotulo: '📋 Cotação' },
-  { id: 'cardapio', rotulo: '🍽️ Cardápio' },
-  { id: 'compras', rotulo: '🛒 Compras' },
-  { id: 'feedback', rotulo: '👍 Feedback' },
-  { id: 'gerencial', rotulo: '📈 Gerencial' },
+  { id: 'agora',    rotulo: 'Agora'    },
+  { id: 'semana',   rotulo: 'Semana'   },
+  { id: 'compras',  rotulo: 'Compras'  },
+  { id: 'feedback', rotulo: 'Feedback' },
 ] as const;
 
 type AbaId = (typeof ABAS)[number]['id'];
-type SecaoCompras = 'comprar' | 'estoque' | 'precos' | 'radar';
 
-const SECOES_COMPRAS: { id: SecaoCompras; rotulo: string }[] = [
-  { id: 'comprar', rotulo: 'Comprar' },
-  { id: 'estoque', rotulo: 'Estoque' },
-  { id: 'precos', rotulo: 'Preços' },
-  { id: 'radar', rotulo: 'Radar' },
-];
+/* ── badge de etapa ──────────────────────────────────────── */
 
 const ROTULO_ETAPA: Record<Etapa, string> = {
-  rascunho: 'Rascunho',
-  cozinha: 'Na cozinha',
-  compras: 'Em compra',
+  rascunho:    'Rascunho',
+  cozinha:     'Na cozinha',
+  compras:     'Em compra',
   recebimento: 'Recebendo',
-  concluido: 'Concluída',
+  concluido:   'Concluída',
 };
 
 const COR_ETAPA: Record<Etapa, string> = {
-  rascunho: 'bg-carvao-400/10 text-carvao-500 ring-carvao-400/25',
-  cozinha: 'bg-[#b07c1e]/10 text-[#9a6c17] ring-[#b07c1e]/25 dark:text-[#e3b45c]',
-  compras: 'bg-[#2d6f8e]/10 text-[#2d6f8e] ring-[#2d6f8e]/25 dark:text-[#7cb8d4]',
-  recebimento: 'bg-ouro-400/10 text-ouro-600 ring-ouro-400/25 dark:text-ouro-300',
-  concluido: 'bg-brand-500/10 text-brand-600 ring-brand-500/25',
+  rascunho:    'bg-carvao-400/10    text-carvao-500  ring-carvao-400/25',
+  cozinha:     'bg-ouro-400/10      text-ouro-700    ring-ouro-400/25   dark:text-ouro-300',
+  compras:     'bg-[#2d6f8e]/10    text-[#2d6f8e]   ring-[#2d6f8e]/25  dark:text-[#7cb8d4]',
+  recebimento: 'bg-ouro-400/10      text-ouro-600    ring-ouro-400/25   dark:text-ouro-300',
+  concluido:   'bg-brand-500/10     text-brand-600   ring-brand-500/25',
 };
+
+/* ── componente principal ────────────────────────────────── */
 
 export default function PaginaCardapios() {
   const [semanaId, setSemanaId] = useState(() => idSemanaIso(new Date()));
-  const [aba, setAba] = useState<AbaId>('painel');
+  const [aba, setAba] = useState<AbaId>('agora');
   const [posterAberto, setPosterAberto] = useState(false);
   const [semanaSheet, setSemanaSheet] = useState(false);
-  const [secaoCompras, setSecaoCompras] = useState<SecaoCompras>('comprar');
+  const [gerencialSheet, setGerencialSheet] = useState(false);
+  const [cotacaoSheet, setCotacaoSheet] = useState(false);
 
   const { estado, atualizar, pronto } = useSemana(semanaId);
   const { precos, definirPreco } = usePrecos();
@@ -113,8 +107,10 @@ export default function PaginaCardapios() {
   const grupoAtivo = GRUPOS.find((g) => g.abas.includes(aba)) ?? GRUPOS[0];
 
   const irSemana = (delta: number) => setSemanaId(deslocarSemana(semanaId, delta));
+  const irPara = (alvo: string) => {
+    if (abasPermitidas.includes(alvo as AbaId)) setAba(alvo as AbaId);
+  };
 
-  // lista de semanas para o seletor: janela ao redor de hoje + as que têm cardápio
   const listaSemanas = useMemo(() => {
     const set = new Set<string>();
     for (let i = -2; i <= 8; i++) set.add(deslocarSemana(semanaAtualId, i));
@@ -134,11 +130,11 @@ export default function PaginaCardapios() {
       ...e,
       dias: e.dias.map((d, i) => ({
         ...d,
-        principal: origem.dias[i]?.principal ?? '',
+        principal:    origem.dias[i]?.principal    ?? '',
         guarnicaoFixa: origem.dias[i]?.guarnicaoFixa ?? d.guarnicaoFixa,
-        guarnicao: origem.dias[i]?.guarnicao ?? '',
-        salada: origem.dias[i]?.salada ?? '',
-        sobremesa: origem.dias[i]?.sobremesa ?? '',
+        guarnicao:    origem.dias[i]?.guarnicao    ?? '',
+        salada:       origem.dias[i]?.salada       ?? '',
+        sobremesa:    origem.dias[i]?.sobremesa    ?? '',
       })),
       ajustes: {},
     }));
@@ -150,7 +146,7 @@ export default function PaginaCardapios() {
   const podeEstoque = pode(papel, 'estoque:gerenciar');
   const podeAvaliar = pode(papel, 'cardapio:editar');
 
-  // se a aba atual não é permitida ao perfil, vai para a primeira liberada
+  // se a aba atual não é permitida ao perfil, volta para a primeira liberada
   useEffect(() => {
     if (!abasPermitidas.includes(aba)) setAba(abasPermitidas[0] as AbaId);
   }, [abasPermitidas, aba]);
@@ -164,10 +160,11 @@ export default function PaginaCardapios() {
 
   return (
     <>
-      {/* Cabeçalho da marca */}
+      {/* ── Cabeçalho da marca ──────────────────────────── */}
       <header className="sticky top-0 z-40 bg-gradient-to-r from-brand-800 via-brand-600 to-brand-800 text-white shadow-media print:hidden">
         <div className="h-1 w-full bg-gradient-to-r from-ouro-600 via-ouro-300 to-ouro-600" />
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-4">
+          {/* Marca */}
           <div className="flex min-w-0 items-center gap-3">
             {logo ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -184,7 +181,19 @@ export default function PaginaCardapios() {
               </div>
             </div>
           </div>
+
+          {/* Ações do header */}
           <div className="flex shrink-0 items-center gap-2">
+            {/* Relatórios — acesso discreto no header */}
+            {(papel === 'administrador' || papel === 'gestor') && (
+              <button
+                onClick={() => setGerencialSheet(true)}
+                className="hidden items-center gap-1.5 rounded-full bg-white/15 py-1.5 pl-3 pr-3 text-xs font-semibold text-white ring-1 ring-white/25 transition hover:bg-white/25 sm:flex"
+              >
+                <Icone nome="gerencial" tam={14} className="text-white/70" />
+                Relatórios
+              </button>
+            )}
             <span className="hidden items-center gap-1.5 rounded-full bg-white/15 py-1.5 pl-3 pr-3 text-xs font-semibold text-white ring-1 ring-white/25 sm:flex">
               <Icone nome="usuario" tam={14} className="text-white/70" />
               {perfil?.rotulo ?? 'Perfil'}
@@ -204,10 +213,11 @@ export default function PaginaCardapios() {
       </header>
 
       <main className="mx-auto max-w-5xl space-y-4 px-4 pb-28 pt-5 lg:pb-8">
-        {/* Cabeçalho do módulo */}
+
+        {/* ── Cabeçalho de semana ─────────────────────────── */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="font-display text-2xl font-bold text-brand-800 dark:text-brand-300 sm:text-3xl">
+            <h1 className="font-display text-2xl font-bold text-carvao-800 dark:text-areia-100 sm:text-3xl">
               {periodoSemana(semanaId)}
               <span
                 className={`ml-2.5 inline-flex translate-y-[-2px] items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide ring-1 ${COR_ETAPA[estado.etapa]}`}
@@ -221,7 +231,7 @@ export default function PaginaCardapios() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {/* Stepper de semana — navegação por polegar; toque no rótulo abre a lista */}
+            {/* Navegação de semana */}
             <div className="flex items-center rounded-2xl border border-carvao-200 bg-white p-1 dark:border-carvao-600 dark:bg-carvao-900">
               <button
                 onClick={() => irSemana(-1)}
@@ -249,18 +259,19 @@ export default function PaginaCardapios() {
               onClick={() => setPosterAberto(true)}
               className="flex h-11 min-h-11 items-center gap-1.5 whitespace-nowrap rounded-2xl bg-gradient-to-r from-brand-700 to-brand-600 px-4 text-sm font-bold text-white shadow-suave ring-1 ring-ouro-400/50 transition hover:from-brand-800 hover:to-brand-700"
             >
-              <Icone nome="imagem" tam={18} /> <span className="hidden sm:inline">Pôster</span>
+              <Icone nome="imagem" tam={18} />
+              <span className="hidden sm:inline">Pôster</span>
             </button>
           </div>
         </div>
 
-        {/* Navegação completa — desktop */}
+        {/* ── Navegação — desktop ──────────────────────────── */}
         <nav className="hidden gap-1 overflow-x-auto rounded-full bg-white p-1 ring-1 ring-carvao-200 lg:flex dark:bg-carvao-800 dark:ring-carvao-600 print:hidden">
           {ABAS.filter((a) => abasPermitidas.includes(a.id)).map((a) => (
             <button
               key={a.id}
               onClick={() => setAba(a.id)}
-              className={`min-h-10 shrink-0 whitespace-nowrap rounded-full px-4 text-[12px] font-bold tracking-tight transition ${
+              className={`min-h-10 shrink-0 whitespace-nowrap rounded-full px-5 text-[13px] font-semibold tracking-tight transition ${
                 aba === a.id
                   ? 'bg-gradient-to-r from-brand-700 to-brand-600 text-white shadow-suave'
                   : 'text-carvao-500 hover:bg-brand-50 hover:text-brand-700 dark:text-areia-200 dark:hover:bg-carvao-700'
@@ -269,8 +280,19 @@ export default function PaginaCardapios() {
               {a.rotulo}
             </button>
           ))}
+
+          {/* Relatórios no nav desktop (gerencial demovido) */}
+          {(papel === 'administrador' || papel === 'gestor') && (
+            <button
+              onClick={() => setGerencialSheet(true)}
+              className="ml-auto shrink-0 whitespace-nowrap rounded-full px-4 text-[12px] font-semibold text-carvao-400 transition hover:bg-carvao-50 hover:text-carvao-600 dark:text-carvao-400 dark:hover:bg-carvao-700"
+            >
+              Relatórios
+            </button>
+          )}
         </nav>
 
+        {/* ── Conteúdo ─────────────────────────────────────── */}
         {!pronto ? (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -283,49 +305,27 @@ export default function PaginaCardapios() {
           </div>
         ) : (
           <>
-            {/* PAINEL — visão geral + acompanhar (etapa + contagem) + auditoria resumida */}
-            {aba === 'painel' && (
+            {/* AGORA — contexto atual, orientado pela etapa */}
+            {aba === 'agora' && (
+              <AbaAgora
+                estado={estado}
+                precos={precos}
+                aceitacao={aceitacao}
+                fatores={fatores}
+                papel={papel}
+                irPara={irPara}
+              />
+            )}
+
+            {/* SEMANA — plano da semana + fluxo de etapas */}
+            {aba === 'semana' && (
               <div className="space-y-6">
-                <BriefingCard
+                <AbaCardapio
                   estado={estado}
-                  semanaId={semanaId}
+                  atualizar={atualizar}
+                  podeEditar={podeEditarCardapio}
                   precos={precos}
-                  aceitacao={aceitacao}
-                  estoque={estoque}
-                  historico={historico}
-                  fornecedores={fornecedores}
-                />
-                <AbaDashboard
-                  estado={estado}
-                  semanaId={semanaId}
-                  precos={precos}
-                  fatores={fatores}
-                  estoque={estoque}
-                  historico={historico}
-                  aceitacao={aceitacao}
-                  fornecedores={fornecedores}
-                  irPara={(a) => setAba(a as AbaId)}
-                />
-                <PrevisaoCard
-                  semanaId={semanaId}
-                  onPessoasAtualizadas={(pessoasMap) =>
-                    atualizar((e) => ({
-                      ...e,
-                      dias: e.dias.map((d, i) => ({
-                        ...d,
-                        pessoas: pessoasMap[i] ?? d.pessoas,
-                      })),
-                    }))
-                  }
-                />
-                <InteligenciaCard
-                  estado={estado}
-                  semanaId={semanaId}
-                  precos={precos}
-                  aceitacao={aceitacao}
-                  estoque={estoque}
-                  historico={historico}
-                  fornecedores={fornecedores}
+                  definirPreco={definirPreco}
                 />
                 <AbaFluxo
                   estado={estado}
@@ -338,91 +338,50 @@ export default function PaginaCardapios() {
               </div>
             )}
 
-            {aba === 'cotacao' && (
-              <AbaCotacao
-                definirPreco={definirPreco}
-                definirFornecedor={definirFornecedor}
-                cadastrarItem={cadastrarItem}
-                itensExtras={itensExtras}
-              />
-            )}
-
-            {aba === 'cardapio' && (
-              <AbaCardapio
-                estado={estado}
-                atualizar={atualizar}
-                podeEditar={podeEditarCardapio}
-                precos={precos}
-                definirPreco={definirPreco}
-              />
-            )}
-
-            {aba === 'gerencial' && (
-              <CentralGerencial
-                estado={estado}
-                semanaId={semanaId}
-                precos={precos}
-                historico={historico}
-                aceitacao={aceitacao}
-                fornecedores={fornecedores}
-                fatores={fatores}
-              />
-            )}
-
-            {/* COMPRAS — comprar/receber · estoque · preços · radar (seções) */}
+            {/* COMPRAS — lista + estoque + preços + radar */}
             {aba === 'compras' && (
               <div className="space-y-4">
-                <div className="flex gap-1 overflow-x-auto rounded-2xl bg-carvao-100/70 p-1 dark:bg-carvao-800/70">
-                  {SECOES_COMPRAS.map((s) => (
-                    <button
-                      key={s.id}
-                      onClick={() => setSecaoCompras(s.id)}
-                      className={`min-h-9 flex-1 whitespace-nowrap rounded-xl px-3 text-[13px] font-semibold transition ${
-                        secaoCompras === s.id
-                          ? 'bg-white text-brand-700 shadow-suave dark:bg-carvao-700 dark:text-brand-300'
-                          : 'text-carvao-500 dark:text-areia-200'
-                      }`}
-                    >
-                      {s.rotulo}
-                    </button>
-                  ))}
+                {/* Ações da seção compras */}
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm text-carvao-500 dark:text-carvao-400">
+                    Lista gerada pelos pratos e número de pessoas de cada dia.
+                  </p>
+                  <button
+                    onClick={() => setCotacaoSheet(true)}
+                    className="shrink-0 whitespace-nowrap rounded-2xl border border-carvao-200 bg-white px-3 py-2 text-[12px] font-semibold text-carvao-600 transition hover:bg-carvao-50 dark:border-carvao-600 dark:bg-carvao-800 dark:text-areia-200 dark:hover:bg-carvao-700"
+                  >
+                    Atualizar preços
+                  </button>
                 </div>
-                {secaoCompras === 'comprar' && (
-                  <AbaCompras
-                    estado={estado}
-                    atualizar={atualizar}
-                    papel={papel}
-                    precos={precos}
-                    fornecedores={fornecedores}
-                    fatores={fatores}
-                  />
-                )}
-                {secaoCompras === 'estoque' && (
-                  <AbaEstoque
-                    estado={estado}
-                    fatores={fatores}
-                    estoque={estoque}
-                    movimentar={movimentar}
-                    definirMinimo={definirMinimo}
-                    definirSaldo={definirSaldo}
-                    podeEditar={podeEstoque}
-                  />
-                )}
-                {secaoCompras === 'precos' && (
-                  <AbaPrecos
-                    precos={precos}
-                    definirPreco={definirPreco}
-                    fornecedores={fornecedores}
-                    itensExtras={itensExtras}
-                  />
-                )}
-                {secaoCompras === 'radar' && (
-                  <AbaRadar precos={precos} historico={historico} fornecedores={fornecedores} />
-                )}
+
+                <AbaCompras
+                  estado={estado}
+                  atualizar={atualizar}
+                  papel={papel}
+                  precos={precos}
+                  fornecedores={fornecedores}
+                  fatores={fatores}
+                />
+
+                {/* Seções secundárias — dobráveis */}
+                <SecoesSecundarias
+                  estado={estado}
+                  fatores={fatores}
+                  estoque={estoque}
+                  movimentar={movimentar}
+                  definirMinimo={definirMinimo}
+                  definirSaldo={definirSaldo}
+                  podeEstoque={podeEstoque}
+                  precos={precos}
+                  definirPreco={definirPreco}
+                  fornecedores={fornecedores}
+                  itensExtras={itensExtras}
+                  historico={historico}
+                />
               </div>
             )}
 
-            {/* FEEDBACK — aceitação dos pratos + desperdício + QR */}
+            {/* FEEDBACK — aceitação + desperdício */}
             {aba === 'feedback' && (
               <div className="space-y-6">
                 <AbaAceitacao
@@ -450,6 +409,7 @@ export default function PaginaCardapios() {
         )}
       </main>
 
+      {/* ── Sheet: Seletor de semana ─────────────────────── */}
       <BottomSheet titulo="Escolher semana" aberto={semanaSheet} aoFechar={() => setSemanaSheet(false)}>
         <div className="mb-3 space-y-2">
           <div className="grid grid-cols-2 gap-2">
@@ -489,10 +449,7 @@ export default function PaginaCardapios() {
           {listaSemanas.map((id) => (
             <button
               key={id}
-              onClick={() => {
-                setSemanaId(id);
-                setSemanaSheet(false);
-              }}
+              onClick={() => { setSemanaId(id); setSemanaSheet(false); }}
               className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-semibold tabular-nums transition ${
                 id === semanaId
                   ? 'bg-brand-50 text-brand-700 ring-1 ring-brand-500/30 dark:bg-carvao-700 dark:text-brand-300'
@@ -500,15 +457,122 @@ export default function PaginaCardapios() {
               }`}
             >
               <span>{rotuloSemana(id)}</span>
-              {id === semanaAtualId && <span className="text-[11px] font-bold text-brand-600 dark:text-brand-400">atual</span>}
+              {id === semanaAtualId && (
+                <span className="text-[11px] font-bold text-brand-600 dark:text-brand-400">atual</span>
+              )}
             </button>
           ))}
         </div>
       </BottomSheet>
 
-      <BottomNav grupos={gruposVisiveis} grupoAtivo={grupoAtivo.id} aoSelecionar={(g) => setAba((GRUPOS.find((x) => x.id === g) ?? GRUPOS[0]).abas[0] as AbaId)} />
+      {/* ── Sheet: Atualizar preços (ex-Cotação) ─────────── */}
+      <BottomSheet titulo="Atualizar preços" aberto={cotacaoSheet} aoFechar={() => setCotacaoSheet(false)}>
+        <div className="pb-4">
+          <AbaCotacao
+            definirPreco={definirPreco}
+            definirFornecedor={definirFornecedor}
+            cadastrarItem={cadastrarItem}
+            itensExtras={itensExtras}
+          />
+        </div>
+      </BottomSheet>
+
+      {/* ── Sheet: Relatórios (ex-Gerencial) ─────────────── */}
+      <BottomSheet titulo="Relatórios" aberto={gerencialSheet} aoFechar={() => setGerencialSheet(false)}>
+        <div className="pb-4">
+          <CentralGerencial
+            estado={estado}
+            semanaId={semanaId}
+            precos={precos}
+            historico={historico}
+            aceitacao={aceitacao}
+            fornecedores={fornecedores}
+            fatores={fatores}
+          />
+        </div>
+      </BottomSheet>
+
+      <BottomNav
+        grupos={gruposVisiveis}
+        grupoAtivo={grupoAtivo.id}
+        aoSelecionar={(g) => setAba((GRUPOS.find((x) => x.id === g) ?? GRUPOS[0]).abas[0] as AbaId)}
+      />
       <Assistente contexto={{ estado, semanaId, precos, historico, fornecedores, aceitacao, estoque, fatores }} />
       <ToastHost />
     </>
+  );
+}
+
+/* ── Seções secundárias de Compras ───────────────────────── */
+
+interface SecoesProps {
+  estado: Parameters<typeof AbaEstoque>[0]['estado'];
+  fatores: Record<string, number>;
+  estoque: Parameters<typeof AbaEstoque>[0]['estoque'];
+  movimentar: Parameters<typeof AbaEstoque>[0]['movimentar'];
+  definirMinimo: Parameters<typeof AbaEstoque>[0]['definirMinimo'];
+  definirSaldo: Parameters<typeof AbaEstoque>[0]['definirSaldo'];
+  podeEstoque: boolean;
+  precos: Record<string, number>;
+  definirPreco: Parameters<typeof AbaPrecos>[0]['definirPreco'];
+  fornecedores: Record<string, string>;
+  itensExtras: Parameters<typeof AbaPrecos>[0]['itensExtras'];
+  historico: Parameters<typeof AbaRadar>[0]['historico'];
+}
+
+function SecoesSecundarias({
+  estado, fatores, estoque, movimentar, definirMinimo, definirSaldo, podeEstoque,
+  precos, definirPreco, fornecedores, itensExtras, historico,
+}: SecoesProps) {
+  const [aberta, setAberta] = useState<'estoque' | 'precos' | 'radar' | null>(null);
+
+  const SECOES = [
+    { id: 'estoque' as const, rotulo: 'Estoque' },
+    { id: 'precos'  as const, rotulo: 'Preços'  },
+    { id: 'radar'   as const, rotulo: 'Radar'   },
+  ];
+
+  return (
+    <div className="space-y-2 border-t border-carvao-100 pt-4 dark:border-carvao-700">
+      <p className="text-xs font-semibold uppercase tracking-widest text-carvao-400">Seções adicionais</p>
+      <div className="flex gap-2">
+        {SECOES.map((s) => (
+          <button
+            key={s.id}
+            onClick={() => setAberta(aberta === s.id ? null : s.id)}
+            className={`rounded-2xl px-4 py-2 text-[13px] font-semibold transition ${
+              aberta === s.id
+                ? 'bg-brand-600 text-white'
+                : 'bg-carvao-100 text-carvao-600 hover:bg-carvao-200 dark:bg-carvao-700 dark:text-areia-200'
+            }`}
+          >
+            {s.rotulo}
+          </button>
+        ))}
+      </div>
+
+      {aberta === 'estoque' && (
+        <AbaEstoque
+          estado={estado}
+          fatores={fatores}
+          estoque={estoque}
+          movimentar={movimentar}
+          definirMinimo={definirMinimo}
+          definirSaldo={definirSaldo}
+          podeEditar={podeEstoque}
+        />
+      )}
+      {aberta === 'precos' && (
+        <AbaPrecos
+          precos={precos}
+          definirPreco={definirPreco}
+          fornecedores={fornecedores}
+          itensExtras={itensExtras}
+        />
+      )}
+      {aberta === 'radar' && (
+        <AbaRadar precos={precos} historico={historico} fornecedores={fornecedores} />
+      )}
+    </div>
   );
 }

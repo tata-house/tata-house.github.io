@@ -1,7 +1,12 @@
 /* =====================================================================
-   IA client-side — chama OpenAI ou Anthropic diretamente do browser.
+   IA client-side — chama um LLM diretamente do browser.
    Substitui a API Route /api/ia, permitindo hospedagem estática.
-   Configure NEXT_PUBLIC_OPENAI_API_KEY ou NEXT_PUBLIC_ANTHROPIC_API_KEY.
+
+   Provedores suportados (em ordem de prioridade), configure UM:
+     NEXT_PUBLIC_GEMINI_API_KEY     → Google Gemini (gratuito, recomendado)
+     NEXT_PUBLIC_OPENAI_API_KEY     → OpenAI (pago)
+     NEXT_PUBLIC_ANTHROPIC_API_KEY  → Anthropic (pago)
+
    Sem nenhuma key → retorna { offline: true } e o assistente usa regras.
    ===================================================================== */
 
@@ -43,6 +48,45 @@ function promptParaModo(modo: ModoIA, tarefa: string, dossie: DossieIA): string 
   }
 }
 
+/** Extrai o primeiro objeto JSON de um texto (LLMs às vezes envolvem em prosa). */
+function extrairJson(texto: string): RespostaIA {
+  const match = texto.match(/\{[\s\S]*\}/);
+  if (!match) return { texto };
+  try {
+    return JSON.parse(match[0]) as RespostaIA;
+  } catch {
+    return { texto };
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Google Gemini — gratuito, funciona client-side                       */
+/* ------------------------------------------------------------------ */
+
+async function chamarGemini(apiKey: string, prompt: string): Promise<RespostaIA> {
+  const modelo = 'gemini-2.0-flash';
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: SYSTEM }] },
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 512, responseMimeType: 'application/json' },
+      }),
+    },
+  );
+  if (!res.ok) throw new Error(`Gemini ${res.status}`);
+  const json = await res.json();
+  const texto = json.candidates?.[0]?.content?.parts?.[0]?.text ?? '{}';
+  return extrairJson(texto);
+}
+
+/* ------------------------------------------------------------------ */
+/* OpenAI                                                               */
+/* ------------------------------------------------------------------ */
+
 async function chamarOpenAI(apiKey: string, prompt: string): Promise<RespostaIA> {
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -63,6 +107,10 @@ async function chamarOpenAI(apiKey: string, prompt: string): Promise<RespostaIA>
   return JSON.parse(conteudo) as RespostaIA;
 }
 
+/* ------------------------------------------------------------------ */
+/* Anthropic                                                            */
+/* ------------------------------------------------------------------ */
+
 async function chamarAnthropic(apiKey: string, prompt: string): Promise<RespostaIA> {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -82,26 +130,30 @@ async function chamarAnthropic(apiKey: string, prompt: string): Promise<Resposta
   if (!res.ok) throw new Error(`Anthropic ${res.status}`);
   const json = await res.json();
   const texto = json.content?.[0]?.text ?? '{}';
-  const match = texto.match(/\{[\s\S]*\}/);
-  if (!match) return { texto };
-  return JSON.parse(match[0]) as RespostaIA;
+  return extrairJson(texto);
 }
+
+/* ------------------------------------------------------------------ */
+/* Seleção do provedor                                                  */
+/* ------------------------------------------------------------------ */
 
 export async function chamarIACliente(
   tarefa: string,
   dossie: DossieIA,
   modo: ModoIA = 'pergunta',
 ): Promise<RespostaIA> {
+  const geminiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
   const openaiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
   const anthropicKey = process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY;
 
-  if (!openaiKey && !anthropicKey) {
+  if (!geminiKey && !openaiKey && !anthropicKey) {
     return { offline: true, texto: '' };
   }
 
   const prompt = promptParaModo(modo, tarefa, dossie);
 
   try {
+    if (geminiKey) return await chamarGemini(geminiKey, prompt);
     if (openaiKey) return await chamarOpenAI(openaiKey, prompt);
     return await chamarAnthropic(anthropicKey!, prompt);
   } catch {

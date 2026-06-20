@@ -1,8 +1,10 @@
 /* =====================================================================
-   Núcleo de preços — três estados claros: real, estimado e sem preço.
-   - real:     veio da cotação, nota fiscal, fornecedor ou manual confirmado.
-   - estimado: média de mercado interna (histórico) — base pronta para IA.
-   - sem:      sem cotação e sem estimativa → exige revisão antes de fechar.
+   Núcleo de preços — quatro estados claros:
+   - real:       veio da cotação, nota fiscal ou entrada manual confirmada.
+   - historico:  média das planilhas de compras Mai/Jun 2026 — sempre disponível.
+   - estimado:   estimativa de mercado gerada pelo usuário (substituída pelo
+                 histórico quando disponível).
+   - sem:        item totalmente sem referência de preço.
    Funções puras, sem efeitos; a camada de UI só consome o resultado.
    ===================================================================== */
 
@@ -10,7 +12,7 @@ import { DADOS, normalizar, converterParaUnidadeBase } from './motor';
 import { PRECOS_COMPRAS, UNIDADES_COMPRAS } from './precos-compras';
 import type { HistoricoPrecos } from './tipos';
 
-export type TipoPreco = 'real' | 'estimado' | 'sem';
+export type TipoPreco = 'real' | 'historico' | 'estimado' | 'sem';
 
 export interface PrecoResolvido {
   valor: number;
@@ -24,7 +26,13 @@ function media(ns: number[]): number {
   return ns.reduce((a, b) => a + b, 0) / Math.max(ns.length, 1);
 }
 
-/** Resolve o preço de um item priorizando o real; depois o estimado; senão "sem". */
+/**
+ * Resolve o preço de um item em quatro camadas de prioridade:
+ * 1. real     — preço digitado pelo usuário para esta cotação
+ * 2. historico — média real das planilhas Mai/Jun 2026 (automático)
+ * 3. estimado — estimativa de mercado gerada pelo usuário
+ * 4. sem      — sem nenhuma referência (evitado ao máximo)
+ */
 export function resolverPreco(
   norm: string,
   precos: Record<string, number>,
@@ -32,6 +40,8 @@ export function resolverPreco(
 ): PrecoResolvido {
   const real = precos[norm];
   if (real > 0) return { valor: real, tipo: 'real' };
+  const hist = PRECOS_COMPRAS[norm];
+  if (hist > 0) return { valor: hist, tipo: 'historico' };
   const est = estimativas[norm];
   if (est > 0) return { valor: est, tipo: 'estimado' };
   return { valor: 0, tipo: 'sem' };
@@ -46,12 +56,14 @@ function unidadeBase(u: string): string {
 }
 
 /**
- * Estimativa de mercado interna — três camadas, da mais para a menos precisa:
- * 1. Histórico local registrado pelo usuário (entradas manuais anteriores).
- * 2. Média dos preços reais das planilhas de compras (Maio+Junho/2026) de
- *    itens com a mesma unidade — base muito mais realista que a heurística
- *    anterior.
- * 3. Média dos preços manuais de DADOS.itens com mesma unidade (fallback).
+ * Estimativa de preço para itens que não constam nas planilhas de compra:
+ * 1. Histórico local registrado pelo usuário (mais confiável).
+ * 2. Média de preços reais de outros itens com a mesma unidade.
+ * 3. null — sem referência possível.
+ *
+ * Nota: para itens presentes nas planilhas Mai/Jun 2026, o `resolverPreco`
+ * já retorna o preço histórico automaticamente; `estimarPreco` só é acionado
+ * para itens fora dessas planilhas.
  */
 export function estimarPreco(
   norm: string,
@@ -62,23 +74,17 @@ export function estimarPreco(
   const serie = historico[norm];
   if (serie && serie.length) return Math.round(media(serie.map((p) => p.valor)) * 100) / 100;
 
-  // 2 + 3. Média por unidade combinando planilhas reais + preços manuais
+  // 2. Média de itens com mesma unidade (combinando planilhas + entradas manuais)
   const u = unidadeDe.get(norm);
   if (u) {
     const ub = unidadeBase(u);
-
-    // Preços reais das planilhas de compras (mais confiáveis)
     const dasCompras = Object.entries(PRECOS_COMPRAS)
       .filter(([k, v]) => v > 0 && unidadeBase(UNIDADES_COMPRAS[k] ?? '') === ub)
       .map(([, v]) => v);
-
-    // Preços manuais informados para itens de DADOS com mesma unidade
     const dosDados = DADOS.itens
       .filter((it) => unidadeBase(it.u) === ub && precos[normalizar(it.n)] > 0)
       .map((it) => precos[normalizar(it.n)]);
-
-    const setTodos = new Set([...dasCompras, ...dosDados]);
-    const todos = Array.from(setTodos);
+    const todos = Array.from(new Set([...dasCompras, ...dosDados]));
     if (todos.length >= 2) return Math.round(media(todos) * 100) / 100;
     if (todos.length === 1) return Math.round(todos[0] * 100) / 100;
   }
@@ -130,7 +136,8 @@ export function custoTipado(
     if (r.tipo === 'real') {
       c.real += r.valor * qtdBase;
       c.itensReais++;
-    } else if (r.tipo === 'estimado') {
+    } else if (r.tipo === 'historico' || r.tipo === 'estimado') {
+      // histórico e estimado contribuem ao custo estimado (não confirmado)
       c.estimado += r.valor * qtdBase;
       c.itensEstimados++;
     } else {
@@ -143,7 +150,8 @@ export function custoTipado(
 }
 
 export const ROTULO_TIPO_PRECO: Record<TipoPreco, string> = {
-  real: 'real',
-  estimado: 'estimado',
-  sem: 'sem preço',
+  real:      'real',
+  historico: 'histórico',
+  estimado:  'estimado',
+  sem:       'sem preço',
 };

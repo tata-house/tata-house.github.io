@@ -170,7 +170,7 @@ export function AbaCardapio({
         todos.add(norm);
         const tipo = resolverPreco(norm, precos, estimativas).tipo;
         if (tipo === 'sem') sem.set(norm, { item: s.item, unid: s.unid });
-        else if (tipo === 'estimado') est.add(norm);
+        else if (tipo === 'historico' || tipo === 'estimado') est.add(norm);
       });
     });
     return { semPreco: Array.from(sem.entries()), qtdEstimados: est.size, normsSemana: Array.from(todos) };

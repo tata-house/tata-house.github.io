@@ -125,7 +125,7 @@ export function ChefIA({
         .map((n) => {
           const norm = normalizar(n);
           const preco = resolverPreco(norm, precos, estimativas);
-          return { n, norm, ref: preco.tipo === 'real' ? custoRefDe(n) : 0 };
+          return { n, norm, ref: (preco.tipo === 'real' || preco.tipo === 'historico') ? custoRefDe(n) : 0 };
         })
         .filter((a) => a.ref > 0)
         .sort((a, b) => a.ref - b.ref);

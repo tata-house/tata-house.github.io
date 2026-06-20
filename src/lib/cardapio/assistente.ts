@@ -62,7 +62,7 @@ export function responder(pergunta: string, ctx: ContextoAssistente): RespostaAs
   if (/gast|gasto|caro|mais cust|onde.*dinheiro/.test(q)) {
     const top = gastosDaSemana(ctx).slice(0, 5);
     if (top.length === 0)
-      return { texto: 'Ainda não há preços suficientes lançados para calcular onde está o maior gasto. Importe uma cotação na aba Cotação.' };
+      return { texto: 'Ainda não há preços suficientes lançados para calcular onde está o maior gasto. Lance os preços em Compras → Preços ou no catálogo em Ajustes.' };
     return {
       texto: 'Os itens que mais pesam no custo desta semana são:',
       itens: top.map((t) => `${t.item} — ${formatarReais(t.custo)} (${formatarQtd(t.qtd)} ${t.unid})`),

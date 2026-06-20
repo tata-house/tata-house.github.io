@@ -43,7 +43,7 @@ function Indice() {
     { num: '08', nome: 'Feedback — avaliação do prato', ancora: 'feedback' },
     { num: '09', nome: 'Desperdício — o que sobrou', ancora: 'desperdicio' },
     { num: '10', nome: 'Radar de Preços — alertas de custo', ancora: 'radar' },
-    { num: '11', nome: 'Gerencial — relatórios e histórico', ancora: 'gerencial' },
+    { num: '11', nome: 'Relatórios — análise e histórico', ancora: 'gerencial' },
     { num: '12', nome: 'Inteligência — sugestões do sistema', ancora: 'inteligencia' },
     { num: '13', nome: 'Assistente — o robô tira dúvidas', ancora: 'assistente' },
     { num: '14', nome: 'Quem pode fazer o quê', ancora: 'papeis' },
@@ -479,7 +479,7 @@ export default function ManualPage() {
             <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
               <p className="mb-2 font-bold text-gray-800">📲 QR Code (para os colaboradores)</p>
               <p className="mb-2 text-sm text-gray-600">
-                Imprima o QR code na aba Feedback e cole na parede do refeitório.
+                Imprima o QR code na aba Cardápio e cole na parede do refeitório.
                 Cada pessoa escaneia com o celular e avalia o prato do dia:
               </p>
               <div className="flex gap-3">
@@ -494,7 +494,7 @@ export default function ManualPage() {
             <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
               <p className="mb-1 font-bold text-gray-800">✋ Avaliação manual (pelo gestor)</p>
               <p className="text-sm text-gray-600">
-                O gestor pode registrar a avaliação manualmente na aba Feedback, anotando a nota e até um comentário.
+                O gestor pode registrar a avaliação manualmente na aba Cardápio, anotando a nota e até um comentário.
               </p>
             </div>
           </div>
@@ -521,8 +521,8 @@ export default function ManualPage() {
           </p>
 
           <div className="space-y-4">
-            <Passo num={1} titulo="Acesse Gerencial → Desperdício"
-              texto="Essa aba fica dentro da seção Gerencial, no menu de baixo." />
+            <Passo num={1} titulo="Acesse a aba Cardápio"
+              texto='Após a semana avançar para "Recebendo" ou "Concluída", a seção de Avaliação aparece no final da aba Cardápio.' />
             <Passo num={2} titulo="Selecione o dia e o prato"
               texto="Escolha o dia e qual prato foi registrado." />
             <Passo num={3} titulo="Informe o produzido e o consumido"
@@ -550,7 +550,7 @@ export default function ManualPage() {
           subtitulo="O sistema vigia os preços e avisa quando algo muda muito">
 
           <p>
-            O Radar de Preços fica na aba <strong>Cotação → Radar</strong>.
+            O Radar de Preços fica em <strong>Relatórios → Central</strong>, na seção de Preços.
             Ele guarda o histórico de preços de cada item e compara com os preços atuais.
           </p>
 
@@ -590,22 +590,19 @@ export default function ManualPage() {
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="gerencial" emoji="📊" titulo="Gerencial — relatórios e histórico"
-          subtitulo="Visão completa dos dados da empresa, com exportação">
+        <Secao id="gerencial" emoji="📊" titulo="Relatórios — análise e histórico"
+          subtitulo="Visão completa dos dados da empresa">
 
           <Destaque icone="👤" cor="yellow"
-            texto="A seção Gerencial é destinada ao Gestor e Administrador. A equipe de cozinha e compras não acessa essa área." />
+            texto="A aba Relatórios é destinada ao Gestor e Administrador. A equipe de cozinha e compras não acessa essa área." />
 
-          <p>Dentro do Gerencial você encontra:</p>
+          <p>Dentro de Relatórios você encontra três seções:</p>
 
           <div className="space-y-3">
             {[
-              { emoji: '📉', nome: 'Dashboard Gerencial', desc: 'KPIs totais: refeições servidas, custo médio, economia gerada, % de desperdício. Pode filtrar por semana, mês ou geral.' },
-              { emoji: '🗑️', nome: 'Desperdício', desc: 'Registro e análise de sobras por prato e por dia. Mostra o ranking dos pratos que mais desperdiçam.' },
-              { emoji: '⭐', nome: 'Aceitação', desc: 'Ranking de todos os pratos com notas e número de avaliações. Mostra favoritos e pratos problema.' },
-              { emoji: '🔍', nome: 'Auditoria', desc: 'Histórico de tudo que foi alterado no sistema: quem mudou, o quê e quando. Útil para rastrear erros.' },
-              { emoji: '📤', nome: 'Exportação', desc: 'Baixe os dados em Excel ou CSV: cardápio, compras, preços, aceitação, nutrição e auditoria.' },
-              { emoji: '⚙️', nome: 'Configurações', desc: 'Troque o cargo, gerencie o logo da empresa, e ajuste preferências do sistema.' },
+              { emoji: '📊', nome: 'Central', desc: 'KPIs financeiros: valor gerado no mês, DNA alimentar da empresa, previsão de refeições, radar de preços e inteligência acumulada.' },
+              { emoji: '🔬', nome: 'Cenários', desc: 'Simulador financeiro: ajuste preços, pessoas e desperdício para ver o impacto no custo antes de tomar decisões.' },
+              { emoji: '🔍', nome: 'Auditoria', desc: 'Histórico de tudo que foi alterado no sistema: quem mudou, o quê e quando. Disponível apenas para Gerência.' },
             ].map((s) => (
               <div key={s.nome} className="flex gap-3 rounded-2xl bg-gray-50 p-4">
                 <span className="text-xl">{s.emoji}</span>
@@ -616,6 +613,10 @@ export default function ManualPage() {
               </div>
             ))}
           </div>
+
+          <p className="text-sm text-gray-600">
+            Avaliação de pratos (aceitação) e controle de desperdício ficam na aba <strong>Cardápio</strong>, na seção "Avaliação da semana" — ela aparece quando a semana avança para a etapa de Recebimento ou Conclusão.
+          </p>
         </Secao>
 
         {/* -------------------------------------------------------- */}
@@ -723,7 +724,7 @@ export default function ManualPage() {
               },
               {
                 p: 'A lista de compras está errada. Por quê?',
-                r: 'A lista depende do cardápio estar completo e dos preços estarem lançados. Confira se todos os dias da semana têm prato, guarnição e salada. Depois verifique se os preços foram aplicados na aba Cotação.',
+                r: 'A lista depende do cardápio estar completo e dos preços estarem lançados. Confira se todos os dias da semana têm prato, guarnição e salada. Depois verifique se os preços foram lançados em Compras → Preços ou em Ajustes → Catálogo de preços.',
               },
               {
                 p: 'O sistema ficou lento. O que faço?',

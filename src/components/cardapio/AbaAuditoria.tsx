@@ -31,7 +31,7 @@ export function AbaAuditoria({ papel }: { papel: Papel }) {
       <EstadoVazio
         icone="🔒"
         titulo="Acesso restrito"
-        texto="A trilha de auditoria é visível apenas para Gestor e Administrador. Troque o papel no topo para visualizar."
+        texto="A trilha de auditoria é visível apenas para Gerência. Saia e entre com o perfil de Gerência para visualizar."
       />
     );
   }

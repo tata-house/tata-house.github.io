@@ -152,7 +152,7 @@ export function AbaSimulador({
       <EstadoVazio
         icone="💰"
         titulo="Lance os preços para simular custos"
-        texto="O simulador financeiro precisa dos preços da cotação para comparar cenários. Importe uma cotação na aba Cotação."
+        texto="O simulador financeiro precisa dos preços para comparar cenários. Lance os preços em Compras → Preços ou no catálogo em Ajustes."
       />
     );
   }

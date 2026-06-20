@@ -25,6 +25,7 @@ import { InteligenciaCard } from '@/components/cardapio/InteligenciaCard';
 import { AbaSimulador } from '@/components/cardapio/AbaSimulador';
 import { AbaAuditoria } from '@/components/cardapio/AbaAuditoria';
 import { AbaPrecos } from '@/components/cardapio/AbaPrecos';
+import { DnaCard } from '@/components/cardapio/DnaCard';
 import {
   deslocarSemana,
   idSemanaIso,
@@ -659,6 +660,7 @@ export default function PaginaCardapios() {
 
                 {abaRelatorios === 'central' && (
                   <>
+                    <DnaCard />
                     <InteligenciaCard
                       estado={estado}
                       semanaId={semanaId}

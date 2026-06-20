@@ -17,9 +17,9 @@ import { AbaFluxo } from '@/components/cardapio/AbaFluxo';
 import { AbaRadar } from '@/components/cardapio/AbaRadar';
 import { CentralGerencial } from '@/components/cardapio/CentralGerencial';
 import { Configuracoes } from '@/components/cardapio/Configuracoes';
+import { CartaoNuvem } from '@/components/cardapio/CartaoNuvem';
 import { Assistente } from '@/components/cardapio/Assistente';
 import { PosterSemana } from '@/components/cardapio/PosterSemana';
-import { CartaoNuvem } from '@/components/cardapio/CartaoNuvem';
 import { BriefingCard } from '@/components/cardapio/BriefingCard';
 import { InteligenciaCard } from '@/components/cardapio/InteligenciaCard';
 import { AbaSimulador } from '@/components/cardapio/AbaSimulador';
@@ -743,7 +743,7 @@ export default function PaginaCardapios() {
                   </SecaoAjuste>
                 )}
 
-                {/* Backup em nuvem (aparece só com Supabase configurado) */}
+                {/* Backup na nuvem (aparece só com Supabase configurado) */}
                 <CartaoNuvem />
               </div>
             )}

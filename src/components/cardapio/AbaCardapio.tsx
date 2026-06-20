@@ -422,7 +422,8 @@ export function AbaCardapio({
         </label>
         {!temPrecos && (
           <p className="text-xs text-carvao-400">
-            Cole a cotação da semana na aba <strong>Cotação</strong> para ver o custo estimado e otimizar a sugestão.
+            Cole a cotação da semana em <strong>Ajustes → Catálogo de preços</strong> ou edite item a item em{' '}
+            <strong>Compras → Preços</strong> para ver o custo estimado e otimizar a sugestão.
           </p>
         )}
         {temPrecos && semPreco.length > 0 && (
@@ -465,7 +466,7 @@ export function AbaCardapio({
                 </span>
               ))}
               {semPreco.length > 16 && (
-                <span className="self-center text-[11px] text-carvao-400">+{semPreco.length - 16} na aba Preços</span>
+                <span className="self-center text-[11px] text-carvao-400">+{semPreco.length - 16} em Compras → Preços</span>
               )}
             </div>
           </div>

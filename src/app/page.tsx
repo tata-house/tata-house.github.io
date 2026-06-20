@@ -19,6 +19,12 @@ import { CentralGerencial } from '@/components/cardapio/CentralGerencial';
 import { Configuracoes } from '@/components/cardapio/Configuracoes';
 import { Assistente } from '@/components/cardapio/Assistente';
 import { PosterSemana } from '@/components/cardapio/PosterSemana';
+import { CartaoNuvem } from '@/components/cardapio/CartaoNuvem';
+import { BriefingCard } from '@/components/cardapio/BriefingCard';
+import { InteligenciaCard } from '@/components/cardapio/InteligenciaCard';
+import { AbaSimulador } from '@/components/cardapio/AbaSimulador';
+import { AbaAuditoria } from '@/components/cardapio/AbaAuditoria';
+import { AbaPrecos } from '@/components/cardapio/AbaPrecos';
 import {
   deslocarSemana,
   idSemanaIso,
@@ -251,7 +257,8 @@ export default function PaginaCardapios() {
   const [plaquinhaAberta, setPlaquinhaAberta] = useState(false);
   const [semanaSheet, setSemanaSheet] = useState(false);
   const [buscaAberta, setBuscaAberta] = useState(false);
-  const [abaCompras, setAbaCompras] = useState<'lista' | 'estoque'>('lista');
+  const [abaCompras, setAbaCompras] = useState<'lista' | 'precos' | 'estoque'>('lista');
+  const [abaRelatorios, setAbaRelatorios] = useState<'central' | 'cenarios' | 'auditoria'>('central');
 
   const { estado, atualizar, pronto } = useSemana(semanaId);
   const { precos, definirPreco } = usePrecos();
@@ -494,14 +501,25 @@ export default function PaginaCardapios() {
           <>
             {/* ── INÍCIO ────────────────────────────────────── */}
             {aba === 'agora' && (
-              <AbaAgora
-                estado={estado}
-                precos={precos}
-                aceitacao={aceitacao}
-                fatores={fatores}
-                papel={papel}
-                irPara={(alvo) => irPara(alvo as AbaId)}
-              />
+              <div className="space-y-4">
+                <BriefingCard
+                  estado={estado}
+                  semanaId={semanaId}
+                  precos={precos}
+                  aceitacao={aceitacao}
+                  estoque={estoque}
+                  historico={historico}
+                  fornecedores={fornecedores}
+                />
+                <AbaAgora
+                  estado={estado}
+                  precos={precos}
+                  aceitacao={aceitacao}
+                  fatores={fatores}
+                  papel={papel}
+                  irPara={(alvo) => irPara(alvo as AbaId)}
+                />
+              </div>
             )}
 
             {/* ── CARDÁPIO ──────────────────────────────────── */}
@@ -521,6 +539,7 @@ export default function PaginaCardapios() {
                   precos={precos}
                   fatores={fatores}
                   aprenderDeSemana={aprenderDeSemana}
+                  irPara={(alvo) => irPara(alvo as AbaId)}
                 />
                 {/* Feedback integrado ao fluxo — aparece quando concluído */}
                 {(estado.etapa === 'concluido' || estado.etapa === 'recebimento') && podeAvaliar && (
@@ -559,9 +578,9 @@ export default function PaginaCardapios() {
             {/* ── COMPRAS ───────────────────────────────────── */}
             {aba === 'compras' && (
               <div className="space-y-4">
-                {/* segmento Lista / Estoque */}
+                {/* segmento Lista / Preços / Estoque */}
                 <div className="flex gap-4 border-b border-carvao-100 dark:border-carvao-800">
-                  {(['lista', 'estoque'] as const).map((seg) => (
+                  {(['lista', 'precos', 'estoque'] as const).map((seg) => (
                     <button
                       key={seg}
                       onClick={() => setAbaCompras(seg)}
@@ -571,7 +590,7 @@ export default function PaginaCardapios() {
                           : 'text-carvao-400 hover:text-carvao-600 dark:text-carvao-500'
                       }`}
                     >
-                      {seg === 'lista' ? 'Lista de compras' : 'Estoque'}
+                      {seg === 'lista' ? 'Lista de compras' : seg === 'precos' ? 'Preços' : 'Estoque'}
                     </button>
                   ))}
                 </div>
@@ -584,6 +603,15 @@ export default function PaginaCardapios() {
                     precos={precos}
                     fornecedores={fornecedores}
                     fatores={fatores}
+                  />
+                )}
+
+                {abaCompras === 'precos' && (
+                  <AbaPrecos
+                    precos={precos}
+                    definirPreco={definirPreco}
+                    fornecedores={fornecedores}
+                    itensExtras={itensExtras}
                   />
                 )}
 
@@ -608,16 +636,64 @@ export default function PaginaCardapios() {
                   <h2 className="font-display text-2xl font-bold text-carvao-900 dark:text-white">Relatórios</h2>
                   <p className="mt-1 text-sm text-carvao-400">Análise e exportação de dados da semana</p>
                 </div>
-                <CentralGerencial
-                  estado={estado}
-                  semanaId={semanaId}
-                  precos={precos}
-                  historico={historico}
-                  aceitacao={aceitacao}
-                  fornecedores={fornecedores}
-                  fatores={fatores}
-                />
-                <AbaRadar precos={precos} historico={historico} fornecedores={fornecedores} />
+                {/* sub-abas */}
+                <div className="flex gap-1 rounded-2xl bg-carvao-100 p-1 dark:bg-carvao-800">
+                  {([
+                    { id: 'central',   rotulo: '📊 Central' },
+                    { id: 'cenarios',  rotulo: '🔬 Cenários' },
+                    ...(pode(papel, 'auditoria:ver') ? [{ id: 'auditoria', rotulo: '🔍 Auditoria' }] : []),
+                  ] as { id: 'central' | 'cenarios' | 'auditoria'; rotulo: string }[]).map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => setAbaRelatorios(s.id)}
+                      className={`flex-1 rounded-xl py-2 text-[13px] font-semibold transition ${
+                        abaRelatorios === s.id
+                          ? 'bg-white shadow-sm dark:bg-carvao-700'
+                          : 'text-carvao-500 hover:text-carvao-700 dark:text-carvao-400'
+                      }`}
+                    >
+                      {s.rotulo}
+                    </button>
+                  ))}
+                </div>
+
+                {abaRelatorios === 'central' && (
+                  <>
+                    <InteligenciaCard
+                      estado={estado}
+                      semanaId={semanaId}
+                      precos={precos}
+                      aceitacao={aceitacao}
+                      estoque={estoque}
+                      historico={historico}
+                      fornecedores={fornecedores}
+                    />
+                    <CentralGerencial
+                      estado={estado}
+                      semanaId={semanaId}
+                      precos={precos}
+                      historico={historico}
+                      aceitacao={aceitacao}
+                      fornecedores={fornecedores}
+                      fatores={fatores}
+                    />
+                    <AbaRadar precos={precos} historico={historico} fornecedores={fornecedores} />
+                  </>
+                )}
+
+                {abaRelatorios === 'cenarios' && (
+                  <AbaSimulador
+                    estado={estado}
+                    atualizar={atualizar}
+                    precos={precos}
+                    fatores={fatores}
+                    podeEditar={podeEditarCardapio}
+                  />
+                )}
+
+                {abaRelatorios === 'auditoria' && pode(papel, 'auditoria:ver') && (
+                  <AbaAuditoria papel={papel} />
+                )}
               </div>
             )}
 
@@ -645,6 +721,9 @@ export default function PaginaCardapios() {
                     <Configuracoes />
                   </SecaoAjuste>
                 )}
+
+                {/* Backup em nuvem (aparece só com Supabase configurado) */}
+                <CartaoNuvem />
               </div>
             )}
           </>

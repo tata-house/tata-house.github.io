@@ -17,6 +17,7 @@ import { AbaFluxo } from '@/components/cardapio/AbaFluxo';
 import { AbaRadar } from '@/components/cardapio/AbaRadar';
 import { CentralGerencial } from '@/components/cardapio/CentralGerencial';
 import { Configuracoes } from '@/components/cardapio/Configuracoes';
+import { CartaoNuvem } from '@/components/cardapio/CartaoNuvem';
 import { Assistente } from '@/components/cardapio/Assistente';
 import { PosterSemana } from '@/components/cardapio/PosterSemana';
 import {
@@ -645,6 +646,8 @@ export default function PaginaCardapios() {
                     <Configuracoes />
                   </SecaoAjuste>
                 )}
+                {/* Backup na nuvem */}
+                <CartaoNuvem />
               </div>
             )}
           </>

@@ -175,6 +175,63 @@ const ALIASES_HISTORICO: Record<string, string> = {
   'feijao fraldinho': 'feijao fradinho',
   'massa de lasanha': 'massa para lasanha',
   'massa lasanha': 'massa para lasanha',
+  // carne bovina genérica (captura "carne" após limpeza de qualificadores)
+  'carne': 'acem',
+  // almôndega = carne moída
+  'almondega': 'acem moido',
+  'almondegas': 'acem moido',
+  // alcatra e rabada → referência bovina disponível
+  'aranha da alcatra': 'acem',
+  'aranha de alcatra': 'acem',
+  'rabada bovina': 'costela',
+  'osso': 'costela',
+  // ervas frescas → herb mais próximo nas compras
+  'cebolinha': 'coentro',
+  'cebolihha': 'coentro',
+  'salsinha': 'salsa desidratada',
+  'manjericao': 'ervas finas',
+  'guento': 'coentro',
+  // gorduras/laticínios
+  'manteiga': 'creme de leite',
+  'essencia de baunilha': 'adocante',
+  // frutas não compradas → proxy de preço por unidade/kg disponível
+  'abacate': 'goiaba',
+  'laranja': 'goiaba',
+  'limao': 'goiaba',
+  'manga': 'goiaba',
+  'mamao': 'melao',
+  'maca': 'goiaba',
+  'maca fuji': 'goiaba',
+  'mexerica': 'goiaba',
+  'maracuja': 'melao',
+  // legumes não comprados → proxy de legume disponível
+  'agriao': 'acelga',
+  'berinjela': 'abobrinha italiana',
+  'espinafre': 'acelga',
+  'rucula': 'acelga',
+  // grãos/doces secos
+  'canjica': 'feijao',
+  'mazeina': 'maisena',
+  'chocolate': 'maisena',
+  'bolacha maisena': 'maisena',
+  'bolacha': 'refrescos',
+  'champion': 'chuchu',
+  // sucos industrializados → refrescos
+  'suco de morango': 'refrescos',
+  'suco de morango calda': 'refrescos',
+  'suco de maracuja': 'refrescos',
+  'suco de limao': 'refrescos',
+  'suco de frambeosa': 'refrescos',
+  'suco': 'refrescos',
+  // typos / nomes truncados
+  'leite condensadon': 'leite condensado',
+  'leite condesado': 'leite condensado',
+  'maionsese': 'maionese',
+  'peito de frango s': 'file de frango',
+  // cacau/cacão
+  'cacao': 'maisena',
+  // mousse sem qualificador (após remoção do parêntese " (Pronto)")
+  'mousse morango': 'flan',
 };
 
 // Pré-compila lookup por prefixo de palavras (ex: "batata" → "batata congelada")
@@ -188,12 +245,17 @@ for (const chave of Object.keys(PRECOS_COMPRAS).sort((a, b) => a.length - b.leng
   }
 }
 
-/** Remove qualificadores que não mudam o produto base nem seu custo. */
+/** Remove qualificadores que não mudam o produto base nem seu custo.
+ *  Usa lookahead (?=\s|$) para não consumir o espaço seguinte, permitindo
+ *  que múltiplos qualificadores (ex: "suína em tiras") sejam removidos numa
+ *  única passagem do regex. */
 function limpezaNorm(s: string): string {
   return s
     .replace(/[-\s.]+$/, '')
+    .replace(/\s*\([^)]*\)/g, '')                                             // "(Pronto)" "(sabores)" etc.
+    .replace(/\s+\d+[,.]?\d*\s*(?:kg|g|l|ml|un)\b/gi, '')                    // "16,4 kg" embutido no nome
     .replace(
-      /\s+(sem osso|fatiado[a]?|em cubos?|em bifes?|em tiras?|em peca|em conserva|descascad[oa]|ralad[oa]|frit[oa]s?|pronto[a]?s?|maduro[a]?s?|verde|de porco|bovina?|suina?|baunilha|inteiro[a]?s?|sem sabor|incolor|fresco[a]?|ninja|comum|na manteiga|em estoque|tem estoque|precisa vim|)\s*/gi,
+      /\s+(sem osso|fatiado[a]?|em cubos?|em bifes?|em tiras?|em peca|em conserva|descascad[oa]|ralad[oa]|frit[oa]s?|pronto[a]?s?|maduro[a]?s?|de porco|bovina?|suina?|baunilha|inteiro[a]?s?|sem sabor|incolor|fresco[a]?|ninja|comum|na manteiga|em estoque|tem estoque|precisa vim)(?=\s|$)/gi,
       ' ',
     )
     .replace(/\s+/g, ' ')

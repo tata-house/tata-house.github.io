@@ -604,6 +604,8 @@ export default function PaginaCardapios() {
                     precos={precos}
                     fornecedores={fornecedores}
                     fatores={fatores}
+                    definirPreco={definirPreco}
+                    definirFornecedor={definirFornecedor}
                   />
                 )}
 

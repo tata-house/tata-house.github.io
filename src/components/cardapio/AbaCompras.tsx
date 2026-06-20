@@ -12,6 +12,7 @@ import {
   linhasDoDia,
 } from '@/lib/cardapio/motor';
 import { registrarAuditoria, useMostrarBasicos } from '@/lib/cardapio/estado';
+import { pode } from '@/lib/cardapio/org';
 import type { EstadoSemana, Papel, StatusItem } from '@/lib/cardapio/tipos';
 import { ListaCompras } from './ListaCompras';
 import { ConciliacaoSemana } from './ConciliacaoSemana';
@@ -50,6 +51,8 @@ export function AbaCompras({
   precos,
   fornecedores = {},
   fatores,
+  definirPreco,
+  definirFornecedor,
 }: {
   estado: EstadoSemana;
   atualizar: (fn: (e: EstadoSemana) => EstadoSemana) => void;
@@ -57,6 +60,8 @@ export function AbaCompras({
   precos: Record<string, number>;
   fornecedores?: Record<string, string>;
   fatores?: Record<string, number>;
+  definirPreco?: (itemNorm: string, valor: number | null, nome?: string) => void;
+  definirFornecedor?: (itemNorm: string, marca: string | null) => void;
 }) {
   const { mostrarBasicos, setMostrarBasicos } = useMostrarBasicos();
   const [novoItemDia, setNovoItemDia] = useState<number | null>(null);
@@ -130,6 +135,7 @@ export function AbaCompras({
   const podeAjustarQtd = papel === 'administrador' || papel === 'gestor' || papel === 'cozinha';
   const podeComprar = papel === 'compras' || papel === 'gestor' || papel === 'administrador';
   const podeReceber = papel === 'recebimento' || papel === 'gestor' || papel === 'administrador';
+  const podePreco = pode(papel, 'precos:editar') && !!definirPreco;
 
   const setAjuste = (dia: number, chave: string, qtd: number | null, removido?: boolean, obs?: string, unidOverride?: string) => {
     if (qtd !== null) {
@@ -629,8 +635,38 @@ export function AbaCompras({
                               <span className="text-[10px] font-normal text-carvao-400">(sugerido {formatarQtd(l.sugerida)})</span>
                             )}
                           </p>
-                          {fornecedores[l.chave] && (
-                            <span className="block text-[10px] font-semibold text-brand-600">↓ mais barato: {fornecedores[l.chave]}</span>
+                          {podePreco ? (
+                            <div className="mt-1.5 flex flex-wrap items-center gap-1.5 print:hidden">
+                              <span className="text-[10px] font-bold uppercase tracking-wide text-carvao-400">cotação</span>
+                              <span className="text-[10px] text-carvao-400">R$</span>
+                              <input
+                                type="number"
+                                min={0}
+                                step="0.01"
+                                inputMode="decimal"
+                                defaultValue={precos[l.chave] ?? ''}
+                                placeholder="0,00"
+                                title="Preço de cotação (atualiza o custo da semana)"
+                                onBlur={(e) => {
+                                  const v = e.target.value;
+                                  definirPreco!(l.chave, v === '' ? null : Number(v), l.item);
+                                }}
+                                className="h-7 w-16 rounded-md border border-carvao-200 bg-white px-1.5 text-right text-[11px] font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
+                              />
+                              <span className="text-[10px] text-carvao-400">/{l.unid}</span>
+                              <input
+                                type="text"
+                                defaultValue={fornecedores[l.chave] ?? ''}
+                                placeholder="fornecedor"
+                                title="Fornecedor mais barato deste item"
+                                onBlur={(e) => definirFornecedor?.(l.chave, e.target.value.trim() || null)}
+                                className="h-7 w-28 rounded-md border border-carvao-200 bg-white px-2 text-[11px] dark:border-carvao-600 dark:bg-carvao-900"
+                              />
+                            </div>
+                          ) : (
+                            fornecedores[l.chave] && (
+                              <span className="block text-[10px] font-semibold text-brand-600">↓ mais barato: {fornecedores[l.chave]}</span>
+                            )
                           )}
                         </div>
                         <div className="flex shrink-0 items-center gap-1.5">

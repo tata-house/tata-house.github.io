@@ -1,13 +1,13 @@
 'use client';
 
-import { Botao, Cartao } from '@/components/cardapio/ui';
+import { Botao, Cartao } from '@/components/ui';
 import { DIAS_SEMANA, formatarReais, linhasDoDia } from '@/lib/cardapio/motor';
 import { resolverPreco } from '@/lib/cardapio/precos';
 import { useEstimativas } from '@/lib/cardapio/estimativas';
 import type { EstadoSemana, Etapa, Papel } from '@/lib/cardapio/tipos';
 
 const ETAPAS: { id: Etapa; rotulo: string; quem: string }[] = [
-  { id: 'rascunho', rotulo: 'Montagem do cardápio', quem: 'Gestor' },
+  { id: 'rascunho', rotulo: 'Montagem do cardápio', quem: 'Gestor / Gerência' },
   { id: 'cozinha', rotulo: 'Revisão da cozinha', quem: 'Cozinha' },
   { id: 'compras', rotulo: 'Compra dos itens', quem: 'Setor de compras' },
   { id: 'recebimento', rotulo: 'Recebimento', quem: 'Recebimento' },
@@ -17,10 +17,10 @@ const ETAPAS: { id: Etapa; rotulo: string; quem: string }[] = [
 const ACAO_POR_ETAPA: Partial<
   Record<Etapa, { rotulo: string; proxima: Etapa; papeis: Papel[] }>
 > = {
-  rascunho: { rotulo: '📨 Enviar para revisão da cozinha', proxima: 'cozinha', papeis: ['gestor'] },
-  cozinha: { rotulo: '✅ Cozinha aprova a lista', proxima: 'compras', papeis: ['cozinha', 'gestor'] },
-  compras: { rotulo: '🛒 Compras finalizadas', proxima: 'recebimento', papeis: ['compras', 'gestor'] },
-  recebimento: { rotulo: '📦 Tudo recebido — concluir', proxima: 'concluido', papeis: ['recebimento', 'gestor'] },
+  rascunho:    { rotulo: '📨 Enviar para revisão da cozinha', proxima: 'cozinha',     papeis: ['gestor', 'administrador'] },
+  cozinha:     { rotulo: '✅ Cozinha aprova a lista',         proxima: 'compras',     papeis: ['cozinha', 'gestor', 'administrador'] },
+  compras:     { rotulo: '🛒 Compras finalizadas',            proxima: 'recebimento', papeis: ['compras', 'gestor', 'administrador'] },
+  recebimento: { rotulo: '📦 Tudo recebido — concluir',       proxima: 'concluido',   papeis: ['recebimento', 'gestor', 'administrador'] },
 };
 
 export function AbaFluxo({
@@ -30,6 +30,7 @@ export function AbaFluxo({
   precos = {},
   fatores,
   aprenderDeSemana,
+  irPara,
 }: {
   estado: EstadoSemana;
   atualizar: (fn: (e: EstadoSemana) => EstadoSemana) => void;
@@ -37,6 +38,7 @@ export function AbaFluxo({
   precos?: Record<string, number>;
   fatores?: Record<string, number>;
   aprenderDeSemana?: (estado: EstadoSemana) => void;
+  irPara?: (aba: string) => void;
 }) {
   const { estimativas } = useEstimativas();
   const idxAtual = ETAPAS.findIndex((e) => e.id === estado.etapa);
@@ -81,7 +83,12 @@ export function AbaFluxo({
   const refeicoes = estado.refeicoes ?? {};
   const totalRefeicoes = Object.values(refeicoes).reduce((a, b) => a + (b || 0), 0);
   const custoPorRefeicao = totalRefeicoes > 0 && custoSemana > 0 ? custoSemana / totalRefeicoes : null;
-  const podeContar = papel === 'cozinha' || papel === 'gestor';
+  const podeContar = papel === 'cozinha' || papel === 'gestor' || papel === 'administrador';
+
+  // meta semanal = orçamento mensal / 4,33 semanas
+  const metaSemanal = estado.orcamento ?? Math.round(15000 / 4.33);
+  const pctCusto = metaSemanal > 0 ? Math.min((custoSemana / metaSemanal) * 100, 100) : 0;
+  const corMeta = pctCusto >= 95 ? '#b04c41' : pctCusto >= 80 ? '#c4860a' : '#2d6f8e';
 
   const avancar = () => {
     if (!acao) return;
@@ -227,6 +234,29 @@ export function AbaFluxo({
         })}
       </Cartao>
 
+      {/* Termômetro de custo vs. meta */}
+      {custoSemana > 0 && (
+        <Cartao className="space-y-2">
+          <div className="flex items-baseline justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-carvao-400">Custo vs. meta semanal</span>
+            <span className="text-sm font-extrabold" style={{ color: corMeta }}>
+              {formatarReais(custoSemana)} / {formatarReais(metaSemanal)}
+            </span>
+          </div>
+          <div className="h-2.5 w-full overflow-hidden rounded-full bg-carvao-100 dark:bg-carvao-700">
+            <div
+              className="h-full rounded-full transition-all"
+              style={{ width: `${pctCusto}%`, backgroundColor: corMeta }}
+            />
+          </div>
+          {pctCusto >= 95 && (
+            <p className="text-xs font-semibold text-[#b04c41]">
+              ⚠️ Orçamento quase esgotado ({pctCusto.toFixed(0)}% usado)
+            </p>
+          )}
+        </Cartao>
+      )}
+
       {/* Aviso de preço pendente antes de fechar */}
       {exigePrecoAntes && itensSemPreco > 0 && (
         <Cartao className="!py-3 ring-1 ring-[#b04c41]/30">
@@ -234,9 +264,17 @@ export function AbaFluxo({
             ⛔ {itensSemPreco} {itensSemPreco === 1 ? 'item' : 'itens'} sem preço.
           </p>
           <p className="mt-0.5 text-xs text-carvao-500 dark:text-areia-200">
-            Lance o preço real na aba <strong>Cotação/Compras</strong> ou gere uma estimativa na aba{' '}
+            Lance o preço real em <strong>Ajustes → Catálogo de preços</strong> ou gere uma estimativa na aba{' '}
             <strong>Cardápio</strong> antes de fechar — assim o custo da semana fica completo.
           </p>
+          {irPara && (
+            <button
+              onClick={() => irPara('ajustes')}
+              className="mt-2 rounded-full bg-carvao-100 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-carvao-600 hover:bg-carvao-200 dark:bg-carvao-700 dark:text-carvao-300"
+            >
+              Ir para Ajustes →
+            </button>
+          )}
         </Cartao>
       )}
 
@@ -248,8 +286,8 @@ export function AbaFluxo({
           </Botao>
           {!podeAgir && (
             <p className="text-center text-xs text-carvao-400">
-              Esta ação é de: <strong>{ETAPAS[idxAtual]?.quem}</strong>. Troque o papel no topo da tela para
-              simular.
+              Esta ação é de: <strong>{ETAPAS[idxAtual]?.quem}</strong>. Saia e entre com o perfil correto para
+              executar.
             </p>
           )}
         </div>

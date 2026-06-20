@@ -169,13 +169,8 @@ async function chamarIA(
   modo: 'pergunta' | 'briefing' | 'decisao' | 'alerta' = 'pergunta',
 ): Promise<RespostaAssistente | null> {
   try {
-    const res = await fetch('/api/ia', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tarefa, dossie, modo }),
-    });
-    if (!res.ok) return null;
-    const json = await res.json();
+    const { chamarIACliente } = await import('./ia-cliente');
+    const json = await chamarIACliente(tarefa, dossie, modo);
     if (json.offline) return null;
     if (json.texto) return { texto: json.texto, itens: json.itens };
     return null;

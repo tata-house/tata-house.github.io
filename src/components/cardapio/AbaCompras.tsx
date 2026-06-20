@@ -73,20 +73,50 @@ export function AbaCompras({
     setEnviandoEmail(true);
     setEmailStatus('idle');
     try {
-      const res = await fetch('/api/enviar-nota', {
+      const serviceId  = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+      const publicKey  = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+      if (!serviceId || !templateId || !publicKey) {
+        setEmailStatus('erro');
+        return;
+      }
+
+      const itensParsed = itens.filter((i) => i.produto.trim()).map((i) => ({
+        produto: i.produto,
+        qtd: Number(i.qtd) || 0,
+        unid: i.unid,
+        precoUnit: Number(i.precoUnit) || 0,
+      }));
+      const data = new Date().toLocaleDateString('pt-BR');
+      const totalGeral =
+        itensParsed.length > 0 && itensParsed.every((i) => i.qtd && i.precoUnit)
+          ? `R$ ${itensParsed.reduce((s, i) => s + i.qtd * i.precoUnit, 0).toFixed(2)}`
+          : '—';
+      const itensTexto =
+        itensParsed.length > 0
+          ? itensParsed
+              .map((i) => {
+                const total = i.qtd && i.precoUnit ? `R$ ${(i.qtd * i.precoUnit).toFixed(2)}` : '—';
+                return `${i.produto} — ${i.qtd} ${i.unid} × R$ ${i.precoUnit.toFixed(2)} = ${total}`;
+              })
+              .join('\n')
+          : 'Nenhum item informado.';
+
+      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fornecedor,
-          data: new Date().toLocaleDateString('pt-BR'),
-          responsavel: papel,
-          itens: itens.filter((i) => i.produto.trim()).map((i) => ({
-            produto: i.produto,
-            qtd: Number(i.qtd) || 0,
-            unid: i.unid,
-            precoUnit: Number(i.precoUnit) || 0,
-          })),
-          fotoBase64: foto,
+          service_id: serviceId,
+          template_id: templateId,
+          user_id: publicKey,
+          template_params: {
+            fornecedor: fornecedor || '—',
+            data,
+            responsavel: papel,
+            itens_texto: itensTexto,
+            total: totalGeral,
+            foto_base64: foto && foto.startsWith('data:image/') ? foto : '',
+          },
         }),
       });
       setEmailStatus(res.ok ? 'ok' : 'erro');

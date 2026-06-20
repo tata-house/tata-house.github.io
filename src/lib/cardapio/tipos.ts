@@ -336,6 +336,24 @@ export type Permissao =
   | 'auditoria:ver'
   | 'config:gerenciar';
 
+/* ----- Módulo: perfil de fornecedor (inteligência além do preço) ----- */
+export interface AvaliacaoFornecedor {
+  em: string; // ISO
+  qualidade: 1 | 2 | 3 | 4 | 5;
+  entregaOk: boolean;
+  obs?: string;
+}
+
+export interface PerfilFornecedor {
+  nome: string;
+  whatsapp?: string;
+  pedidoMinimo?: number; // R$
+  prazoEntregaDias?: number;
+  formaPagamento?: string;
+  avaliacoes: AvaliacaoFornecedor[];
+  obs?: string;
+}
+
 /* ----- Módulo: funcionários e restrições alimentares ----- */
 export type TurnoFuncionario = 'almoco' | 'jantar' | 'ambos';
 export type TipoRestricao = 'alergia' | 'preferencia' | 'religioso';

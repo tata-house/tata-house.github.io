@@ -21,6 +21,7 @@ import { calcularDna, type DnaAlimentar } from './dna';
 import { montarDossie, type DossieIA } from './dossie';
 import type {
   Aceitacao,
+  AvaliacaoFornecedor,
   ChefFeedback,
   ContagemRefeicoesDia,
   Estoque,
@@ -31,6 +32,7 @@ import type {
   MovEstoque,
   EstadoSemana,
   Papel,
+  PerfilFornecedor,
   RegistroAceitacao,
   RegistroAuditoria,
   RegistroDesperdicio,
@@ -915,6 +917,47 @@ export function useContagemRefeicoes() {
 
 export function lerContagemRefeicoes(): ContagemRefeicoesDia[] {
   return lerLocal<ContagemRefeicoesDia[]>('contagemRefeicoes', []);
+}
+
+/* =====================================================================
+   Módulo: Perfis de fornecedor (inteligência além do preço)
+   ===================================================================== */
+
+export function useFornecedorPerfis() {
+  const [perfis, setPerfis] = useState<Record<string, PerfilFornecedor>>({});
+
+  useEffect(() => {
+    setPerfis(lerLocal('fornecedorPerfis', {}));
+  }, []);
+
+  const salvarPerfil = useCallback((nome: string, dados: Partial<Omit<PerfilFornecedor, 'nome' | 'avaliacoes'>>) => {
+    setPerfis((atual) => {
+      const prev = atual[nome] ?? { nome, avaliacoes: [] };
+      const novo = { ...atual, [nome]: { ...prev, ...dados, nome } };
+      gravarLocal('fornecedorPerfis', novo);
+      return novo;
+    });
+  }, []);
+
+  const adicionarAvaliacao = useCallback((nome: string, av: Omit<AvaliacaoFornecedor, 'em'>) => {
+    setPerfis((atual) => {
+      const prev = atual[nome] ?? { nome, avaliacoes: [] };
+      const novaAv: AvaliacaoFornecedor = { ...av, em: new Date().toISOString() };
+      const novo = {
+        ...atual,
+        [nome]: { ...prev, avaliacoes: [novaAv, ...prev.avaliacoes].slice(0, 50) },
+      };
+      gravarLocal('fornecedorPerfis', novo);
+      registrarAuditoria({ acao: 'avaliou fornecedor', alvo: nome, para: av.qualidade });
+      return novo;
+    });
+  }, []);
+
+  return { perfis, salvarPerfil, adicionarAvaliacao };
+}
+
+export function lerFornecedorPerfis(): Record<string, PerfilFornecedor> {
+  return lerLocal('fornecedorPerfis', {});
 }
 
 /* =====================================================================

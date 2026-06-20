@@ -1,0 +1,25 @@
+{
+  "name": "Tatá House — Refeitório do Tatá Sushi",
+  "short_name": "Tatá House",
+  "description": "Planejamento do cardápio do refeitório, cotação, lista de compras, estoque e custo por refeição.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#15171b",
+  "theme_color": "#00b14f",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

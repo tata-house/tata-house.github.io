@@ -32,4 +32,4 @@ coloque as planilhas em uma pasta e rode:
 python3 scripts/cardapio/consolidar.py
 ```
 
-Veja `scripts/cardapio/README.md` para detalhes.
+Veja `scripts/cardapio/README.md` para detalhes. 

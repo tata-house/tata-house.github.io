@@ -335,3 +335,33 @@ export type Permissao =
   | 'precos:editar'
   | 'auditoria:ver'
   | 'config:gerenciar';
+
+/* ----- Módulo: funcionários e restrições alimentares ----- */
+export type TurnoFuncionario = 'almoco' | 'jantar' | 'ambos';
+export type TipoRestricao = 'alergia' | 'preferencia' | 'religioso';
+
+export interface RestricaoAlimentar {
+  tipo: TipoRestricao;
+  alimento: string;
+  obs?: string;
+}
+
+export interface Funcionario {
+  id: string;
+  nome: string;
+  setor: string;
+  turno: TurnoFuncionario;
+  restricoes: RestricaoAlimentar[];
+  ativo: boolean;
+  criadoEm: string;
+}
+
+/* ----- Módulo: contagem de refeições por dia ----- */
+export interface ContagemRefeicoesDia {
+  data: string; // yyyy-mm-dd
+  almoco: number;
+  jantar: number;
+  marmitas: number;
+  obs?: string;
+  registradoEm: string;
+}

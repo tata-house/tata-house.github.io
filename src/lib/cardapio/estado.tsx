@@ -22,8 +22,10 @@ import { montarDossie, type DossieIA } from './dossie';
 import type {
   Aceitacao,
   ChefFeedback,
+  ContagemRefeicoesDia,
   Estoque,
   EventoDemanda,
+  Funcionario,
   HistoricoPrecos,
   ItemEstoque,
   MovEstoque,
@@ -833,6 +835,86 @@ export function useSubstituicoes() {
 
 export function lerSubstituicoes(): SubstituicaoRegistro[] {
   return lerLocal<SubstituicaoRegistro[]>('substituicoes', []);
+}
+
+/* =====================================================================
+   Módulo: Funcionários e restrições alimentares
+   ===================================================================== */
+
+export function useFuncionarios() {
+  const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
+
+  useEffect(() => {
+    setFuncionarios(lerLocal<Funcionario[]>('funcionarios', []));
+  }, []);
+
+  const salvar = useCallback((f: Omit<Funcionario, 'id' | 'criadoEm'>) => {
+    setFuncionarios((atual) => {
+      const novo: Funcionario = {
+        ...f,
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        criadoEm: new Date().toISOString(),
+      };
+      const lista = [...atual, novo];
+      gravarLocal('funcionarios', lista);
+      registrarAuditoria({ acao: 'cadastrou funcionário', alvo: f.nome });
+      return lista;
+    });
+  }, []);
+
+  const atualizarFuncionario = useCallback((id: string, f: Partial<Funcionario>) => {
+    setFuncionarios((atual) => {
+      const novo = atual.map((x) => (x.id === id ? { ...x, ...f } : x));
+      gravarLocal('funcionarios', novo);
+      return novo;
+    });
+  }, []);
+
+  const removerFuncionario = useCallback((id: string) => {
+    setFuncionarios((atual) => {
+      const f = atual.find((x) => x.id === id);
+      const novo = atual.filter((x) => x.id !== id);
+      gravarLocal('funcionarios', novo);
+      if (f) registrarAuditoria({ acao: 'removeu funcionário', alvo: f.nome });
+      return novo;
+    });
+  }, []);
+
+  return { funcionarios, salvar, atualizarFuncionario, removerFuncionario };
+}
+
+export function lerFuncionarios(): Funcionario[] {
+  return lerLocal<Funcionario[]>('funcionarios', []);
+}
+
+/* =====================================================================
+   Módulo: Contagem de refeições por dia
+   ===================================================================== */
+
+export function useContagemRefeicoes() {
+  const [contagens, setContagens] = useState<ContagemRefeicoesDia[]>([]);
+
+  useEffect(() => {
+    setContagens(lerLocal<ContagemRefeicoesDia[]>('contagemRefeicoes', []));
+  }, []);
+
+  const registrar = useCallback((c: Omit<ContagemRefeicoesDia, 'registradoEm'>) => {
+    setContagens((atual) => {
+      const sem = atual.filter((x) => x.data !== c.data);
+      const novo = [{ ...c, registradoEm: new Date().toISOString() }, ...sem]
+        .sort((a, b) => b.data.localeCompare(a.data))
+        .slice(0, 365);
+      gravarLocal('contagemRefeicoes', novo);
+      registrarAuditoria({ acao: 'registrou contagem', alvo: c.data, para: c.almoco + c.jantar });
+      return novo;
+    });
+  }, []);
+
+  return { contagens, registrar };
+}
+
+export function lerContagemRefeicoes(): ContagemRefeicoesDia[] {
+  return lerLocal<ContagemRefeicoesDia[]>('contagemRefeicoes', []);
 }
 
 /* =====================================================================

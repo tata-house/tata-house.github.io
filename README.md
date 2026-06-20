@@ -33,3 +33,4 @@ python3 scripts/cardapio/consolidar.py
 ```
 
 Veja `scripts/cardapio/README.md` para detalhes. 
+ 

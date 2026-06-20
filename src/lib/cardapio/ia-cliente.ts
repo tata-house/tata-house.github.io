@@ -4,6 +4,8 @@
 
    Provedores suportados (em ordem de prioridade), configure UM:
      NEXT_PUBLIC_GEMINI_API_KEY     → Google Gemini (gratuito, recomendado)
+                                       chave do AI Studio (formato AIza... ou AQ...)
+                                       enviada no header x-goog-api-key
      NEXT_PUBLIC_OPENAI_API_KEY     → OpenAI (pago)
      NEXT_PUBLIC_ANTHROPIC_API_KEY  → Anthropic (pago)
 
@@ -64,16 +66,20 @@ function extrairJson(texto: string): RespostaIA {
 /* ------------------------------------------------------------------ */
 
 async function chamarGemini(apiKey: string, prompt: string): Promise<RespostaIA> {
-  const modelo = 'gemini-2.0-flash';
+  const modelo = 'gemini-2.5-flash';
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: SYSTEM }] },
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 512, responseMimeType: 'application/json' },
+        generationConfig: {
+          maxOutputTokens: 800,
+          responseMimeType: 'application/json',
+          thinkingConfig: { thinkingBudget: 0 },
+        },
       }),
     },
   );

@@ -85,7 +85,7 @@ export function AbaFluxo({
   const custoPorRefeicao = totalRefeicoes > 0 && custoSemana > 0 ? custoSemana / totalRefeicoes : null;
   const podeContar = papel === 'cozinha' || papel === 'gestor' || papel === 'administrador';
 
-  // meta semanal = orçamento mensal / 4,33 semanas
+  // meta semanal = orçamento informado, ou derivada da meta mensal de R$ 15.000 (4,33 semanas/mês)
   const metaSemanal = estado.orcamento ?? Math.round(15000 / 4.33);
   const pctCusto = metaSemanal > 0 ? Math.min((custoSemana / metaSemanal) * 100, 100) : 0;
   const corMeta = pctCusto >= 95 ? '#b04c41' : pctCusto >= 80 ? '#c4860a' : '#2d6f8e';
@@ -167,7 +167,7 @@ export function AbaFluxo({
                     ...s,
                     refeicoes: {
                       ...(s.refeicoes ?? {}),
-                      [i]: e.target.value ? Number(e.target.value) : 0,
+                      [i]: e.target.value ? Math.max(0, Math.round(Number(e.target.value))) : 0,
                     },
                   }))
                 }
@@ -234,7 +234,7 @@ export function AbaFluxo({
         })}
       </Cartao>
 
-      {/* Termômetro de custo vs. meta */}
+      {/* Termômetro de custo vs. meta semanal — co-piloto financeiro */}
       {custoSemana > 0 && (
         <Cartao className="space-y-2">
           <div className="flex items-baseline justify-between">
@@ -249,11 +249,14 @@ export function AbaFluxo({
               style={{ width: `${pctCusto}%`, backgroundColor: corMeta }}
             />
           </div>
-          {pctCusto >= 95 && (
-            <p className="text-xs font-semibold text-[#b04c41]">
-              ⚠️ Orçamento quase esgotado ({pctCusto.toFixed(0)}% usado)
-            </p>
-          )}
+          <p className="text-[11px] text-carvao-400">
+            {estado.orcamento
+              ? 'Meta informada pelo setor de compras.'
+              : 'Meta derivada de R$ 15.000/mês (≈ 4,33 semanas). Defina o orçamento da semana na aba Cardápio para ajustar.'}
+            {pctCusto >= 95 && (
+              <span className="font-bold text-[#b04c41]"> · ⚠️ orçamento quase esgotado ({pctCusto.toFixed(0)}%).</span>
+            )}
+          </p>
         </Cartao>
       )}
 
@@ -264,15 +267,15 @@ export function AbaFluxo({
             ⛔ {itensSemPreco} {itensSemPreco === 1 ? 'item' : 'itens'} sem preço.
           </p>
           <p className="mt-0.5 text-xs text-carvao-500 dark:text-areia-200">
-            Lance o preço real em <strong>Ajustes → Catálogo de preços</strong> ou gere uma estimativa na aba{' '}
+            Lance o preço real em <strong>Compras → Preços</strong> ou gere uma estimativa na aba{' '}
             <strong>Cardápio</strong> antes de fechar — assim o custo da semana fica completo.
           </p>
           {irPara && (
             <button
-              onClick={() => irPara('ajustes')}
+              onClick={() => irPara('compras')}
               className="mt-2 rounded-full bg-carvao-100 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-carvao-600 hover:bg-carvao-200 dark:bg-carvao-700 dark:text-carvao-300"
             >
-              Ir para Ajustes →
+              Ir para Preços →
             </button>
           )}
         </Cartao>

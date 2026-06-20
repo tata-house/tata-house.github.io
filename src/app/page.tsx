@@ -24,6 +24,7 @@ import { BriefingCard } from '@/components/cardapio/BriefingCard';
 import { InteligenciaCard } from '@/components/cardapio/InteligenciaCard';
 import { AbaSimulador } from '@/components/cardapio/AbaSimulador';
 import { AbaAuditoria } from '@/components/cardapio/AbaAuditoria';
+import { AbaPrecos } from '@/components/cardapio/AbaPrecos';
 import {
   deslocarSemana,
   idSemanaIso,
@@ -256,7 +257,7 @@ export default function PaginaCardapios() {
   const [plaquinhaAberta, setPlaquinhaAberta] = useState(false);
   const [semanaSheet, setSemanaSheet] = useState(false);
   const [buscaAberta, setBuscaAberta] = useState(false);
-  const [abaCompras, setAbaCompras] = useState<'lista' | 'estoque'>('lista');
+  const [abaCompras, setAbaCompras] = useState<'lista' | 'precos' | 'estoque'>('lista');
   const [abaRelatorios, setAbaRelatorios] = useState<'central' | 'cenarios' | 'auditoria'>('central');
 
   const { estado, atualizar, pronto } = useSemana(semanaId);
@@ -538,7 +539,7 @@ export default function PaginaCardapios() {
                   precos={precos}
                   fatores={fatores}
                   aprenderDeSemana={aprenderDeSemana}
-                  irPara={(aba) => irPara(aba as AbaId)}
+                  irPara={(alvo) => irPara(alvo as AbaId)}
                 />
                 {/* Feedback integrado ao fluxo — aparece quando concluído */}
                 {(estado.etapa === 'concluido' || estado.etapa === 'recebimento') && podeAvaliar && (
@@ -577,9 +578,9 @@ export default function PaginaCardapios() {
             {/* ── COMPRAS ───────────────────────────────────── */}
             {aba === 'compras' && (
               <div className="space-y-4">
-                {/* segmento Lista / Estoque */}
+                {/* segmento Lista / Preços / Estoque */}
                 <div className="flex gap-4 border-b border-carvao-100 dark:border-carvao-800">
-                  {(['lista', 'estoque'] as const).map((seg) => (
+                  {(['lista', 'precos', 'estoque'] as const).map((seg) => (
                     <button
                       key={seg}
                       onClick={() => setAbaCompras(seg)}
@@ -589,7 +590,7 @@ export default function PaginaCardapios() {
                           : 'text-carvao-400 hover:text-carvao-600 dark:text-carvao-500'
                       }`}
                     >
-                      {seg === 'lista' ? 'Lista de compras' : 'Estoque'}
+                      {seg === 'lista' ? 'Lista de compras' : seg === 'precos' ? 'Preços' : 'Estoque'}
                     </button>
                   ))}
                 </div>
@@ -602,6 +603,15 @@ export default function PaginaCardapios() {
                     precos={precos}
                     fornecedores={fornecedores}
                     fatores={fatores}
+                  />
+                )}
+
+                {abaCompras === 'precos' && (
+                  <AbaPrecos
+                    precos={precos}
+                    definirPreco={definirPreco}
+                    fornecedores={fornecedores}
+                    itensExtras={itensExtras}
                   />
                 )}
 
@@ -646,6 +656,7 @@ export default function PaginaCardapios() {
                     </button>
                   ))}
                 </div>
+
                 {abaRelatorios === 'central' && (
                   <>
                     <InteligenciaCard
@@ -669,6 +680,7 @@ export default function PaginaCardapios() {
                     <AbaRadar precos={precos} historico={historico} fornecedores={fornecedores} />
                   </>
                 )}
+
                 {abaRelatorios === 'cenarios' && (
                   <AbaSimulador
                     estado={estado}
@@ -678,6 +690,7 @@ export default function PaginaCardapios() {
                     podeEditar={podeEditarCardapio}
                   />
                 )}
+
                 {abaRelatorios === 'auditoria' && pode(papel, 'auditoria:ver') && (
                   <AbaAuditoria papel={papel} />
                 )}
@@ -709,7 +722,7 @@ export default function PaginaCardapios() {
                   </SecaoAjuste>
                 )}
 
-                {/* Backup em nuvem */}
+                {/* Backup em nuvem (aparece só com Supabase configurado) */}
                 <CartaoNuvem />
               </div>
             )}
@@ -821,3 +834,4 @@ function AbaCotacaoInline({
     />
   );
 }
+

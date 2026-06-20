@@ -145,8 +145,13 @@ const NIVEL_ORDEM: Record<NivelAlerta, number> = { urgente: 0, atencao: 1, info:
 /**
  * Monta o briefing do dia: consolida todos os alertas, ordena por
  * urgência e entrega o card pronto para exibição.
+ * @param extrasProspectivos - alertas prospectivos calculados pelo BriefingCard
  */
-export function montarBriefing(dossie: DossieIA, estado: EstadoSemana): Briefing {
+export function montarBriefing(
+  dossie: DossieIA,
+  estado: EstadoSemana,
+  extrasProspectivos?: ItemBriefing[],
+): Briefing {
   const itens: ItemBriefing[] = [
     ...alertaCardapioIncompleto(estado),
     ...alertaOrcamento(dossie),
@@ -154,6 +159,7 @@ export function montarBriefing(dossie: DossieIA, estado: EstadoSemana): Briefing
     ...alertasEstoqueBriefing(dossie),
     ...alertasDesperdicio(dossie),
     ...alertaAceitacao(dossie),
+    ...(extrasProspectivos ?? []),
     ...infoMemoria(dossie),
   ].sort((a, b) => NIVEL_ORDEM[a.nivel] - NIVEL_ORDEM[b.nivel]);
 

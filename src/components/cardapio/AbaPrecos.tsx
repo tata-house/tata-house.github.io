@@ -1,12 +1,14 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Botao, Cartao, Pilula, estiloInput } from '@/components/ui';
 import { Icone } from '@/components/Icones';
 import { DADOS, formatarReais, normalizar } from '@/lib/cardapio/motor';
 import { resolverPreco, ROTULO_TIPO_PRECO } from '@/lib/cardapio/precos';
-import { useHistoricoPrecos } from '@/lib/cardapio/estado';
+import { useHistoricoPrecos, registrarAuditoria } from '@/lib/cardapio/estado';
 import { useEstimativas } from '@/lib/cardapio/estimativas';
+import { DialogoContexto } from './ContextoDecisao';
+import type { ContextoDecisao } from '@/lib/cardapio/tipos';
 
 /**
  * Preços por item — com tipo (real / estimado / sem preço) e histórico em
@@ -26,8 +28,20 @@ export function AbaPrecos({
 }) {
   const [busca, setBusca] = useState('');
   const [aberto, setAberto] = useState<string | null>(null);
+  const [contextoItem, setContextoItem] = useState<{ norm: string; nome: string } | null>(null);
+  const precoBefore = useRef<Record<string, number | undefined>>({});
   const historico = useHistoricoPrecos();
   const { estimativas, definirEstimativa, gerarEstimativas } = useEstimativas();
+
+  const salvarContexto = (contexto: ContextoDecisao) => {
+    if (!contextoItem) return;
+    registrarAuditoria({
+      acao: 'justificou mudança de preço',
+      alvo: contextoItem.nome,
+      contexto,
+    });
+    setContextoItem(null);
+  };
 
   const itens = useMemo(() => {
     const extras = Object.values(itensExtras).map((e) => ({ n: e.n, u: e.u, f: 0 }));
@@ -42,6 +56,12 @@ export function AbaPrecos({
 
   return (
     <div className="space-y-4">
+      <DialogoContexto
+        aberto={!!contextoItem}
+        titulo={contextoItem ? `Por que o preço de ${contextoItem.nome} mudou?` : undefined}
+        fechar={() => setContextoItem(null)}
+        onConfirmar={salvarContexto}
+      />
       <Cartao className="space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           <Pilula tom="verde">{cadReais} reais</Pilula>
@@ -113,7 +133,15 @@ export function AbaPrecos({
                       inputMode="decimal"
                       value={precos[k] ?? ''}
                       placeholder="0,00"
+                      onFocus={() => { precoBefore.current[k] = precos[k]; }}
                       onChange={(e) => definirPreco(k, e.target.value === '' ? null : Number(e.target.value), i.n)}
+                      onBlur={() => {
+                        const antes = precoBefore.current[k];
+                        const depois = precos[k];
+                        if (antes && depois && antes > 0 && Math.abs(depois - antes) / antes >= 0.10) {
+                          setContextoItem({ norm: k, nome: i.n });
+                        }
+                      }}
                       className="w-20 rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-right font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                     />
                     <span className="w-6 text-[11px] text-carvao-400">/{i.u}</span>

@@ -733,6 +733,109 @@ export function lerMediaRefeicoes(): Record<number, { f: number; n: number }> {
 }
 
 /* =====================================================================
+   Módulo 11 — Ações comprometidas + rastreamento de resultados.
+   ===================================================================== */
+
+import type { AcaoComprometida, ResultadoAcao } from './tipos';
+
+export function useAcoesComprometidas() {
+  const [acoes, setAcoes] = useState<AcaoComprometida[]>([]);
+
+  useEffect(() => {
+    setAcoes(lerLocal<AcaoComprometida[]>('acoesComprometidas', []));
+  }, []);
+
+  const comprometer = useCallback((acao: Omit<AcaoComprometida, 'id' | 'comprometidaEm'>) => {
+    setAcoes((atual) => {
+      const nova: AcaoComprometida = {
+        ...acao,
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        comprometidaEm: new Date().toISOString(),
+      };
+      const novo = [nova, ...atual].slice(0, 200);
+      gravarLocal('acoesComprometidas', novo);
+      return novo;
+    });
+  }, []);
+
+  const registrarResultado = useCallback((id: string, resultado: ResultadoAcao) => {
+    setAcoes((atual) => {
+      const novo = atual.map((a) => (a.id === id ? { ...a, resultado } : a));
+      gravarLocal('acoesComprometidas', novo);
+      return novo;
+    });
+  }, []);
+
+  const acoesAtivas = useCallback(
+    (semanaId: string) => acoes.filter((a) => a.semanaId === semanaId && !a.resultado),
+    [acoes],
+  );
+
+  return { acoes, comprometer, registrarResultado, acoesAtivas };
+}
+
+export function lerAcoesComprometidas(): AcaoComprometida[] {
+  return lerLocal<AcaoComprometida[]>('acoesComprometidas', []);
+}
+
+/* =====================================================================
+   Módulo 12 — Inteligência de substituição.
+   ===================================================================== */
+
+import type { SubstituicaoRegistro } from './tipos';
+
+export function useSubstituicoes() {
+  const [registros, setRegistros] = useState<SubstituicaoRegistro[]>([]);
+
+  useEffect(() => {
+    setRegistros(lerLocal<SubstituicaoRegistro[]>('substituicoes', []));
+  }, []);
+
+  const registrar = useCallback((sub: Omit<SubstituicaoRegistro, 'id' | 'registradoEm'>) => {
+    setRegistros((atual) => {
+      // evita duplicata na mesma semana + dia
+      const existente = atual.find(
+        (r) => r.semanaId === sub.semanaId && r.dia === sub.dia && r.normOriginal === sub.normOriginal,
+      );
+      if (existente) return atual;
+      const novo: SubstituicaoRegistro = {
+        ...sub,
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        registradoEm: new Date().toISOString(),
+      };
+      const lista = [novo, ...atual].slice(0, 1000);
+      gravarLocal('substituicoes', lista);
+      return lista;
+    });
+  }, []);
+
+  const enriquecer = useCallback(
+    (semanaId: string, normSubstituto: string, aceitacao?: number, desperdicio?: number) => {
+      setRegistros((atual) => {
+        const novo = atual.map((r) =>
+          r.semanaId === semanaId && r.normSubstituto === normSubstituto
+            ? {
+                ...r,
+                ...(aceitacao != null ? { aceitacaoSubstituto: aceitacao } : {}),
+                ...(desperdicio != null ? { desperdicioSubstituto: desperdicio } : {}),
+              }
+            : r,
+        );
+        gravarLocal('substituicoes', novo);
+        return novo;
+      });
+    },
+    [],
+  );
+
+  return { registros, registrar, enriquecer };
+}
+
+export function lerSubstituicoes(): SubstituicaoRegistro[] {
+  return lerLocal<SubstituicaoRegistro[]>('substituicoes', []);
+}
+
+/* =====================================================================
    Chef IA — feedback das sugestões (👍/👎) + histórico de recomendações
    ===================================================================== */
 

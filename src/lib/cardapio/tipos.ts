@@ -231,6 +231,21 @@ export interface EventoDemanda {
 }
 
 /* ----- Módulo 9: auditoria e segurança ----- */
+export type MotivoDecisao =
+  | 'preco_subiu'
+  | 'preco_caiu'
+  | 'falta_estoque'
+  | 'qualidade_ruim'
+  | 'baixa_aceitacao'
+  | 'sazonalidade'
+  | 'variedade'
+  | 'outro';
+
+export interface ContextoDecisao {
+  motivo: MotivoDecisao;
+  obs?: string;
+}
+
 export interface RegistroAuditoria {
   em: string; // ISO datetime
   papel: Papel;
@@ -239,6 +254,58 @@ export interface RegistroAuditoria {
   de?: string | number | null;
   para?: string | number | null;
   semana?: string;
+  contexto?: ContextoDecisao; // por que a decisão foi tomada
+}
+
+/* ----- Módulo 11: rastreamento de ações e resultados ----- */
+export type MetricaRastreada = 'custo_pp' | 'desperdicio_pct' | 'aceitacao_media';
+
+export interface AcaoComprometida {
+  id: string;
+  semanaId: string;
+  tipoObjetivo: string;
+  descricao: string;
+  base: string; // rastreabilidade: de onde veio a recomendação
+  metrica: MetricaRastreada;
+  valorAntes: number; // baseline no momento do comprometimento
+  comprometidaEm: string; // ISO
+  resultado?: ResultadoAcao;
+}
+
+export interface ResultadoAcao {
+  semanaId: string;
+  valorDepois: number;
+  delta: number; // valorDepois − valorAntes
+  avaliacao: 'melhorou' | 'igual' | 'piorou';
+  avaliadoEm: string;
+}
+
+/* ----- Módulo 12: inteligência de substituições ----- */
+export type MotivoSubstituicao = 'preco' | 'estoque' | 'qualidade' | 'variedade' | 'outro';
+
+export interface SubstituicaoRegistro {
+  id: string;
+  semanaId: string;
+  dia: number; // 0=segunda…6=domingo
+  nomeOriginal: string;
+  nomeSubstituto: string;
+  normOriginal: string;
+  normSubstituto: string;
+  motivo: MotivoSubstituicao;
+  registradoEm: string;
+  aceitacaoSubstituto?: number; // nota média do substituto nesta semana
+  desperdicioSubstituto?: number; // taxa de desperdício (0–1)
+}
+
+export interface SubstituicaoAprendida {
+  normOriginal: string;
+  normSubstituto: string;
+  nomeOriginal: string;
+  nomeSubstituto: string;
+  n: number;
+  aceitacaoMedia: number | null;
+  desperdicioMedio: number | null;
+  confianca: 'alta' | 'media' | 'baixa';
 }
 
 /* ----- Módulo 10: organização / multi-tenant (preparação Supabase) ----- */

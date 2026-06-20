@@ -2,7 +2,14 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { montarBriefing, type ItemBriefing, type NivelAlerta } from '@/lib/cardapio/briefing';
-import { montarDossieCompleto } from '@/lib/cardapio/estado';
+import {
+  montarDossieCompleto,
+  useAprendizado,
+  semanasComConteudo,
+  lerSemana,
+  lerDesperdicio,
+} from '@/lib/cardapio/estado';
+import { alertasProspectivos } from '@/lib/cardapio/prospectivo';
 import { gerarBriefing } from '@/lib/cardapio/assistente';
 import type { Aceitacao, Estoque, EstadoSemana, HistoricoPrecos } from '@/lib/cardapio/tipos';
 
@@ -52,6 +59,8 @@ export function BriefingCard(props: Props) {
   const [iaTexto, setIaTexto] = useState<string | null>(null);
   const [carregandoIa, setCarregandoIa] = useState(false);
 
+  const { fatores } = useAprendizado();
+
   const dossie = useMemo(
     () =>
       montarDossieCompleto({
@@ -66,7 +75,38 @@ export function BriefingCard(props: Props) {
     [props.semanaId, props.estado, props.precos, props.aceitacao, props.estoque, props.historico, props.fornecedores],
   );
 
-  const briefing = useMemo(() => montarBriefing(dossie, props.estado), [dossie, props.estado]);
+  const historicoSemanas = useMemo(() => {
+    return semanasComConteudo()
+      .filter((id) => id < props.semanaId)
+      .slice(-8)
+      .map((id) => ({ semanaId: id, estado: lerSemana(id) }));
+  }, [props.semanaId]);
+
+  const desps = useMemo(() => {
+    return semanasComConteudo()
+      .filter((id) => id <= props.semanaId)
+      .flatMap((id) => lerDesperdicio(id));
+  }, [props.semanaId]);
+
+  const extrasProspectivos = useMemo(
+    () =>
+      alertasProspectivos(
+        props.semanaId,
+        props.estado,
+        props.estoque,
+        props.historico,
+        props.aceitacao,
+        fatores,
+        historicoSemanas,
+        desps,
+      ),
+    [props.semanaId, props.estado, props.estoque, props.historico, props.aceitacao, fatores, historicoSemanas, desps],
+  );
+
+  const briefing = useMemo(
+    () => montarBriefing(dossie, props.estado, extrasProspectivos),
+    [dossie, props.estado, extrasProspectivos],
+  );
 
   // tenta o briefing via LLM apenas quando há alertas reais
   useEffect(() => {

@@ -27,6 +27,7 @@ import { AbaAuditoria } from '@/components/cardapio/AbaAuditoria';
 import { AbaPrecos } from '@/components/cardapio/AbaPrecos';
 import { DnaCard } from '@/components/cardapio/DnaCard';
 import { PrevisaoCard } from '@/components/cardapio/PrevisaoCard';
+import { RoiCard } from '@/components/cardapio/RoiCard';
 import {
   deslocarSemana,
   idSemanaIso,
@@ -663,6 +664,7 @@ export default function PaginaCardapios() {
 
                 {abaRelatorios === 'central' && (
                   <>
+                    <RoiCard precos={precos} historico={historico} fatores={fatores} />
                     <DnaCard />
                     <PrevisaoCard
                       semanaId={semanaId}

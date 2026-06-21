@@ -4,6 +4,7 @@
    ===================================================================== */
 
 import { Icone } from '@/components/Icones';
+import { BotaoBaixarManual } from './BotaoBaixarManual';
 
 export const metadata = {
   title: 'Manual do Sistema — Tatá House',
@@ -320,10 +321,22 @@ function TabelaPapeis() {
 
 export default function ManualPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 print:bg-white">
+      <style>{`
+        @media print {
+          .no-print { display: none !important; }
+          @page { margin: 1.5cm 1.8cm; }
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          section { break-inside: avoid; page-break-inside: avoid; }
+          section + section { margin-top: 1.5rem; }
+          .shadow-sm, .shadow-2xl, .shadow-xl { box-shadow: none !important; }
+          a { text-decoration: none !important; color: inherit !important; }
+        }
+      `}</style>
       <div className="mx-auto max-w-2xl space-y-5 px-4 py-8">
 
         <Capa />
+        <BotaoBaixarManual />
         <Indice />
 
         {/* ═══════════════════════════════════════════════════
@@ -1179,6 +1192,8 @@ export default function ManualPage() {
             ))}
           </div>
         </Secao>
+
+        <BotaoBaixarManual />
 
         {/* Rodapé */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f3d26] via-[#1a5c3a] to-[#0f3d26] p-8 text-center text-white shadow-xl">

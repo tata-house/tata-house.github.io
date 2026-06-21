@@ -41,24 +41,30 @@ const RUIDO = new Set([
   'tipo', 'extra', 'especial', 'novilho', 'solteira', 'temp',
 ]);
 
-/**
- * Fornecedores conhecidos: regex de detecção → nome canônico.
- * Adicione novos fornecedores aqui quando necessário.
- */
-const FORNECEDORES_CONHECIDOS: [RegExp, string][] = [
-  [/vita[\s-]*frango/i,  'Vita Frango'],
-  [/\bjampac\b/i,        'Jampac'],
-  [/apetito/i,           'Apetito Foods'],
-  [/\bwg\b/i,            'WG'],
-  [/frito[\s-]*sul/i,    'Frito Sul'],
+/** Fallback de fornecedores hardcoded — usados só se o usuário não cadastrou nenhum. */
+const FORNECEDORES_FALLBACK: [RegExp, string][] = [
+  [/vita[\s-]*frango/i, 'Vita Frango'],
+  [/\bjampac\b/i,       'Jampac'],
+  [/apetito/i,          'Apetito Foods'],
+  [/\bwg\b/i,           'WG'],
+  [/frito[\s-]*sul/i,   'Frito Sul'],
 ];
 
-/** Retorna o nome canônico se a string contém um fornecedor conhecido. */
-function fornecedorConhecido(s: string): string | null {
-  for (const [re, nome] of FORNECEDORES_CONHECIDOS) {
-    if (re.test(s)) return nome;
-  }
-  return null;
+/** Gera regex a partir do nome cadastrado (case-insensitive, espaços flexíveis). */
+function regexDeFornecedor(nome: string): RegExp {
+  const s = nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '[\\s-]+');
+  return new RegExp(`\\b${s}\\b`, 'i');
+}
+
+/** Constrói lookup de fornecedores: cadastrados pelo usuário têm prioridade sobre o fallback. */
+function buildLookupFornecedor(custom: string[]): (s: string) => string | null {
+  const lista: [RegExp, string][] = custom.length
+    ? custom.map((n) => [regexDeFornecedor(n), n])
+    : FORNECEDORES_FALLBACK;
+  return (s: string) => {
+    for (const [re, nome] of lista) if (re.test(s)) return nome;
+    return null;
+  };
 }
 
 function paraNumero(s: string): number {
@@ -178,9 +184,10 @@ function detectarFornecedor(linha: string): string | null {
   return limpo || null;
 }
 
-export function parsearCotacao(texto: string): LinhaCotacao[] {
+export function parsearCotacao(texto: string, fornecedoresCustom: string[] = []): LinhaCotacao[] {
   const linhas: LinhaCotacao[] = [];
   let fornecedorSecao: string | null = null;
+  const fornecedorConhecido = buildLookupFornecedor(fornecedoresCustom);
 
   for (const bruta of texto.split(/\r?\n/)) {
     // Detecta início de mensagem WhatsApp ANTES de limpar a linha
@@ -191,7 +198,7 @@ export function parsearCotacao(texto: string): LinhaCotacao[] {
     const precos = linha.match(RE_PRECO);
 
     if (!precos) {
-      // Fornecedores conhecidos têm prioridade absoluta (Vita Frango, Jampac, WG…)
+      // Fornecedores cadastrados/conhecidos têm prioridade absoluta
       const fk = fornecedorConhecido(linha);
       if (fk) {
         fornecedorSecao = fk;
@@ -199,8 +206,6 @@ export function parsearCotacao(texto: string): LinhaCotacao[] {
       }
       // Detecção genérica: só sobrescreve no início de nova mensagem WA
       // ou quando ainda não há fornecedor ativo.
-      // Isso impede que subcategorias como *ACÉM* ou *PALETA* (que aparecem
-      // dentro de uma seção do Jampac) substituam o fornecedor correto.
       const forn = detectarFornecedor(linha);
       if (forn && (temPrefitoWA || !fornecedorSecao)) {
         fornecedorSecao = forn;
@@ -209,8 +214,7 @@ export function parsearCotacao(texto: string): LinhaCotacao[] {
     }
 
     // Linha tem preço(s).
-    // Detecta padrão E: fornecedor prefixando a linha de item após normalização
-    // de tabulações. Ex.: "WG Tiras de carnes R$ 43,00"
+    // Detecta padrão E: fornecedor prefixando a linha de item.
     let linhaItem = linha;
     const mPrefix = linha.match(/^(\S{2,10})\s(.+)$/);
     if (mPrefix && !RE_TEM_PRECO.test(mPrefix[1])) {
@@ -270,30 +274,35 @@ export function parsearCotacao(texto: string): LinhaCotacao[] {
 
 const GROQ_MODELO = 'llama-3.3-70b-versatile';
 
-const PROMPT_IA = `Você é especialista em cotações de alimentos para restaurante industrial brasileiro.
+function buildPromptIA(fornecedores: string[]): string {
+  const listForn = fornecedores.length
+    ? fornecedores.join(', ')
+    : 'Vita Frango, Jampac, Apetito Foods, WG, Frito Sul';
+  return `Você é especialista em cotações de alimentos para restaurante industrial brasileiro.
 Extraia TODOS os produtos com preço desta lista recebida via WhatsApp de fornecedores.
 
 REGRAS:
 - Cabeçalhos de categoria (*ACÉM*, *SUÍNOS*, *BOVINOS CONGELADOS*, FRANGOS etc.) → IGNORE
-- Saudações, datas, dias da semana, mensagens de status ("WG atualizada") → IGNORE
-- Fornecedores por seção: Vita Frango, Jampac, Apetito Foods, WG, Frito Sul
-- "Produto - Marca valor" → marca é o nome após o traço (Ribeiro, RRX, FazCarne etc.)
+- Saudações, datas, dias da semana, mensagens de status → IGNORE
+- Fornecedores cadastrados: ${listForn}
+- "Produto - Marca valor" → marca é o nome após o traço
 - Remova qualificadores: Resf/Resfriado/Cong/Congelado/RF/CG/FIFO do nome
 - Preço como número com ponto decimal (ex: 31.90)
 
 Responda APENAS com JSON array válido (sem markdown):
 [{"nome":"Frango inteiro","preco":7.00,"marca":"Vita Frango"},...]`;
+}
 
 type ItemIA = { nome: string; preco: number; marca?: string };
 
-async function chamarGroq(texto: string, apiKey: string): Promise<LinhaCotacao[]> {
+async function chamarGroq(texto: string, apiKey: string, fornecedores: string[]): Promise<LinhaCotacao[]> {
   const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
       model: GROQ_MODELO,
       messages: [
-        { role: 'user', content: `${PROMPT_IA}\n\nCOTAÇÃO:\n${texto.slice(0, 16000)}` },
+        { role: 'user', content: `${buildPromptIA(fornecedores)}\n\nCOTAÇÃO:\n${texto.slice(0, 16000)}` },
       ],
       temperature: 0.1,
       response_format: { type: 'json_object' },
@@ -367,10 +376,11 @@ function combinarResultados(logica: LinhaCotacao[], ia: LinhaCotacao[]): LinhaCo
 export async function parsearCotacaoComIA(
   texto: string,
   apiKey: string,
+  fornecedoresCustom: string[] = [],
 ): Promise<{ linhas: LinhaCotacao[]; comIA: boolean; erroIA?: string }> {
-  const logica = parsearCotacao(texto); // sempre roda primeiro
+  const logica = parsearCotacao(texto, fornecedoresCustom);
   try {
-    const ia = await chamarGroq(texto, apiKey);
+    const ia = await chamarGroq(texto, apiKey, fornecedoresCustom);
     return { linhas: combinarResultados(logica, ia), comIA: true };
   } catch (e) {
     return { linhas: logica, comIA: false, erroIA: e instanceof Error ? e.message : String(e) };

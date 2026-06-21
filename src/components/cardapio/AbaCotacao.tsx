@@ -6,8 +6,9 @@ import { agruparCotacao, extrairRemetenteWhatsApp, parsearCotacao, parsearCotaca
 import type { LinhaCotacao } from '@/lib/cardapio/cotacao';
 import { DADOS, formatarReais, normalizar } from '@/lib/cardapio/motor';
 
-const CHAVE_TEXTO = 'cardapio.v1.cotacao.texto';
-const CHAVE_GROQ  = 'cardapio.v1.groq.key';
+const CHAVE_TEXTO        = 'cardapio.v1.cotacao.texto';
+const CHAVE_GROQ         = 'cardapio.v1.groq.key';
+const CHAVE_FORNECEDORES = 'cardapio.v1.fornecedores';
 
 export function AbaCotacao({
   definirPreco,
@@ -32,6 +33,11 @@ export function AbaCotacao({
   const [pdfCarregando, setPdfCarregando]   = useState(false);
   const [pdfErro, setPdfErro]           = useState('');
 
+  // Fornecedores cadastrados
+  const [fornecedoresList, setFornecedoresList] = useState<string[]>([]);
+  const [novoForn, setNovoForn]                 = useState('');
+  const [mostrarForn, setMostrarForn]           = useState(false);
+
   // IA
   const [groqKey, setGroqKey]           = useState('');
   const [keyRascunho, setKeyRascunho]   = useState('');
@@ -46,8 +52,27 @@ export function AbaCotacao({
       const k = localStorage.getItem(CHAVE_GROQ) ?? '';
       setGroqKey(k);
       setKeyRascunho(k);
+      try {
+        const f = JSON.parse(localStorage.getItem(CHAVE_FORNECEDORES) ?? '[]');
+        if (Array.isArray(f)) setFornecedoresList(f);
+      } catch { /* ok */ }
     } catch { /* sem storage */ }
   }, []);
+
+  const salvarFornecedores = (lista: string[]) => {
+    setFornecedoresList(lista);
+    try { localStorage.setItem(CHAVE_FORNECEDORES, JSON.stringify(lista)); } catch { /* ok */ }
+  };
+
+  const adicionarFornecedor = () => {
+    const nome = novoForn.trim();
+    if (!nome || fornecedoresList.includes(nome)) { setNovoForn(''); return; }
+    salvarFornecedores([...fornecedoresList, nome]);
+    setNovoForn('');
+  };
+
+  const removerFornecedor = (nome: string) =>
+    salvarFornecedores(fornecedoresList.filter((f) => f !== nome));
 
   const salvarKey = () => {
     const k = keyRascunho.trim();
@@ -77,7 +102,7 @@ export function AbaCotacao({
   /* Leitura só com lógica */
   const ler = () => {
     salvarTexto();
-    setLido(parsearCotacao(texto));
+    setLido(parsearCotacao(texto, fornecedoresList));
     setModoUsado('logica');
     resetarResultados();
     detectarFornecedor();
@@ -89,7 +114,7 @@ export function AbaCotacao({
     setIaCarregando(true);
     resetarResultados();
     try {
-      const { linhas, comIA, erroIA } = await parsearCotacaoComIA(texto, groqKey);
+      const { linhas, comIA, erroIA } = await parsearCotacaoComIA(texto, groqKey, fornecedoresList);
       setLido(linhas);
       setModoUsado(comIA ? 'combo' : 'logica');
       if (erroIA) setIaErro(erroIA);
@@ -230,7 +255,65 @@ export function AbaCotacao({
           />
         </div>
 
-        {/* Configuração da chave Gemini */}
+        {/* Cadastro de fornecedores */}
+        <div className="rounded-2xl border border-carvao-100 bg-carvao-50 p-3 dark:border-carvao-700 dark:bg-carvao-800/50">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-semibold text-carvao-500 dark:text-carvao-400">
+              Fornecedores cadastrados{fornecedoresList.length > 0 ? ` (${fornecedoresList.length})` : ''}
+            </span>
+            <button
+              onClick={() => setMostrarForn((v) => !v)}
+              className="text-xs font-bold text-brand-600 hover:underline dark:text-brand-400"
+            >
+              {mostrarForn ? 'Fechar' : 'Gerenciar'}
+            </button>
+          </div>
+
+          {mostrarForn && (
+            <div className="mt-3 space-y-3">
+              {fornecedoresList.length === 0 ? (
+                <p className="text-xs text-carvao-400 dark:text-carvao-500">
+                  Nenhum fornecedor cadastrado. Adicione os nomes reais dos seus fornecedores para que a leitura use os nomes corretos.
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {fornecedoresList.map((nome) => (
+                    <span
+                      key={nome}
+                      className="flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-semibold text-carvao-700 ring-1 ring-carvao-200 dark:bg-carvao-700 dark:text-carvao-200 dark:ring-carvao-600"
+                    >
+                      {nome}
+                      <button
+                        onClick={() => removerFornecedor(nome)}
+                        className="ml-1 text-carvao-400 hover:text-red-500"
+                        aria-label={`Remover ${nome}`}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="flex gap-2">
+                <input
+                  value={novoForn}
+                  onChange={(e) => setNovoForn(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && adicionarFornecedor()}
+                  placeholder="Nome do fornecedor (ex: Distribuidora ABC)"
+                  className="min-w-0 flex-1 rounded-xl border border-carvao-200 bg-white px-3 py-2 text-xs dark:border-carvao-600 dark:bg-carvao-900"
+                />
+                <button
+                  onClick={adicionarFornecedor}
+                  className="shrink-0 rounded-xl bg-brand-600 px-4 py-2 text-xs font-bold text-white hover:bg-brand-700"
+                >
+                  Adicionar
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Configuração da chave Groq */}
         <div className="rounded-2xl border border-carvao-100 bg-carvao-50 p-3 dark:border-carvao-700 dark:bg-carvao-800/50">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">

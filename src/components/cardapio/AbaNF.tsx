@@ -1,11 +1,13 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Botao, Cartao, Pilula, estiloInput, estiloRotulo } from '@/components/ui';
 import { Icone } from '@/components/Icones';
 import { normalizar } from '@/lib/cardapio/motor';
 import { comprimirImagem, lerNotaFiscalViaIA } from '@/lib/cardapio/nf-leitura';
 import type { ItemNotaExtraido, ResultadoLeituraNF } from '@/lib/cardapio/nf-leitura';
+
+const CHAVE_GROQ = 'cardapio.v1.groq.key';
 
 function formatarReais(v: number): string {
   return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -32,6 +34,7 @@ export function AbaNF({
   onRegistrarFornecedor?: (nome: string, cnpj?: string, itens?: { norm: string; nome: string }[]) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [groqKey, setGroqKey] = useState('');
   const [preview, setPreview] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(false);
   const [resultado, setResultado] = useState<ResultadoLeituraNF | null>(null);
@@ -39,6 +42,10 @@ export function AbaNF({
   const [aplicado, setAplicado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [fileData, setFileData] = useState<{ base64: string; mimeType: string } | null>(null);
+
+  useEffect(() => {
+    try { setGroqKey(localStorage.getItem(CHAVE_GROQ) ?? ''); } catch { /* ok */ }
+  }, []);
 
   const handleArquivo = async (file: File) => {
     setResultado(null);
@@ -63,7 +70,7 @@ export function AbaNF({
     setCarregando(true);
     setErro(null);
     try {
-      const res = await lerNotaFiscalViaIA(fileData.base64, fileData.mimeType);
+      const res = await lerNotaFiscalViaIA(fileData.base64, fileData.mimeType, groqKey);
       setResultado(res);
       if (res.erro) {
         setErro(res.erro);
@@ -102,13 +109,13 @@ export function AbaNF({
     setTimeout(() => setAplicado(false), 3000);
   };
 
-  const temChave = !!process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  const temChave = groqKey.trim().length > 0;
 
   return (
     <div className="space-y-5">
       {!temChave && (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-800/40 dark:bg-amber-950/30 dark:text-amber-300">
-          Defina <code className="font-mono">NEXT_PUBLIC_GEMINI_API_KEY</code> para habilitar leitura de NF por IA.
+          Configure a chave Groq na aba <strong>Cotação</strong> para habilitar leitura de NF por IA.
         </div>
       )}
 
@@ -274,7 +281,7 @@ export function AbaNF({
         <p className="text-xs font-semibold text-carvao-500">Como funciona</p>
         <ul className="mt-2 space-y-1.5 text-xs text-carvao-400">
           <li>1. Fotografe ou carregue uma imagem da nota fiscal.</li>
-          <li>2. O Gemini extrai automaticamente: fornecedor, data, itens, quantidades e preços.</li>
+          <li>2. O Groq (Llama Vision) extrai automaticamente: fornecedor, data, itens, quantidades e preços.</li>
           <li>3. Selecione os itens que deseja importar e clique em &quot;Aplicar preços&quot;.</li>
           <li>4. Os preços unitários alimentam o catálogo e o radar de preços.</li>
         </ul>

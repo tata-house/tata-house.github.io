@@ -1,7 +1,8 @@
 'use client';
 
 /* =====================================================================
-   Leitura de nota fiscal por foto — Gemini Vision.
+   Leitura de nota fiscal por foto — Groq Vision (llama-3.2-90b).
+   A chave é passada pelo chamador (nunca hardcoded nem em env vars).
    ===================================================================== */
 
 export interface ItemNotaExtraido {
@@ -21,6 +22,8 @@ export interface ResultadoLeituraNF {
   erro?: string;
 }
 
+const GROQ_VISION_MODELO = 'llama-3.2-90b-vision-preview';
+
 const PROMPT_NF = `Você é um sistema OCR especializado em notas fiscais brasileiras (NF-e, Cupom Fiscal, NF de produtor rural).
 Extraia os dados estruturados da imagem e retorne APENAS JSON neste formato:
 {
@@ -37,53 +40,57 @@ Regras:
 - Se a unidade for g (gramas), converta para KG dividindo quantidade e preço unitário por 1000.
 - Preserve o nome do produto exatamente como aparece na NF para rastreabilidade.
 - Se não conseguir ler um campo, omita-o (não invente).
-- Retorne apenas o JSON, sem explicações.`;
+- Retorne apenas o JSON, sem explicações nem markdown.`;
 
 export async function lerNotaFiscalViaIA(
   base64: string,
   mimeType: string,
+  groqKey: string,
 ): Promise<ResultadoLeituraNF> {
-  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-  if (!apiKey) {
-    return { itens: [], erro: 'Chave de API não configurada (NEXT_PUBLIC_GEMINI_API_KEY).' };
+  if (!groqKey?.trim()) {
+    return { itens: [], erro: 'Chave Groq não configurada. Configure em Cotação → IA Groq.' };
   }
 
   try {
-    const res = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: PROMPT_NF }] },
-          contents: [
-            {
-              parts: [
-                { inlineData: { mimeType, data: base64 } },
-                { text: 'Extraia os dados desta nota fiscal.' },
-              ],
-            },
-          ],
-          generationConfig: {
-            maxOutputTokens: 3000,
-            responseMimeType: 'application/json',
-            thinkingConfig: { thinkingBudget: 0 },
-          },
-        }),
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${groqKey}`,
       },
-    );
+      body: JSON.stringify({
+        model: GROQ_VISION_MODELO,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'image_url',
+                image_url: { url: `data:${mimeType};base64,${base64}` },
+              },
+              {
+                type: 'text',
+                text: PROMPT_NF,
+              },
+            ],
+          },
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.1,
+        max_tokens: 3000,
+      }),
+    });
 
     if (!res.ok) {
       const corpo = await res.text().catch(() => res.statusText);
-      const ehAutenticacao = res.status === 401 || corpo.includes('UNAUTHENTICATED') || corpo.includes('ACCESS_TOKEN_TYPE_UNSUPPORTED');
-      const mensagem = ehAutenticacao
-        ? `Chave de API inválida (HTTP 401). Acesse aistudio.google.com/apikey, gere uma chave que começa com "AIza" e atualize o secret GEMINI_API_KEY no GitHub.`
-        : `Gemini ${res.status}: ${corpo}`;
+      let mensagem = `Groq ${res.status}: ${corpo}`;
+      if (res.status === 401) mensagem = 'Chave Groq inválida. Verifique em console.groq.com/keys.';
+      if (res.status === 429) mensagem = 'Limite de requisições atingido. Aguarde um momento.';
       return { itens: [], erro: mensagem };
     }
 
     const json = await res.json();
-    const texto: string = json.candidates?.[0]?.content?.parts?.[0]?.text ?? '{}';
+    const texto: string = json.choices?.[0]?.message?.content ?? '{}';
 
     let dados: ResultadoLeituraNF;
     try {

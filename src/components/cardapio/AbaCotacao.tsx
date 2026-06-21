@@ -404,27 +404,64 @@ export function AbaCotacao({
               <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
                 {casados.map((c) => {
                   const fora = ignorados.has(c.item);
+                  const delta = c.deltaHistorico;
+                  const deltaPct = delta != null ? `${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(0)}%` : null;
+                  const corDelta =
+                    delta == null ? ''
+                    : delta > 0.12 ? 'text-red-600 dark:text-red-400'
+                    : delta < -0.12 ? 'text-brand-600 dark:text-brand-400'
+                    : 'text-carvao-400';
+                  const corConfianca =
+                    c.confianca === 'alta' ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                    : c.confianca === 'media' ? 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'
+                    : c.confianca === 'baixa' ? 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400'
+                    : 'bg-carvao-100 text-carvao-400 dark:bg-carvao-700';
+                  const labelConfianca =
+                    c.confianca === 'alta' ? '● alta'
+                    : c.confianca === 'media' ? '● média'
+                    : c.confianca === 'baixa' ? '● baixa'
+                    : '○ sem hist.';
                   return (
-                    <li key={c.item} className={`flex items-center justify-between gap-3 px-5 py-2.5 ${fora ? 'opacity-40' : ''}`}>
-                      <label className="flex min-w-0 cursor-pointer items-center gap-2.5">
-                        <input
-                          type="checkbox"
-                          checked={!fora}
-                          onChange={() => alternar(c.item)}
-                          className="h-4 w-4 shrink-0 accent-brand-600"
-                        />
-                        <span className="min-w-0">
-                          <span className="block truncate text-sm font-semibold">{c.item}</span>
-                          <span className="block text-caption text-carvao-400">
-                            {c.marca ? `${c.marca} · ` : ''}
-                            {c.ofertas > 1 ? `melhor de ${c.ofertas} ofertas` : '1 oferta'}
+                    <li key={c.item} className={`px-5 py-2.5 ${fora ? 'opacity-40' : ''}`}>
+                      <div className="flex items-center justify-between gap-3">
+                        <label className="flex min-w-0 cursor-pointer items-center gap-2.5">
+                          <input
+                            type="checkbox"
+                            checked={!fora}
+                            onChange={() => alternar(c.item)}
+                            className="h-4 w-4 shrink-0 accent-brand-600"
+                          />
+                          <span className="min-w-0">
+                            <span className="block truncate text-sm font-semibold">{c.item}</span>
+                            <span className="block text-caption text-carvao-400">
+                              {c.marca ? `${c.marca} · ` : ''}
+                              {c.ofertas > 1 ? `melhor de ${c.ofertas} ofertas` : '1 oferta'}
+                              {c.origemHistorico ? ` · ${c.origemHistorico}` : ''}
+                            </span>
                           </span>
-                        </span>
-                      </label>
-                      <span className="shrink-0 text-sm font-bold">
-                        {formatarReais(c.preco)}
-                        <span className="font-normal text-carvao-400">/{c.unid}</span>
-                      </span>
+                        </label>
+                        <div className="shrink-0 text-right">
+                          <span className="text-sm font-bold">
+                            {formatarReais(c.preco)}
+                            <span className="font-normal text-carvao-400">/{c.unid}</span>
+                          </span>
+                          <div className="mt-0.5 flex items-center justify-end gap-1.5">
+                            <span className={`rounded-full px-1.5 py-0.5 text-micro font-bold ${corConfianca}`}>
+                              {labelConfianca}
+                            </span>
+                            {c.precoHistorico != null && deltaPct && (
+                              <span className={`text-micro font-semibold ${corDelta}`}>
+                                {deltaPct} hist. {formatarReais(c.precoHistorico)}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      {c.alerta && (
+                        <p className="mt-1 rounded-lg bg-amber-50 px-2 py-1 text-micro font-semibold text-amber-700 dark:bg-amber-950/30 dark:text-amber-400">
+                          ⚠ {c.alerta}
+                        </p>
+                      )}
                     </li>
                   );
                 })}

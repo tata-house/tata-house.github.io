@@ -188,20 +188,22 @@ export function Kpi({
     azul: 'from-[#4d92b0] to-info',
   }[tom];
   return (
-    <div className="group relative overflow-hidden rounded-3xl border border-carvao-100 bg-white p-4 shadow-suave transition-all duration-200 hover:-translate-y-0.5 hover:shadow-flutuante motion-reduce:transform-none motion-reduce:transition-none dark:border-carvao-700/70 dark:bg-carvao-850">
+    <div className="group relative flex flex-col items-center overflow-hidden rounded-3xl border border-carvao-100 bg-white p-4 text-center shadow-suave transition-all duration-200 hover:-translate-y-0.5 hover:shadow-flutuante motion-reduce:transform-none motion-reduce:transition-none dark:border-carvao-700/70 dark:bg-carvao-850">
       <span className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r transition-all duration-200 group-hover:h-1.5 ${barra}`} />
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-rotulo font-semibold text-carvao-500 dark:text-carvao-300">{rotulo}</p>
-        {icone && <span className="text-base leading-none opacity-70">{icone}</span>}
-      </div>
-      <p className="mt-1 font-display text-heroi font-bold leading-none text-carvao-900 tabular-nums dark:text-areia-50">{valor}</p>
+      <p className="flex items-center gap-1 text-rotulo font-semibold text-carvao-500 dark:text-carvao-300">
+        {icone && <span className="leading-none opacity-70">{icone}</span>}
+        {rotulo}
+      </p>
+      <p className="mt-1.5 w-full truncate font-display text-[22px] font-bold leading-none text-carvao-900 tabular-nums dark:text-areia-50 sm:text-[26px]">
+        {valor}
+      </p>
       {detalhe && <p className="mt-1.5 text-caption font-semibold text-carvao-400">{detalhe}</p>}
     </div>
   );
 }
 
 export function EstadoVazio({
-  icone = '✨',
+  icone = '',
   titulo,
   texto,
   acao,

@@ -137,7 +137,7 @@ export function ConciliacaoSemana({
   return (
     <div className="space-y-4 rounded-2xl bg-carvao-50 p-4 ring-1 ring-carvao-200 dark:bg-carvao-900/60 dark:ring-carvao-700/60">
       <p className="text-caption font-extrabold uppercase tracking-[0.2em] text-carvao-400">
-        🔍 Conciliação automática
+        Conciliação automática
       </p>
 
       {/* Custo por refeição fora da faixa plausível */}
@@ -148,7 +148,7 @@ export function ConciliacaoSemana({
               ? 'bg-blue-500/8 ring-blue-400/30'
               : 'bg-perigo/8 ring-perigo/25'
           }`}>
-            <span className="mt-0.5 text-lg">{alertaCustoIrreal.tipo === 'baixo' ? '⚠️' : '🔴'}</span>
+            <span className="mt-0.5 text-lg">{alertaCustoIrreal.tipo === 'baixo' ? '' : ''}</span>
             <div className="min-w-0 flex-1">
               <p className={`text-nota font-semibold ${alertaCustoIrreal.tipo === 'baixo' ? 'text-blue-700 dark:text-blue-300' : 'text-perigo'}`}>
                 Custo por refeição {alertaCustoIrreal.tipo === 'baixo' ? 'muito baixo' : 'muito alto'}
@@ -168,7 +168,7 @@ export function ConciliacaoSemana({
       {alertasPreco.length > 0 && (
         <section className="space-y-2">
           <h4 className="flex items-center gap-2 text-micro font-extrabold uppercase tracking-[0.15em] text-ouro-600 dark:text-ouro-300">
-            ⬆️ Preço acima do histórico
+            Preço acima do histórico
             <span className="rounded-full bg-ouro-400/20 px-2 py-0.5 text-micro font-black">{alertasPreco.length}</span>
           </h4>
           {alertasPreco.map((a, i) => (
@@ -191,7 +191,7 @@ export function ConciliacaoSemana({
       {alertasQtd.length > 0 && (
         <section className="space-y-2">
           <h4 className="flex items-center gap-2 text-micro font-extrabold uppercase tracking-[0.15em] text-perigo">
-            📦 Comprado além do necessário
+            Comprado além do necessário
             <span className="rounded-full bg-perigo/15 px-2 py-0.5 text-micro font-black">{alertasQtd.length}</span>
           </h4>
           {alertasQtd.map((a, i) => (

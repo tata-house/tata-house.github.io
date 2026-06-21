@@ -131,7 +131,6 @@ export function CardapioOrientadoDados({
   if (custos.length === 0 && alertasAntecipados.length === 0) {
     return (
       <EstadoVazio
-        icone="🎯"
         titulo="Dados insuficientes para orientação"
         texto="Cadastre o cardápio, preços e pelo menos algumas avaliações para gerar recomendações orientadas por dados."
       />
@@ -142,7 +141,7 @@ export function CardapioOrientadoDados({
     <div className="space-y-5">
       {/* Alertas antecipados de inflação */}
       {alertasAntecipados.length > 0 && (
-        <Secao titulo="📈 Inflação projetada — próximas 4 semanas">
+        <Secao titulo="Inflação projetada — próximas 4 semanas">
           <div className="space-y-2">
             {alertasAntecipados.map((p) => (
               <Cartao key={p.norm} className="!py-3">
@@ -168,10 +167,10 @@ export function CardapioOrientadoDados({
 
       {/* Sugestões de substituição */}
       {sugestoes.length > 0 && (
-        <Secao titulo="🔄 Substituições sugeridas por dados">
+        <Secao titulo="Substituições sugeridas por dados">
           {totalEconomia > 0 && (
             <div className="mb-3 rounded-2xl bg-brand-50 px-4 py-3 text-sm text-brand-700 dark:bg-brand-900/20 dark:text-brand-300">
-              💡 Economia estimada aplicando todas as sugestões: <strong>{fmt(totalEconomia)}/dia</strong>
+              Economia estimada aplicando todas as sugestões: <strong>{fmt(totalEconomia)}/dia</strong>
             </div>
           )}
           <div className="space-y-3">
@@ -208,7 +207,7 @@ export function CardapioOrientadoDados({
       {/* Ranking custo-benefício */}
       {comScore.length > 0 && (
         <>
-          <Secao titulo="🏆 Melhor custo-benefício da semana">
+          <Secao titulo="Melhor custo-benefício da semana">
             <Cartao className="!p-0">
               <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
                 {top5.map((s, i) => (
@@ -231,7 +230,7 @@ export function CardapioOrientadoDados({
           </Secao>
 
           {bottom5.length > 0 && (
-            <Secao titulo="⚠️ Menor custo-benefício — candidatos a revisão">
+            <Secao titulo="Menor custo-benefício — candidatos a revisão">
               <Cartao className="!p-0">
                 <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
                   {bottom5.map((s) => (
@@ -266,7 +265,7 @@ export function CardapioOrientadoDados({
 
       {/* Ranking histórico — pratos mais servidos em toda a operação */}
       {rankingHistorico.length > 0 && (
-        <Secao titulo={`📊 Mais servidos no histórico — ${TOTAL_DIAS_HISTORICO} dias de operação`}>
+        <Secao titulo={`Mais servidos no histórico — ${TOTAL_DIAS_HISTORICO} dias de operação`}>
           <Cartao className="!p-0">
             <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
               {rankingHistorico.map((p, i) => (

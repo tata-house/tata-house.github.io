@@ -83,7 +83,7 @@ export function responder(pergunta: string, ctx: ContextoAssistente): RespostaAs
   // itens que subiram de preço
   if (/subi|aument|preço suba|caro fic|radar|variaç/.test(q)) {
     const radar = analisarRadar(ctx.precos, ctx.historico, ctx.fornecedores).filter((r) => r.alerta === 'alta');
-    if (radar.length === 0) return { texto: 'Nenhum item teve aumento anormal de preço no histórico recente. 👍' };
+    if (radar.length === 0) return { texto: 'Nenhum item teve aumento anormal de preço no histórico recente. ' };
     return { texto: 'Itens com alta anormal de preço:', itens: radar.slice(0, 6).map(fraseAlerta) };
   }
 
@@ -110,7 +110,7 @@ export function responder(pergunta: string, ctx: ContextoAssistente): RespostaAs
   // estoque baixo
   if (/estoque|acaba|faltando|repor/.test(q)) {
     const al = alertasEstoque(ctx.estoque);
-    if (al.length === 0) return { texto: 'Nenhum item está abaixo do estoque mínimo no momento. 👍' };
+    if (al.length === 0) return { texto: 'Nenhum item está abaixo do estoque mínimo no momento. ' };
     return { texto: 'Itens no/ abaixo do mínimo:', itens: al.map((a) => `${a.item} — ${formatarQtd(a.qtd)} ${a.unid} (mín. ${formatarQtd(a.minimo)})`) };
   }
 
@@ -141,19 +141,19 @@ export function responder(pergunta: string, ctx: ContextoAssistente): RespostaAs
  */
 export function insightProativo(ctx: ContextoAssistente): RespostaAssistente | null {
   const altas = analisarRadar(ctx.precos, ctx.historico, ctx.fornecedores).filter((r) => r.alerta === 'alta');
-  if (altas.length > 0) return { texto: `💡 ${fraseAlerta(altas[0])}` };
+  if (altas.length > 0) return { texto: `${fraseAlerta(altas[0])}` };
 
   const baixos = alertasEstoque(ctx.estoque);
   if (baixos.length > 0)
     return {
-      texto: `📦 ${baixos.length} ${baixos.length === 1 ? 'item está' : 'itens estão'} no limite do estoque:`,
+      texto: `${baixos.length} ${baixos.length === 1 ? 'item está' : 'itens estão'} no limite do estoque:`,
       itens: baixos.slice(0, 4).map((a) => `${a.item} — ${formatarQtd(a.qtd)} ${a.unid}`),
     };
 
   const ruins = rankingAceitacao(ctx.aceitacao).filter((r) => r.media < 2.5);
   if (ruins.length > 0)
     return {
-      texto: `👎 ${ruins[0].prato} teve aceitação baixa (nota ${ruins[0].media.toFixed(1)}). Vale considerar tirar do cardápio.`,
+      texto: `${ruins[0].prato} teve aceitação baixa (nota ${ruins[0].media.toFixed(1)}). Vale considerar tirar do cardápio.`,
     };
 
   return null;

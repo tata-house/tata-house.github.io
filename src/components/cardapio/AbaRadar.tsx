@@ -32,7 +32,6 @@ export function AbaRadar({
   if (radar.length === 0) {
     return (
       <EstadoVazio
-        icone="📡"
         titulo="O radar precisa de histórico"
         texto="Cada vez que você lança ou altera um preço (na Cotação ou em Preços), o radar passa a comparar e avisar sobre altas e quedas anormais."
       />
@@ -42,14 +41,14 @@ export function AbaRadar({
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-3 gap-3">
-        <Kpi rotulo="Itens monitorados" valor={radar.length} tom="azul" icone="📡" />
-        <Kpi rotulo="Alertas ativos" valor={alertas.length} tom={alertas.length ? 'vermelho' : 'verde'} icone="🚨" />
-        <Kpi rotulo="Fornecedores" valor={fornecedoresUsados.length} tom="neutro" icone="🏬" />
+        <Kpi rotulo="Itens monitorados" valor={radar.length} tom="azul" />
+        <Kpi rotulo="Alertas ativos" valor={alertas.length} tom={alertas.length ? 'vermelho' : 'verde'} />
+        <Kpi rotulo="Fornecedores" valor={fornecedoresUsados.length} tom="neutro" />
       </div>
 
       {/* Alertas com frase pronta */}
       {alertas.length > 0 && (
-        <Secao titulo="🚨 Alertas de preço">
+        <Secao titulo="Alertas de preço">
           <div className="space-y-2">
             {alertas.slice(0, 8).map((r) => (
               <Cartao key={r.norm} className="flex items-start gap-3 !py-3">
@@ -62,7 +61,7 @@ export function AbaRadar({
       )}
 
       {/* Tendência por item */}
-      <Secao titulo="📈 Tendência de preços">
+      <Secao titulo="Tendência de preços">
         <Cartao className="!p-0">
           <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
             {comHistorico.slice(0, 40).map((r) => (
@@ -94,7 +93,7 @@ export function AbaRadar({
 
       {/* Fornecedores mais usados */}
       {fornecedoresUsados.length > 0 && (
-        <Secao titulo="🏬 Fornecedores mais usados">
+        <Secao titulo="Fornecedores mais usados">
           <Cartao className="flex flex-wrap gap-2">
             {fornecedoresUsados.map(([f, n]) => (
               <Pilula key={f} tom="verde">

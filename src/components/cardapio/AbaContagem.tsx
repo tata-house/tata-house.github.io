@@ -111,7 +111,7 @@ export function AbaContagem({
       {/* Formulário de registro */}
       <Cartao>
         <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-carvao-400">
-          🍽️ Registrar refeições
+          Registrar refeições
         </p>
 
         <div className="mb-4">
@@ -194,15 +194,15 @@ export function AbaContagem({
       {contagens.length > 0 && (
         <>
           <div className="grid grid-cols-3 gap-3">
-            <Kpi rotulo="Almoços (7d)" valor={totalSemana.almoco} tom="neutro" icone="☀️" />
-            <Kpi rotulo="Jantares (7d)" valor={totalSemana.jantar} tom="neutro" icone="🌙" />
-            <Kpi rotulo="Marmitas (7d)" valor={totalSemana.marmitas} tom="neutro" icone="📦" />
+            <Kpi rotulo="Almoços (7d)" valor={totalSemana.almoco} tom="neutro" />
+            <Kpi rotulo="Jantares (7d)" valor={totalSemana.jantar} tom="neutro" />
+            <Kpi rotulo="Marmitas (7d)" valor={totalSemana.marmitas} tom="neutro" />
           </div>
 
           {/* Médias por dia da semana */}
           <Cartao>
             <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-carvao-400">
-              📊 Médias por dia da semana
+              Médias por dia da semana
             </p>
             <div className="space-y-3">
               {[1, 2, 3, 4, 5].map((diaSem) => {
@@ -233,7 +233,7 @@ export function AbaContagem({
           {/* Histórico recente */}
           <Cartao>
             <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-carvao-400">
-              📋 Histórico recente
+              Histórico recente
             </p>
             <div className="space-y-1.5">
               {ultimas30.slice(0, 14).map((c) => (
@@ -245,7 +245,7 @@ export function AbaContagem({
                   <span className="w-10 shrink-0 text-xs font-bold text-carvao-400">{dataParaDiaSemana(c.data)}</span>
                   <span className="w-10 text-xs text-carvao-500 tabular-nums">{dataParaDisplay(c.data)}</span>
                   <span className="flex-1 text-xs text-carvao-600 dark:text-carvao-300 tabular-nums">
-                    ☀️ {c.almoco} · 🌙 {c.jantar} · 📦 {c.marmitas}
+                    {c.almoco} · {c.jantar} · {c.marmitas}
                   </span>
                   {c.obs && <span className="truncate text-xs text-carvao-400">{c.obs}</span>}
                 </button>
@@ -257,7 +257,7 @@ export function AbaContagem({
 
       {contagens.length === 0 && (
         <div className="rounded-2xl bg-carvao-50 py-10 text-center dark:bg-carvao-800/50">
-          <p className="text-4xl">📊</p>
+          
           <p className="mt-2 text-sm font-semibold text-carvao-500">Sem registros ainda</p>
           <p className="mt-1 text-xs text-carvao-400">
             Registre a contagem de refeições diariamente para gerar métricas e padrões

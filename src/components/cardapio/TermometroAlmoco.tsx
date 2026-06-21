@@ -73,7 +73,7 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
             alerta ? 'text-perigo' : 'text-brand-600 dark:text-brand-300'
           }`}
         >
-          🌡️ Termômetro do almoço
+          Termômetro do almoço
         </p>
         <button
           type="button"
@@ -88,7 +88,7 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
       {/* Alerta de tendência negativa */}
       {alerta && (
         <div className="flex items-start gap-2 rounded-xl bg-perigo/10 px-3 py-2.5 ring-1 ring-perigo/25">
-          <span aria-hidden className="mt-0.5 text-base">⚠️</span>
+          <span aria-hidden className="mt-0.5 text-base"></span>
           <p className="text-sm font-bold text-perigo">
             {Math.round(taxaRuimRecente * 100)}% de "Não gostei" nos últimos 30 min ({janela.length} votos) — verifique o prato antes do próximo serviço
           </p>
@@ -99,15 +99,15 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
       <div className="grid grid-cols-3 gap-2 text-center">
         <div className="rounded-xl bg-brand-500/10 py-2.5">
           <p className="font-display text-xl font-black text-brand-600 dark:text-brand-300">{bom}</p>
-          <p className="text-caption font-bold text-brand-600 dark:text-brand-400">😋 Gostei</p>
+          <p className="text-caption font-bold text-brand-600 dark:text-brand-400">Gostei</p>
         </div>
         <div className="rounded-xl bg-ouro-400/10 py-2.5">
           <p className="font-display text-xl font-black text-ouro-600 dark:text-ouro-300">{ok}</p>
-          <p className="text-caption font-bold text-ouro-600 dark:text-ouro-400">😐 Ok</p>
+          <p className="text-caption font-bold text-ouro-600 dark:text-ouro-400">Ok</p>
         </div>
         <div className="rounded-xl bg-perigo/10 py-2.5">
           <p className="font-display text-xl font-black text-perigo">{ruim}</p>
-          <p className="text-caption font-bold text-perigo">👎 Não gostei</p>
+          <p className="text-caption font-bold text-perigo">Não gostei</p>
         </div>
       </div>
 
@@ -125,11 +125,11 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
       {janela.length > 0 && (
         <p className="text-caption text-carvao-400">
           Últimos 30 min:{' '}
-          <span className="font-semibold text-brand-600 dark:text-brand-300">{janela.filter((v) => v.voto === 'bom').length} 😋</span>
+          <span className="font-semibold text-brand-600 dark:text-brand-300">{janela.filter((v) => v.voto === 'bom').length} </span>
           {' · '}
-          <span className="font-semibold text-ouro-600">{janela.filter((v) => v.voto === 'ok').length} 😐</span>
+          <span className="font-semibold text-ouro-600">{janela.filter((v) => v.voto === 'ok').length} </span>
           {' · '}
-          <span className="font-semibold text-perigo">{ruimRecente} 👎</span>
+          <span className="font-semibold text-perigo">{ruimRecente} </span>
           {' '}({janela.length} votos)
         </p>
       )}

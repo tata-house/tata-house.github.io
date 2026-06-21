@@ -140,7 +140,7 @@ export function AbaCotacao({
         {/* Upload de arquivo */}
         <div className="flex items-center gap-3">
           <label className="cursor-pointer rounded-full border border-dashed border-carvao-300 px-4 py-2 text-rotulo font-bold text-carvao-500 transition hover:border-brand-400 hover:text-brand-600 dark:border-carvao-600 dark:text-carvao-400">
-            📂 Importar arquivo (CSV / TXT)
+            Importar arquivo (CSV / TXT)
             <input
               type="file"
               accept=".csv,.txt,.tsv"
@@ -170,7 +170,7 @@ export function AbaCotacao({
           />
         </div>
         <Botao variante="primario" className="w-full" disabled={!texto.trim()} onClick={ler}>
-          🔍 Ler cotação
+          Ler cotação
         </Botao>
       </Cartao>
 
@@ -228,11 +228,11 @@ export function AbaCotacao({
                   disabled={selecionados.length === 0}
                   onClick={aplicar}
                 >
-                  💰 Aplicar {selecionados.length} preços à tabela
+                  Aplicar {selecionados.length} preços à tabela
                 </Botao>
                 {aplicado > 0 && (
                   <p className="text-center text-xs font-semibold text-brand-600">
-                    ✓ {aplicado} preços aplicados! Agora vá em 🍽️ Cardápio e toque em “✨ Sugerir” — a sugestão
+                    ✓ {aplicado} preços aplicados! Agora vá em Cardápio e toque em “Sugerir” — a sugestão
                     vai priorizar o melhor custo-benefício desta cotação.
                   </p>
                 )}
@@ -250,7 +250,7 @@ export function AbaCotacao({
                   onClick={cadastrarTodos}
                   className="rounded-full bg-brand-700 px-4 py-2 text-rotulo font-extrabold uppercase tracking-wide text-white shadow-suave hover:bg-brand-800"
                 >
-                  ➕ Cadastrar todos de uma vez
+                  Cadastrar todos de uma vez
                 </button>
               </div>
               <p className="text-xs text-carvao-400">
@@ -287,7 +287,7 @@ export function AbaCotacao({
                             onClick={() => cadastrar(idx, s)}
                             className="rounded-full bg-brand-700 px-3 py-1.5 text-caption font-extrabold uppercase tracking-wide text-white hover:bg-brand-800"
                           >
-                            ➕ Cadastrar
+                            Cadastrar
                           </button>
                         </span>
                       )}

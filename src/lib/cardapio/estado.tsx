@@ -1047,7 +1047,7 @@ export function lerFornecedorPerfis(): Record<string, PerfilFornecedor> {
 }
 
 /* =====================================================================
-   Chef IA — feedback das sugestões (👍/👎) + histórico de recomendações
+   Chef IA — feedback das sugestões (/) + histórico de recomendações
    ===================================================================== */
 
 export function useChefFeedback() {

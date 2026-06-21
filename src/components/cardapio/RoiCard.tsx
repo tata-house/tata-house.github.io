@@ -31,16 +31,16 @@ export function RoiCard({
   const semBase = roi.semanas === 0 || roi.total <= 0;
 
   const fontes = [
-    { r: 'Compra abaixo da média', v: roi.economiaFornecedor, i: '🏷️' },
-    { r: 'Menos desperdício', v: roi.economiaDesperdicio, i: '♻️' },
-    { r: 'Cardápio otimizado', v: roi.economiaCardapio, i: '🧠' },
+    { r: 'Compra abaixo da média', v: roi.economiaFornecedor, i: '' },
+    { r: 'Menos desperdício', v: roi.economiaDesperdicio, i: '' },
+    { r: 'Cardápio otimizado', v: roi.economiaCardapio, i: '' },
   ];
 
   return (
     <Cartao className="overflow-hidden !p-0">
       <div className="bg-gradient-to-r from-brand-800 via-brand-700 to-brand-600 px-5 py-4 text-white">
         <p className="text-caption font-extrabold uppercase tracking-[0.18em] text-brand-200">
-          💎 Valor gerado no mês
+          Valor gerado no mês
         </p>
         <p className="font-display text-3xl font-bold">
           <Contador valor={roi.total} formato={formatarReais} />

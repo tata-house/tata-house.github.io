@@ -150,7 +150,7 @@ export function AbaInventario({
           <button onClick={aoFechar} className="text-sm font-bold uppercase tracking-wide text-carvao-500 dark:text-areia-200">
             ← Voltar
           </button>
-          <h2 className="font-display text-base font-bold">📋 Inventário mensal</h2>
+          <h2 className="font-display text-base font-bold">Inventário mensal</h2>
           <input
             type="month"
             value={mes}
@@ -189,7 +189,7 @@ export function AbaInventario({
 
         {podeEditar && (
           <Cartao className="space-y-2">
-            <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">➕ Cadastrar produto</p>
+            <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">Cadastrar produto</p>
             <div className="flex flex-wrap gap-2">
               <input
                 className={`${estiloInput} min-w-0 flex-1`}
@@ -233,7 +233,6 @@ export function AbaInventario({
 
         {Object.keys(itens).length === 0 ? (
           <EstadoVazio
-            icone="📦"
             titulo="Sem itens para contar"
             texto="Cadastre um produto acima, ou registre entradas no estoque, para que apareçam aqui no inventário."
           />
@@ -301,10 +300,10 @@ export function AbaInventario({
             {podeEditar && (
               <div className="flex flex-wrap gap-2">
                 <Botao variante="secundario" onClick={salvarRascunho} className="flex-1">
-                  💾 Salvar rascunho
+                  Salvar rascunho
                 </Botao>
                 <Botao variante="sucesso" onClick={finalizar} className="flex-1">
-                  ✅ Finalizar inventário
+                  Finalizar inventário
                 </Botao>
               </div>
             )}

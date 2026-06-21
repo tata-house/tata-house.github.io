@@ -224,7 +224,7 @@ function equilibrarProteinas(d: DossieIA): PlanoObjetivo {
 
   if (acoes.length === 0) {
     acoes.push({
-      acao: 'A distribuição de proteínas da semana está equilibrada. 👍',
+      acao: 'A distribuição de proteínas da semana está equilibrada. ',
       base: 'Nenhuma proteína domina o cardápio.',
       prioridade: 1,
     });

@@ -29,10 +29,10 @@ interface Props {
 }
 
 const OBJETIVOS: { tipo: TipoObjetivo; icone: string }[] = [
-  { tipo: 'reduzir_custo', icone: '💰' },
-  { tipo: 'reduzir_desperdicio', icone: '♻️' },
-  { tipo: 'melhorar_aceitacao', icone: '⭐' },
-  { tipo: 'equilibrar_proteinas', icone: '🥩' },
+  { tipo: 'reduzir_custo', icone: '' },
+  { tipo: 'reduzir_desperdicio', icone: '' },
+  { tipo: 'melhorar_aceitacao', icone: '' },
+  { tipo: 'equilibrar_proteinas', icone: '' },
 ];
 
 const fmtReais = (v: number) => `R$ ${v.toFixed(0)}`;
@@ -106,7 +106,7 @@ export function InteligenciaCard(props: Props) {
   return (
     <section className="rounded-3xl bg-white p-5 shadow-suave ring-1 ring-carvao-100 dark:bg-carvao-850 dark:ring-carvao-700">
       <div className="mb-3 flex items-center gap-2">
-        <span className="text-xl">🧠</span>
+        
         <h2 className="font-display text-base font-bold text-carvao-800 dark:text-areia-100">Inteligência da casa</h2>
       </div>
 
@@ -134,7 +134,7 @@ export function InteligenciaCard(props: Props) {
       {comResultado.length > 0 && (
         <div className="mb-4 rounded-2xl bg-areia-50 p-3 ring-1 ring-carvao-100 dark:bg-carvao-800 dark:ring-carvao-700">
           <p className="mb-2 text-micro font-bold uppercase tracking-wide text-carvao-500 dark:text-areia-400">
-            📊 Resultados das ações comprometidas
+            Resultados das ações comprometidas
           </p>
           <div className="space-y-1.5">
             {comResultado.map((a) => (
@@ -202,14 +202,14 @@ export function InteligenciaCard(props: Props) {
                     </p>
                   </div>
                   {jaComprometido ? (
-                    <span className="mt-0.5 shrink-0 text-sm" title="Comprometido esta semana">📌</span>
+                    <span className="mt-0.5 shrink-0 text-sm" title="Comprometido esta semana"></span>
                   ) : (
                     <button
                       onClick={() => handleComprometer(a)}
                       title="Vou fazer isso esta semana"
                       className="mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-caption font-bold text-brand-600 ring-1 ring-brand-400/40 hover:bg-brand-50 dark:text-brand-400 dark:ring-brand-500/30 dark:hover:bg-brand-900/20 transition"
                     >
-                      📌 Vou fazer
+                      Vou fazer
                     </button>
                   )}
                 </li>
@@ -228,7 +228,7 @@ export function InteligenciaCard(props: Props) {
       {ativasSemana.length > 0 && (
         <div className="mt-4 rounded-2xl bg-brand-50 p-3 ring-1 ring-brand-500/20 dark:bg-brand-900/20 dark:ring-brand-600/30">
           <p className="mb-2 text-micro font-bold uppercase tracking-wide text-brand-600 dark:text-brand-400">
-            📌 Comprometidos esta semana
+            Comprometidos esta semana
           </p>
           <ul className="space-y-1">
             {ativasSemana.map((a) => (

@@ -29,7 +29,6 @@ export function AbaAuditoria({ papel }: { papel: Papel }) {
   if (!podeVer) {
     return (
       <EstadoVazio
-        icone="🔒"
         titulo="Acesso restrito"
         texto="A trilha de auditoria é visível apenas para Gerência. Saia e entre com o perfil de Gerência para visualizar."
       />
@@ -39,12 +38,12 @@ export function AbaAuditoria({ papel }: { papel: Papel }) {
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-3">
-        <Kpi rotulo="Ações registradas" valor={registros.length} tom="azul" icone="🛡️" />
-        <Kpi rotulo="Última ação" valor={registros[0] ? new Date(registros[0].em).toLocaleDateString('pt-BR') : '—'} tom="neutro" icone="🕒" />
+        <Kpi rotulo="Ações registradas" valor={registros.length} tom="azul" />
+        <Kpi rotulo="Última ação" valor={registros[0] ? new Date(registros[0].em).toLocaleDateString('pt-BR') : '—'} tom="neutro" />
       </div>
 
       {/* Matriz de permissões (M10) */}
-      <Secao titulo="🔑 Acessos por papel">
+      <Secao titulo="Acessos por papel">
         <Cartao className="overflow-x-auto !p-0">
           <table className="w-full min-w-[640px] border-collapse text-sm">
             <thead>
@@ -83,7 +82,7 @@ export function AbaAuditoria({ papel }: { papel: Papel }) {
 
       {/* Trilha de auditoria */}
       <Secao
-        titulo="🛡️ Trilha de auditoria"
+        titulo="Trilha de auditoria"
         acao={
           registros.length > 0 && (
             <Botao variante="secundario" className="!min-h-9 !px-3 !py-1.5 !text-caption" onClick={limpar}>
@@ -93,7 +92,7 @@ export function AbaAuditoria({ papel }: { papel: Papel }) {
         }
       >
         {registros.length === 0 ? (
-          <EstadoVazio icone="🛡️" titulo="Nenhuma ação registrada ainda" texto="Alterações de preço, fornecedor, estoque, etapas do fluxo e desperdício aparecem aqui automaticamente." />
+          <EstadoVazio titulo="Nenhuma ação registrada ainda" texto="Alterações de preço, fornecedor, estoque, etapas do fluxo e desperdício aparecem aqui automaticamente." />
         ) : (
           <Cartao className="!p-0">
             <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">

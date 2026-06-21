@@ -113,7 +113,7 @@ export function rotuloMetrica(metrica: MetricaRastreada): string {
 }
 
 export function rotuloResultado(resultado: ResultadoAcao, metrica: MetricaRastreada): string {
-  const emoji = resultado.avaliacao === 'melhorou' ? '✅' : resultado.avaliacao === 'piorou' ? '⚠️' : '➡️';
+  const emoji = resultado.avaliacao === 'melhorou' ? '' : resultado.avaliacao === 'piorou' ? '' : '';
   const delta = Math.abs(resultado.delta);
   const fmt = metrica === 'custo_pp'
     ? `R$ ${delta.toFixed(2)}`

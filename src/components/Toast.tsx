@@ -56,7 +56,7 @@ export function ToastHost() {
           }`}
         >
           <span className="flex items-center gap-2">
-            <span>{m.tom === 'erro' ? '⚠️' : m.tom === 'info' ? 'ℹ️' : '✅'}</span>
+            <span>{m.tom === 'erro' ? '' : m.tom === 'info' ? 'ℹ' : ''}</span>
             {m.texto}
           </span>
           {m.acao ? (

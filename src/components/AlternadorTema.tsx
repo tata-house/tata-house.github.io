@@ -25,7 +25,7 @@ export function AlternadorTema() {
       aria-label="Alternar modo escuro"
       className="flex h-9 w-9 items-center justify-center rounded-full bg-white/[0.05] text-sm ring-1 ring-white/[0.07] transition hover:bg-white/10"
     >
-      {escuro ? '☀️' : '🌙'}
+      {escuro ? '' : ''}
     </button>
   );
 }

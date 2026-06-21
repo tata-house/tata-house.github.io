@@ -1,28 +1,29 @@
 'use client';
 
 import { useMemo } from 'react';
+import { Icone } from '@/components/Icones';
 import { normalizar } from '@/lib/cardapio/motor';
 import type { DiaCardapio, Estoque, Funcionario } from '@/lib/cardapio/tipos';
 
 /* Termos que indicam proteína animal em nomes de prato */
 const MAPA_PROTEINA: { norm: string; rotulo: string; emoji: string }[] = [
-  { norm: 'frango',     rotulo: 'Frango',   emoji: '🍗' },
-  { norm: 'sobrecoxa',  rotulo: 'Frango',   emoji: '🍗' },
-  { norm: 'peito',      rotulo: 'Frango',   emoji: '🍗' },
-  { norm: 'file',       rotulo: 'Carne',    emoji: '🥩' },
-  { norm: 'bife',       rotulo: 'Carne',    emoji: '🥩' },
-  { norm: 'contra',     rotulo: 'Carne',    emoji: '🥩' },
-  { norm: 'alcatra',    rotulo: 'Carne',    emoji: '🥩' },
-  { norm: 'picanha',    rotulo: 'Carne',    emoji: '🥩' },
-  { norm: 'costela',    rotulo: 'Carne',    emoji: '🥩' },
-  { norm: 'carne',      rotulo: 'Carne',    emoji: '🥩' },
-  { norm: 'linguica',   rotulo: 'Linguiça', emoji: '🌭' },
-  { norm: 'costelinha', rotulo: 'Suíno',    emoji: '🐷' },
-  { norm: 'lombo',      rotulo: 'Suíno',    emoji: '🐷' },
-  { norm: 'tilapia',    rotulo: 'Peixe',    emoji: '🐟' },
-  { norm: 'salmao',     rotulo: 'Peixe',    emoji: '🐟' },
-  { norm: 'peixe',      rotulo: 'Peixe',    emoji: '🐟' },
-  { norm: 'ovo',        rotulo: 'Ovo',      emoji: '🥚' },
+  { norm: 'frango',     rotulo: 'Frango',   emoji: '' },
+  { norm: 'sobrecoxa',  rotulo: 'Frango',   emoji: '' },
+  { norm: 'peito',      rotulo: 'Frango',   emoji: '' },
+  { norm: 'file',       rotulo: 'Carne',    emoji: '' },
+  { norm: 'bife',       rotulo: 'Carne',    emoji: '' },
+  { norm: 'contra',     rotulo: 'Carne',    emoji: '' },
+  { norm: 'alcatra',    rotulo: 'Carne',    emoji: '' },
+  { norm: 'picanha',    rotulo: 'Carne',    emoji: '' },
+  { norm: 'costela',    rotulo: 'Carne',    emoji: '' },
+  { norm: 'carne',      rotulo: 'Carne',    emoji: '' },
+  { norm: 'linguica',   rotulo: 'Linguiça', emoji: '' },
+  { norm: 'costelinha', rotulo: 'Suíno',    emoji: '' },
+  { norm: 'lombo',      rotulo: 'Suíno',    emoji: '' },
+  { norm: 'tilapia',    rotulo: 'Peixe',    emoji: '' },
+  { norm: 'salmao',     rotulo: 'Peixe',    emoji: '' },
+  { norm: 'peixe',      rotulo: 'Peixe',    emoji: '' },
+  { norm: 'ovo',        rotulo: 'Ovo',      emoji: '' },
 ];
 
 function detectarProteina(prato: string): { norm: string; rotulo: string; emoji: string } | null {
@@ -106,7 +107,7 @@ export function AlertaProteinaDia({
           key={i}
           className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-700/50 dark:bg-amber-950/30"
         >
-          <span className="text-xl">{a.proteina.emoji}</span>
+          <Icone nome="alerta" tam={20} className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-400" />
           <div className="min-w-0">
             <p className="text-sm font-bold text-amber-800 dark:text-amber-300">
               Estoque baixo de {a.proteina.rotulo} — {DIAS_PT[a.diaIdx]}
@@ -127,7 +128,7 @@ export function AlertaProteinaDia({
           key={i}
           className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 dark:border-red-700/50 dark:bg-red-950/30"
         >
-          <span className="text-xl">⚠️</span>
+          <Icone nome="alerta" tam={20} className="mt-0.5 shrink-0 text-red-600 dark:text-red-400" />
           <div className="min-w-0">
             <p className="text-sm font-bold text-red-700 dark:text-red-400">
               Restrição alimentar — {DIAS_PT[c.diaIdx]}

@@ -133,7 +133,7 @@ export function ListaCompras({
       <div className="flex items-center gap-2 print:hidden">
         <input
           className={`${estiloInput} flex-1`}
-          placeholder="🔎 Buscar item…"
+          placeholder="Buscar item…"
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
         />
@@ -153,7 +153,7 @@ export function ListaCompras({
 
       {editando && (
         <p className="rounded-xl bg-ouro-300/15 px-3 py-2 text-rotulo font-semibold text-ouro-600 ring-1 ring-ouro-400/30">
-          ✏️ Modo edição — ajuste quantidades, troque unidades, remova ou adicione itens. Tudo fica registrado no histórico.
+          Modo edição — ajuste quantidades, troque unidades, remova ou adicione itens. Tudo fica registrado no histórico.
         </p>
       )}
 
@@ -262,7 +262,7 @@ export function ListaCompras({
                           />
                         )}
                         {obs && obsAberta !== `${di}:${l.chave}` && (
-                          <p className="mt-1 text-caption italic text-carvao-400">📝 {obs}</p>
+                          <p className="mt-1 text-caption italic text-carvao-400">{obs}</p>
                         )}
                       </li>
                     );
@@ -295,11 +295,11 @@ export function ListaCompras({
                             {!l.manual && l.fonte === 'fallback' && (
                               <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-carvao-400">est.</span>
                             )}
-                            {obs && <span className="ml-1 text-caption italic text-carvao-400">· 📝</span>}
+                            {obs && <span className="ml-1 text-caption italic text-carvao-400">· </span>}
                           </span>
                           {!podeMexerPreco && (fornecedores[l.chave] || precos[l.chave] > 0) && (
                             <span className="mt-0.5 block text-micro font-semibold text-brand-600 dark:text-brand-300">
-                              🏪 {fornecedores[l.chave] || 'fornecedor não informado'}
+                              {fornecedores[l.chave] || 'fornecedor não informado'}
                               {precos[l.chave] > 0 && (
                                 <span className="font-normal text-carvao-400">
                                   {' · '}{formatarReais(precos[l.chave])}/{unidAtual}
@@ -319,7 +319,7 @@ export function ListaCompras({
                         const editandoForn = addFornDe === `${di}:${l.chave}`;
                         return (
                           <div className="flex flex-wrap items-center gap-1.5 px-4 pb-2.5 pl-12 print:hidden">
-                            <span className="text-caption">🏪</span>
+                            
                             {opcoes.length > 0 ? (
                               <select
                                 value={fornecedores[l.chave] ?? ''}

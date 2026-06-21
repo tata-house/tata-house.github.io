@@ -180,7 +180,6 @@ export function AbaFornecedorIntel({
   if (todosFornecedores.length === 0) {
     return (
       <EstadoVazio
-        icone="🏬"
         titulo="Nenhum fornecedor cadastrado"
         texto="Vincule fornecedores aos itens na aba Preços para começar a monitorar."
       />
@@ -211,12 +210,11 @@ export function AbaFornecedorIntel({
 
       {/* KPIs */}
       <div className="grid grid-cols-3 gap-3">
-        <Kpi rotulo="Fornecedores" valor={todosFornecedores.length} tom="neutro" icone="🏬" />
+        <Kpi rotulo="Fornecedores" valor={todosFornecedores.length} tom="neutro" />
         <Kpi
           rotulo="Avaliados"
           valor={Object.values(perfis).filter((p) => p.avaliacoes.length > 0).length}
           tom="verde"
-          icone="⭐"
         />
         <Kpi
           rotulo="Alertas"
@@ -225,7 +223,6 @@ export function AbaFornecedorIntel({
             return taxa !== null && taxa < 0.7;
           }).length}
           tom="vermelho"
-          icone="⚠️"
         />
       </div>
 
@@ -273,7 +270,7 @@ export function AbaFornecedorIntel({
                     className="flex h-8 w-8 items-center justify-center rounded-lg text-ouro-500 hover:bg-ouro-50 dark:hover:bg-carvao-700"
                     title="Avaliar entrega"
                   >
-                    ⭐
+                    
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); setEditando(nome); }}
@@ -306,7 +303,7 @@ export function AbaFornecedorIntel({
                   {/* Contato */}
                   {perfil?.whatsapp && (
                     <p className="mb-2 text-sm text-carvao-600 dark:text-carvao-300">
-                      📱 {perfil.whatsapp}
+                      {perfil.whatsapp}
                     </p>
                   )}
                   {perfil?.obs && (

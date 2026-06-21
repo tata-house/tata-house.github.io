@@ -126,7 +126,7 @@ export function alertasMenuHistorico(
       if (medDesp >= 0.20) {
         alertas.push({
           nivel: medDesp >= 0.35 ? 'urgente' : 'atencao',
-          icone: '🔮',
+          icone: '',
           titulo: `${prato} tende a sobrar (${Math.round(medDesp * 100)}% histórico)`,
           detalhe: `Nos últimos ${taxas.length} registros, ${Math.round(medDesp * 100)}% em média sobrou. Considere reduzir a produção.`,
           acao: `Reduzir produção de ${prato} em ~${Math.min(30, Math.round(medDesp * 100))}% esta semana.`,
@@ -141,7 +141,7 @@ export function alertasMenuHistorico(
       const nota = Math.round((ac.somaNotas / ac.n) * 10) / 10;
       alertas.push({
         nivel: 'atencao',
-        icone: '🔮',
+        icone: '',
         titulo: `${prato} tem aceitação baixa (${nota}★ histórico)`,
         detalhe: `${ac.n} avaliações com nota média ${nota}. Provável insatisfação esta semana.`,
         acao: 'Considerar substituir ou servir em outro dia.',
@@ -197,7 +197,7 @@ export function alertasTendenciaPreco(
 
     alertas.push({
       nivel: variacao >= 0.25 ? 'atencao' : 'info',
-      icone: '📅',
+      icone: '',
       titulo: `${norm} tende a subir em ${nomesMes[mesProximo]}`,
       detalhe: `Histórico mostra alta de ~${pct}% no mês seguinte vs. média anual. Considere estoque preventivo.`,
       acao: 'Comprar quantidade extra este mês para evitar pagar mais no próximo.',

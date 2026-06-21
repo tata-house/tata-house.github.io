@@ -22,6 +22,23 @@ const COR_PROTEINA: Record<Proteina, string> = {
   outros: '#aab0b9',
 };
 
+/** Medalhão de posição — ouro/prata/bronze no top 3, número discreto no resto. */
+function RankBadge({ pos }: { pos: number }) {
+  const estilo =
+    pos === 0
+      ? 'bg-gradient-to-br from-ouro-300 to-ouro-500 text-white shadow-suave'
+      : pos === 1
+        ? 'bg-gradient-to-br from-carvao-200 to-carvao-400 text-white'
+        : pos === 2
+          ? 'bg-gradient-to-br from-[#c89466] to-[#a06a3a] text-white'
+          : 'bg-carvao-100 text-carvao-400 dark:bg-carvao-700 dark:text-carvao-300';
+  return (
+    <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-caption font-black tabular-nums ${estilo}`}>
+      {pos + 1}
+    </span>
+  );
+}
+
 function notaTom(nota: number | null): string {
   if (nota === null) return 'text-carvao-400';
   if (nota >= 4) return 'text-brand-600 dark:text-brand-300';
@@ -43,8 +60,8 @@ export function DnaCard() {
       {/* Cabeçalho */}
       <div className="bg-gradient-to-r from-carvao-900 via-carvao-800 to-brand-800 px-5 py-4 text-white">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-caption font-extrabold uppercase tracking-[0.18em] text-brand-200">
-            🧬 DNA Alimentar da casa
+          <p className="flex items-center gap-2 text-caption font-extrabold uppercase tracking-[0.18em] text-brand-200">
+            <Icone nome="gerencial" tam={14} /> DNA alimentar da casa
           </p>
           <button
             onClick={recalcular}
@@ -59,17 +76,17 @@ export function DnaCard() {
         {/* Stats históricos */}
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-caption text-brand-200/80">
           {dna.totalDiasHistorico > 0 && (
-            <span>📅 {dna.totalDiasHistorico} dias de operação</span>
+            <span>{dna.totalDiasHistorico} dias de operação</span>
           )}
-          <span>🍽️ {totalPratosUnicos} pratos únicos</span>
+          <span>{totalPratosUnicos} pratos únicos</span>
           {dna.baseSemanas > 0 && (
-            <span>📋 {dna.baseSemanas} semana{dna.baseSemanas > 1 ? 's' : ''} no app</span>
+            <span>{dna.baseSemanas} semana{dna.baseSemanas > 1 ? 's' : ''} no app</span>
           )}
           {dna.baseAvaliacoes > 0 && (
-            <span>⭐ {dna.baseAvaliacoes} avaliação{dna.baseAvaliacoes > 1 ? 'ões' : ''}</span>
+            <span>{dna.baseAvaliacoes} avaliação{dna.baseAvaliacoes > 1 ? 'ões' : ''}</span>
           )}
           {dna.mediaPessoas !== null && (
-            <span>👥 média {dna.mediaPessoas} pax/dia</span>
+            <span>média {dna.mediaPessoas} pax/dia</span>
           )}
         </div>
       </div>
@@ -112,24 +129,25 @@ export function DnaCard() {
           {dna.topPorFrequencia.length > 0 && (
             <div className="space-y-1.5">
               <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">
-                📈 Mais servidos no histórico
+                Mais servidos no histórico
               </p>
-              <div className="divide-y divide-carvao-50 dark:divide-carvao-800">
+              <div className="space-y-1">
                 {dna.topPorFrequencia.map((p, i) => (
-                  <div key={p.prato} className="flex items-center gap-2 py-1.5">
-                    <span className="w-5 shrink-0 text-center text-caption font-bold text-carvao-300">
-                      {i + 1}
-                    </span>
+                  <div
+                    key={p.prato}
+                    className={`flex items-center gap-3 rounded-xl px-2.5 py-2 ${i < 3 ? 'bg-areia-50 dark:bg-carvao-800/60' : ''}`}
+                  >
+                    <RankBadge pos={i} />
                     <span
-                      className="h-2 w-2 shrink-0 rounded-full"
+                      className="h-2.5 w-2.5 shrink-0 rounded-full ring-2 ring-white dark:ring-carvao-850"
                       style={{ backgroundColor: COR_PROTEINA[p.proteina] }}
                     />
                     <span className="min-w-0 flex-1 truncate text-nota font-semibold text-carvao-800 dark:text-areia-100">
                       {p.prato}
                     </span>
-                    <span className="shrink-0 text-caption text-carvao-400">{p.frequencia}×</span>
+                    <span className="shrink-0 text-caption font-semibold tabular-nums text-carvao-400">{p.frequencia}×</span>
                     {p.nota !== null && (
-                      <span className={`shrink-0 text-caption font-bold ${notaTom(p.nota)}`}>
+                      <span className={`shrink-0 text-caption font-bold tabular-nums ${notaTom(p.nota)}`}>
                         {p.nota}★
                       </span>
                     )}
@@ -143,7 +161,7 @@ export function DnaCard() {
           {dna.campeoes.length > 0 && (
             <div className="space-y-1.5">
               <p className="text-caption font-bold uppercase tracking-wider text-brand-600 dark:text-brand-300">
-                🏆 Campeões da casa
+                Campeões da casa
                 {dna.baseAvaliacoes === 0 && (
                   <span className="ml-1 font-medium normal-case tracking-normal text-carvao-400">· por frequência no histórico</span>
                 )}
@@ -170,7 +188,7 @@ export function DnaCard() {
           {/* Problemas */}
           {dna.problemas.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-caption font-bold uppercase tracking-wider text-perigo">⚠️ Pontos de atenção</p>
+              <p className="text-caption font-bold uppercase tracking-wider text-perigo">Pontos de atenção</p>
               <div className="flex flex-wrap gap-1.5">
                 {dna.problemas.map((p) => (
                   <span

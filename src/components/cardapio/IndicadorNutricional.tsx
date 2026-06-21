@@ -44,7 +44,7 @@ export function IndicadorNutricional({ dias }: { dias: DiaCardapio[] }) {
       {/* Cabeçalho */}
       <div className="flex items-center justify-between gap-3">
         <p className="text-caption font-extrabold uppercase tracking-[0.2em] text-carvao-400">
-          🥗 Índice Nutricional Tata House
+          Índice Nutricional Tata House
         </p>
         <div className={`flex items-center gap-2 rounded-full px-3 py-1 ring-1 ${corScore.anel} bg-white dark:bg-carvao-800`}>
           <span className={`text-nota font-black ${corScore.texto}`}>{score}%</span>

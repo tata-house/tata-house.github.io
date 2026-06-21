@@ -240,7 +240,7 @@ export function AbaCompras({
           Quantidades já escaladas pelo nº de pessoas de cada dia.
         </p>
         <Botao variante="secundario" onClick={() => window.print()} className="!min-h-10 !px-4 !py-2 text-sm">
-          🖨️ Imprimir
+          Imprimir
         </Botao>
       </div>
 
@@ -248,8 +248,8 @@ export function AbaCompras({
       <div className="flex gap-1 rounded-2xl bg-carvao-100/70 p-1 print:hidden dark:bg-carvao-800/70">
         {(
           [
-            ['lista', '📋 Lista'],
-            ['detalhado', '🧾 Detalhado'],
+            ['lista', 'Lista'],
+            ['detalhado', 'Detalhado'],
           ] as const
         ).map(([id, rot]) => (
           <button
@@ -276,7 +276,7 @@ export function AbaCompras({
               : 'bg-carvao-100/60 text-carvao-400 ring-carvao-200/60 hover:bg-carvao-100 dark:bg-carvao-800/60 dark:ring-carvao-700/60'
           }`}
         >
-          🧂 {mostrarBasicos ? 'Ocultar básicos' : 'Mostrar básicos'}
+          {mostrarBasicos ? 'Ocultar básicos' : 'Mostrar básicos'}
         </button>
       </div>
 
@@ -309,10 +309,10 @@ export function AbaCompras({
       {(podeComprar || podeReceber || (estado.notasFiscais ?? []).length > 0) && (
         <Cartao className="space-y-3 print:hidden">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3 className="font-display text-lg font-semibold">📑 Notas fiscais</h3>
+            <h3 className="font-display text-lg font-semibold">Notas fiscais</h3>
             {(podeComprar || podeReceber) && (
               <label className="cursor-pointer rounded-full bg-ouro-300/20 px-3.5 py-2 text-caption font-bold uppercase tracking-wide text-ouro-600 ring-1 ring-ouro-400/40 hover:bg-ouro-300/30">
-                📸 Foto da nota fiscal
+                Foto da nota fiscal
                 <input
                   type="file"
                   accept="image/*"
@@ -334,12 +334,12 @@ export function AbaCompras({
           </div>
           {emailStatus === 'ok' && (
             <p className="rounded-xl bg-brand-500/10 px-3 py-2 text-rotulo font-bold text-brand-700 ring-1 ring-brand-500/30">
-              ✉️ E-mail enviado para compras@tatasushi.com.br
+              E-mail enviado para compras@tatasushi.com.br
             </p>
           )}
           {emailStatus === 'erro' && (
             <p className="rounded-xl bg-perigo/10 px-3 py-2 text-rotulo font-bold text-perigo ring-1 ring-perigo/25">
-              ⚠️ Falha no envio do e-mail — verifique a configuração RESEND_API_KEY na Vercel.
+              Falha no envio do e-mail — verifique a configuração RESEND_API_KEY na Vercel.
             </p>
           )}
           {(estado.notasFiscais ?? []).length === 0 ? (
@@ -544,7 +544,7 @@ export function AbaCompras({
                       setFotoPendente(null);
                     }}
                   >
-                    {enviandoEmail ? '📧 Enviando…' : '✓ Confirmar e enviar por e-mail'}
+                    {enviandoEmail ? 'Enviando…' : '✓ Confirmar e enviar por e-mail'}
                   </Botao>
                 </div>
               </>
@@ -585,11 +585,11 @@ export function AbaCompras({
               <p className="text-xs font-semibold tabular-nums text-carvao-400">
                 {compradas}/{linhas.length} comprados · {recebidas}/{linhas.length} recebidos
                 {custo.itensComPreco > 0 && <> · ≈ {formatarReais(custo.total)}</>}
-                {divergencias > 0 && <span className="font-extrabold text-perigo"> · ⚠ {divergencias} divergências</span>}
+                {divergencias > 0 && <span className="font-extrabold text-perigo"> · {divergencias} divergências</span>}
                 {notasDoDia > 0 && (
                   <span className="font-bold text-brand-600">
                     {' '}
-                    · 📎 {notasDoDia} nota{notasDoDia > 1 ? 's' : ''}
+                    · {notasDoDia} nota{notasDoDia > 1 ? 's' : ''}
                   </span>
                 )}
               </p>
@@ -732,7 +732,7 @@ export function AbaCompras({
                       )}
                       {!podeAjustarQtd && estado.ajustes[di]?.[l.chave]?.obs && (
                         <p className="mt-1 text-caption italic text-carvao-400">
-                          📝 {estado.ajustes[di][l.chave].obs}
+                          {estado.ajustes[di][l.chave].obs}
                         </p>
                       )}
 
@@ -831,7 +831,7 @@ export function AbaCompras({
                               )}
                               {veioMenos && (
                                 <span className="block text-micro font-extrabold text-[#d18a3a]">
-                                  ⚠ veio {formatarQtd(l.status.recebidoQtd!)} de {formatarQtd(l.status.compradoQtd!)}
+                                  veio {formatarQtd(l.status.recebidoQtd!)} de {formatarQtd(l.status.compradoQtd!)}
                                 </span>
                               )}
                             </div>

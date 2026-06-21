@@ -123,7 +123,7 @@ export function PrevisaoPresenca({
 
   return (
     <Secao
-      titulo="🔭 Previsão de presença"
+      titulo="Previsão de presença"
       acao={
         excesso !== 0 ? (
           <Pilula tom={excesso > 0 ? 'ouro' : 'vermelho'}>
@@ -174,7 +174,7 @@ export function PrevisaoPresenca({
 
         {ajustes.length > 0 && podeEditar && (
           <Botao variante="secundario" onClick={aplicarTodos} className="w-full">
-            🎯 Ajustar todos para a previsão ({ajustes.length})
+            Ajustar todos para a previsão ({ajustes.length})
           </Botao>
         )}
 

@@ -17,14 +17,14 @@ function Capa() {
         style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 20%, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       <div className="relative z-10">
         <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 text-5xl shadow-lg">
-          🍱
+          
         </div>
         <h1 className="font-display text-3xl font-bold text-white drop-shadow">
           Manual do Sistema
         </h1>
         <p className="mt-2 text-lg font-semibold text-green-200">Tatá House — Gestão de Cardápio</p>
         <div className="mt-6 inline-block rounded-full bg-white/15 px-5 py-2 text-sm text-green-100">
-          📖 Guia completo para todos os funcionários
+          Guia completo para todos os funcionários
         </div>
       </div>
     </div>
@@ -51,7 +51,7 @@ function Indice() {
   ];
   return (
     <section id="indice" className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
-      <h2 className="mb-4 font-display text-xl font-bold text-gray-800">📋 O que tem neste manual</h2>
+      <h2 className="mb-4 font-display text-xl font-bold text-gray-800">O que tem neste manual</h2>
       <div className="grid gap-2 sm:grid-cols-2">
         {itens.map((it) => (
           <a
@@ -89,7 +89,7 @@ function Secao({ id, emoji, titulo, subtitulo, children }: {
   );
 }
 
-function Destaque({ icone, texto, cor = 'green' }: { icone: string; texto: string; cor?: 'green' | 'yellow' | 'red' | 'blue' }) {
+function Destaque({ icone, texto, cor = 'green' }: { icone?: string; texto: string; cor?: 'green' | 'yellow' | 'red' | 'blue' }) {
   const cores = {
     green: 'bg-green-50 border-green-200 text-green-800',
     yellow: 'bg-yellow-50 border-yellow-200 text-yellow-800',
@@ -98,7 +98,7 @@ function Destaque({ icone, texto, cor = 'green' }: { icone: string; texto: strin
   };
   return (
     <div className={`flex gap-3 rounded-2xl border p-4 ${cores[cor]}`}>
-      <span className="text-xl leading-none">{icone}</span>
+      {icone && <span className="text-xl leading-none">{icone}</span>}
       <p className="text-sm font-medium leading-relaxed">{texto}</p>
     </div>
   );
@@ -191,10 +191,10 @@ export default function ManualPage() {
         <Indice />
 
         {/* -------------------------------------------------------- */}
-        <Secao id="acesso" emoji="🔑" titulo="Como entrar no sistema"
+        <Secao id="acesso" emoji="" titulo="Como entrar no sistema"
           subtitulo="Primeiro passo — acessar o site no celular ou computador">
 
-          <Destaque icone="📱" cor="green"
+          <Destaque cor="green"
             texto="O sistema funciona direto no navegador do celular ou computador. Não precisa instalar nada!" />
 
           <p>Siga estes passos para entrar:</p>
@@ -210,7 +210,7 @@ export default function ManualPage() {
               texto='O sistema vai lembrar do seu cargo mesmo se você fechar o celular.' />
           </div>
 
-          <Destaque icone="💡" cor="yellow"
+          <Destaque cor="yellow"
             texto="Dica: Para abrir rápido, adicione o site na tela inicial do seu celular. Assim fica como um ícone, igual a um aplicativo!" />
 
           <div className="rounded-2xl bg-gray-50 p-4">
@@ -220,37 +220,37 @@ export default function ManualPage() {
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="painel" emoji="🏠" titulo="Painel — a tela principal"
+        <Secao id="painel" emoji="" titulo="Painel — a tela principal"
           subtitulo="É aqui que você começa. O painel mostra um resumo de tudo.">
 
-          <Destaque icone="👋" cor="green"
+          <Destaque cor="green"
             texto='Todo dia ao abrir o sistema, aparece o card "Bom dia, gestor" com os alertas mais importantes do dia. Comece sempre por aí!' />
 
           <p>O Painel tem 4 partes principais:</p>
 
           <div className="space-y-3">
             <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-              <p className="mb-1 font-bold text-gray-800">🗓️ Briefing do dia</p>
+              <p className="mb-1 font-bold text-gray-800">Briefing do dia</p>
               <p className="text-sm text-gray-600">
                 Aparece no topo com os alertas urgentes (vermelho), de atenção (amarelo) e informativos (azul).
-                Se tudo estiver bem, aparece um ✅ verde.
+                Se tudo estiver bem, aparece um verde.
               </p>
             </div>
             <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-              <p className="mb-1 font-bold text-gray-800">📈 Indicadores da semana</p>
+              <p className="mb-1 font-bold text-gray-800">Indicadores da semana</p>
               <p className="text-sm text-gray-600">
                 Mostra: quantas refeições foram feitas, custo por prato, quanto falta comprar, e o orçamento da semana.
               </p>
             </div>
             <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-              <p className="mb-1 font-bold text-gray-800">📊 Previsão de consumo</p>
+              <p className="mb-1 font-bold text-gray-800">Previsão de consumo</p>
               <p className="text-sm text-gray-600">
                 O sistema prevê quantas pessoas vão almoçar em cada dia da semana, com base nos meses anteriores.
                 Você pode usar essa previsão para calcular a lista de compras automaticamente.
               </p>
             </div>
             <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-              <p className="mb-1 font-bold text-gray-800">🧠 Inteligência da casa</p>
+              <p className="mb-1 font-bold text-gray-800">Inteligência da casa</p>
               <p className="text-sm text-gray-600">
                 Mostra o "DNA" da empresa: quais proteínas são mais servidas, pratos favoritos e pratos que sempre sobram.
                 Você pode escolher um objetivo e o sistema monta um plano de ação.
@@ -260,15 +260,15 @@ export default function ManualPage() {
 
           <p>Na parte de baixo do Painel também fica o <strong>Fluxo da semana</strong> — as etapas do cardápio ao recebimento.</p>
 
-          <Destaque icone="💡" cor="blue"
+          <Destaque cor="blue"
             texto="Dica: Olhe o Painel toda manhã antes de começar o trabalho. Ele avisa se há algum problema antes que ele se torne grande!" />
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="cardapio" emoji="📋" titulo="Cardápio — montar a semana"
+        <Secao id="cardapio" emoji="" titulo="Cardápio — montar a semana"
           subtitulo="Aqui você define o que vai ser servido em cada dia">
 
-          <Destaque icone="👨‍🍳" cor="green"
+          <Destaque cor="green"
             texto="Quem monta o cardápio é o Gestor. A equipe de Cozinha pode ver o cardápio, mas não muda nada." />
 
           <p>Para montar o cardápio da semana:</p>
@@ -297,35 +297,35 @@ export default function ManualPage() {
             ]} />
           </div>
 
-          <Destaque icone="⚠️" cor="yellow"
-            texto='Se um prato aparecer com um ponto de exclamação (❗) é porque o preço não foi lançado ainda. Isso impede o cálculo correto da lista de compras.' />
+          <Destaque cor="yellow"
+            texto='Se um prato aparecer com um ponto de exclamação () é porque o preço não foi lançado ainda. Isso impede o cálculo correto da lista de compras.' />
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="cotacao" emoji="💰" titulo="Cotação — lançar os preços"
+        <Secao id="cotacao" emoji="" titulo="Cotação — lançar os preços"
           subtitulo="Aqui entram os preços que os fornecedores mandaram">
 
-          <Destaque icone="📲" cor="blue"
+          <Destaque cor="blue"
             texto="Você pode colar diretamente o texto que o fornecedor mandou no WhatsApp! O sistema lê e já identifica os itens e preços automaticamente." />
 
           <p>Formas de lançar preços:</p>
 
           <div className="space-y-3">
             <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-              <p className="mb-1 font-bold text-blue-800">📋 Colar texto do WhatsApp</p>
+              <p className="mb-1 font-bold text-blue-800">Colar texto do WhatsApp</p>
               <p className="text-sm text-blue-700">
                 Copie a mensagem do fornecedor com os preços, cole na caixa de texto e clique em "Analisar".
                 O sistema lê e já preenche tudo automaticamente.
               </p>
             </div>
             <div className="rounded-2xl border border-green-100 bg-green-50 p-4">
-              <p className="mb-1 font-bold text-green-800">📁 Arquivo CSV ou Excel</p>
+              <p className="mb-1 font-bold text-green-800">Arquivo CSV ou Excel</p>
               <p className="text-sm text-green-700">
                 Se o fornecedor mandar um arquivo de planilha, você pode importar direto.
               </p>
             </div>
             <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-              <p className="mb-1 font-bold text-gray-800">✏️ Digitar manualmente</p>
+              <p className="mb-1 font-bold text-gray-800">Digitar manualmente</p>
               <p className="text-sm text-gray-600">
                 Pesquise o item pelo nome, digit o preço e clique em "Salvar".
               </p>
@@ -336,29 +336,29 @@ export default function ManualPage() {
             <Passo num={1} titulo="Lance os preços dos fornecedores"
               texto="Use qualquer método acima para registrar o preço de cada item." />
             <Passo num={2} titulo="Compare fornecedores"
-              texto='Se você lançou preços de mais de um fornecedor, o sistema marca automaticamente o mais barato de cada item com "🏆".' />
+              texto='Se você lançou preços de mais de um fornecedor, o sistema marca automaticamente o mais barato de cada item com "".' />
             <Passo num={3} titulo='Clique em "Aplicar todos os preços"'
               texto="Isso atualiza o custo estimado da semana inteira de uma vez." />
           </div>
 
-          <Destaque icone="💡" cor="green"
+          <Destaque cor="green"
             texto="O Radar de Preços guarda o histórico. Se um item subiu muito de preço, o sistema avisa com um alerta vermelho." />
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="compras" emoji="🛒" titulo="Compras — a lista do mercado"
+        <Secao id="compras" emoji="" titulo="Compras — a lista do mercado"
           subtitulo="O sistema calcula automaticamente o que precisa comprar">
 
-          <Destaque icone="✨" cor="green"
+          <Destaque cor="green"
             texto="A lista de compras é gerada automaticamente! O sistema calcula a quantidade de cada ingrediente baseado no cardápio e no número de pessoas." />
 
           <p>A lista tem três etapas para cada item:</p>
 
           <div className="grid grid-cols-3 gap-3 text-center">
             {[
-              { emoji: '🛒', nome: 'A comprar', cor: 'bg-gray-100 text-gray-700' },
-              { emoji: '🚚', nome: 'A caminho', cor: 'bg-yellow-50 text-yellow-800' },
-              { emoji: '✅', nome: 'Recebido', cor: 'bg-green-50 text-green-800' },
+              { emoji: '', nome: 'A comprar', cor: 'bg-gray-100 text-gray-700' },
+              { emoji: '', nome: 'A caminho', cor: 'bg-yellow-50 text-yellow-800' },
+              { emoji: '', nome: 'Recebido', cor: 'bg-green-50 text-green-800' },
             ].map((e) => (
               <div key={e.nome} className={`rounded-2xl p-3 ${e.cor}`}>
                 <div className="text-2xl">{e.emoji}</div>
@@ -385,19 +385,19 @@ export default function ManualPage() {
           </div>
 
           <div className="rounded-2xl bg-gray-50 p-4">
-            <p className="mb-2 font-semibold text-gray-800">📸 Foto da nota fiscal</p>
+            <p className="mb-2 font-semibold text-gray-800">Foto da nota fiscal</p>
             <p className="text-sm text-gray-600">
               Na aba Compras você pode fotografar a nota fiscal. O sistema tenta ler os itens e preços automaticamente
               e pode enviar o relatório por e-mail para o setor de compras.
             </p>
           </div>
 
-          <Destaque icone="💡" cor="yellow"
+          <Destaque cor="yellow"
             texto='Se o item já tem estoque guardado, a lista desconta automaticamente! Ex: se tem 5kg de frango no estoque e precisa de 15kg, a lista mostra só 10kg para comprar.' />
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="estoque" emoji="📦" titulo="Estoque — o que temos guardado"
+        <Secao id="estoque" emoji="" titulo="Estoque — o que temos guardado"
           subtitulo="Controle dos ingredientes que estão na despensa">
 
           <p>O estoque serve para:</p>
@@ -415,17 +415,17 @@ export default function ManualPage() {
             <Passo num={2} titulo="Baixa automática"
               texto='Quando a semana é concluída, o sistema dá baixa dos ingredientes usados no cardápio automaticamente.' />
             <Passo num={3} titulo="Estoque mínimo"
-              texto='Você pode definir uma quantidade mínima para cada item. Quando o saldo cair abaixo, o Painel mostra um alerta 📦.' />
+              texto='Você pode definir uma quantidade mínima para cada item. Quando o saldo cair abaixo, o Painel mostra um alerta .' />
             <Passo num={4} titulo="Inventário físico"
               texto='Uma vez por mês é bom fazer a contagem física e corrigir o saldo se tiver diferença.' />
           </div>
 
-          <Destaque icone="⚠️" cor="yellow"
+          <Destaque cor="yellow"
             texto="Se o estoque mostrar um número errado, não entre em pânico. Ajuste manualmente em Estoque → item → Ajustar saldo." />
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="fluxo" emoji="🔄" titulo="Fluxo — as etapas da semana"
+        <Secao id="fluxo" emoji="" titulo="Fluxo — as etapas da semana"
           subtitulo="O sistema acompanha o progresso de cada semana, do cardápio ao recebimento">
 
           <p>Cada semana passa por 5 etapas. Só avança quando a etapa está completa:</p>
@@ -462,28 +462,28 @@ export default function ManualPage() {
             </p>
           </div>
 
-          <Destaque icone="💡" cor="green"
+          <Destaque cor="green"
             texto="Sempre registre o número real de refeições no final do dia. Com o tempo, o sistema fica cada vez mais preciso nas previsões." />
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="feedback" emoji="⭐" titulo="Feedback — a avaliação do prato"
+        <Secao id="feedback" emoji="" titulo="Feedback — a avaliação do prato"
           subtitulo="Como a equipe avalia o almoço de cada dia">
 
-          <Destaque icone="📱" cor="green"
+          <Destaque cor="green"
             texto='A avaliação é muito simples! Basta escanear o QR code e tocar em um emoji. Dura menos de 30 segundos.' />
 
           <p>Existem duas formas de coletar avaliação:</p>
 
           <div className="space-y-3">
             <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-              <p className="mb-2 font-bold text-gray-800">📲 QR Code (para os colaboradores)</p>
+              <p className="mb-2 font-bold text-gray-800">QR Code (para os colaboradores)</p>
               <p className="mb-2 text-sm text-gray-600">
                 Imprima o QR code na aba Cardápio e cole na parede do refeitório.
                 Cada pessoa escaneia com o celular e avalia o prato do dia:
               </p>
               <div className="flex gap-3">
-                {[['😋','Ótimo'],['😐','Regular'],['👎','Ruim']].map(([e, r]) => (
+                {[['','Ótimo'],['','Regular'],['','Ruim']].map(([e, r]) => (
                   <div key={r} className="flex flex-1 flex-col items-center gap-1 rounded-xl bg-white p-3 ring-1 ring-gray-200">
                     <span className="text-2xl">{e}</span>
                     <span className="text-caption font-semibold text-gray-600">{r}</span>
@@ -492,7 +492,7 @@ export default function ManualPage() {
               </div>
             </div>
             <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-              <p className="mb-1 font-bold text-gray-800">✋ Avaliação manual (pelo gestor)</p>
+              <p className="mb-1 font-bold text-gray-800">Avaliação manual (pelo gestor)</p>
               <p className="text-sm text-gray-600">
                 O gestor pode registrar a avaliação manualmente na aba Cardápio, anotando a nota e até um comentário.
               </p>
@@ -507,12 +507,12 @@ export default function ManualPage() {
             'Os pratos favoritos aparecem como "campeões" no DNA da casa',
           ]} />
 
-          <Destaque icone="💡" cor="yellow"
+          <Destaque cor="yellow"
             texto="Incentive a equipe a avaliar todo dia! Quanto mais votos, mais o sistema aprende e melhora as sugestões." />
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="desperdicio" emoji="♻️" titulo="Desperdício — o que sobrou"
+        <Secao id="desperdicio" emoji="" titulo="Desperdício — o que sobrou"
           subtitulo="Registrar a sobra ajuda a economizar e a planejar melhor">
 
           <p>
@@ -541,12 +541,12 @@ export default function ManualPage() {
             ]} />
           </div>
 
-          <Destaque icone="💡" cor="green"
+          <Destaque cor="green"
             texto="Reduzir 10% de desperdício por semana pode economizar centenas de reais por mês! Vale muito a pena registrar." />
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="radar" emoji="📡" titulo="Radar de Preços — alertas de custo"
+        <Secao id="radar" emoji="" titulo="Radar de Preços — alertas de custo"
           subtitulo="O sistema vigia os preços e avisa quando algo muda muito">
 
           <p>
@@ -556,21 +556,21 @@ export default function ManualPage() {
 
           <div className="space-y-3">
             <div className="flex gap-3 rounded-2xl bg-red-50 p-4">
-              <span className="text-xl">🔴</span>
+              
               <div>
                 <p className="font-bold text-red-800">Alta anormal</p>
                 <p className="text-sm text-red-700">O item subiu mais de 15% desde a última cotação. Verifique com o fornecedor ou busque alternativa.</p>
               </div>
             </div>
             <div className="flex gap-3 rounded-2xl bg-blue-50 p-4">
-              <span className="text-xl">🔵</span>
+              
               <div>
                 <p className="font-bold text-blue-800">Queda anormal</p>
                 <p className="text-sm text-blue-700">O item ficou mais barato. Bom momento para comprar mais e guardar em estoque!</p>
               </div>
             </div>
             <div className="flex gap-3 rounded-2xl bg-gray-50 p-4">
-              <span className="text-xl">⚪</span>
+              
               <div>
                 <p className="font-bold text-gray-800">Estável</p>
                 <p className="text-sm text-gray-600">Preço dentro do normal. Nenhuma ação necessária.</p>
@@ -585,24 +585,24 @@ export default function ManualPage() {
             'Sugestão de substituição quando uma proteína está cara demais',
           ]} />
 
-          <Destaque icone="💡" cor="blue"
+          <Destaque cor="blue"
             texto="Se o frango subiu muito, o Radar pode sugerir trocar por outra proteína na semana seguinte e até calcular quanto você economizaria." />
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="gerencial" emoji="📊" titulo="Relatórios — análise e histórico"
+        <Secao id="gerencial" emoji="" titulo="Relatórios — análise e histórico"
           subtitulo="Visão completa dos dados da empresa">
 
-          <Destaque icone="👤" cor="yellow"
+          <Destaque cor="yellow"
             texto="A aba Relatórios é destinada ao Gestor e Administrador. A equipe de cozinha e compras não acessa essa área." />
 
           <p>Dentro de Relatórios você encontra três seções:</p>
 
           <div className="space-y-3">
             {[
-              { emoji: '📊', nome: 'Central', desc: 'KPIs financeiros: valor gerado no mês, DNA alimentar da empresa, previsão de refeições, radar de preços e inteligência acumulada.' },
-              { emoji: '🔬', nome: 'Cenários', desc: 'Simulador financeiro: ajuste preços, pessoas e desperdício para ver o impacto no custo antes de tomar decisões.' },
-              { emoji: '🔍', nome: 'Auditoria', desc: 'Histórico de tudo que foi alterado no sistema: quem mudou, o quê e quando. Disponível apenas para Gerência.' },
+              { emoji: '', nome: 'Central', desc: 'KPIs financeiros: valor gerado no mês, DNA alimentar da empresa, previsão de refeições, radar de preços e inteligência acumulada.' },
+              { emoji: '', nome: 'Cenários', desc: 'Simulador financeiro: ajuste preços, pessoas e desperdício para ver o impacto no custo antes de tomar decisões.' },
+              { emoji: '', nome: 'Auditoria', desc: 'Histórico de tudo que foi alterado no sistema: quem mudou, o quê e quando. Disponível apenas para Gerência.' },
             ].map((s) => (
               <div key={s.nome} className="flex gap-3 rounded-2xl bg-gray-50 p-4">
                 <span className="text-xl">{s.emoji}</span>
@@ -620,7 +620,7 @@ export default function ManualPage() {
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="inteligencia" emoji="🧠" titulo="Inteligência — sugestões do sistema"
+        <Secao id="inteligencia" emoji="" titulo="Inteligência — sugestões do sistema"
           subtitulo="O sistema aprende com o histórico e ajuda a tomar decisões melhores">
 
           <p>
@@ -630,26 +630,26 @@ export default function ManualPage() {
 
           <div className="space-y-3">
             <div className="rounded-2xl border border-gray-100 bg-green-50 p-4">
-              <p className="mb-1 font-bold text-green-800">🧬 DNA alimentar</p>
+              <p className="mb-1 font-bold text-green-800">DNA alimentar</p>
               <p className="text-sm text-green-700">
                 Mostra o perfil da sua empresa: quais proteínas são mais servidas, quais pratos a equipe ama
                 e quais pratos sempre sobram. Atualiza automaticamente a cada semana.
               </p>
             </div>
             <div className="rounded-2xl border border-gray-100 bg-blue-50 p-4">
-              <p className="mb-1 font-bold text-blue-800">🎯 Objetivo da semana</p>
+              <p className="mb-1 font-bold text-blue-800">Objetivo da semana</p>
               <p className="text-sm text-blue-700">
                 Você escolhe um objetivo e o sistema monta um plano de ações concretas:
               </p>
               <ul className="mt-2 space-y-1 text-sm text-blue-700">
-                <li>💰 <strong>Reduzir custo</strong> — quais itens cortar ou substituir</li>
-                <li>♻️ <strong>Reduzir desperdício</strong> — quais pratos produzir menos</li>
-                <li>⭐ <strong>Melhorar aceitação</strong> — programar os pratos favoritos</li>
-                <li>🥩 <strong>Equilibrar proteínas</strong> — variar mais a proteína da semana</li>
+                <li><strong>Reduzir custo</strong> — quais itens cortar ou substituir</li>
+                <li><strong>Reduzir desperdício</strong> — quais pratos produzir menos</li>
+                <li><strong>Melhorar aceitação</strong> — programar os pratos favoritos</li>
+                <li><strong>Equilibrar proteínas</strong> — variar mais a proteína da semana</li>
               </ul>
             </div>
             <div className="rounded-2xl border border-gray-100 bg-purple-50 p-4">
-              <p className="mb-1 font-bold text-purple-800">📊 Previsão com intervalos</p>
+              <p className="mb-1 font-bold text-purple-800">Previsão com intervalos</p>
               <p className="text-sm text-purple-700">
                 A previsão de refeições mostra três números: pessimista, esperado e otimista.
                 Com um toque em "Usar previsão otimista", a lista de compras já é recalculada
@@ -658,20 +658,20 @@ export default function ManualPage() {
             </div>
           </div>
 
-          <Destaque icone="💡" cor="green"
+          <Destaque cor="green"
             texto="Quanto mais semanas de uso, mais inteligente o sistema fica. As previsões e sugestões melhoram automaticamente com o tempo." />
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="assistente" emoji="🤖" titulo="Assistente — o robô tira dúvidas"
+        <Secao id="assistente" emoji="" titulo="Assistente — o robô tira dúvidas"
           subtitulo="Um assistente virtual que responde perguntas sobre a gestão">
 
           <p>
-            No canto inferior direito da tela fica o botão <strong>🤖</strong>.
+            No canto inferior direito da tela fica o botão <strong></strong>.
             Toque nele para abrir o Assistente.
           </p>
 
-          <Destaque icone="✨" cor="blue"
+          <Destaque cor="blue"
             texto="O Assistente analisa os dados reais da sua empresa e responde perguntas em linguagem simples. Você não precisa entender de planilhas!" />
 
           <p>Exemplos de perguntas que você pode fazer:</p>
@@ -686,7 +686,7 @@ export default function ManualPage() {
               'O que está acabando no estoque?',
             ].map((p) => (
               <div key={p} className="rounded-2xl bg-gray-100 px-4 py-2.5 text-sm text-gray-700">
-                💬 "{p}"
+                "{p}"
               </div>
             ))}
           </div>
@@ -703,17 +703,17 @@ export default function ManualPage() {
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="papeis" emoji="👥" titulo="Quem pode fazer o quê"
+        <Secao id="papeis" emoji="" titulo="Quem pode fazer o quê"
           subtitulo="Cada cargo tem acesso ao que precisa para o seu trabalho">
 
           <TabelaPapeis />
 
-          <Destaque icone="💡" cor="yellow"
+          <Destaque cor="yellow"
             texto="Para mudar de cargo, vá em Gerencial → Configurações e toque no seu cargo atual. Mas atenção: isso muda o que você pode ver e fazer no sistema!" />
         </Secao>
 
         {/* -------------------------------------------------------- */}
-        <Secao id="faq" emoji="❓" titulo="Perguntas frequentes"
+        <Secao id="faq" emoji="" titulo="Perguntas frequentes"
           subtitulo="Dúvidas comuns — e as respostas simples">
 
           <div className="space-y-4">
@@ -736,11 +736,11 @@ export default function ManualPage() {
               },
               {
                 p: 'Como imprimir a lista de compras?',
-                r: 'Na aba Compras, toque no ícone de impressora 🖨️ no canto superior. Você pode imprimir ou salvar como PDF.',
+                r: 'Na aba Compras, toque no ícone de impressora no canto superior. Você pode imprimir ou salvar como PDF.',
               },
               {
                 p: 'O que significa o badge (bolinha vermelha) no botão do Assistente?',
-                r: 'Significa que o Assistente identificou algo importante: um preço alto, estoque baixo ou prato com baixa aceitação. Toque no 🤖 para ver o alerta.',
+                r: 'Significa que o Assistente identificou algo importante: um preço alto, estoque baixo ou prato com baixa aceitação. Toque no para ver o alerta.',
               },
               {
                 p: 'Posso ver semanas anteriores?',
@@ -752,8 +752,8 @@ export default function ManualPage() {
               },
             ].map((item, i) => (
               <div key={i} className="rounded-2xl bg-gray-50 p-4">
-                <p className="mb-2 font-bold text-gray-800">❓ {item.p}</p>
-                <p className="text-sm text-gray-600">✅ {item.r}</p>
+                <p className="mb-2 font-bold text-gray-800">{item.p}</p>
+                <p className="text-sm text-gray-600">{item.r}</p>
               </div>
             ))}
           </div>
@@ -761,7 +761,7 @@ export default function ManualPage() {
 
         {/* rodapé */}
         <div className="rounded-3xl bg-gradient-to-br from-[#1a5c3a] to-[#246b45] p-6 text-center text-white">
-          <div className="mb-2 text-3xl">🍱</div>
+          <div className="mb-2 text-3xl"></div>
           <p className="font-display text-lg font-bold">Tatá House</p>
           <p className="mt-1 text-sm text-green-200">Sistema de Gestão de Cardápio</p>
           <p className="mt-3 text-rotulo text-green-300">

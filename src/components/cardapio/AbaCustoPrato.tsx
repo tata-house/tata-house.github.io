@@ -87,7 +87,7 @@ function DetalheIngredientes({ custo, onFechar }: { custo: CustoPorcao; onFechar
 
         {custo.cobertura < 1 && (
           <p className="mt-4 text-center text-xs text-carvao-400">
-            ⚠️ {Math.round((1 - custo.cobertura) * custo.ingredientes.length)} ingrediente(s) sem preço cadastrado — custo subestimado.
+            {Math.round((1 - custo.cobertura) * custo.ingredientes.length)} ingrediente(s) sem preço cadastrado — custo subestimado.
           </p>
         )}
       </div>
@@ -119,7 +119,6 @@ export function AbaCustoPrato({
   if (custos.length === 0) {
     return (
       <EstadoVazio
-        icone="💰"
         titulo="Sem dados de custo ainda"
         texto="Preencha o cardápio da semana e cadastre preços dos ingredientes para ver o custo por prato."
       />
@@ -131,14 +130,14 @@ export function AbaCustoPrato({
       {detalhe && <DetalheIngredientes custo={detalhe} onFechar={() => setDetalhe(null)} />}
 
       <div className="grid grid-cols-3 gap-3">
-        <Kpi rotulo="Média/porção" valor={`R$ ${mediaCusto.toFixed(2).replace('.', ',')}`} tom="neutro" icone="💰" />
-        <Kpi rotulo="Mais caro" valor={`R$ ${(maisCaro?.custoPorcao ?? 0).toFixed(2).replace('.', ',')}`} tom="vermelho" icone="📈" />
-        <Kpi rotulo="Mais barato" valor={`R$ ${(maisBarato?.custoPorcao ?? 0).toFixed(2).replace('.', ',')}`} tom="verde" icone="📉" />
+        <Kpi rotulo="Média/porção" valor={`R$ ${mediaCusto.toFixed(2).replace('.', ',')}`} tom="neutro" />
+        <Kpi rotulo="Mais caro" valor={`R$ ${(maisCaro?.custoPorcao ?? 0).toFixed(2).replace('.', ',')}`} tom="vermelho" />
+        <Kpi rotulo="Mais barato" valor={`R$ ${(maisBarato?.custoPorcao ?? 0).toFixed(2).replace('.', ',')}`} tom="verde" />
       </div>
 
       {semDados > 0 && (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-800/40 dark:bg-amber-950/30 dark:text-amber-300">
-          ⚠️ {semDados} prato(s) sem dados de ingredientes no sistema — não aparecem no ranking.
+          {semDados} prato(s) sem dados de ingredientes no sistema — não aparecem no ranking.
         </div>
       )}
 
@@ -159,7 +158,7 @@ export function AbaCustoPrato({
         ))}
       </div>
 
-      <Secao titulo="💰 Custo por porção — ranking">
+      <Secao titulo="Custo por porção — ranking">
         <Cartao className="!p-0">
           <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
             {filtrados.map((c) => (

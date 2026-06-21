@@ -78,7 +78,7 @@ export function CartaoNuvem() {
   };
 
   return (
-    <Secao titulo="☁️ Nuvem (sincronização automática)">
+    <Secao titulo="Nuvem (sincronização automática)">
       <Cartao className="space-y-3">
         <p className="text-sm text-carvao-600 dark:text-areia-200">
           {sincronizando
@@ -89,7 +89,7 @@ export function CartaoNuvem() {
         </p>
         {erro && <p className="text-xs font-semibold text-perigo">Erro ao sincronizar: {erro}</p>}
         <Botao variante="secundario" onClick={atualizarAgora} disabled={sincronizando} className="w-full">
-          {sincronizando ? 'Aguarde…' : '🔄 Atualizar agora'}
+          {sincronizando ? 'Aguarde…' : 'Atualizar agora'}
         </Botao>
         <p className="text-caption text-carvao-400">
           Ao abrir o app, ele já traz o que há de mais novo da nuvem, e suas alterações sobem sozinhas.

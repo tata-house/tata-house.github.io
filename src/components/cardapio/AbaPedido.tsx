@@ -94,7 +94,7 @@ function gerarMensagemWhatsApp(
       return `• ${i.item} — ${formatarQtd(qtd)} ${i.unid}${previsao}`;
     })
     .join('\n');
-  return `Olá! Segue pedido *Tatá House* — semana ${periodo}:\n\n${linhas}\n\nAguardamos confirmação. Obrigado(a)! 🙏`;
+  return `Olá! Segue pedido *Tatá House* — semana ${periodo}:\n\n${linhas}\n\nAguardamos confirmação. Obrigado(a)! `;
 }
 
 function abrirWhatsApp(telefone: string | undefined, texto: string) {
@@ -192,7 +192,7 @@ export function AbaPedido({
       {/* resumo */}
       <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-carvao-50 px-4 py-3 ring-1 ring-carvao-100 dark:bg-carvao-900/40 dark:ring-carvao-700/50">
         <span className="text-nota font-semibold text-carvao-600 dark:text-areia-200">
-          📦 {grupos.length} fornecedor{grupos.length !== 1 ? 'es' : ''}
+          {grupos.length} fornecedor{grupos.length !== 1 ? 'es' : ''}
         </span>
         <span className="text-carvao-300">·</span>
         <span className="text-nota font-semibold text-carvao-600 dark:text-areia-200">

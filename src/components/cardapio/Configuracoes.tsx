@@ -26,7 +26,7 @@ export function Configuracoes() {
   };
 
   return (
-    <Secao titulo="⚙️ Configurações — PINs de acesso">
+    <Secao titulo="Configurações — PINs de acesso">
       <Cartao className="space-y-3">
         <p className="text-xs text-carvao-500 dark:text-areia-200">
           Defina um PIN próprio para cada perfil (substitui os PINs padrão). Guarde com segurança e compartilhe só com

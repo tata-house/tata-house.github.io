@@ -28,10 +28,10 @@ export function NutricaoPrato({ prato }: { prato: string }) {
 
   // alertas pontuais por prato
   const alertas: string[] = [];
-  if (info.sodio > 800) alertas.push('🧂 sódio alto');
-  if (info.proteinas < 15) alertas.push('💪 proteína baixa');
-  if (info.kcal > 550) alertas.push('🔥 calórico');
-  if (info.gorduras > 26) alertas.push('🥑 gorduroso');
+  if (info.sodio > 800) alertas.push('sódio alto');
+  if (info.proteinas < 15) alertas.push('proteína baixa');
+  if (info.kcal > 550) alertas.push('calórico');
+  if (info.gorduras > 26) alertas.push('gorduroso');
 
   const macros: [string, string][] = [
     ['Kcal', `${info.kcal}`],
@@ -69,12 +69,12 @@ export function NutricaoPrato({ prato }: { prato: string }) {
         <div className={`h-full rounded-full ${idx.bg} transition-all duration-500`} style={{ width: `${info.indiceSaudavel}%` }} />
       </div>
 
-      {/* Macros */}
-      <div className="grid grid-cols-6 gap-1">
+      {/* Macros — 3 colunas para os números caberem sem vazar */}
+      <div className="grid grid-cols-3 gap-1.5">
         {macros.map(([rot, val]) => (
-          <div key={rot} className="rounded-lg bg-white px-1 py-1 text-center ring-1 ring-carvao-100 dark:bg-carvao-800 dark:ring-carvao-700/60">
-            <p className="text-[8px] font-bold uppercase leading-tight text-carvao-400">{rot}</p>
-            <p className="text-rotulo font-black leading-tight tabular-nums text-carvao-700 dark:text-areia-100">{val}</p>
+          <div key={rot} className="min-w-0 rounded-lg bg-white px-1.5 py-1.5 text-center ring-1 ring-carvao-100 dark:bg-carvao-800 dark:ring-carvao-700/60">
+            <p className="text-micro font-bold uppercase leading-tight text-carvao-400">{rot}</p>
+            <p className="truncate text-nota font-black leading-tight tabular-nums text-carvao-700 dark:text-areia-100">{val}</p>
           </div>
         ))}
       </div>

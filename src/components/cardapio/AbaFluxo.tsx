@@ -17,10 +17,10 @@ const ETAPAS: { id: Etapa; rotulo: string; quem: string }[] = [
 const ACAO_POR_ETAPA: Partial<
   Record<Etapa, { rotulo: string; proxima: Etapa; papeis: Papel[] }>
 > = {
-  rascunho:    { rotulo: '📨 Enviar para revisão da cozinha', proxima: 'cozinha',     papeis: ['gestor', 'administrador'] },
-  cozinha:     { rotulo: '✅ Cozinha aprova a lista',         proxima: 'compras',     papeis: ['cozinha', 'gestor', 'administrador'] },
-  compras:     { rotulo: '🛒 Compras finalizadas',            proxima: 'recebimento', papeis: ['compras', 'gestor', 'administrador'] },
-  recebimento: { rotulo: '📦 Tudo recebido — concluir',       proxima: 'concluido',   papeis: ['recebimento', 'gestor', 'administrador'] },
+  rascunho:    { rotulo: 'Enviar para revisão da cozinha', proxima: 'cozinha',     papeis: ['gestor', 'administrador'] },
+  cozinha:     { rotulo: 'Cozinha aprova a lista',         proxima: 'compras',     papeis: ['cozinha', 'gestor', 'administrador'] },
+  compras:     { rotulo: 'Compras finalizadas',            proxima: 'recebimento', papeis: ['compras', 'gestor', 'administrador'] },
+  recebimento: { rotulo: 'Tudo recebido — concluir',       proxima: 'concluido',   papeis: ['recebimento', 'gestor', 'administrador'] },
 };
 
 export function AbaFluxo({
@@ -139,7 +139,7 @@ export function AbaFluxo({
       {/* Contagem de refeições — feita pela cozinha no fim de cada dia */}
       <Cartao className="space-y-3">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h3 className="font-display text-lg font-semibold">🍽️ Contagem de refeições</h3>
+          <h3 className="font-display text-lg font-semibold">Contagem de refeições</h3>
           {custoPorRefeicao !== null && (
             <span className="rounded-full bg-brand-500/10 px-3 py-1 text-sm font-extrabold text-brand-700 ring-1 ring-brand-500/30 dark:text-brand-300">
               {formatarReais(custoPorRefeicao)} / refeição
@@ -254,7 +254,7 @@ export function AbaFluxo({
               ? 'Meta informada pelo setor de compras.'
               : 'Meta derivada de R$ 15.000/mês (≈ 4,33 semanas). Defina o orçamento da semana na aba Cardápio para ajustar.'}
             {pctCusto >= 95 && (
-              <span className="font-bold text-perigo"> · ⚠️ orçamento quase esgotado ({pctCusto.toFixed(0)}%).</span>
+              <span className="font-bold text-perigo"> · orçamento quase esgotado ({pctCusto.toFixed(0)}%).</span>
             )}
           </p>
         </Cartao>
@@ -264,7 +264,7 @@ export function AbaFluxo({
       {exigePrecoAntes && itensSemPreco > 0 && (
         <Cartao className="!py-3 ring-1 ring-perigo/30">
           <p className="text-sm font-semibold text-perigo">
-            ⛔ {itensSemPreco} {itensSemPreco === 1 ? 'item' : 'itens'} sem preço.
+            {itensSemPreco} {itensSemPreco === 1 ? 'item' : 'itens'} sem preço.
           </p>
           <p className="mt-0.5 text-xs text-carvao-500 dark:text-areia-200">
             Lance o preço real em <strong>Compras → Preços</strong> ou gere uma estimativa na aba{' '}

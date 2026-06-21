@@ -108,14 +108,14 @@ export function AbaNF({
     <div className="space-y-5">
       {!temChave && (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-800/40 dark:bg-amber-950/30 dark:text-amber-300">
-          ⚠️ Defina <code className="font-mono">NEXT_PUBLIC_GEMINI_API_KEY</code> para habilitar leitura de NF por IA.
+          Defina <code className="font-mono">NEXT_PUBLIC_GEMINI_API_KEY</code> para habilitar leitura de NF por IA.
         </div>
       )}
 
       {/* Upload */}
       <Cartao>
         <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-carvao-400">
-          📄 Nota fiscal — leitura por IA
+          Nota fiscal — leitura por IA
         </p>
 
         <div
@@ -162,7 +162,7 @@ export function AbaNF({
                 Analisando…
               </span>
             ) : (
-              '✨ Analisar com IA'
+              'Analisar com IA'
             )}
           </Botao>
         )}
@@ -179,7 +179,7 @@ export function AbaNF({
 
       {erro && !resultado?.itens.length && (
         <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800/40 dark:bg-red-950/30 dark:text-red-300">
-          ⚠️ {erro}
+          {erro}
         </div>
       )}
 

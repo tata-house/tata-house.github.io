@@ -5,14 +5,14 @@ import { BottomSheet } from '@/components/ui';
 import type { ContextoDecisao as TContexto, MotivoDecisao } from '@/lib/cardapio/tipos';
 
 const MOTIVOS: { valor: MotivoDecisao; rotulo: string; icone: string }[] = [
-  { valor: 'preco_subiu',     rotulo: 'Preço subiu',      icone: '📈' },
-  { valor: 'preco_caiu',      rotulo: 'Preço caiu',       icone: '📉' },
-  { valor: 'falta_estoque',   rotulo: 'Falta de estoque', icone: '📦' },
-  { valor: 'qualidade_ruim',  rotulo: 'Qualidade ruim',   icone: '⚠️' },
-  { valor: 'baixa_aceitacao', rotulo: 'Baixa aceitação',  icone: '👎' },
-  { valor: 'sazonalidade',    rotulo: 'Sazonalidade',     icone: '📅' },
-  { valor: 'variedade',       rotulo: 'Variedade',        icone: '🔄' },
-  { valor: 'outro',           rotulo: 'Outro motivo',     icone: '💬' },
+  { valor: 'preco_subiu',     rotulo: 'Preço subiu',      icone: '' },
+  { valor: 'preco_caiu',      rotulo: 'Preço caiu',       icone: '' },
+  { valor: 'falta_estoque',   rotulo: 'Falta de estoque', icone: '' },
+  { valor: 'qualidade_ruim',  rotulo: 'Qualidade ruim',   icone: '' },
+  { valor: 'baixa_aceitacao', rotulo: 'Baixa aceitação',  icone: '' },
+  { valor: 'sazonalidade',    rotulo: 'Sazonalidade',     icone: '' },
+  { valor: 'variedade',       rotulo: 'Variedade',        icone: '' },
+  { valor: 'outro',           rotulo: 'Outro motivo',     icone: '' },
 ];
 
 export interface DialogoContextoProps {

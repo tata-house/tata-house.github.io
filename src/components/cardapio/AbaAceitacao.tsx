@@ -70,9 +70,9 @@ export function AbaAceitacao({
   };
 
   const VOTOS: { v: 'bom' | 'ok' | 'ruim'; e: string; rot: string; tom: 'verde' | 'ouro' | 'vermelho' }[] = [
-    { v: 'bom', e: '😋', rot: 'Gostei', tom: 'verde' },
-    { v: 'ok', e: '😐', rot: 'Neutro', tom: 'ouro' },
-    { v: 'ruim', e: '👎', rot: 'Não', tom: 'vermelho' },
+    { v: 'bom', e: '', rot: 'Gostei', tom: 'verde' },
+    { v: 'ok', e: '', rot: 'Neutro', tom: 'ouro' },
+    { v: 'ruim', e: '', rot: 'Não', tom: 'vermelho' },
   ];
 
   const pratosSemana = estado.dias.map((d) => d.principal).filter(Boolean);
@@ -82,7 +82,7 @@ export function AbaAceitacao({
     <div className="space-y-5">
       <PlaquinhaQR aberto={plaquinhaAberta} aoFechar={() => setPlaquinhaAberta(false)} url={urlAvaliar} />
       {/* Pesquisa por QR — funcionários avaliam o prato do dia */}
-      <Secao titulo="📱 Pesquisa por QR">
+      <Secao titulo="Pesquisa por QR">
         <Cartao className="flex flex-col items-center gap-4 sm:flex-row">
           <QrCode url={urlAvaliar} size={132} className="shrink-0 ring-1 ring-carvao-200" />
           <div className="min-w-0 space-y-1.5 text-center sm:text-left">
@@ -99,16 +99,16 @@ export function AbaAceitacao({
               {urlAvaliar}
             </a>
             <Botao variante="secundario" className="!min-h-10 !px-4 !py-2 text-sm" onClick={() => setPlaquinhaAberta(true)}>
-              🖼️ Plaquinha para imprimir
+              Plaquinha para imprimir
             </Botao>
           </div>
         </Cartao>
       </Secao>
 
       {/* Avaliação dos pratos da semana */}
-      <Secao titulo="🗳️ Avaliar pratos da semana">
+      <Secao titulo="Avaliar pratos da semana">
         {pratosSemana.length === 0 ? (
-          <EstadoVazio icone="🍽️" titulo="Sem pratos para avaliar" texto="Monte o cardápio para registrar a aceitação de cada prato." />
+          <EstadoVazio titulo="Sem pratos para avaliar" texto="Monte o cardápio para registrar a aceitação de cada prato." />
         ) : (
           <div className="space-y-2">
             {estado.dias.map((d, i) =>
@@ -150,7 +150,7 @@ export function AbaAceitacao({
       {/* Rankings */}
       {ranking.length > 0 && (
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-          <Secao titulo="🏆 Mais aceitos">
+          <Secao titulo="Mais aceitos">
             <Cartao className="space-y-3">
               {ranking.slice(0, 5).map((r) => (
                 <div key={r.prato} className="space-y-1">
@@ -163,7 +163,7 @@ export function AbaAceitacao({
               ))}
             </Cartao>
           </Secao>
-          <Secao titulo="⚠️ Pior aceitação">
+          <Secao titulo="Pior aceitação">
             <Cartao className="space-y-3">
               {ranking
                 .slice()
@@ -185,7 +185,7 @@ export function AbaAceitacao({
 
       {/* Cruzamento aceitação × desperdício */}
       {cruzamento.length > 0 && (
-        <Secao titulo="🔎 Baixa aceitação + sobra">
+        <Secao titulo="Baixa aceitação + sobra">
           <Cartao className="!p-0">
             <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
               {cruzamento.map((c) => (
@@ -208,7 +208,7 @@ export function AbaAceitacao({
       )}
 
       {/* Eventos de demanda (M6) */}
-      <Secao titulo="📅 Eventos e feriados (previsão)">
+      <Secao titulo="Eventos e feriados (previsão)">
         {podeEditar && (
           <Cartao className="space-y-3">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

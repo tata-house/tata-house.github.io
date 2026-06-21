@@ -94,7 +94,7 @@ export function OperacaoDia({
           <button onClick={aoFechar} className="text-sm font-bold uppercase tracking-wide text-brand-200 hover:text-white">
             ← Sair
           </button>
-          <h2 className="font-display text-base font-black tracking-wide">⚡ Operação do Dia</h2>
+          <h2 className="font-display text-base font-black tracking-wide">Operação do Dia</h2>
           <span className="text-caption font-bold uppercase tracking-wide text-ouro-300">{DIAS_SEMANA[di]}</span>
         </div>
       </div>
@@ -107,14 +107,14 @@ export function OperacaoDia({
         ) : (
           <>
             <p className="text-center text-sm font-semibold text-brand-100">
-              {tudoFeito ? '🎉 Tudo pronto por hoje!' : `Você tem ${totalTarefas} tarefa${totalTarefas === 1 ? '' : 's'} hoje`}
+              {tudoFeito ? 'Tudo pronto por hoje!' : `Você tem ${totalTarefas} tarefa${totalTarefas === 1 ? '' : 's'} hoje`}
             </p>
 
             {/* Produzir */}
             {produzir.length > 0 && (
               <section className="space-y-2">
                 <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-ouro-300">
-                  🍳 Produzir ({feitasProd}/{produzir.length})
+                  Produzir ({feitasProd}/{produzir.length})
                 </h3>
                 {produzir.map(([rot, nome]) => {
                   const feito = feitos.has(rot);
@@ -151,14 +151,14 @@ export function OperacaoDia({
             {/* Receber / conferir */}
             {receber.length > 0 && (
               <section className="space-y-2">
-                <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-ouro-300">📥 Receber e conferir</h3>
+                <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-ouro-300">Receber e conferir</h3>
                 {receber.map((l) => (
                   <button
                     key={l.chave}
                     onClick={() => marcarRecebido(l.chave, l.qtd)}
                     className="flex w-full items-center gap-3 rounded-2xl bg-white/10 px-4 py-3.5 text-left ring-1 ring-white/15 transition hover:bg-white/15"
                   >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/15 text-sm">📦</span>
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/15 text-sm"></span>
                     <span className="min-w-0 flex-1 text-subtitulo font-semibold">{l.item}</span>
                     <span className="shrink-0 text-sm font-bold tabular-nums text-brand-100">
                       {formatarQtd(l.qtd)} {l.unid}
@@ -171,7 +171,7 @@ export function OperacaoDia({
             {/* Ainda comprar */}
             {comprar.length > 0 && (
               <section className="space-y-2">
-                <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-ouro-300">🛒 Ainda comprar</h3>
+                <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-ouro-300">Ainda comprar</h3>
                 {comprar.map((l) => (
                   <button
                     key={l.chave}
@@ -190,7 +190,7 @@ export function OperacaoDia({
 
             {tudoFeito && (
               <Cartao className="!bg-brand-500/20 !text-white !ring-brand-400/40 text-center">
-                <p className="text-base font-bold">🎉 Dia concluído!</p>
+                <p className="text-base font-bold">Dia concluído!</p>
                 <p className="text-sm text-brand-100">Produção, recebimento e compras de hoje estão em dia.</p>
               </Cartao>
             )}

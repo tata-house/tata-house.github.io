@@ -95,15 +95,15 @@ export function AbaDesperdicio({
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-3 gap-3">
-        <Kpi rotulo="Sobra na semana" valor={`${formatarQtd(totalSobra)}`} detalhe="porções/kg" tom="ouro" icone="♻️" />
-        <Kpi rotulo="Custo perdido" valor={custoRef ? formatarReais(totalCusto) : '—'} detalhe={custoRef ? 'estimado' : 'defina custo/refeição'} tom="vermelho" icone="💸" />
-        <Kpi rotulo="Taxa de sobra" valor={`${Math.round(taxa * 100)}%`} detalhe="do que foi produzido" tom={taxa > 0.1 ? 'vermelho' : 'verde'} icone="📉" />
+        <Kpi rotulo="Sobra na semana" valor={`${formatarQtd(totalSobra)}`} detalhe="porções/kg" tom="ouro" />
+        <Kpi rotulo="Custo perdido" valor={custoRef ? formatarReais(totalCusto) : '—'} detalhe={custoRef ? 'estimado' : 'defina custo/refeição'} tom="vermelho" />
+        <Kpi rotulo="Taxa de sobra" valor={`${Math.round(taxa * 100)}%`} detalhe="do que foi produzido" tom={taxa > 0.1 ? 'vermelho' : 'verde'} />
       </div>
 
       <RadarDesperdicio estado={estado} precos={precos} fatores={fatores} registros={registros} />
 
       {podeEditar && (
-        <Secao titulo="➕ Registrar sobra do dia">
+        <Secao titulo="Registrar sobra do dia">
           <Cartao className="space-y-3">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <div>
@@ -156,7 +156,7 @@ export function AbaDesperdicio({
 
       {/* Ranking de sobra por prato + sugestão */}
       {porPrato.length > 0 && (
-        <Secao titulo="🍂 Pratos com maior sobra">
+        <Secao titulo="Pratos com maior sobra">
           <Cartao className="!p-0">
             <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
               {porPrato.slice(0, 6).map((p) => (
@@ -174,7 +174,7 @@ export function AbaDesperdicio({
           </Cartao>
           {porPrato[0] && porPrato[0].sobra > 0 && (
             <p className="text-xs font-semibold text-ouro-600 dark:text-ouro-300">
-              💡 Sugestão: na próxima vez que servir <strong>{porPrato[0].prato}</strong>, produza um pouco menos — foi o
+              Sugestão: na próxima vez que servir <strong>{porPrato[0].prato}</strong>, produza um pouco menos — foi o
               prato que mais sobrou.
             </p>
           )}
@@ -182,9 +182,9 @@ export function AbaDesperdicio({
       )}
 
       {/* Histórico de lançamentos */}
-      <Secao titulo="📋 Lançamentos da semana">
+      <Secao titulo="Lançamentos da semana">
         {registros.length === 0 ? (
-          <EstadoVazio icone="♻️" titulo="Nenhuma sobra registrada" texto="Anote a sobra de cada dia para o app calcular o custo perdido e sugerir ajustes." />
+          <EstadoVazio titulo="Nenhuma sobra registrada" texto="Anote a sobra de cada dia para o app calcular o custo perdido e sugerir ajustes." />
         ) : (
           <Cartao className="!p-0">
             <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">

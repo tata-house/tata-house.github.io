@@ -131,7 +131,7 @@ export function CentralGerencial({
   };
 
   const exportarAceitacao = () => {
-    const rows: string[][] = [['Prato', 'Bom 😋', 'Ok 😐', 'Ruim 👎', 'Total', 'Nota Média (1-5)', 'Última Atualização']];
+    const rows: string[][] = [['Prato', 'Bom ', 'Ok ', 'Ruim ', 'Total', 'Nota Média (1-5)', 'Última Atualização']];
     for (const [, r] of Object.entries(aceitacao).sort((a, b) => b[1].n - a[1].n)) {
       rows.push([
         r.prato, String(r.bom), String(r.ok), String(r.ruim), String(r.n),
@@ -197,13 +197,13 @@ export function CentralGerencial({
   };
 
   const RELATORIOS = [
-    { id: 'cardapios', icone: '🍽️', titulo: 'Cardápios', desc: 'Pratos planejados por dia e semana', fn: exportarCardapios },
-    { id: 'compras', icone: '🛒', titulo: 'Compras e Recebimento', desc: 'Itens comprados, preços pagos e quantidades recebidas', fn: exportarCompras },
-    { id: 'custos', icone: '💰', titulo: 'Custos', desc: 'Custo estimado vs. real, refeições e custo por refeição', fn: exportarCustos },
-    { id: 'precos', icone: '📊', titulo: 'Tabela de Preços', desc: 'Preços atuais, fornecedores e histórico por item', fn: exportarPrecos },
-    { id: 'aceitacao', icone: '👍', titulo: 'Aceitação dos Pratos', desc: 'Votos bom/ok/ruim e nota média por prato', fn: exportarAceitacao },
-    { id: 'nutricional', icone: '🥗', titulo: 'Desempenho Nutricional', desc: 'Índice Nutricional Tata House por semana', fn: exportarNutricional },
-    { id: 'auditoria', icone: '🔒', titulo: 'Auditoria', desc: 'Histórico de todas as ações realizadas no sistema', fn: exportarAuditoria },
+    { id: 'cardapios', icone: '', titulo: 'Cardápios', desc: 'Pratos planejados por dia e semana', fn: exportarCardapios },
+    { id: 'compras', icone: '', titulo: 'Compras e Recebimento', desc: 'Itens comprados, preços pagos e quantidades recebidas', fn: exportarCompras },
+    { id: 'custos', icone: '', titulo: 'Custos', desc: 'Custo estimado vs. real, refeições e custo por refeição', fn: exportarCustos },
+    { id: 'precos', icone: '', titulo: 'Tabela de Preços', desc: 'Preços atuais, fornecedores e histórico por item', fn: exportarPrecos },
+    { id: 'aceitacao', icone: '', titulo: 'Aceitação dos Pratos', desc: 'Votos bom/ok/ruim e nota média por prato', fn: exportarAceitacao },
+    { id: 'nutricional', icone: '', titulo: 'Desempenho Nutricional', desc: 'Índice Nutricional Tata House por semana', fn: exportarNutricional },
+    { id: 'auditoria', icone: '', titulo: 'Auditoria', desc: 'Histórico de todas as ações realizadas no sistema', fn: exportarAuditoria },
   ];
 
   return (
@@ -211,7 +211,7 @@ export function CentralGerencial({
       {/* Cabeçalho */}
       <div className="rounded-2xl bg-gradient-to-r from-carvao-800 to-carvao-600 p-5 text-white dark:from-carvao-900 dark:to-carvao-700">
         <div className="flex items-center gap-3">
-          <span className="text-3xl">📈</span>
+          
           <div>
             <h2 className="font-display text-xl font-bold">Central Gerencial</h2>
             <p className="text-sm text-carvao-200">Visão executiva — exporte tudo para Excel / Google Sheets em CSV</p>
@@ -251,7 +251,7 @@ export function CentralGerencial({
       {/* Índice nutricional resumido */}
       <Cartao className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-caption font-bold uppercase tracking-wide text-carvao-400">🥗 Índice Nutricional — semana atual</p>
+          <p className="text-caption font-bold uppercase tracking-wide text-carvao-400">Índice Nutricional — semana atual</p>
           <p className="font-display text-2xl font-black text-brand-700 dark:text-brand-300">{nutri.score}% {nutri.rotulo}</p>
         </div>
         <div className="h-3 w-32 overflow-hidden rounded-full bg-carvao-100 dark:bg-carvao-800">
@@ -261,7 +261,7 @@ export function CentralGerencial({
 
       {/* Relatórios exportáveis */}
       <div className="space-y-2">
-        <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-carvao-400">📥 Exportar relatórios (CSV)</h3>
+        <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-carvao-400">Exportar relatórios (CSV)</h3>
         <div className="grid gap-2 sm:grid-cols-2">
           {RELATORIOS.map((r) => (
             <button
@@ -283,7 +283,7 @@ export function CentralGerencial({
       {/* Últimas ações (auditoria resumida) */}
       {auditoria.length > 0 && (
         <Cartao className="space-y-2">
-          <h3 className="font-display text-sm font-bold">🔍 Últimas ações registradas</h3>
+          <h3 className="font-display text-sm font-bold">Últimas ações registradas</h3>
           <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
             {auditoria.slice(0, 10).map((r, i) => (
               <li key={i} className="flex items-center gap-3 py-2 text-sm">
@@ -315,7 +315,7 @@ export function CentralGerencial({
         rel="noopener noreferrer"
         className="flex items-center justify-center gap-2 rounded-2xl bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-700 ring-1 ring-brand-200/60 transition hover:bg-brand-100 dark:bg-carvao-800 dark:text-brand-300 dark:ring-carvao-600"
       >
-        <span className="text-lg">📖</span>
+        
         Manual do sistema — guia completo para funcionários
         <span className="text-brand-400">↗</span>
       </a>

@@ -86,9 +86,9 @@ export function AbaEstoque({
       />
 
       <div className="grid grid-cols-3 gap-3">
-        <Kpi rotulo="Itens em estoque" valor={Object.keys(estoque).length} tom="neutro" icone="📦" />
-        <Kpi rotulo="A comprar" valor={aComprar.length} detalhe="após descontar estoque" tom="ouro" icone="🛒" />
-        <Kpi rotulo="No mínimo" valor={baixos.length} detalhe="estoque baixo" tom={baixos.length ? 'vermelho' : 'verde'} icone="⚠️" />
+        <Kpi rotulo="Itens em estoque" valor={Object.keys(estoque).length} tom="neutro" />
+        <Kpi rotulo="A comprar" valor={aComprar.length} detalhe="após descontar estoque" tom="ouro" />
+        <Kpi rotulo="No mínimo" valor={baixos.length} detalhe="estoque baixo" tom={baixos.length ? 'vermelho' : 'verde'} />
       </div>
 
       {/* Inventário mensal — contagem física do estoque */}
@@ -97,7 +97,7 @@ export function AbaEstoque({
         className="flex w-full items-center justify-between gap-3 rounded-2xl border border-brand-600/30 bg-brand-50 px-4 py-3 text-left transition hover:bg-brand-100 dark:bg-carvao-800 dark:hover:bg-carvao-700"
       >
         <span>
-          <span className="block text-sm font-extrabold text-brand-700 dark:text-brand-300">📋 Inventário mensal</span>
+          <span className="block text-sm font-extrabold text-brand-700 dark:text-brand-300">Inventário mensal</span>
           <span className="block text-caption text-carvao-500 dark:text-areia-200">
             Conte o estoque do mês e veja as divergências (esperado × contado).
           </span>
@@ -107,11 +107,11 @@ export function AbaEstoque({
 
       {/* Necessidade real de compra */}
       <Secao
-        titulo="🛒 Necessidade real de compra"
+        titulo="Necessidade real de compra"
         acao={<Pilula tom="azul">cardápio − estoque</Pilula>}
       >
         {consumo.length === 0 ? (
-          <EstadoVazio icone="🍽️" titulo="Monte o cardápio da semana" texto="A necessidade de compra aparece quando há pratos definidos." />
+          <EstadoVazio titulo="Monte o cardápio da semana" texto="A necessidade de compra aparece quando há pratos definidos." />
         ) : (
           <Cartao className="!p-0">
             <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
@@ -145,7 +145,7 @@ export function AbaEstoque({
       {podeEditar && (
         <>
           {/* Entrada de produtos */}
-          <Secao titulo="➕ Entrada de produtos">
+          <Secao titulo="Entrada de produtos">
             <Cartao className="space-y-3">
               <div className="flex flex-col gap-2 sm:flex-row">
                 <input
@@ -186,7 +186,7 @@ export function AbaEstoque({
       )}
 
       {/* Saldo atual */}
-      <Secao titulo="📦 Estoque atual">
+      <Secao titulo="Estoque atual">
         <input
           className={`${estiloInput} mb-1`}
           placeholder="Buscar item no estoque…"
@@ -194,7 +194,7 @@ export function AbaEstoque({
           onChange={(e) => setBusca(e.target.value)}
         />
         {itensEstoque.length === 0 ? (
-          <EstadoVazio icone="📦" titulo="Estoque vazio" texto="Lance entradas de produtos para começar a controlar o estoque." />
+          <EstadoVazio titulo="Estoque vazio" texto="Lance entradas de produtos para começar a controlar o estoque." />
         ) : (
           <Cartao className="!p-0">
             <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">

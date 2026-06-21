@@ -278,7 +278,7 @@ export function AbaCardapio({
         className="flex w-full items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-brand-800 to-brand-600 px-4 py-3 text-left text-white shadow-suave ring-1 ring-ouro-400/40 transition hover:from-brand-900 hover:to-brand-700"
       >
         <span>
-          <span className="block text-sm font-extrabold tracking-wide">⚡ Operação do Dia</span>
+          <span className="block text-sm font-extrabold tracking-wide">Operação do Dia</span>
           <span className="block text-caption text-brand-100">O que produzir, receber e comprar hoje — em um toque.</span>
         </span>
         <span className="shrink-0 text-lg">→</span>
@@ -352,16 +352,16 @@ export function AbaCardapio({
           <p className="mb-3 text-caption font-bold uppercase tracking-wide text-brand-700 dark:text-brand-300">Escolha o modo de geração</p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {([
-              { id: 'historica', icone: '📅', titulo: 'Antigo', desc: 'Baseado no histórico da operação' },
-              { id: 'economica', icone: '⚖️', titulo: 'Mesclado', desc: 'Tradição equilibrada com variedade' },
-              { id: 'criativa', icone: '✨', titulo: 'Novo', desc: 'Maior liberdade para novas ideias' },
+              { id: 'historica', icone: 'calendario' as const, titulo: 'Antigo', desc: 'Baseado no histórico da operação' },
+              { id: 'economica', icone: 'gerencial' as const,  titulo: 'Mesclado', desc: 'Tradição equilibrada com variedade' },
+              { id: 'criativa', icone: 'raio' as const,        titulo: 'Novo', desc: 'Maior liberdade para novas ideias' },
             ] as const).map((m) => (
               <button
                 key={m.id}
                 onClick={() => { gerar(m.id); setGerarAberto(false); }}
-                className="flex items-start gap-2 rounded-xl border border-carvao-200 bg-white p-3 text-left transition hover:border-brand-400 hover:bg-brand-50 dark:border-carvao-700 dark:bg-carvao-800"
+                className="flex items-start gap-2.5 rounded-xl border border-carvao-200 bg-white p-3 text-left transition hover:border-brand-400 hover:bg-brand-50 dark:border-carvao-700 dark:bg-carvao-800"
               >
-                <span className="mt-0.5 text-xl leading-none">{m.icone}</span>
+                <span className="mt-0.5 text-brand-600 dark:text-brand-300"><Icone nome={m.icone} tam={20} /></span>
                 <div>
                   <p className="text-sm font-bold text-carvao-800 dark:text-areia-100">{m.titulo}</p>
                   <p className="text-caption text-carvao-500 dark:text-carvao-400">{m.desc}</p>
@@ -496,7 +496,7 @@ export function AbaCardapio({
             </div>
 
             <Botao variante="sucesso" className="w-full" onClick={gerarPersonalizado}>
-              ✨ Gerar cardápio personalizado
+              Gerar cardápio personalizado
             </Botao>
           </div>}
         </div>
@@ -507,7 +507,7 @@ export function AbaCardapio({
         <div className="rounded-2xl border border-brand-200 bg-white p-4 shadow-suave dark:border-brand-900 dark:bg-carvao-900">
           <div className="mb-2 flex items-start justify-between gap-3">
             <p className="flex items-center gap-2 text-sm font-bold text-brand-700 dark:text-brand-300">
-              <span aria-hidden>💡</span> {explicacao.titulo}
+              <span aria-hidden></span> {explicacao.titulo}
             </p>
             <button
               onClick={() => setExplicacao(null)}
@@ -540,7 +540,7 @@ export function AbaCardapio({
                   a.nivel === 'erro' ? 'text-perigo' : 'text-[#9a6c17] dark:text-[#e3b45c]'
                 }`}
               >
-                <span aria-hidden>{a.nivel === 'erro' ? '⛔' : '⚠️'}</span>
+                <span aria-hidden>{a.nivel === 'erro' ? '' : ''}</span>
                 {a.msg}
               </p>
             ))}
@@ -641,7 +641,7 @@ export function AbaCardapio({
                   </p>
                   {fonte === 'estimado' && (
                     <p className="rounded-xl bg-perigo/10 px-2.5 py-1.5 text-caption font-semibold text-perigo ring-1 ring-perigo/20">
-                      ⚠️ Este prato não tem receita cadastrada — os ingredientes são um chute. Escolha um prato com
+                      Este prato não tem receita cadastrada — os ingredientes são um chute. Escolha um prato com
                       receita ou complete os itens na lista de compras.
                     </p>
                   )}
@@ -699,7 +699,7 @@ export function AbaCardapio({
           <div className="rounded-2xl bg-ouro-300/15 p-3 ring-1 ring-ouro-400/30">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <p className="text-xs font-bold uppercase tracking-wide text-ouro-600">
-                ⚠️ {semPreco.length} itens da semana ainda sem preço — complete para o custo cobrir tudo:
+                {semPreco.length} itens da semana ainda sem preço — complete para o custo cobrir tudo:
               </p>
               {podeEditar && (
                 <Botao

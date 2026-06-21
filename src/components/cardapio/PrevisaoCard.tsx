@@ -39,7 +39,7 @@ export function PrevisaoCard({ semanaId, onPessoasAtualizadas }: Props) {
     <section className="rounded-3xl bg-white p-5 shadow-suave ring-1 ring-carvao-100 dark:bg-carvao-850 dark:ring-carvao-700">
       <div className="mb-1 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="text-xl">📊</span>
+          
           <h2 className="font-display text-base font-bold text-carvao-800 dark:text-areia-100">Previsão de consumo</h2>
         </div>
         {previsao.baseSemanas > 0 && (

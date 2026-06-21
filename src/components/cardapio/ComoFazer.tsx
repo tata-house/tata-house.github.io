@@ -15,9 +15,9 @@ import { receitaDoPrato } from '@/lib/cardapio/receitas';
 import { preparoDoPrato } from '@/lib/cardapio/preparos';
 
 const ROTULO_CLASSE: Record<string, string> = {
-  economica: '💰 Econômica',
-  equilibrada: '⚖️ Equilibrada',
-  premium: '⭐ Premium',
+  economica: 'Econômica',
+  equilibrada: 'Equilibrada',
+  premium: 'Premium',
 };
 
 const ROTULO_COMPLEX: Record<string, string> = {
@@ -48,7 +48,7 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
           'inline-flex items-center gap-1 rounded-full bg-brand-600/10 px-2.5 py-1 text-caption font-bold text-brand-700 ring-1 ring-brand-600/20 transition hover:bg-brand-600/20 dark:text-brand-300'
         }
       >
-        👨‍🍳 Como fazer
+        Como fazer
       </button>
 
       <BottomSheet titulo={`Como fazer · ${prato}`} aberto={aberto} aoFechar={() => setAberto(false)}>
@@ -57,13 +57,13 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
           {receita && (
             <div className="flex flex-wrap gap-1.5">
               {receita.classe && <Pilula tom="verde">{ROTULO_CLASSE[receita.classe] ?? receita.classe}</Pilula>}
-              {receita.tempoMin > 0 && <Pilula tom="neutro">⏱️ {receita.tempoMin} min</Pilula>}
+              {receita.tempoMin > 0 && <Pilula tom="neutro">⏱{receita.tempoMin} min</Pilula>}
               {receita.complexidade && (
-                <Pilula tom="ouro">🔥 {ROTULO_COMPLEX[receita.complexidade] ?? receita.complexidade}</Pilula>
+                <Pilula tom="ouro">{ROTULO_COMPLEX[receita.complexidade] ?? receita.complexidade}</Pilula>
               )}
-              {receita.rendimentoPorcaoG > 0 && <Pilula tom="neutro">🍽️ {receita.rendimentoPorcaoG} g/porção</Pilula>}
+              {receita.rendimentoPorcaoG > 0 && <Pilula tom="neutro">{receita.rendimentoPorcaoG} g/porção</Pilula>}
               {receita.adequacaoRefeitorio > 0 && (
-                <Pilula tom="azul">👍 {receita.adequacaoRefeitorio}% refeitório</Pilula>
+                <Pilula tom="azul">{receita.adequacaoRefeitorio}% refeitório</Pilula>
               )}
             </div>
           )}
@@ -143,7 +143,7 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
               <ul className="flex flex-wrap gap-1.5">
                 {receita.substituicoes.map((s, i) => (
                   <li key={i} className="rounded-full bg-carvao-100 px-2.5 py-1 text-rotulo text-carvao-600 dark:bg-carvao-700 dark:text-areia-200">
-                    🔄 {s}
+                    {s}
                   </li>
                 ))}
               </ul>
@@ -154,7 +154,7 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
           {receita?.obsOperacional && (
             <div className="rounded-2xl bg-brand-500/8 px-3 py-2.5 ring-1 ring-brand-500/20">
               <p className="text-caption font-bold uppercase tracking-wider text-brand-700 dark:text-brand-300">
-                💡 Dica de produção
+                Dica de produção
               </p>
               <p className="mt-0.5 text-sm text-carvao-700 dark:text-areia-100">{receita.obsOperacional}</p>
             </div>

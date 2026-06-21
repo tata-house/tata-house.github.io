@@ -110,7 +110,7 @@ export function RadarDesperdicio({
 
   return (
     <Secao
-      titulo="🛰️ Radar preditivo de desperdício"
+      titulo="Radar preditivo de desperdício"
       acao={
         custoEvitavel > 0 ? (
           <Pilula tom="verde">evita ~{formatarReais(custoEvitavel)}/sem</Pilula>
@@ -122,7 +122,7 @@ export function RadarDesperdicio({
       {previsoes.length === 0 ? (
         <Cartao className="space-y-1">
           <p className="text-sm font-semibold text-brand-700 dark:text-brand-300">
-            ✅ Nenhum risco previsto para os pratos desta semana.
+            Nenhum risco previsto para os pratos desta semana.
           </p>
           <p className="text-caption text-carvao-400">
             O radar aprendeu com {padroes.size} prato(s) do histórico. Os pratos planejados não têm padrão de sobra
@@ -155,7 +155,7 @@ export function RadarDesperdicio({
 
       {observar.length > 0 && (
         <Cartao className="space-y-1.5 bg-areia-50/60 dark:bg-carvao-900/40">
-          <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">👁️ Vigiar quando voltarem</p>
+          <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">Vigiar quando voltarem</p>
           <ul className="space-y-1 text-rotulo">
             {observar.map((p) => (
               <li key={p.prato} className="flex items-center justify-between gap-2">

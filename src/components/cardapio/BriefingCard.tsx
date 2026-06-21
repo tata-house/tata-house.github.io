@@ -122,7 +122,7 @@ export function BriefingCard(props: Props) {
       estoque: props.estoque,
     };
     gerarBriefing(ctx, dossie)
-      .then((r) => { if (r?.texto && !r.texto.startsWith('💡') && !r.texto.startsWith('📦') && !r.texto.startsWith('👎')) setIaTexto(r.texto); })
+      .then((r) => { if (r?.texto && !r.texto.startsWith('') && !r.texto.startsWith('') && !r.texto.startsWith('')) setIaTexto(r.texto); })
       .catch(() => {})
       .finally(() => setCarregandoIa(false));
   }, [briefing.tudo_ok]); // só recalcula quando muda de estado
@@ -130,7 +130,7 @@ export function BriefingCard(props: Props) {
   if (briefing.tudo_ok) {
     return (
       <div className="flex items-center gap-3 rounded-3xl bg-brand-50 px-5 py-4 ring-1 ring-brand-200/60 dark:bg-carvao-850 dark:ring-carvao-700">
-        <span className="text-2xl">✅</span>
+        
         <div>
           <p className="font-display text-sm font-bold text-brand-700 dark:text-brand-300">{briefing.saudacao}</p>
           <p className="text-nota text-carvao-600 dark:text-areia-300">Tudo em ordem hoje. Nenhum alerta ativo.</p>
@@ -149,7 +149,7 @@ export function BriefingCard(props: Props) {
         className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
       >
         <div className="flex items-center gap-2.5">
-          <span className="text-xl">🗓️</span>
+          
           <div>
             <p className="font-display text-sm font-bold text-carvao-800 dark:text-areia-100">{briefing.saudacao}</p>
             <p className="text-rotulo text-carvao-500 dark:text-areia-400">

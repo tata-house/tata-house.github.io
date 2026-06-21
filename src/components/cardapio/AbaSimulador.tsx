@@ -144,13 +144,12 @@ export function AbaSimulador({
   }, [estado.dias, precos, estimativasEfetivas, fatores]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (estado.dias.every((d) => !d.principal)) {
-    return <EstadoVazio icone="⚖️" titulo="Monte um cardápio para simular" texto="O simulador compara o custo da semana atual com alternativas mais econômicas ou criativas." />;
+    return <EstadoVazio titulo="Monte um cardápio para simular" texto="O simulador compara o custo da semana atual com alternativas mais econômicas ou criativas." />;
   }
 
   if (!temPrecos) {
     return (
       <EstadoVazio
-        icone="💰"
         titulo="Lance os preços para simular custos"
         texto="O simulador financeiro precisa dos preços para comparar cenários. Lance os preços em Compras → Preços ou no catálogo em Ajustes."
       />
@@ -160,21 +159,19 @@ export function AbaSimulador({
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Kpi rotulo="Custo / refeição" valor={formatarReais(atual.custoRef)} detalhe="semana atual" tom="ouro" icone="🎯" />
-        <Kpi rotulo="Custo total" valor={formatarReais(atual.custo)} detalhe="estimado" tom="neutro" icone="💰" />
+        <Kpi rotulo="Custo / refeição" valor={formatarReais(atual.custoRef)} detalhe="semana atual" tom="ouro" />
+        <Kpi rotulo="Custo total" valor={formatarReais(atual.custo)} detalhe="estimado" tom="neutro" />
         <Kpi
           rotulo="Economia / semana"
           valor={alt ? formatarReais(Math.abs(economia)) : '—'}
           detalhe={alt ? (economia >= 0 ? 'mais barato' : 'mais caro') : 'gere uma alternativa'}
           tom={economia >= 0 ? 'verde' : 'vermelho'}
-          icone="📉"
         />
         <Kpi
           rotulo="Impacto no mês"
           valor={alt ? formatarReais(Math.abs(economiaMes)) : '—'}
           detalhe="× 4,3 semanas"
           tom={economia >= 0 ? 'verde' : 'vermelho'}
-          icone="🗓️"
         />
       </div>
 
@@ -196,7 +193,7 @@ export function AbaSimulador({
           </p>
           {tipado.itensSemPreco > 0 && (
             <p className="rounded-xl bg-perigo/10 px-2.5 py-1.5 text-caption font-semibold text-perigo ring-1 ring-perigo/20">
-              ⚠️ {tipado.itensSemPreco} itens sem nenhuma referência de preço — a simulação está incompleta. Lance um
+              {tipado.itensSemPreco} itens sem nenhuma referência de preço — a simulação está incompleta. Lance um
               preço (Cotação) ou registre o item no histórico.
             </p>
           )}
@@ -204,7 +201,7 @@ export function AbaSimulador({
       )}
 
       {/* Simulador de cenários — "E se…" */}
-      <Secao titulo="🔮 E se… (cenários)">
+      <Secao titulo="E se… (cenários)">
         <Cartao className="space-y-3">
           <div>
             <label className="flex items-center justify-between text-sm font-semibold">
@@ -284,17 +281,17 @@ export function AbaSimulador({
 
       <div className="flex flex-wrap gap-2">
         <Botao onClick={() => gerar('economica')} className="flex-1">
-          ⚡ Alternativa econômica
+          Alternativa econômica
         </Botao>
         <Botao variante="secundario" onClick={() => gerar('criativa')} className="flex-1">
-          ✨ Alternativa criativa
+          Alternativa criativa
         </Botao>
       </div>
 
       {/* Comparativo lado a lado */}
       {alt && (
         <Secao
-          titulo="⚖️ Comparativo"
+          titulo="Comparativo"
           acao={
             <Pilula tom={economia >= 0 ? 'verde' : 'vermelho'}>
               {economia >= 0 ? 'economiza ' : 'custa '}
@@ -327,14 +324,14 @@ export function AbaSimulador({
           </div>
           {podeEditar && (
             <Botao variante="sucesso" onClick={aplicar} className="w-full">
-              ✅ Aplicar alternativa nesta semana
+              Aplicar alternativa nesta semana
             </Botao>
           )}
         </Secao>
       )}
 
       {/* Pratos mais caros */}
-      <Secao titulo="💸 Pratos mais caros da semana">
+      <Secao titulo="Pratos mais caros da semana">
         <Cartao className="!p-0">
           <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
             {maisCaros.map((m) => (

@@ -22,7 +22,7 @@ export interface ItemBriefing {
 }
 
 export interface Briefing {
-  saudacao: string; // "Bom dia, gestor 👋"
+  saudacao: string; // "Bom dia, gestor "
   itens: ItemBriefing[];
   tudo_ok: boolean;
   geradoEm: string;
@@ -39,7 +39,7 @@ function hora(): 'manha' | 'tarde' | 'noite' {
 
 function saudacao(): string {
   const s = { manha: 'Bom dia', tarde: 'Boa tarde', noite: 'Boa noite' }[hora()];
-  return `${s}, gestor 👋`;
+  return `${s}, gestor `;
 }
 
 /* ---- coleta alertas de cada domínio -------------------------------- */
@@ -50,7 +50,7 @@ function alertasPreco(dossie: DossieIA): ItemBriefing[] {
     .slice(0, 2)
     .map((a) => ({
       nivel: a.variacaoPct >= 30 ? 'urgente' : 'atencao',
-      icone: '📈',
+      icone: '',
       titulo: `${a.item} subiu ${a.variacaoPct}%`,
       detalhe: `De R$${a.precoMedio.toFixed(2)} para R$${a.precoAtual.toFixed(2)} desde a última cotação.`,
       acao: 'Avaliar substituição ou cotação extra.',
@@ -60,7 +60,7 @@ function alertasPreco(dossie: DossieIA): ItemBriefing[] {
 function alertasEstoqueBriefing(dossie: DossieIA): ItemBriefing[] {
   return dossie.estoqueAbaixoMinimo.slice(0, 3).map((e) => ({
     nivel: e.qtd === 0 ? 'urgente' : 'atencao',
-    icone: '📦',
+    icone: '',
     titulo: `${e.item} ${e.qtd === 0 ? 'zerado' : 'abaixo do mínimo'}`,
     detalhe: `Saldo: ${e.qtd} ${e.unid} (mín. ${e.minimo} ${e.unid}).`,
     acao: 'Incluir na próxima compra.',
@@ -73,7 +73,7 @@ function alertasDesperdicio(dossie: DossieIA): ItemBriefing[] {
     .slice(0, 2)
     .map((d) => ({
       nivel: d.taxaMedia >= 0.3 ? 'urgente' : 'atencao',
-      icone: '🗑️',
+      icone: '',
       titulo: `${d.prato} — ${Math.round(d.taxaMedia * 100)}% de sobra`,
       detalhe: `Média de ${Math.round(d.taxaMedia * 100)}% desperdiçado em ${d.n} registro(s).`,
       acao: 'Reduzir produção ou retirar do cardápio.',
@@ -86,7 +86,7 @@ function alertaAceitacao(dossie: DossieIA): ItemBriefing[] {
     .slice(0, 1)
     .map((p) => ({
       nivel: 'atencao',
-      icone: '👎',
+      icone: '',
       titulo: `${p.prato} — nota ${p.media}`,
       detalhe: `${p.n} avaliações com nota média ${p.media}. Equipe não está gostando.`,
       acao: 'Considerar retirar do cardápio.',
@@ -100,7 +100,7 @@ function alertaOrcamento(dossie: DossieIA): ItemBriefing[] {
   return [
     {
       nivel: pct >= 110 ? 'urgente' : 'atencao',
-      icone: '💸',
+      icone: '',
       titulo: `Custo ${pct >= 110 ? 'acima' : 'perto'} do orçamento`,
       detalhe: `R$${dossie.custoTotal.toFixed(0)} estimado vs R$${dossie.orcamento.toFixed(0)} de orçamento (${Math.round(pct)}%).`,
       acao: 'Revisar proteínas caras ou porções.',
@@ -114,7 +114,7 @@ function alertaCardapioIncompleto(estado: EstadoSemana): ItemBriefing[] {
   return [
     {
       nivel: faltando >= 3 ? 'urgente' : 'atencao',
-      icone: '📋',
+      icone: '',
       titulo: `${faltando} dia(s) sem cardápio`,
       detalhe: `Ainda há ${faltando} dia(s) da semana sem prato principal definido.`,
       acao: 'Preencher o cardápio para liberar a lista de compras.',
@@ -131,7 +131,7 @@ function infoMemoria(dossie: DossieIA): ItemBriefing[] {
   return [
     {
       nivel: 'info',
-      icone: '🧠',
+      icone: '',
       titulo: `Memória: ${top.item} ajustado ${pct}% ${dir}`,
       detalhe: `A cozinha consistentemente pede ${pct}% ${dir} da sugestão. Fator ${top.fator}× aplicado.`,
     },

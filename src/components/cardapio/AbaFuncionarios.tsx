@@ -26,9 +26,9 @@ const RESTRICAO_ROTULO: Record<TipoRestricao, string> = {
 };
 
 const RESTRICAO_EMOJI: Record<TipoRestricao, string> = {
-  alergia: '⚠️',
-  preferencia: '🚫',
-  religioso: '✡️',
+  alergia: '',
+  preferencia: '',
+  religioso: '',
 };
 
 function detectarConflitos(funcionarios: Funcionario[], dias: DiaCardapio[]): {
@@ -175,9 +175,9 @@ function FormFuncionario({
             onChange={(e) => setNovoTipo(e.target.value as TipoRestricao)}
             className="min-h-12 rounded-2xl border border-carvao-200 bg-white px-3 text-sm text-carvao-800 dark:border-carvao-600 dark:bg-carvao-900 dark:text-areia-100"
           >
-            <option value="alergia">⚠️ Alergia</option>
-            <option value="preferencia">🚫 Preferência</option>
-            <option value="religioso">✡️ Religioso</option>
+            <option value="alergia">Alergia</option>
+            <option value="preferencia">Preferência</option>
+            <option value="religioso">Religioso</option>
           </select>
           <input
             className={`${estiloInput} flex-1`}
@@ -307,7 +307,7 @@ export function AbaFuncionarios({
       {conflitos.length > 0 && (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-800/50 dark:bg-red-950/30">
           <p className="mb-3 text-sm font-bold text-red-700 dark:text-red-400">
-            ⚠️ {conflitos.length} conflito{conflitos.length > 1 ? 's' : ''} detectado{conflitos.length > 1 ? 's' : ''} nesta semana
+            {conflitos.length} conflito{conflitos.length > 1 ? 's' : ''} detectado{conflitos.length > 1 ? 's' : ''} nesta semana
           </p>
           <div className="space-y-2">
             {conflitos.map((c, i) => (
@@ -357,7 +357,7 @@ export function AbaFuncionarios({
           className="flex items-center gap-1.5 rounded-2xl border border-carvao-200 px-3 py-2.5 text-sm font-semibold text-carvao-500 transition hover:border-brand-400 hover:text-brand-600 dark:border-carvao-600 dark:text-carvao-400"
           title="Importar restrições a partir de conversa"
         >
-          <span className="text-base">💬</span>
+          
           <span className="hidden sm:inline">Importar da conversa</span>
         </button>
       </div>
@@ -365,14 +365,14 @@ export function AbaFuncionarios({
       {importAberto && (
         <Cartao className="space-y-3">
           <p className="text-sm font-bold text-carvao-700 dark:text-areia-100">
-            💬 Importar restrições via conversa
+            Importar restrições via conversa
           </p>
           <p className="text-xs text-carvao-400">
             Cole abaixo uma conversa do WhatsApp (ou qualquer texto) onde restrições alimentares de funcionários são mencionadas. O Gemini extrai os nomes e restrições automaticamente.
           </p>
           {!process.env.NEXT_PUBLIC_GEMINI_API_KEY && (
             <p className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700 dark:border-amber-800/40 dark:bg-amber-950/30 dark:text-amber-300">
-              ⚠️ Configure <code>NEXT_PUBLIC_GEMINI_API_KEY</code> para habilitar a extração por IA.
+              Configure <code>NEXT_PUBLIC_GEMINI_API_KEY</code> para habilitar a extração por IA.
             </p>
           )}
           <textarea
@@ -393,7 +393,7 @@ export function AbaFuncionarios({
                 Extraindo…
               </span>
             ) : (
-              '✨ Extrair com IA'
+              'Extrair com IA'
             )}
           </Botao>
 
@@ -431,7 +431,7 @@ export function AbaFuncionarios({
                       <div className="mt-1 flex flex-wrap gap-1">
                         {e.restricoes.map((r, ri) => (
                           <span key={ri} className={`rounded-full px-2 py-0.5 text-micro font-semibold ${RESTRICAO_COR[r.tipo as TipoRestricao] ?? 'bg-carvao-100 text-carvao-600'}`}>
-                            {RESTRICAO_EMOJI[r.tipo as TipoRestricao] ?? '🚫'} {r.alimento}
+                            {RESTRICAO_EMOJI[r.tipo as TipoRestricao] ?? ''} {r.alimento}
                           </span>
                         ))}
                         {e.restricoes.length === 0 && (
@@ -459,7 +459,7 @@ export function AbaFuncionarios({
 
       {funcionarios.length === 0 && (
         <div className="rounded-2xl bg-carvao-50 py-10 text-center dark:bg-carvao-800/50">
-          <p className="text-4xl">👥</p>
+          
           <p className="mt-2 text-sm font-semibold text-carvao-500">
             Nenhum funcionário cadastrado
           </p>

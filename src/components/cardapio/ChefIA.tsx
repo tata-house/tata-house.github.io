@@ -7,7 +7,7 @@
    2. Nunca sugere pratos da lista de veto operacional
    3. Considera aceitação histórica antes de recomendar alternativa
    4. Verifica frequência recente (janela de 4 semanas)
-   5. Aprende com o feedback (👍/👎) do time
+   5. Aprende com o feedback (/) do time
    ===================================================================== */
 
 import { useMemo, useState } from 'react';
@@ -134,7 +134,7 @@ export function ChefIA({
       if (caro && alt && caro.ref - alt.ref > 0.5) {
         const economia = (caro.ref - alt.ref) * caro.d.pessoas;
         const texto = `Trocar "${caro.d.principal}" (${DIAS_SEMANA[caro.i].slice(0, 3)}) por "${alt.n}" pode economizar ~${formatarReais(economia)} neste dia.`;
-        out.push({ id: 'economia', icone: '💸', titulo: 'Oportunidade de economia', texto, tom: 'verde' });
+        out.push({ id: 'economia', icone: '', titulo: 'Oportunidade de economia', texto, tom: 'verde' });
       }
     }
 
@@ -142,7 +142,7 @@ export function ChefIA({
     const semReceita = comPrato.filter((x) => !receitaDoPrato(x.d.principal));
     if (semReceita.length > 0) {
       const texto = `${semReceita.length} prato(s) sem receita cadastrada — os ingredientes são estimados. Prefira pratos com receita ou revise os itens manualmente.`;
-      out.push({ id: 'receita', icone: '📋', titulo: 'Ingredientes não confirmados', texto, tom: 'ouro' });
+      out.push({ id: 'receita', icone: '', titulo: 'Ingredientes não confirmados', texto, tom: 'ouro' });
     }
 
     // 3) Baixa aceitação histórica (≥3 avaliações, nota < 3)
@@ -151,7 +151,7 @@ export function ChefIA({
       if (a && a.n >= 3 && a.somaNotas / a.n < 3) {
         const nota = (a.somaNotas / a.n).toFixed(1);
         const texto = `"${x.d.principal}" teve avaliação baixa (nota ${nota}/5 com ${a.n} registros). Considere substituir por um prato com maior aceitação.`;
-        out.push({ id: `aceitacao-${x.i}`, icone: '👎', titulo: 'Baixa aceitação', texto, tom: 'vermelho' });
+        out.push({ id: `aceitacao-${x.i}`, icone: '', titulo: 'Baixa aceitação', texto, tom: 'vermelho' });
       }
     });
 
@@ -162,10 +162,10 @@ export function ChefIA({
       cont[p] = (cont[p] ?? 0) + 1;
     });
     if ((cont['frango'] ?? 0) > 4) {
-      out.push({ id: 'frango', icone: '🍗', titulo: 'Frango em excesso', texto: `Frango aparece ${cont['frango']}× nesta semana — acima do recomendado (máx. 4×). Varie as proteínas.`, tom: 'ouro' });
+      out.push({ id: 'frango', icone: '', titulo: 'Frango em excesso', texto: `Frango aparece ${cont['frango']}× nesta semana — acima do recomendado (máx. 4×). Varie as proteínas.`, tom: 'ouro' });
     }
     if ((cont['suina'] ?? 0) > 2) {
-      out.push({ id: 'suina', icone: '🥓', titulo: 'Carne suína em excesso', texto: `Carne suína ${cont['suina']}× — acima do recomendado (máx. 2×). Risco nutricional por excesso de gordura saturada.`, tom: 'vermelho' });
+      out.push({ id: 'suina', icone: '', titulo: 'Carne suína em excesso', texto: `Carne suína ${cont['suina']}× — acima do recomendado (máx. 2×). Risco nutricional por excesso de gordura saturada.`, tom: 'vermelho' });
     }
 
     // 5) Prato repetido das últimas 4 semanas (frequência ≥3×)
@@ -173,14 +173,14 @@ export function ChefIA({
       const k = normalizar(x.d.principal);
       const freq = frequenciaRecente[k] ?? 0;
       if (freq >= 3) {
-        out.push({ id: `freq-${x.i}`, icone: '🔄', titulo: 'Alta repetição', texto: `"${x.d.principal}" apareceu ${freq}× nas últimas 4 semanas. A equipe pode estar com sensação de monotonia.`, tom: 'ouro' });
+        out.push({ id: `freq-${x.i}`, icone: '', titulo: 'Alta repetição', texto: `"${x.d.principal}" apareceu ${freq}× nas últimas 4 semanas. A equipe pode estar com sensação de monotonia.`, tom: 'ouro' });
       }
     });
 
     // 6) Dias incompletos
     const vazios = estado.dias.filter((d) => !d.principal).length;
     if (vazios > 0 && vazios < 7) {
-      out.push({ id: 'incompleto', icone: '📅', titulo: 'Semana incompleta', texto: `${vazios} dia(s) ainda sem prato principal. Use "Sugerir" para completar automaticamente.`, tom: 'azul' });
+      out.push({ id: 'incompleto', icone: '', titulo: 'Semana incompleta', texto: `${vazios} dia(s) ainda sem prato principal. Use "Sugerir" para completar automaticamente.`, tom: 'azul' });
     }
 
     // 7) Itens sem preço na semana (impacto financeiro invisível)
@@ -194,7 +194,7 @@ export function ChefIA({
     });
     const unicos = Array.from(new Set(semPrecoSet));
     if (unicos.length > 2) {
-      out.push({ id: 'sempreco', icone: '💲', titulo: 'Custo não visível', texto: `${unicos.length} ingredientes sem cotação (ex: ${unicos.slice(0, 2).join(', ')}). O custo real da semana pode ser maior.`, tom: 'roxo' });
+      out.push({ id: 'sempreco', icone: '', titulo: 'Custo não visível', texto: `${unicos.length} ingredientes sem cotação (ex: ${unicos.slice(0, 2).join(', ')}). O custo real da semana pode ser maior.`, tom: 'roxo' });
     }
 
     // 8) Prato com alto desperdício histórico (se aceitacao.ruim > bom)
@@ -202,7 +202,7 @@ export function ChefIA({
       const k = normalizar(x.d.principal);
       const ac = aceitacao[k];
       if (ac && ac.n >= 5 && ac.ruim > ac.bom * 1.5) {
-        out.push({ id: `ruim-${x.i}`, icone: '⚠️', titulo: 'Risco de desperdício', texto: `"${x.d.principal}" historicamente recebe mais negativos (${ac.ruim} 👎) que positivos (${ac.bom} 😋). Revise ou substitua.`, tom: 'vermelho' });
+        out.push({ id: `ruim-${x.i}`, icone: '', titulo: 'Risco de desperdício', texto: `"${x.d.principal}" historicamente recebe mais negativos (${ac.ruim} ) que positivos (${ac.bom} ). Revise ou substitua.`, tom: 'vermelho' });
       }
     });
 
@@ -246,11 +246,11 @@ export function ChefIA({
     return expandido ? (
       <Cartao className="space-y-3 border-l-4 !border-l-brand-500">
         <div className="flex items-center gap-2">
-          <span className="text-lg">🤖</span>
+          
           <h3 className="font-display text-sm font-bold">Chef IA</h3>
         </div>
         <div className="rounded-2xl bg-brand-500/5 px-4 py-6 text-center">
-          <p className="text-2xl">✅</p>
+          
           <p className="mt-2 font-semibold text-brand-700 dark:text-brand-300">Semana bem planejada!</p>
           <p className="mt-1 text-sm text-carvao-400">Nenhuma recomendação no momento. Continue assim.</p>
         </div>
@@ -264,7 +264,7 @@ export function ChefIA({
   return (
     <Cartao className={`space-y-3 border-l-4 !border-l-brand-500 ${expandido ? '' : ''}`}>
       <div className="flex items-center gap-2">
-        <span className="text-lg">🤖</span>
+        
         <h3 className="font-display text-sm font-bold">Chef IA</h3>
         <Pilula tom="azul">{dicas.length}</Pilula>
         <span className="text-caption text-carvao-400">
@@ -291,14 +291,14 @@ export function ChefIA({
                     title="Boa sugestão"
                     className={`flex h-7 w-7 items-center justify-center rounded-full text-nota transition ${jaDeuBom ? 'bg-brand-500/20' : 'hover:bg-brand-500/10'}`}
                   >
-                    👍
+                    
                   </button>
                   <button
                     onClick={() => darFeedback(d, 'ruim')}
                     title="Sugestão ruim — não mostrar mais"
                     className="flex h-7 w-7 items-center justify-center rounded-full text-nota transition hover:bg-perigo/10"
                   >
-                    👎
+                    
                   </button>
                 </div>
               </div>
@@ -337,7 +337,7 @@ export function ChefIA({
           {feedbacks.filter((f) => f.voto === 'ruim').length} sugestão(ões) descartada(s) pelo time — o Chef IA aprendeu suas preferências.
         </p>
       )}
-      <p className="text-micro text-carvao-400">Use 👎 para ensinar o Chef IA sobre o que não funciona na operação.</p>
+      <p className="text-micro text-carvao-400">Use para ensinar o Chef IA sobre o que não funciona na operação.</p>
     </Cartao>
   );
 }

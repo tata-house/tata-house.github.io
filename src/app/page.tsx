@@ -390,6 +390,7 @@ export default function PaginaCardapios() {
   const [semanaSheet, setSemanaSheet] = useState(false);
   const [buscaAberta, setBuscaAberta] = useState(false);
   const [iaAberta, setIaAberta] = useState(false);
+  const [abaCardapioSeg, setAbaCardapioSeg] = useState<'montar' | 'operacao' | 'avaliacao'>('montar');
   const [abaCompras, setAbaCompras] = useState<'lista' | 'estoque' | 'nf' | 'fornecedores' | 'pedido'>('lista');
   const [abaRelatorios, setAbaRelatorios] = useState<
     'gerencial' | 'custos' | 'rankings' | 'previsao' | 'fornecedores' | 'auditoria'
@@ -739,47 +740,63 @@ export default function PaginaCardapios() {
 
             {/* ── CARDÁPIO ──────────────────────────────────── */}
             {aba === 'cardapio' && (
-              <div className="space-y-6">
-                <AlertaProteinaDia
-                  dias={estado.dias}
-                  estoque={estoque}
-                  funcionarios={funcionarios}
-                />
-                <AbaCardapio
-                  estado={estado}
-                  atualizar={atualizar}
-                  podeEditar={podeEditarCardapio}
-                  precos={precos}
-                  definirPreco={definirPreco}
-                  definirFornecedor={definirFornecedor}
-                  cadastrarItem={cadastrarItem}
-                  registrarOferta={registrarOferta}
-                  fornecedores={fornecedores}
-                  itensExtras={itensExtras}
-                />
-                <AbaContagem
-                  contagens={contagens}
-                  onRegistrar={registrarContagem}
-                />
-                <AbaFluxo
-                  estado={estado}
-                  atualizar={atualizar}
-                  papel={papel}
-                  precos={precos}
-                  fatores={fatores}
-                  aprenderDeSemana={aprenderDeSemana}
-                  irPara={(alvo) => irPara(alvo as AbaId)}
-                />
-                {/* Feedback integrado ao fluxo — aparece quando concluído */}
-                {(estado.etapa === 'concluido' || estado.etapa === 'recebimento') && podeAvaliar && (
+              <div className="space-y-4">
+                {/* Categorias — Montar / Operação / Avaliação */}
+                <div className="flex gap-4 border-b border-carvao-100 dark:border-carvao-800">
+                  {([
+                    { id: 'montar' as const,    rotulo: 'Cardápio' },
+                    { id: 'operacao' as const,  rotulo: 'Operação' },
+                    ...(podeAvaliar ? [{ id: 'avaliacao' as const, rotulo: 'Avaliação' }] : []),
+                  ]).map((seg) => (
+                    <button
+                      key={seg.id}
+                      onClick={() => setAbaCardapioSeg(seg.id)}
+                      className={`relative whitespace-nowrap pb-3 text-sm font-semibold transition ${
+                        abaCardapioSeg === seg.id
+                          ? 'text-brand-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:rounded-full after:bg-brand-600 dark:text-brand-400'
+                          : 'text-carvao-400 hover:text-carvao-600 dark:text-carvao-500'
+                      }`}
+                    >
+                      {seg.rotulo}
+                    </button>
+                  ))}
+                </div>
+
+                {abaCardapioSeg === 'montar' && (
                   <div className="space-y-6">
-                    <div className="flex items-center gap-3">
-                      <div className="h-px flex-1 bg-carvao-100 dark:bg-carvao-700" />
-                      <span className="text-rotulo font-bold text-carvao-500 dark:text-carvao-300">
-                        Avaliação da semana
-                      </span>
-                      <div className="h-px flex-1 bg-carvao-100 dark:bg-carvao-700" />
-                    </div>
+                    <AlertaProteinaDia dias={estado.dias} estoque={estoque} funcionarios={funcionarios} />
+                    <AbaCardapio
+                      estado={estado}
+                      atualizar={atualizar}
+                      podeEditar={podeEditarCardapio}
+                      precos={precos}
+                      definirPreco={definirPreco}
+                      definirFornecedor={definirFornecedor}
+                      cadastrarItem={cadastrarItem}
+                      registrarOferta={registrarOferta}
+                      fornecedores={fornecedores}
+                      itensExtras={itensExtras}
+                    />
+                  </div>
+                )}
+
+                {abaCardapioSeg === 'operacao' && (
+                  <div className="space-y-6">
+                    <AbaContagem contagens={contagens} onRegistrar={registrarContagem} />
+                    <AbaFluxo
+                      estado={estado}
+                      atualizar={atualizar}
+                      papel={papel}
+                      precos={precos}
+                      fatores={fatores}
+                      aprenderDeSemana={aprenderDeSemana}
+                      irPara={(alvo) => irPara(alvo as AbaId)}
+                    />
+                  </div>
+                )}
+
+                {abaCardapioSeg === 'avaliacao' && podeAvaliar && (
+                  <div className="space-y-6">
                     <AbaAceitacao
                       estado={estado}
                       aceitacao={aceitacao}

@@ -5,7 +5,9 @@ import { AlternadorTema } from '@/components/AlternadorTema';
 import { BottomNav, GRUPOS } from '@/components/BottomNav';
 import { ToastHost, toast } from '@/components/Toast';
 import { Icone } from '@/components/Icones';
-import { BottomSheet, Skeleton } from '@/components/ui';
+import { BottomSheet, Skeleton, Kpi } from '@/components/ui';
+import { resumoSemana } from '@/lib/cardapio/indicadores';
+import { formatarReais } from '@/lib/cardapio/motor';
 import { AbaAgora } from '@/components/cardapio/AbaAgora';
 import { AbaAceitacao } from '@/components/cardapio/AbaAceitacao';
 import { PlaquinhaQR } from '@/components/cardapio/PlaquinhaQR';
@@ -387,6 +389,20 @@ export default function PaginaCardapios() {
     [estado, semanaId, precos, historico, fornecedores, aceitacao, estoque, fatores],
   );
 
+  // KPIs-herói do topo de Relatórios — leitura gerencial de 5 segundos
+  const kpisRelatorios = useMemo(() => {
+    const r = resumoSemana(estado, precos, fatores);
+    const custoSemana = r.custoReal || r.custoEstimado;
+    const custoRef = r.custoRefReal ?? r.custoRefEstimado;
+    let somaNotas = 0, nNotas = 0;
+    Object.values(aceitacao).forEach((a) => { if (a.n > 0) { somaNotas += a.somaNotas; nNotas += a.n; } });
+    const mediaAceit = nNotas > 0 ? somaNotas / nNotas : null;
+    let prod = 0, sobra = 0;
+    desperdicio.forEach((d) => { if (d.produzido > 0) { prod += d.produzido; sobra += Math.max(0, d.produzido - d.consumido); } });
+    const desperdicioPct = prod > 0 ? (sobra / prod) * 100 : null;
+    return { custoSemana, custoRef, mediaAceit, desperdicioPct };
+  }, [estado, precos, fatores, aceitacao, desperdicio]);
+
   // atalho de teclado ⌘K / Ctrl+K
   useEffect(() => {
     const fn = (e: KeyboardEvent) => {
@@ -567,6 +583,15 @@ export default function PaginaCardapios() {
             {/* ── INÍCIO ────────────────────────────────────── */}
             {aba === 'agora' && (
               <div className="space-y-4">
+                {/* Gerência: leitura gerencial de 5s logo no Início */}
+                {(papel === 'gestor' || papel === 'administrador') && (
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <Kpi rotulo="Custo da semana" valor={kpisRelatorios.custoSemana > 0 ? formatarReais(kpisRelatorios.custoSemana) : '—'} tom="neutro" />
+                    <Kpi rotulo="Custo / refeição" valor={kpisRelatorios.custoRef ? formatarReais(kpisRelatorios.custoRef) : '—'} tom="verde" />
+                    <Kpi rotulo="Aceitação média" valor={kpisRelatorios.mediaAceit !== null ? `${kpisRelatorios.mediaAceit.toFixed(1)}★` : '—'} tom="ouro" />
+                    <Kpi rotulo="Desperdício" valor={kpisRelatorios.desperdicioPct !== null ? `${Math.round(kpisRelatorios.desperdicioPct)}%` : '—'} tom={kpisRelatorios.desperdicioPct !== null && kpisRelatorios.desperdicioPct >= 15 ? 'vermelho' : 'neutro'} />
+                  </div>
+                )}
                 <BriefingCard
                   estado={estado}
                   semanaId={semanaId}
@@ -692,18 +717,41 @@ export default function PaginaCardapios() {
                 </div>
 
                 {abaCompras === 'lista' && (
-                  <AbaCompras
-                    estado={estado}
-                    atualizar={atualizar}
-                    papel={papel}
-                    precos={precos}
-                    fornecedores={fornecedores}
-                    ofertas={ofertas}
-                    fatores={fatores}
-                    definirPreco={definirPreco}
-                    definirFornecedor={definirFornecedor}
-                    registrarOferta={registrarOferta}
-                  />
+                  <>
+                    {/* A partir da lista — NF e Pedido são fluxo; Estoque e Fornecedores, ferramentas */}
+                    <div className="flex flex-wrap gap-2">
+                      {([
+                        { id: 'nf' as const,           rotulo: 'Lançar nota fiscal', tom: 'acao' },
+                        { id: 'pedido' as const,       rotulo: 'Gerar pedido',       tom: 'acao' },
+                        { id: 'fornecedores' as const, rotulo: 'Fornecedores',       tom: 'ferr' },
+                        { id: 'estoque' as const,      rotulo: 'Estoque',            tom: 'ferr' },
+                      ]).map((a) => (
+                        <button
+                          key={a.id}
+                          onClick={() => setAbaCompras(a.id)}
+                          className={`rounded-xl px-3 py-2 text-rotulo font-semibold transition ${
+                            a.tom === 'acao'
+                              ? 'bg-brand-600 text-white hover:bg-brand-700'
+                              : 'border border-carvao-200 text-carvao-600 hover:bg-carvao-50 dark:border-carvao-700 dark:text-areia-200 dark:hover:bg-carvao-800'
+                          }`}
+                        >
+                          {a.rotulo}
+                        </button>
+                      ))}
+                    </div>
+                    <AbaCompras
+                      estado={estado}
+                      atualizar={atualizar}
+                      papel={papel}
+                      precos={precos}
+                      fornecedores={fornecedores}
+                      ofertas={ofertas}
+                      fatores={fatores}
+                      definirPreco={definirPreco}
+                      definirFornecedor={definirFornecedor}
+                      registrarOferta={registrarOferta}
+                    />
+                  </>
                 )}
 
                 {abaCompras === 'estoque' && (
@@ -761,6 +809,29 @@ export default function PaginaCardapios() {
                 <div className="border-b border-carvao-100 pb-4 dark:border-carvao-800">
                   <h2 className="font-display text-2xl font-bold text-carvao-900 dark:text-white">Relatórios</h2>
                   <p className="mt-1 text-sm text-carvao-400">Análise e exportação de dados da semana</p>
+                </div>
+                {/* KPIs-herói — leitura gerencial instantânea no topo */}
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <Kpi
+                    rotulo="Custo da semana"
+                    valor={kpisRelatorios.custoSemana > 0 ? formatarReais(kpisRelatorios.custoSemana) : '—'}
+                    tom="neutro"
+                  />
+                  <Kpi
+                    rotulo="Custo / refeição"
+                    valor={kpisRelatorios.custoRef ? formatarReais(kpisRelatorios.custoRef) : '—'}
+                    tom="verde"
+                  />
+                  <Kpi
+                    rotulo="Aceitação média"
+                    valor={kpisRelatorios.mediaAceit !== null ? `${kpisRelatorios.mediaAceit.toFixed(1)}★` : '—'}
+                    tom="ouro"
+                  />
+                  <Kpi
+                    rotulo="Desperdício"
+                    valor={kpisRelatorios.desperdicioPct !== null ? `${Math.round(kpisRelatorios.desperdicioPct)}%` : '—'}
+                    tom={kpisRelatorios.desperdicioPct !== null && kpisRelatorios.desperdicioPct >= 15 ? 'vermelho' : 'neutro'}
+                  />
                 </div>
                 {/* sub-abas por TEMA — navegação por assunto, não dump vertical */}
                 <div className="flex gap-1 overflow-x-auto rounded-2xl bg-carvao-100 p-1 dark:bg-carvao-800">

@@ -6,8 +6,8 @@ import { agruparCotacao, extrairRemetenteWhatsApp, parsearCotacao, parsearCotaca
 import type { LinhaCotacao } from '@/lib/cardapio/cotacao';
 import { DADOS, formatarReais, normalizar } from '@/lib/cardapio/motor';
 
-const CHAVE_TEXTO   = 'cardapio.v1.cotacao.texto';
-const CHAVE_GEMINI  = 'cardapio.v1.gemini.key';
+const CHAVE_TEXTO = 'cardapio.v1.cotacao.texto';
+const CHAVE_GROQ  = 'cardapio.v1.groq.key';
 
 export function AbaCotacao({
   definirPreco,
@@ -33,7 +33,7 @@ export function AbaCotacao({
   const [pdfErro, setPdfErro]           = useState('');
 
   // IA
-  const [geminiKey, setGeminiKey]       = useState('');
+  const [groqKey, setGroqKey]           = useState('');
   const [keyRascunho, setKeyRascunho]   = useState('');
   const [mostrarConfigIA, setMostrarConfigIA] = useState(false);
   const [iaCarregando, setIaCarregando] = useState(false);
@@ -43,16 +43,16 @@ export function AbaCotacao({
   useEffect(() => {
     try {
       setTexto(localStorage.getItem(CHAVE_TEXTO) ?? '');
-      const k = localStorage.getItem(CHAVE_GEMINI) ?? '';
-      setGeminiKey(k);
+      const k = localStorage.getItem(CHAVE_GROQ) ?? '';
+      setGroqKey(k);
       setKeyRascunho(k);
     } catch { /* sem storage */ }
   }, []);
 
   const salvarKey = () => {
     const k = keyRascunho.trim();
-    setGeminiKey(k);
-    try { localStorage.setItem(CHAVE_GEMINI, k); } catch { /* ok */ }
+    setGroqKey(k);
+    try { localStorage.setItem(CHAVE_GROQ, k); } catch { /* ok */ }
     setMostrarConfigIA(false);
   };
 
@@ -89,7 +89,7 @@ export function AbaCotacao({
     setIaCarregando(true);
     resetarResultados();
     try {
-      const { linhas, comIA, erroIA } = await parsearCotacaoComIA(texto, geminiKey);
+      const { linhas, comIA, erroIA } = await parsearCotacaoComIA(texto, groqKey);
       setLido(linhas);
       setModoUsado(comIA ? 'combo' : 'logica');
       if (erroIA) setIaErro(erroIA);
@@ -186,15 +186,15 @@ export function AbaCotacao({
     reader.readAsText(file, 'UTF-8');
   };
 
-  const temKey = geminiKey.trim().length > 0;
+  const temKey = groqKey.trim().length > 0;
 
   return (
     <div className="space-y-4">
       <Cartao className="space-y-3">
         <p className="text-sm text-carvao-500 dark:text-carvao-300">
           Cole abaixo a <strong>cotação da semana</strong> do jeito que ela chega no WhatsApp (pode colar tudo
-          de uma vez: frango, bovinos, suínos, hortifrúti…). Use <strong>Ler com IA</strong> para resultado
-          mais preciso ou <strong>Só lógica</strong> se estiver offline.
+          de uma vez: frango, bovinos, suínos, hortifrúti…). Use <strong>Ler com IA</strong> (Groq — gratuito)
+          para resultado mais preciso ou <strong>Só lógica</strong> se estiver offline.
         </p>
 
         {/* Upload */}
@@ -236,7 +236,7 @@ export function AbaCotacao({
             <div className="flex items-center gap-2">
               <span className={`h-2 w-2 rounded-full ${temKey ? 'bg-brand-500' : 'bg-carvao-300'}`} />
               <span className="text-xs font-semibold text-carvao-500 dark:text-carvao-400">
-                {temKey ? 'IA Gemini configurada' : 'IA Gemini não configurada'}
+                {temKey ? 'IA Groq configurada' : 'IA Groq não configurada'}
               </span>
             </div>
             <button
@@ -251,7 +251,7 @@ export function AbaCotacao({
             <div className="mt-3 space-y-2">
               <p className="text-xs text-carvao-500 dark:text-carvao-400">
                 Obtenha uma chave gratuita em{' '}
-                <span className="font-semibold text-brand-600 dark:text-brand-400">aistudio.google.com</span>.
+                <span className="font-semibold text-brand-600 dark:text-brand-400">console.groq.com/keys</span>.
                 A chave fica salva somente neste dispositivo.
               </p>
               <div className="flex gap-2">
@@ -259,7 +259,7 @@ export function AbaCotacao({
                   type="password"
                   value={keyRascunho}
                   onChange={(e) => setKeyRascunho(e.target.value)}
-                  placeholder="AIza..."
+                  placeholder="gsk_..."
                   className="min-w-0 flex-1 rounded-xl border border-carvao-200 bg-white px-3 py-2 text-xs font-mono dark:border-carvao-600 dark:bg-carvao-900"
                 />
                 <button

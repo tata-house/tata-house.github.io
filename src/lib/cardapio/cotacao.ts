@@ -268,7 +268,7 @@ export function parsearCotacao(texto: string): LinhaCotacao[] {
 
 /* ------------------- integração Gemini IA ----------------------------- */
 
-const GEMINI_MODELO = 'gemini-2.0-flash';
+const GROQ_MODELO = 'llama-3.3-70b-versatile';
 
 const PROMPT_IA = `Você é especialista em cotações de alimentos para restaurante industrial brasileiro.
 Extraia TODOS os produtos com preço desta lista recebida via WhatsApp de fornecedores.
@@ -286,25 +286,27 @@ Responda APENAS com JSON array válido (sem markdown):
 
 type ItemIA = { nome: string; preco: number; marca?: string };
 
-async function chamarGemini(texto: string, apiKey: string): Promise<LinhaCotacao[]> {
-  const resp = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODELO}:generateContent`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: `${PROMPT_IA}\n\nCOTAÇÃO:\n${texto.slice(0, 16000)}` }] }],
-        generationConfig: { temperature: 0.1, responseMimeType: 'application/json' },
-      }),
-    },
-  );
+async function chamarGroq(texto: string, apiKey: string): Promise<LinhaCotacao[]> {
+  const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      model: GROQ_MODELO,
+      messages: [
+        { role: 'user', content: `${PROMPT_IA}\n\nCOTAÇÃO:\n${texto.slice(0, 16000)}` },
+      ],
+      temperature: 0.1,
+      response_format: { type: 'json_object' },
+    }),
+  });
   if (!resp.ok) {
     const err: { error?: { message?: string } } = await resp.json().catch(() => ({}));
     throw new Error(err?.error?.message ?? `HTTP ${resp.status}`);
   }
-  const data: { candidates?: { content?: { parts?: { text?: string }[] } }[] } = await resp.json();
-  const txt = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '[]';
-  const items: ItemIA[] = JSON.parse(txt);
+  const data: { choices?: { message?: { content?: string } }[] } = await resp.json();
+  const txt = data?.choices?.[0]?.message?.content ?? '{}';
+  const parsed: { items?: ItemIA[] } | ItemIA[] = JSON.parse(txt);
+  const items: ItemIA[] = Array.isArray(parsed) ? parsed : (parsed as { items?: ItemIA[] }).items ?? [];
   return items
     .filter((it) => it.nome && it.preco > 0)
     .map((it) => ({
@@ -368,7 +370,7 @@ export async function parsearCotacaoComIA(
 ): Promise<{ linhas: LinhaCotacao[]; comIA: boolean; erroIA?: string }> {
   const logica = parsearCotacao(texto); // sempre roda primeiro
   try {
-    const ia = await chamarGemini(texto, apiKey);
+    const ia = await chamarGroq(texto, apiKey);
     return { linhas: combinarResultados(logica, ia), comIA: true };
   } catch (e) {
     return { linhas: logica, comIA: false, erroIA: e instanceof Error ? e.message : String(e) };

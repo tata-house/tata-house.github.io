@@ -735,7 +735,7 @@ export default function PaginaCardapios() {
                   papel={papel}
                   irPara={(alvo) => irPara(alvo as AbaId)}
                 />
-                <ContadorRefeicoes />
+                <ContadorRefeicoes custoRefSemana={kpisRelatorios.custoRef} />
               </div>
             )}
 

@@ -45,6 +45,30 @@ export interface StatsRefeicoes {
   diasRegistrados: number;
 }
 
+export interface MesTendencia {
+  mes: string;   // "Jan", "Fev" …
+  total: number;
+}
+
+export function calcularTendenciaMensal(): MesTendencia[] {
+  const dados = getDados();
+  const agora = new Date();
+  const meses: MesTendencia[] = [];
+
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(agora.getFullYear(), agora.getMonth() - i, 1);
+    const prefixo = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const NOMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    let total = 0;
+    for (const [key, val] of Object.entries(dados as Raw)) {
+      if (key.startsWith(prefixo)) total += val[2];
+    }
+    meses.push({ mes: NOMES[d.getMonth()], total });
+  }
+
+  return meses;
+}
+
 export function calcularStats(): StatsRefeicoes {
   const dados = getDados();
   const hoje = hojeISO();

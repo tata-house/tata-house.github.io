@@ -781,7 +781,15 @@ export default function PaginaCardapios() {
 
                 {abaCardapioSeg === 'operacao' && (
                   <div className="space-y-6">
-                    <AbaContagem contagens={contagens} onRegistrar={registrarContagem} />
+                    <AbaContagem
+                      contagens={contagens}
+                      onRegistrar={registrarContagem}
+                      estado={estado}
+                      atualizar={atualizar}
+                      precos={precos}
+                      fatores={fatores}
+                      papel={papel}
+                    />
                     {/* Registrar sobra do dia — tarefa operacional diária */}
                     <AbaDesperdicio
                       estado={estado}

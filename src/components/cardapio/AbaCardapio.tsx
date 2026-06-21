@@ -108,6 +108,7 @@ export function AbaCardapio({
   const [formPersonAberto, setFormPersonAberto] = useState(false);
   const [explicacao, setExplicacao] = useState<{ titulo: string; itens: string[] } | null>(null);
   const [cotacaoAberta, setCotacaoAberta] = useState(false);
+  const [analiseAberta, setAnaliseAberta] = useState(false);
   const [personalizado, setPersonalizado] = useState({
     eventos: '',
     proteinasPrefer: [] as string[],
@@ -546,22 +547,7 @@ export function AbaCardapio({
         </Cartao>
       )}
 
-      {/* Termômetro em tempo real — satisfação do almoço de hoje */}
-      <TermometroAlmoco estado={estado} />
-
-      {/* Monotonia percebida — repetição de textura ou acompanhamentos */}
-      <AntiMonotonia estado={estado} />
-
-      {/* Chef IA — análise inteligente do cardápio (resumo; aba dedicada tem visão completa) */}
-      <ChefIA estado={estado} precos={precos} />
-
-      {/* Índice nutricional estimado da semana */}
-      <IndicadorNutricional dias={estado.dias} />
-
-      {/* Previsão de presença — gêmeo digital da demanda */}
-      <PrevisaoPresenca estado={estado} atualizar={atualizar} podeEditar={podeEditar} />
-
-      {/* Dias */}
+      {/* Dias — protagonistas da tela */}
       <div className="grid gap-3 lg:grid-cols-2">
         {estado.dias.map((dia, i) => {
           const lista = dia.principal ? listaDoDia(dia) : [];
@@ -669,6 +655,32 @@ export function AbaCardapio({
             </Cartao>
           );
         })}
+      </div>
+
+      {/* Análise da semana — leitura de apoio, recolhida para os dias dominarem */}
+      <div className="overflow-hidden rounded-2xl border border-carvao-200 dark:border-carvao-700">
+        <button
+          onClick={() => setAnaliseAberta((a) => !a)}
+          className="flex w-full items-center justify-between gap-3 bg-white px-4 py-3 text-left transition hover:bg-areia-50 dark:bg-carvao-900 dark:hover:bg-carvao-850"
+        >
+          <span className="flex items-center gap-2">
+            <span className="text-lg" aria-hidden>📊</span>
+            <span>
+              <span className="block text-subtitulo text-carvao-800 dark:text-areia-100">Análise da semana</span>
+              <span className="block text-caption text-carvao-400">Termômetro, monotonia, Chef IA, nutrição e previsão de presença</span>
+            </span>
+          </span>
+          <Icone nome="baixo" tam={16} className={`shrink-0 text-carvao-400 transition-transform ${analiseAberta ? 'rotate-180' : ''}`} />
+        </button>
+        {analiseAberta && (
+          <div className="space-y-4 border-t border-carvao-100 bg-areia-50/40 p-3 dark:border-carvao-700 dark:bg-carvao-900/40">
+            <TermometroAlmoco estado={estado} />
+            <AntiMonotonia estado={estado} />
+            <ChefIA estado={estado} precos={precos} />
+            <IndicadorNutricional dias={estado.dias} />
+            <PrevisaoPresenca estado={estado} atualizar={atualizar} podeEditar={podeEditar} />
+          </div>
+        )}
       </div>
 
       {/* Orçamento + itens sem preço */}

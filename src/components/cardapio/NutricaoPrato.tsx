@@ -8,16 +8,18 @@
    como complemento (IndicadorNutricional).
    ===================================================================== */
 
+import { useState } from 'react';
 import { infoNutricional } from '@/lib/cardapio/nutricional';
 
 /** Rótulo do índice (mesma faixa do índice semanal). */
 function rotuloIndice(v: number): { texto: string; cor: string; bg: string } {
   if (v >= 80) return { texto: 'equilibrado', cor: 'text-brand-700 dark:text-brand-300', bg: 'bg-brand-500' };
-  if (v >= 60) return { texto: 'moderado', cor: 'text-[#9a6c17] dark:text-[#e3b45c]', bg: 'bg-ouro-400' };
+  if (v >= 60) return { texto: 'moderado', cor: 'text-ouro-600 dark:text-ouro-300', bg: 'bg-ouro-400' };
   return { texto: 'pesado', cor: 'text-perigo', bg: 'bg-perigo' };
 }
 
 export function NutricaoPrato({ prato }: { prato: string }) {
+  const [aberto, setAberto] = useState(false);
   const info = infoNutricional(prato);
   if (!info) return null;
 
@@ -41,15 +43,25 @@ export function NutricaoPrato({ prato }: { prato: string }) {
 
   return (
     <div className="rounded-2xl bg-areia-50/70 p-3 ring-1 ring-carvao-100 dark:bg-carvao-900/40 dark:ring-carvao-700/60">
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <p className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-carvao-400">
+      {/* Resumo clicável — expande os macros sob demanda (os dias dominam) */}
+      <button
+        onClick={() => setAberto((a) => !a)}
+        className="flex w-full items-center justify-between gap-2"
+        aria-expanded={aberto}
+      >
+        <span className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-carvao-400">
           🥗 Nutrição do prato
           {info.porcao !== '—' && <span className="font-bold text-carvao-400">· {info.porcao}</span>}
-        </p>
-        <span className={`flex items-center gap-1 rounded-full bg-white px-2.5 py-0.5 text-[11px] font-black ring-1 ring-carvao-100 dark:bg-carvao-800 dark:ring-carvao-700 ${idx.cor}`}>
-          {info.indiceSaudavel}% {idx.texto}
         </span>
-      </div>
+        <span className="flex items-center gap-1.5">
+          <span className={`flex items-center gap-1 rounded-full bg-white px-2.5 py-0.5 text-[11px] font-black ring-1 ring-carvao-100 dark:bg-carvao-800 dark:ring-carvao-700 ${idx.cor}`}>
+            {info.indiceSaudavel}% {idx.texto}
+          </span>
+          <span className={`text-carvao-400 transition-transform ${aberto ? 'rotate-180' : ''}`} aria-hidden>⌄</span>
+        </span>
+      </button>
+
+      {!aberto ? null : <div className="mt-2">
 
       {/* Barra do índice */}
       <div className="mb-2 h-1.5 w-full overflow-hidden rounded-full bg-carvao-100 dark:bg-carvao-800">
@@ -75,6 +87,7 @@ export function NutricaoPrato({ prato }: { prato: string }) {
           ))}
         </div>
       )}
+      </div>}
     </div>
   );
 }

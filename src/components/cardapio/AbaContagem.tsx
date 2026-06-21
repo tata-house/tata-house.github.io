@@ -7,31 +7,43 @@ import type { ContagemRefeicoesDia, EstadoSemana, Papel } from '@/lib/cardapio/t
 
 const DIAS_ABREV = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 
-function dataParaDisplay(data: string): string {
-  const [, m, d] = data.split('-').map(Number);
-  return `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}`;
-}
-
-function dataParaDiaSemana(data: string): string {
-  const [y, m, d] = data.split('-').map(Number);
-  return DIAS_ABREV[((new Date(y, m - 1, d).getDay() + 6) % 7)];
-}
-
 function hoje(): string {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function semanaAtual(): string[] {
+  const agora = new Date();
+  const diaSem = (agora.getDay() + 6) % 7;
+  const segunda = new Date(agora);
+  segunda.setDate(agora.getDate() - diaSem);
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(segunda);
+    d.setDate(segunda.getDate() + i);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  });
+}
+
+function displayData(iso: string): string {
+  const [, m, d] = iso.split('-').map(Number);
+  return `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}`;
+}
+
+function diaSemDaData(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  return DIAS_ABREV[((new Date(y, m - 1, d).getDay() + 6) % 7)];
 }
 
 function mediasPorDiaSemana(contagens: ContagemRefeicoesDia[]): Record<number, { almoco: number; jantar: number; marmitas: number; n: number }> {
   const acc: Record<number, { almoco: number; jantar: number; marmitas: number; n: number }> = {};
   contagens.forEach((c) => {
     const [y, m, d] = c.data.split('-').map(Number);
-    const diaSem = (new Date(y, m - 1, d).getDay() + 6) % 7;
-    if (!acc[diaSem]) acc[diaSem] = { almoco: 0, jantar: 0, marmitas: 0, n: 0 };
-    acc[diaSem].almoco += c.almoco;
-    acc[diaSem].jantar += c.jantar;
-    acc[diaSem].marmitas += c.marmitas;
-    acc[diaSem].n += 1;
+    const ds = (new Date(y, m - 1, d).getDay() + 6) % 7;
+    if (!acc[ds]) acc[ds] = { almoco: 0, jantar: 0, marmitas: 0, n: 0 };
+    acc[ds].almoco += c.almoco;
+    acc[ds].jantar += c.jantar;
+    acc[ds].marmitas += c.marmitas;
+    acc[ds].n += 1;
   });
   Object.values(acc).forEach((v) => {
     v.almoco = Math.round(v.almoco / v.n);
@@ -50,6 +62,10 @@ function MiniBar({ valor, max, cor }: { valor: number; max: number; cor: string 
   );
 }
 
+const DATAS_SEMANA = semanaAtual();
+const DATA_HOJE = hoje();
+const DIA_HOJE_IDX = DATAS_SEMANA.indexOf(DATA_HOJE);
+
 export function AbaContagem({
   contagens,
   onRegistrar,
@@ -67,35 +83,29 @@ export function AbaContagem({
   fatores?: Record<string, number>;
   papel?: Papel;
 }) {
-  const dataHoje = hoje();
-  const registroHoje = contagens.find((c) => c.data === dataHoje);
   const podeContar = papel === 'cozinha' || papel === 'gestor' || papel === 'administrador';
 
-  /* ── Formulário de registro detalhado ─────────────────────────────── */
-  const [data, setData] = useState(dataHoje);
+  /* ── Dia activo (padrão: hoje se na semana, senão segunda) ─────────── */
+  const [diaAtivo, setDiaAtivo] = useState(DIA_HOJE_IDX >= 0 ? DIA_HOJE_IDX : 0);
+
+  /* ── Formulário do dia activo ──────────────────────────────────────── */
   const [almoco, setAlmoco] = useState('');
   const [jantar, setJantar] = useState('');
   const [marmitas, setMarmitas] = useState('');
   const [obs, setObs] = useState('');
   const [salvo, setSalvo] = useState(false);
 
-  const preencherExistente = (c: ContagemRefeicoesDia) => {
-    setData(c.data);
-    setAlmoco(String(c.almoco));
-    setJantar(String(c.jantar));
-    setMarmitas(String(c.marmitas));
-    setObs(c.obs ?? '');
-  };
-
-  const handleSalvar = () => {
-    const a = Number(almoco);
-    const j = Number(jantar);
-    const m = Number(marmitas);
-    if (!(a >= 0) || !(j >= 0) || !(m >= 0)) return;
-    onRegistrar({ data, almoco: a, jantar: j, marmitas: m, obs: obs.trim() || undefined });
-    setSalvo(true);
-    setTimeout(() => setSalvo(false), 2500);
-    if (data === dataHoje) {
+  const selecionar = (idx: number) => {
+    setDiaAtivo(idx);
+    setSalvo(false);
+    const iso = DATAS_SEMANA[idx];
+    const reg = contagens.find((c) => c.data === iso);
+    if (reg) {
+      setAlmoco(String(reg.almoco));
+      setJantar(String(reg.jantar));
+      setMarmitas(String(reg.marmitas));
+      setObs(reg.obs ?? '');
+    } else {
       setAlmoco('');
       setJantar('');
       setMarmitas('');
@@ -103,10 +113,35 @@ export function AbaContagem({
     }
   };
 
-  /* ── Grid semanal + custo/refeição ────────────────────────────────── */
-  const refeicoesSemana = estado.refeicoes ?? {};
-  const totalRefeicoes = Object.values(refeicoesSemana).reduce((a: number, b) => a + (b || 0), 0);
+  const handleSalvar = () => {
+    const a = Number(almoco) || 0;
+    const j = Number(jantar) || 0;
+    const m = Number(marmitas) || 0;
+    const iso = DATAS_SEMANA[diaAtivo];
+    // grava no histórico detalhado
+    onRegistrar({ data: iso, almoco: a, jantar: j, marmitas: m, obs: obs.trim() || undefined });
+    // sincroniza o total no estado da semana
+    atualizar((s) => ({
+      ...s,
+      refeicoes: { ...(s.refeicoes ?? {}), [diaAtivo]: a + j + m },
+    }));
+    setSalvo(true);
+    setTimeout(() => setSalvo(false), 2500);
+  };
 
+  /* ── Totais por dia (histórico prevalece sobre estado.refeicoes) ───── */
+  const totaisDia = useMemo(() =>
+    DATAS_SEMANA.map((iso, i) => {
+      const reg = contagens.find((c) => c.data === iso);
+      if (reg) return reg.almoco + reg.jantar + reg.marmitas;
+      return (estado.refeicoes ?? {})[i] ?? 0;
+    }),
+    [contagens, estado.refeicoes],
+  );
+
+  const totalSemana = totaisDia.reduce((s, n) => s + n, 0);
+
+  /* ── Custo/refeição ─────────────────────────────────────────────────── */
   const custoSemana = useMemo(() =>
     estado.dias.reduce(
       (t, _, di) =>
@@ -119,34 +154,36 @@ export function AbaContagem({
     [estado, precos, fatores],
   );
 
-  const custoPorRefeicao = totalRefeicoes > 0 && custoSemana > 0 ? custoSemana / totalRefeicoes : null;
+  const custoPorRefeicao = totalSemana > 0 && custoSemana > 0 ? custoSemana / totalSemana : null;
 
-  /* ── Estatísticas históricas ──────────────────────────────────────── */
+  /* ── Estatísticas históricas ─────────────────────────────────────────── */
   const ultimas30 = contagens.slice(0, 30);
   const medias = useMemo(() => mediasPorDiaSemana(ultimas30), [ultimas30]);
-
-  const totalSemana = useMemo(() => {
+  const totalSemanaStats = useMemo(() => {
+    const cutoff = new Date(DATA_HOJE);
     const ultimos7 = contagens.filter((c) => {
-      const d = new Date(dataHoje);
       const dc = new Date(c.data);
-      return (d.getTime() - dc.getTime()) / 86400000 < 7;
+      return (cutoff.getTime() - dc.getTime()) / 86400000 < 7;
     });
     return ultimos7.reduce(
       (s, c) => ({ almoco: s.almoco + c.almoco, jantar: s.jantar + c.jantar, marmitas: s.marmitas + c.marmitas }),
       { almoco: 0, jantar: 0, marmitas: 0 },
     );
-  }, [contagens, dataHoje]);
+  }, [contagens]);
 
   const maxMedMedia = Math.max(...Object.values(medias).map((v) => Math.max(v.almoco, v.jantar, v.marmitas)), 1);
+
+  /* ── Registro do dia activo ─────────────────────────────────────────── */
+  const regAtivo = contagens.find((c) => c.data === DATAS_SEMANA[diaAtivo]);
 
   return (
     <div className="space-y-5">
 
-      {/* ── Grid semanal ─────────────────────────────────────────────── */}
-      <Cartao className="space-y-3">
+      {/* ── Painel unificado ──────────────────────────────────────────── */}
+      <Cartao className="space-y-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <p className="text-sm font-extrabold uppercase tracking-widest text-carvao-400">
-            Contagem desta semana
+            Refeições da semana
           </p>
           {custoPorRefeicao !== null && (
             <span className="rounded-full bg-brand-500/10 px-3 py-1 text-sm font-extrabold text-brand-700 ring-1 ring-brand-500/30 dark:text-brand-300">
@@ -154,120 +191,96 @@ export function AbaContagem({
             </span>
           )}
         </div>
-        <p className="text-xs text-carvao-400">
-          Anote no fim de cada dia quantas refeições saíram. Isso vira o{' '}
-          <strong>custo real por refeição</strong> e ensina o app a prever o movimento das próximas semanas.
-        </p>
-        <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
-          {estado.dias.map((_, i) => (
-            <label key={i} className="text-center">
-              <span className="block text-micro font-extrabold uppercase tracking-wide text-carvao-400">
-                {DIAS_SEMANA[i].slice(0, 3)}
-              </span>
-              <input
-                type="number"
-                min={0}
-                disabled={!podeContar}
-                value={refeicoesSemana[i] ?? ''}
-                placeholder="—"
-                onChange={(e) =>
-                  atualizar((s) => ({
-                    ...s,
-                    refeicoes: {
-                      ...(s.refeicoes ?? {}),
-                      [i]: e.target.value ? Math.max(0, Math.round(Number(e.target.value))) : 0,
-                    },
-                  }))
-                }
-                className="mt-0.5 w-full rounded-xl border border-carvao-200 bg-white px-1 py-2 text-center text-sm font-bold disabled:opacity-50 dark:border-carvao-600 dark:bg-carvao-900"
-              />
-            </label>
-          ))}
+
+        {/* Seletor de dia */}
+        <div className="grid grid-cols-7 gap-1">
+          {DATAS_SEMANA.map((iso, i) => {
+            const total = totaisDia[i];
+            const ativo = i === diaAtivo;
+            const ehHoje = iso === DATA_HOJE;
+            return (
+              <button
+                key={i}
+                onClick={() => selecionar(i)}
+                className={`flex flex-col items-center rounded-xl py-2 px-1 transition ${
+                  ativo
+                    ? 'bg-brand-600 text-white shadow-sm'
+                    : 'bg-carvao-50 text-carvao-600 hover:bg-carvao-100 dark:bg-carvao-800 dark:text-carvao-300 dark:hover:bg-carvao-700'
+                }`}
+              >
+                <span className={`text-micro font-extrabold uppercase tracking-wide ${ativo ? 'text-white/70' : 'text-carvao-400'}`}>
+                  {DIAS_SEMANA[i].slice(0, 3)}
+                </span>
+                <span className={`text-xs tabular-nums ${ehHoje && !ativo ? 'font-extrabold text-brand-600 dark:text-brand-400' : ''}`}>
+                  {displayData(iso)}
+                </span>
+                <span className={`mt-0.5 text-sm font-bold ${total > 0 ? '' : ativo ? 'text-white/40' : 'text-carvao-300 dark:text-carvao-600'}`}>
+                  {total > 0 ? total : '—'}
+                </span>
+              </button>
+            );
+          })}
         </div>
-        {totalRefeicoes > 0 && (
+
+        {/* Formulário do dia selecionado */}
+        {podeContar && (
+          <div className="space-y-3 rounded-2xl bg-carvao-50 p-4 dark:bg-carvao-800/50">
+            <p className="text-xs font-bold text-carvao-500 dark:text-carvao-400">
+              {DIAS_SEMANA[diaAtivo]}, {displayData(DATAS_SEMANA[diaAtivo])}
+              {regAtivo && (
+                <span className="ml-2 font-normal text-carvao-400">
+                  · já registrado: {regAtivo.almoco}A · {regAtivo.jantar}J · {regAtivo.marmitas}M
+                </span>
+              )}
+            </p>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label className={estiloRotulo}>Almoço</label>
+                <input type="number" min={0} className={estiloInput} value={almoco}
+                  onChange={(e) => setAlmoco(e.target.value)} placeholder="0" />
+              </div>
+              <div>
+                <label className={estiloRotulo}>Jantar</label>
+                <input type="number" min={0} className={estiloInput} value={jantar}
+                  onChange={(e) => setJantar(e.target.value)} placeholder="0" />
+              </div>
+              <div>
+                <label className={estiloRotulo}>Marmitas</label>
+                <input type="number" min={0} className={estiloInput} value={marmitas}
+                  onChange={(e) => setMarmitas(e.target.value)} placeholder="0" />
+              </div>
+            </div>
+            <input
+              className={estiloInput} value={obs}
+              onChange={(e) => setObs(e.target.value)}
+              placeholder="Observação (opcional)"
+            />
+            <Botao
+              onClick={handleSalvar}
+              className="w-full"
+              variante={salvo ? 'sucesso' : 'primario'}
+              disabled={almoco === '' && jantar === '' && marmitas === ''}
+            >
+              {salvo ? '✓ Salvo!' : `Salvar ${DIAS_SEMANA[diaAtivo]}`}
+            </Botao>
+          </div>
+        )}
+
+        {totalSemana > 0 && (
           <p className="text-xs font-semibold text-carvao-400">
-            {totalRefeicoes} refeições na semana
+            {totalSemana} refeições na semana
             {custoSemana > 0 && <> · custo da semana ≈ {formatarReais(custoSemana)}</>}
           </p>
         )}
       </Cartao>
 
-      {/* ── Registro diário detalhado ────────────────────────────────── */}
-      <Cartao>
-        <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-carvao-400">
-          Registro diário detalhado
-        </p>
-
-        <div className="mb-4">
-          <label className={estiloRotulo}>Data</label>
-          <input
-            type="date"
-            className={`${estiloInput} dark:[color-scheme:dark]`}
-            value={data}
-            onChange={(e) => {
-              setData(e.target.value);
-              const existente = contagens.find((c) => c.data === e.target.value);
-              if (existente) preencherExistente(existente);
-              else { setAlmoco(''); setJantar(''); setMarmitas(''); setObs(''); }
-            }}
-          />
-        </div>
-
-        <div className="grid grid-cols-3 gap-3">
-          <div>
-            <label className={estiloRotulo}>Almoço</label>
-            <input
-              type="number" min={0} className={estiloInput} value={almoco}
-              onChange={(e) => setAlmoco(e.target.value)} placeholder="0"
-            />
-          </div>
-          <div>
-            <label className={estiloRotulo}>Jantar</label>
-            <input
-              type="number" min={0} className={estiloInput} value={jantar}
-              onChange={(e) => setJantar(e.target.value)} placeholder="0"
-            />
-          </div>
-          <div>
-            <label className={estiloRotulo}>Marmitas</label>
-            <input
-              type="number" min={0} className={estiloInput} value={marmitas}
-              onChange={(e) => setMarmitas(e.target.value)} placeholder="0"
-            />
-          </div>
-        </div>
-
-        <div className="mt-3">
-          <input
-            className={estiloInput} value={obs}
-            onChange={(e) => setObs(e.target.value)}
-            placeholder="Observação (opcional)"
-          />
-        </div>
-
-        <Botao
-          onClick={handleSalvar}
-          className="mt-4 w-full"
-          variante={salvo ? 'sucesso' : 'primario'}
-          disabled={almoco === '' && jantar === '' && marmitas === ''}
-        >
-          {salvo ? '✓ Salvo!' : 'Salvar registro'}
-        </Botao>
-
-        {registroHoje && data === dataHoje && (
-          <p className="mt-2 text-center text-xs text-carvao-400">
-            Hoje já registrado: {registroHoje.almoco} almoço · {registroHoje.jantar} jantar · {registroHoje.marmitas} marmitas
-          </p>
-        )}
-      </Cartao>
-
-      {/* ── KPIs + médias + histórico ────────────────────────────────── */}
+      {/* ── Estatísticas ─────────────────────────────────────────────── */}
       {contagens.length > 0 && (
         <>
           <div className="grid grid-cols-3 gap-3">
-            <Kpi rotulo="Almoços (7d)" valor={totalSemana.almoco} tom="neutro" />
-            <Kpi rotulo="Jantares (7d)" valor={totalSemana.jantar} tom="neutro" />
-            <Kpi rotulo="Marmitas (7d)" valor={totalSemana.marmitas} tom="neutro" />
+            <Kpi rotulo="Almoços (7d)" valor={totalSemanaStats.almoco} tom="neutro" />
+            <Kpi rotulo="Jantares (7d)" valor={totalSemanaStats.jantar} tom="neutro" />
+            <Kpi rotulo="Marmitas (7d)" valor={totalSemanaStats.marmitas} tom="neutro" />
           </div>
 
           <Cartao>
@@ -275,13 +288,13 @@ export function AbaContagem({
               Médias por dia da semana
             </p>
             <div className="space-y-3">
-              {[0, 1, 2, 3, 4].map((diaSem) => {
-                const m = medias[diaSem];
+              {[0, 1, 2, 3, 4].map((ds) => {
+                const m = medias[ds];
                 if (!m) return null;
                 return (
-                  <div key={diaSem}>
+                  <div key={ds}>
                     <div className="mb-1 flex justify-between text-xs text-carvao-500">
-                      <span className="font-semibold">{DIAS_ABREV[diaSem]}</span>
+                      <span className="font-semibold">{DIAS_ABREV[ds]}</span>
                       <span>{m.almoco} alm · {m.jantar} jan · {m.marmitas} mar</span>
                     </div>
                     <div className="space-y-1">
@@ -308,11 +321,14 @@ export function AbaContagem({
               {ultimas30.slice(0, 14).map((c) => (
                 <button
                   key={c.data}
-                  onClick={() => preencherExistente(c)}
+                  onClick={() => {
+                    const idx = DATAS_SEMANA.indexOf(c.data);
+                    if (idx >= 0) selecionar(idx);
+                  }}
                   className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm hover:bg-carvao-50 dark:hover:bg-carvao-800"
                 >
-                  <span className="w-10 shrink-0 text-xs font-bold text-carvao-400">{dataParaDiaSemana(c.data)}</span>
-                  <span className="w-10 text-xs text-carvao-500 tabular-nums">{dataParaDisplay(c.data)}</span>
+                  <span className="w-10 shrink-0 text-xs font-bold text-carvao-400">{diaSemDaData(c.data)}</span>
+                  <span className="w-10 text-xs text-carvao-500 tabular-nums">{displayData(c.data)}</span>
                   <span className="flex-1 text-xs text-carvao-600 dark:text-carvao-300 tabular-nums">
                     {c.almoco} · {c.jantar} · {c.marmitas}
                   </span>
@@ -328,7 +344,7 @@ export function AbaContagem({
         <div className="rounded-2xl bg-carvao-50 py-10 text-center dark:bg-carvao-800/50">
           <p className="text-sm font-semibold text-carvao-500">Sem registros ainda</p>
           <p className="mt-1 text-xs text-carvao-400">
-            Registre a contagem diariamente para gerar métricas e padrões históricos
+            Clique num dia acima e registre as refeições para gerar métricas e padrões históricos.
           </p>
         </div>
       )}

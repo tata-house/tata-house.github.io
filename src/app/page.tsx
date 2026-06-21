@@ -22,7 +22,6 @@ import { Assistente } from '@/components/cardapio/Assistente';
 import { PosterSemana } from '@/components/cardapio/PosterSemana';
 import { BriefingCard } from '@/components/cardapio/BriefingCard';
 import { AbaAuditoria } from '@/components/cardapio/AbaAuditoria';
-import { AbaPrecos } from '@/components/cardapio/AbaPrecos';
 import { DnaCard } from '@/components/cardapio/DnaCard';
 import { PrevisaoCard } from '@/components/cardapio/PrevisaoCard';
 import { RoiCard } from '@/components/cardapio/RoiCard';
@@ -269,7 +268,7 @@ export default function PaginaCardapios() {
   const [plaquinhaAberta, setPlaquinhaAberta] = useState(false);
   const [semanaSheet, setSemanaSheet] = useState(false);
   const [buscaAberta, setBuscaAberta] = useState(false);
-  const [abaCompras, setAbaCompras] = useState<'lista' | 'precos' | 'estoque' | 'nf' | 'fornecedores' | 'pedido'>('lista');
+  const [abaCompras, setAbaCompras] = useState<'lista' | 'estoque' | 'nf' | 'fornecedores' | 'pedido'>('lista');
   const [abaRelatorios, setAbaRelatorios] = useState<'central' | 'auditoria'>('central');
 
   const { estado, atualizar, pronto } = useSemana(semanaId);
@@ -551,6 +550,8 @@ export default function PaginaCardapios() {
                   podeEditar={podeEditarCardapio}
                   precos={precos}
                   definirPreco={definirPreco}
+                  fornecedores={fornecedores}
+                  itensExtras={itensExtras}
                 />
                 <AbaContagem
                   contagens={contagens}
@@ -604,7 +605,7 @@ export default function PaginaCardapios() {
               <div className="space-y-4">
                 {/* segmento Lista / Preços / Estoque / NF */}
                 <div className="flex gap-4 border-b border-carvao-100 dark:border-carvao-800">
-                  {(['lista', 'precos', 'estoque', 'nf', 'fornecedores', 'pedido'] as const).map((seg) => (
+                  {(['lista', 'estoque', 'nf', 'fornecedores', 'pedido'] as const).map((seg) => (
                     <button
                       key={seg}
                       onClick={() => setAbaCompras(seg)}
@@ -616,8 +617,6 @@ export default function PaginaCardapios() {
                     >
                       {seg === 'lista'
                         ? 'Lista de compras'
-                        : seg === 'precos'
-                        ? 'Preços'
                         : seg === 'estoque'
                         ? 'Estoque'
                         : seg === 'nf'
@@ -639,15 +638,6 @@ export default function PaginaCardapios() {
                     fatores={fatores}
                     definirPreco={definirPreco}
                     definirFornecedor={definirFornecedor}
-                  />
-                )}
-
-                {abaCompras === 'precos' && (
-                  <AbaPrecos
-                    precos={precos}
-                    definirPreco={definirPreco}
-                    fornecedores={fornecedores}
-                    itensExtras={itensExtras}
                   />
                 )}
 

@@ -33,6 +33,7 @@ import { NutricaoPrato } from './NutricaoPrato';
 import { AntiMonotonia } from './AntiMonotonia';
 import { TermometroAlmoco } from './TermometroAlmoco';
 import { IndicadorNutricional } from './IndicadorNutricional';
+import { AbaPrecos } from './AbaPrecos';
 
 /** Mescla receitas da biblioteca com histórico do dados.json, sem duplicatas. */
 function mesclarOpcoes(receitas: string[], historico: string[]): string[] {
@@ -82,12 +83,16 @@ export function AbaCardapio({
   podeEditar,
   precos,
   definirPreco,
+  fornecedores = {},
+  itensExtras = {},
 }: {
   estado: EstadoSemana;
   atualizar: (fn: (e: EstadoSemana) => EstadoSemana) => void;
   podeEditar: boolean;
   precos: Record<string, number>;
-  definirPreco?: (itemNorm: string, valor: number | null) => void;
+  definirPreco?: (itemNorm: string, valor: number | null, nome?: string) => void;
+  fornecedores?: Record<string, string>;
+  itensExtras?: Record<string, { n: string; u: string }>;
 }) {
   const { estimativas, gerarEstimativas } = useEstimativas();
   const { aceitacao } = useAceitacao();
@@ -95,6 +100,7 @@ export function AbaCardapio({
   const [gerarAberto, setGerarAberto] = useState(false);
   const [formPersonAberto, setFormPersonAberto] = useState(false);
   const [explicacao, setExplicacao] = useState<{ titulo: string; itens: string[] } | null>(null);
+  const [cotacaoAberta, setCotacaoAberta] = useState(false);
   const [personalizado, setPersonalizado] = useState({
     eventos: '',
     proteinasPrefer: [] as string[],
@@ -721,7 +727,12 @@ export function AbaCardapio({
                 </span>
               ))}
               {semPreco.length > 16 && (
-                <span className="self-center text-[11px] text-carvao-400">+{semPreco.length - 16} em Compras → Preços</span>
+                <button
+                  onClick={() => setCotacaoAberta(true)}
+                  className="self-center text-[11px] font-semibold text-brand-600 underline-offset-2 hover:underline dark:text-brand-300"
+                >
+                  +{semPreco.length - 16} na cotação completa ↓
+                </button>
               )}
             </div>
           </div>
@@ -732,6 +743,33 @@ export function AbaCardapio({
           proteínas mais baratas. <strong>Personalizado</strong>: você define proteínas, público, custo, eventos e regras.
         </p>
       </Cartao>
+
+      {/* Cotação completa — fonte única de preços (catálogo + histórico) */}
+      <div className="overflow-hidden rounded-2xl border border-carvao-200 dark:border-carvao-700">
+        <button
+          onClick={() => setCotacaoAberta((a) => !a)}
+          className="flex w-full items-center justify-between gap-3 bg-white px-4 py-3 text-left transition hover:bg-areia-50 dark:bg-carvao-900 dark:hover:bg-carvao-850"
+        >
+          <span className="flex items-center gap-2">
+            <span className="text-lg" aria-hidden>💰</span>
+            <span>
+              <span className="block text-sm font-bold text-carvao-800 dark:text-areia-100">Cotação — catálogo de preços</span>
+              <span className="block text-[11px] text-carvao-400">Preço, histórico e variação de cada item · fonte única da semana</span>
+            </span>
+          </span>
+          <Icone nome="baixo" tam={16} className={`shrink-0 text-carvao-400 transition-transform ${cotacaoAberta ? 'rotate-180' : ''}`} />
+        </button>
+        {cotacaoAberta && definirPreco && (
+          <div className="border-t border-carvao-100 bg-areia-50/40 p-3 dark:border-carvao-700 dark:bg-carvao-900/40">
+            <AbaPrecos
+              precos={precos}
+              definirPreco={definirPreco}
+              fornecedores={fornecedores}
+              itensExtras={itensExtras}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

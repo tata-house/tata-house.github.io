@@ -80,6 +80,37 @@ const TABELA: Record<string, Omit<InfoNutricional, 'prato'>> = {
   'yakisoba de carne': { porcao: '280g', kcal: 440, proteinas: 22, carboidratos: 50, gorduras: 16, fibras: 4, sodio: 920, indiceSaudavel: 56 },
   'macarrao ao molho': { porcao: '300g', kcal: 480, proteinas: 18, carboidratos: 68, gorduras: 14, fibras: 3, sodio: 640, indiceSaudavel: 52 },
   'panquecas': { porcao: '250g', kcal: 380, proteinas: 16, carboidratos: 42, gorduras: 16, fibras: 2, sodio: 480, indiceSaudavel: 55 },
+
+  /* Cobertura ampliada — pratos recorrentes da operação real (estimativa TACO).
+     As chaves curtas (ex.: "costela", "linguica") casam por proximidade no
+     buscador, cobrindo as variações ("Costela ao molho", "Costela com batata"). */
+  'sobre coxa': { porcao: '200g', kcal: 340, proteinas: 33, carboidratos: 1, gorduras: 18, fibras: 0, sodio: 400, indiceSaudavel: 78 },
+  'sobrecoxa': { porcao: '200g', kcal: 340, proteinas: 33, carboidratos: 1, gorduras: 18, fibras: 0, sodio: 400, indiceSaudavel: 78 },
+  'churrasco': { porcao: '200g', kcal: 400, proteinas: 32, carboidratos: 2, gorduras: 28, fibras: 0, sodio: 480, indiceSaudavel: 62 },
+  'costela': { porcao: '220g', kcal: 430, proteinas: 28, carboidratos: 3, gorduras: 32, fibras: 1, sodio: 540, indiceSaudavel: 52 },
+  'rabada': { porcao: '250g', kcal: 450, proteinas: 30, carboidratos: 4, gorduras: 32, fibras: 1, sodio: 620, indiceSaudavel: 54 },
+  'pernil': { porcao: '200g', kcal: 360, proteinas: 32, carboidratos: 3, gorduras: 22, fibras: 0, sodio: 480, indiceSaudavel: 65 },
+  'chuletinha': { porcao: '200g', kcal: 390, proteinas: 30, carboidratos: 0, gorduras: 24, fibras: 0, sodio: 460, indiceSaudavel: 62 },
+  'linguica': { porcao: '180g', kcal: 420, proteinas: 22, carboidratos: 3, gorduras: 34, fibras: 1, sodio: 920, indiceSaudavel: 46 },
+  'toscana': { porcao: '180g', kcal: 420, proteinas: 22, carboidratos: 3, gorduras: 34, fibras: 1, sodio: 900, indiceSaudavel: 46 },
+  'calabresa': { porcao: '160g', kcal: 400, proteinas: 20, carboidratos: 4, gorduras: 34, fibras: 1, sodio: 980, indiceSaudavel: 44 },
+  'parmegiana': { porcao: '250g', kcal: 520, proteinas: 34, carboidratos: 24, gorduras: 26, fibras: 2, sodio: 880, indiceSaudavel: 55 },
+  'fricasse': { porcao: '250g', kcal: 430, proteinas: 26, carboidratos: 18, gorduras: 24, fibras: 2, sodio: 760, indiceSaudavel: 58 },
+  'sse de frango': { porcao: '250g', kcal: 430, proteinas: 26, carboidratos: 18, gorduras: 24, fibras: 2, sodio: 760, indiceSaudavel: 58 },
+  'sse de carne': { porcao: '250g', kcal: 450, proteinas: 24, carboidratos: 18, gorduras: 26, fibras: 2, sodio: 780, indiceSaudavel: 54 },
+  'galinhada': { porcao: '300g', kcal: 420, proteinas: 24, carboidratos: 48, gorduras: 14, fibras: 3, sodio: 760, indiceSaudavel: 60 },
+  'carreteira': { porcao: '300g', kcal: 430, proteinas: 26, carboidratos: 40, gorduras: 16, fibras: 3, sodio: 720, indiceSaudavel: 58 },
+  'tropeiro': { porcao: '300g', kcal: 480, proteinas: 24, carboidratos: 40, gorduras: 24, fibras: 8, sodio: 820, indiceSaudavel: 55 },
+  'tutu': { porcao: '300g', kcal: 470, proteinas: 22, carboidratos: 44, gorduras: 22, fibras: 9, sodio: 780, indiceSaudavel: 56 },
+  'tiras de carne': { porcao: '200g', kcal: 350, proteinas: 28, carboidratos: 6, gorduras: 22, fibras: 1, sodio: 560, indiceSaudavel: 62 },
+  'tiras de frango': { porcao: '200g', kcal: 300, proteinas: 30, carboidratos: 5, gorduras: 14, fibras: 1, sodio: 480, indiceSaudavel: 72 },
+  'iscas de frango': { porcao: '200g', kcal: 320, proteinas: 30, carboidratos: 6, gorduras: 16, fibras: 1, sodio: 500, indiceSaudavel: 70 },
+  'iscas de carne': { porcao: '200g', kcal: 360, proteinas: 28, carboidratos: 6, gorduras: 22, fibras: 1, sodio: 560, indiceSaudavel: 62 },
+  'espaguete': { porcao: '300g', kcal: 480, proteinas: 18, carboidratos: 66, gorduras: 14, fibras: 3, sodio: 660, indiceSaudavel: 52 },
+  'sopa': { porcao: '350g', kcal: 260, proteinas: 14, carboidratos: 28, gorduras: 8, fibras: 4, sodio: 620, indiceSaudavel: 70 },
+  'baiao': { porcao: '300g', kcal: 450, proteinas: 22, carboidratos: 48, gorduras: 18, fibras: 7, sodio: 760, indiceSaudavel: 58 },
+  'moqueca': { porcao: '280g', kcal: 320, proteinas: 30, carboidratos: 8, gorduras: 18, fibras: 2, sodio: 520, indiceSaudavel: 72 },
+  'cubos de frango': { porcao: '200g', kcal: 300, proteinas: 32, carboidratos: 4, gorduras: 14, fibras: 1, sodio: 460, indiceSaudavel: 74 },
 };
 
 export function infoNutricional(prato: string | null | undefined): InfoNutricional | null {
@@ -106,10 +137,19 @@ export function infoNutricional(prato: string | null | undefined): InfoNutricion
   // busca exata (tabela legada, para pratos sem receita)
   const exato = TABELA[n];
   if (exato) return { prato, ...exato };
-  // busca parcial (primeiro match)
-  for (const [chave, dados] of Object.entries(TABELA)) {
-    if (n.includes(chave) || chave.includes(n.split(' ')[0])) {
-      return { prato, ...dados };
+  // busca parcial 1: a chave mais específica (mais longa) contida no nome do prato
+  let melhorChave: string | null = null;
+  for (const chave of Object.keys(TABELA)) {
+    if (n.includes(chave) && (!melhorChave || chave.length > melhorChave.length)) {
+      melhorChave = chave;
+    }
+  }
+  if (melhorChave) return { prato, ...TABELA[melhorChave] };
+  // busca parcial 2 (fallback): a chave começa com a primeira palavra do prato
+  const primeira = n.split(' ')[0];
+  if (primeira.length > 3) {
+    for (const [chave, dados] of Object.entries(TABELA)) {
+      if (chave.includes(primeira)) return { prato, ...dados };
     }
   }
   return null;

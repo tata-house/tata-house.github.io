@@ -19,6 +19,7 @@ import { CentralGerencial } from '@/components/cardapio/CentralGerencial';
 import { Configuracoes } from '@/components/cardapio/Configuracoes';
 import { CartaoNuvem } from '@/components/cardapio/CartaoNuvem';
 import { Assistente } from '@/components/cardapio/Assistente';
+import { insightProativo } from '@/lib/cardapio/assistente';
 import { PosterSemana } from '@/components/cardapio/PosterSemana';
 import { BriefingCard } from '@/components/cardapio/BriefingCard';
 import { AbaAuditoria } from '@/components/cardapio/AbaAuditoria';
@@ -95,10 +96,32 @@ const COR_ETAPA_TEXTO: Record<Etapa, string> = {
 const COR_ETAPA_PONTO: Record<Etapa, string> = {
   rascunho:    'bg-carvao-300',
   cozinha:     'bg-ouro-400 animate-pulse',
-  compras:     'bg-[#2d6f8e]',
+  compras:     'bg-info',
   recebimento: 'bg-ouro-400 animate-pulse',
   concluido:   'bg-brand-500',
 };
+
+/* ── mini-stepper de etapas — espinha dorsal visível em todas as telas ── */
+
+const SEQ_ETAPAS: Etapa[] = ['rascunho', 'cozinha', 'compras', 'recebimento', 'concluido'];
+
+function MiniEtapas({ etapa }: { etapa: Etapa }) {
+  const atual = SEQ_ETAPAS.indexOf(etapa);
+  return (
+    <div className="flex items-center gap-1.5" aria-label={`Etapa: ${ROTULO_ETAPA[etapa]}`}>
+      {SEQ_ETAPAS.map((e, i) => (
+        <div key={e} className="flex items-center gap-1.5">
+          <span
+            className={`h-1.5 rounded-full transition-all ${
+              i === atual ? 'w-6 bg-brand-600' : i < atual ? 'w-3 bg-brand-600/50' : 'w-3 bg-carvao-200 dark:bg-carvao-700'
+            }`}
+            title={ROTULO_ETAPA[e]}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 /* ── busca global ────────────────────────────────────────── */
 
@@ -119,6 +142,21 @@ function useBuscaGlobal(
     if (termo.trim().length < 2) return [];
     const t = termo.toLowerCase().trim();
     const res: ResultadoBusca[] = [];
+
+    // Ações (paleta de comando) — verbos que levam direto à tarefa
+    const ACOES: { titulo: string; chaves: string; alvo: AbaId }[] = [
+      { titulo: 'Gerar cardápio',           chaves: 'gerar cardapio criar montar semana', alvo: 'cardapio' },
+      { titulo: 'Abrir cotação / preços',   chaves: 'cotacao preco precos catalogo',      alvo: 'cardapio' },
+      { titulo: 'Lista de compras',         chaves: 'lista compras comprar',              alvo: 'compras' },
+      { titulo: 'Estoque',                  chaves: 'estoque inventario saldo',           alvo: 'compras' },
+      { titulo: 'Gerar pedido',             chaves: 'pedido fornecedor encomenda',        alvo: 'compras' },
+      { titulo: 'Relatórios e exportação',  chaves: 'relatorio exportar csv dna ranking', alvo: 'relatorios' },
+    ];
+    ACOES.forEach((a) => {
+      if (a.titulo.toLowerCase().includes(t) || a.chaves.includes(t)) {
+        res.push({ tipo: 'acao', titulo: a.titulo, subtitulo: 'Ação', acao: () => irPara(a.alvo) });
+      }
+    });
 
     // pratos da semana atual
     const DIAS_PT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
@@ -343,6 +381,12 @@ export default function PaginaCardapios() {
 
   const buscarFn = useBuscaGlobal(estado, precos, fornecedores, irPara);
 
+  // Insight proativo da IA exibido no Início (antes só visível no balão flutuante)
+  const insightInicio = useMemo(
+    () => insightProativo({ estado, semanaId, precos, historico, fornecedores, aceitacao, estoque, fatores }),
+    [estado, semanaId, precos, historico, fornecedores, aceitacao, estoque, fatores],
+  );
+
   // atalho de teclado ⌘K / Ctrl+K
   useEffect(() => {
     const fn = (e: KeyboardEvent) => {
@@ -450,6 +494,9 @@ export default function PaginaCardapios() {
                 · {semanaId === semanaAtualId ? 'semana atual' : 'semana planejada'}
               </span>
             </p>
+            <div className="mt-2">
+              <MiniEtapas etapa={estado.etapa} />
+            </div>
           </div>
           <div className="flex items-center gap-1">
             <button
@@ -529,6 +576,15 @@ export default function PaginaCardapios() {
                   historico={historico}
                   fornecedores={fornecedores}
                 />
+                {insightInicio && (
+                  <div className="flex items-start gap-3 rounded-2xl border border-ouro-400/30 bg-ouro-300/10 px-4 py-3">
+                    <span className="mt-0.5 shrink-0 text-carvao-500 dark:text-ouro-300"><Icone nome="raio" tam={18} /></span>
+                    <div className="min-w-0">
+                      <p className="text-rotulo font-bold uppercase tracking-wide text-ouro-600">Destaque da IA</p>
+                      <p className="mt-0.5 text-corpo text-carvao-700 dark:text-areia-100">{insightInicio.texto}</p>
+                    </div>
+                  </div>
+                )}
                 <AbaAgora
                   estado={estado}
                   precos={precos}

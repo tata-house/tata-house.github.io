@@ -59,10 +59,11 @@ body {
     radial-gradient(900px 460px at -10% 110%, rgba(44, 196, 104, 0.1), transparent 55%);
 }
 
-/* Identidade TATÁ: títulos sempre em caixa alta, com presença */
+/* Identidade TATÁ: títulos com presença. Caixa-alta agora é opcional —
+   aplicada só no logotipo/wordmark via classe `uppercase`, deixando os
+   títulos de tela em sentence case (visual mais premium e legível). */
 .font-display {
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   font-variant-numeric: tabular-nums;
 }
 

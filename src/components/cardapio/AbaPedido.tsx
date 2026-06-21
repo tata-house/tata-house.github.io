@@ -191,17 +191,17 @@ export function AbaPedido({
     <div className="space-y-4">
       {/* resumo */}
       <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-carvao-50 px-4 py-3 ring-1 ring-carvao-100 dark:bg-carvao-900/40 dark:ring-carvao-700/50">
-        <span className="text-[13px] font-semibold text-carvao-600 dark:text-areia-200">
+        <span className="text-nota font-semibold text-carvao-600 dark:text-areia-200">
           📦 {grupos.length} fornecedor{grupos.length !== 1 ? 'es' : ''}
         </span>
         <span className="text-carvao-300">·</span>
-        <span className="text-[13px] font-semibold text-carvao-600 dark:text-areia-200">
+        <span className="text-nota font-semibold text-carvao-600 dark:text-areia-200">
           {totalConfirmados}/{totalItens} itens confirmados
         </span>
         {custoEstimado > 0 && (
           <>
             <span className="text-carvao-300">·</span>
-            <span className="text-[13px] font-semibold text-carvao-600 dark:text-areia-200">
+            <span className="text-nota font-semibold text-carvao-600 dark:text-areia-200">
               ≈ {formatarReais(custoEstimado)} estimado
             </span>
           </>
@@ -326,7 +326,7 @@ function GrupoFornecedor({
       {expandido && (
         <div className="border-t border-carvao-100 dark:border-carvao-800">
           {/* cabeçalho da tabela */}
-          <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 border-b border-carvao-100 bg-carvao-50/60 px-4 py-1.5 text-[10px] font-bold uppercase tracking-wide text-carvao-400 dark:border-carvao-800 dark:bg-carvao-900/30">
+          <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 border-b border-carvao-100 bg-carvao-50/60 px-4 py-1.5 text-micro font-bold uppercase tracking-wide text-carvao-400 dark:border-carvao-800 dark:bg-carvao-900/30">
             <span>Item</span>
             <span className="text-center">Qtd / Un</span>
             <span className="text-center">Previsão</span>
@@ -344,7 +344,7 @@ function GrupoFornecedor({
               >
                 {/* nome */}
                 <span
-                  className={`text-[13px] font-semibold leading-snug ${
+                  className={`text-nota font-semibold leading-snug ${
                     p.confirmado
                       ? 'line-through text-carvao-400'
                       : 'text-carvao-800 dark:text-areia-100'
@@ -367,7 +367,7 @@ function GrupoFornecedor({
                       className="h-8 w-14 rounded-lg border border-carvao-200 bg-white px-1.5 text-center text-rotulo font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                     />
                   ) : (
-                    <strong className="tabular-nums text-[13px]">{formatarQtd(qtdFinal)}</strong>
+                    <strong className="tabular-nums text-nota">{formatarQtd(qtdFinal)}</strong>
                   )}
                   <span className="text-caption text-carvao-400">{unid}</span>
                 </div>

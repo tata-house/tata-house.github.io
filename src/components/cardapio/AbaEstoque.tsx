@@ -211,7 +211,7 @@ export function AbaEstoque({
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <label className="flex items-center gap-1">
-                        <span className="text-[10px] uppercase text-carvao-400">saldo</span>
+                        <span className="text-micro uppercase text-carvao-400">saldo</span>
                         <input
                           type="number"
                           min={0}
@@ -223,7 +223,7 @@ export function AbaEstoque({
                         />
                       </label>
                       <label className="flex items-center gap-1">
-                        <span className="text-[10px] uppercase text-carvao-400">mín.</span>
+                        <span className="text-micro uppercase text-carvao-400">mín.</span>
                         <input
                           type="number"
                           min={0}

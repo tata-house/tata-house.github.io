@@ -170,7 +170,7 @@ export function AbaInventario({
           ].map((c) => (
             <Cartao key={c.r} className="!p-3 text-center">
               <div className="font-display text-xl font-bold">{c.v}</div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-carvao-400">{c.r}</div>
+              <div className="text-micro font-bold uppercase tracking-wider text-carvao-400">{c.r}</div>
             </Cartao>
           ))}
         </div>
@@ -271,7 +271,7 @@ export function AbaInventario({
                           esperado <strong>{formatarQtd(it.esperado)}</strong> {it.unid}
                         </span>
                         <label className="flex items-center gap-1">
-                          <span className="text-[10px] uppercase text-carvao-400">contado</span>
+                          <span className="text-micro uppercase text-carvao-400">contado</span>
                           <input
                             type="number"
                             min={0}
@@ -289,7 +289,7 @@ export function AbaInventario({
                           value={it.obs ?? ''}
                           placeholder="observação (opcional)"
                           onChange={(e) => setObs(norm, e.target.value)}
-                          className="min-w-0 flex-1 rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-[13px] disabled:opacity-50 dark:border-carvao-600 dark:bg-carvao-900"
+                          className="min-w-0 flex-1 rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-nota disabled:opacity-50 dark:border-carvao-600 dark:bg-carvao-900"
                         />
                       </div>
                     </li>

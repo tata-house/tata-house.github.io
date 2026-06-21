@@ -150,7 +150,7 @@ export function ConciliacaoSemana({
           }`}>
             <span className="mt-0.5 text-lg">{alertaCustoIrreal.tipo === 'baixo' ? '⚠️' : '🔴'}</span>
             <div className="min-w-0 flex-1">
-              <p className={`text-[13px] font-semibold ${alertaCustoIrreal.tipo === 'baixo' ? 'text-blue-700 dark:text-blue-300' : 'text-perigo'}`}>
+              <p className={`text-nota font-semibold ${alertaCustoIrreal.tipo === 'baixo' ? 'text-blue-700 dark:text-blue-300' : 'text-perigo'}`}>
                 Custo por refeição {alertaCustoIrreal.tipo === 'baixo' ? 'muito baixo' : 'muito alto'}
               </p>
               <p className="text-caption text-carvao-400">
@@ -167,14 +167,14 @@ export function ConciliacaoSemana({
       {/* Preço acima do histórico */}
       {alertasPreco.length > 0 && (
         <section className="space-y-2">
-          <h4 className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.15em] text-ouro-600 dark:text-ouro-300">
+          <h4 className="flex items-center gap-2 text-micro font-extrabold uppercase tracking-[0.15em] text-ouro-600 dark:text-ouro-300">
             ⬆️ Preço acima do histórico
-            <span className="rounded-full bg-ouro-400/20 px-2 py-0.5 text-[10px] font-black">{alertasPreco.length}</span>
+            <span className="rounded-full bg-ouro-400/20 px-2 py-0.5 text-micro font-black">{alertasPreco.length}</span>
           </h4>
           {alertasPreco.map((a, i) => (
             <div key={i} className="flex items-center gap-3 rounded-xl bg-ouro-300/10 px-3 py-2.5 ring-1 ring-ouro-400/25">
               <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-semibold leading-tight">{a.item}</p>
+                <p className="text-nota font-semibold leading-tight">{a.item}</p>
                 <p className="text-caption text-carvao-400">
                   Cotado {formatarReais(a.atual)}/{a.unid} · média recente {formatarReais(a.medio)}/{a.unid}
                 </p>
@@ -190,9 +190,9 @@ export function ConciliacaoSemana({
       {/* Quantidade comprada acima do necessário */}
       {alertasQtd.length > 0 && (
         <section className="space-y-2">
-          <h4 className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.15em] text-perigo">
+          <h4 className="flex items-center gap-2 text-micro font-extrabold uppercase tracking-[0.15em] text-perigo">
             📦 Comprado além do necessário
-            <span className="rounded-full bg-perigo/15 px-2 py-0.5 text-[10px] font-black">{alertasQtd.length}</span>
+            <span className="rounded-full bg-perigo/15 px-2 py-0.5 text-micro font-black">{alertasQtd.length}</span>
           </h4>
           {alertasQtd.map((a, i) => (
             <div
@@ -200,7 +200,7 @@ export function ConciliacaoSemana({
               className="flex items-center gap-3 rounded-xl bg-perigo/5 px-3 py-2.5 ring-1 ring-perigo/20"
             >
               <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-semibold leading-tight">{a.item}</p>
+                <p className="text-nota font-semibold leading-tight">{a.item}</p>
                 <p className="text-caption text-carvao-400">
                   Necessário {formatarQtd(a.necessario)} {a.unid} · comprado {formatarQtd(a.comprado)} {a.unid}
                   {a.custoExcesso > 0 && <> · excesso ≈ {formatarReais(a.custoExcesso)}</>}

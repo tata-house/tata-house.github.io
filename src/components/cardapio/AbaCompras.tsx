@@ -255,7 +255,7 @@ export function AbaCompras({
           <button
             key={id}
             onClick={() => setModo(id)}
-            className={`min-h-9 flex-1 rounded-xl px-3 text-[13px] font-semibold transition ${
+            className={`min-h-9 flex-1 rounded-xl px-3 text-nota font-semibold transition ${
               modo === id
                 ? 'bg-white text-brand-700 shadow-suave dark:bg-carvao-700 dark:text-brand-300'
                 : 'text-carvao-500 dark:text-areia-200'
@@ -362,7 +362,7 @@ export function AbaCompras({
                     <span className="block text-caption font-bold uppercase text-brand-600">
                       {n.dias.map((d) => DIAS_SEMANA[d].slice(0, 3)).join(' · ')}
                     </span>
-                    <span className="block text-[10px] text-carvao-400">
+                    <span className="block text-micro text-carvao-400">
                       anexada em {n.em.slice(8, 10)}/{n.em.slice(5, 7)}
                     </span>
                   </span>
@@ -506,7 +506,7 @@ export function AbaCompras({
                 </div>
                 <button
                   onClick={() => setItensNota((p) => [...p, { produto: '', qtd: '', unid: 'kg', precoUnit: '' }])}
-                  className="flex items-center gap-1 text-[13px] font-semibold text-brand-600"
+                  className="flex items-center gap-1 text-nota font-semibold text-brand-600"
                 >
                   <Icone nome="somar" tam={15} /> Adicionar item
                 </button>
@@ -643,13 +643,13 @@ export function AbaCompras({
                             {l.item}
                             {l.manual && <Pilula tom="ouro">extra</Pilula>}
                             {l.sugerida !== null && l.qtd !== l.sugerida && (
-                              <span className="text-[10px] font-normal text-carvao-400">(sugerido {formatarQtd(l.sugerida)})</span>
+                              <span className="text-micro font-normal text-carvao-400">(sugerido {formatarQtd(l.sugerida)})</span>
                             )}
                           </p>
                           {podePreco ? (
                             <div className="mt-1.5 flex flex-wrap items-center gap-1.5 print:hidden">
-                              <span className="text-[10px] font-bold uppercase tracking-wide text-carvao-400">cotação</span>
-                              <span className="text-[10px] text-carvao-400">R$</span>
+                              <span className="text-micro font-bold uppercase tracking-wide text-carvao-400">cotação</span>
+                              <span className="text-micro text-carvao-400">R$</span>
                               <input
                                 type="number"
                                 min={0}
@@ -664,7 +664,7 @@ export function AbaCompras({
                                 }}
                                 className="h-7 w-16 rounded-md border border-carvao-200 bg-white px-1.5 text-right text-caption font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                               />
-                              <span className="text-[10px] text-carvao-400">/{l.unid}</span>
+                              <span className="text-micro text-carvao-400">/{l.unid}</span>
                               <input
                                 type="text"
                                 defaultValue={fornecedores[l.chave] ?? ''}
@@ -676,7 +676,7 @@ export function AbaCompras({
                             </div>
                           ) : (
                             fornecedores[l.chave] && (
-                              <span className="block text-[10px] font-semibold text-brand-600">↓ mais barato: {fornecedores[l.chave]}</span>
+                              <span className="block text-micro font-semibold text-brand-600">↓ mais barato: {fornecedores[l.chave]}</span>
                             )
                           )}
                         </div>
@@ -772,13 +772,13 @@ export function AbaCompras({
                                 </div>
                               ) : (
                                 l.status.precoPago !== undefined && (
-                                  <span className="block text-[10px] text-carvao-400">
+                                  <span className="block text-micro text-carvao-400">
                                     {formatarQtd(l.status.compradoQtd ?? l.qtd)} {l.unid} · {formatarReais(l.status.precoPago)}/{l.unid}
                                   </span>
                                 )
                               )}
                               {acima && (
-                                <span className="block text-[10px] font-extrabold text-perigo">
+                                <span className="block text-micro font-extrabold text-perigo">
                                   ▲ acima do cotado ({formatarReais(precos[l.chave])})
                                 </span>
                               )}
@@ -830,7 +830,7 @@ export function AbaCompras({
                                 />
                               )}
                               {veioMenos && (
-                                <span className="block text-[10px] font-extrabold text-[#d18a3a]">
+                                <span className="block text-micro font-extrabold text-[#d18a3a]">
                                   ⚠ veio {formatarQtd(l.status.recebidoQtd!)} de {formatarQtd(l.status.compradoQtd!)}
                                 </span>
                               )}

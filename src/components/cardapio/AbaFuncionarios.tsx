@@ -150,7 +150,7 @@ function FormFuncionario({
           <div className="space-y-1.5">
             {restricoes.map((r, i) => (
               <div key={i} className="flex items-center gap-2 rounded-xl bg-carvao-50 px-3 py-2 dark:bg-carvao-800">
-                <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${RESTRICAO_COR[r.tipo]}`}>
+                <span className={`rounded px-1.5 py-0.5 text-micro font-bold uppercase ${RESTRICAO_COR[r.tipo]}`}>
                   {RESTRICAO_EMOJI[r.tipo]} {RESTRICAO_ROTULO[r.tipo]}
                 </span>
                 <span className="flex-1 text-sm font-semibold capitalize text-carvao-800 dark:text-areia-100">
@@ -430,7 +430,7 @@ export function AbaFuncionarios({
                       </p>
                       <div className="mt-1 flex flex-wrap gap-1">
                         {e.restricoes.map((r, ri) => (
-                          <span key={ri} className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${RESTRICAO_COR[r.tipo as TipoRestricao] ?? 'bg-carvao-100 text-carvao-600'}`}>
+                          <span key={ri} className={`rounded-full px-2 py-0.5 text-micro font-semibold ${RESTRICAO_COR[r.tipo as TipoRestricao] ?? 'bg-carvao-100 text-carvao-600'}`}>
                             {RESTRICAO_EMOJI[r.tipo as TipoRestricao] ?? '🚫'} {r.alimento}
                           </span>
                         ))}
@@ -478,10 +478,10 @@ export function AbaFuncionarios({
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="font-semibold text-carvao-900 dark:text-white">{f.nome}</p>
-                    <span className="rounded bg-carvao-100 px-1.5 py-0.5 text-[10px] font-bold text-carvao-500 dark:bg-carvao-700 dark:text-carvao-300">
+                    <span className="rounded bg-carvao-100 px-1.5 py-0.5 text-micro font-bold text-carvao-500 dark:bg-carvao-700 dark:text-carvao-300">
                       {f.setor}
                     </span>
-                    <span className="rounded bg-brand-50 px-1.5 py-0.5 text-[10px] font-bold text-brand-600 dark:bg-carvao-700 dark:text-brand-400">
+                    <span className="rounded bg-brand-50 px-1.5 py-0.5 text-micro font-bold text-brand-600 dark:bg-carvao-700 dark:text-brand-400">
                       {TURNO_ROTULO[f.turno]}
                     </span>
                   </div>

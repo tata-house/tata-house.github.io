@@ -50,7 +50,7 @@ export function NutricaoPrato({ prato }: { prato: string }) {
         className="flex w-full items-center justify-between gap-2"
         aria-expanded={aberto}
       >
-        <span className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-carvao-400">
+        <span className="flex items-center gap-1.5 text-micro font-extrabold uppercase tracking-[0.18em] text-carvao-400">
           <Icone nome="nutricao" tam={13} className="text-brand-500" /> Nutrição do prato
           {info.porcao !== '—' && <span className="font-bold text-carvao-400">· {info.porcao}</span>}
         </span>
@@ -82,7 +82,7 @@ export function NutricaoPrato({ prato }: { prato: string }) {
       {alertas.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1.5">
           {alertas.map((a) => (
-            <span key={a} className="rounded-full bg-perigo/8 px-2 py-0.5 text-[10px] font-bold text-perigo ring-1 ring-perigo/15">
+            <span key={a} className="rounded-full bg-perigo/8 px-2 py-0.5 text-micro font-bold text-perigo ring-1 ring-perigo/15">
               {a}
             </span>
           ))}

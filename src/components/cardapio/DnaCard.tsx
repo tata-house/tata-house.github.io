@@ -124,7 +124,7 @@ export function DnaCard() {
                       className="h-2 w-2 shrink-0 rounded-full"
                       style={{ backgroundColor: COR_PROTEINA[p.proteina] }}
                     />
-                    <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-carvao-800 dark:text-areia-100">
+                    <span className="min-w-0 flex-1 truncate text-nota font-semibold text-carvao-800 dark:text-areia-100">
                       {p.prato}
                     </span>
                     <span className="shrink-0 text-caption text-carvao-400">{p.frequencia}×</span>

@@ -163,7 +163,7 @@ export function AbaPrecos({
                         ].map((c) => (
                           <div key={c.r} className="rounded-xl bg-white p-2 ring-1 ring-carvao-100 dark:bg-carvao-850 dark:ring-carvao-700/60">
                             <p className="text-[9px] font-bold uppercase tracking-wide text-carvao-400">{c.r}</p>
-                            <p className="text-[13px] font-bold tabular-nums">{c.v ? formatarReais(c.v) : '—'}</p>
+                            <p className="text-nota font-bold tabular-nums">{c.v ? formatarReais(c.v) : '—'}</p>
                           </div>
                         ))}
                       </div>

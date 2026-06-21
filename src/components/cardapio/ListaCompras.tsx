@@ -140,7 +140,7 @@ export function ListaCompras({
         {podeMexer && (
           <button
             onClick={() => setEditando((v) => !v)}
-            className={`flex shrink-0 items-center gap-1.5 rounded-2xl px-3.5 py-2.5 text-[13px] font-bold ring-1 transition ${
+            className={`flex shrink-0 items-center gap-1.5 rounded-2xl px-3.5 py-2.5 text-nota font-bold ring-1 transition ${
               editando
                 ? 'bg-brand-600 text-white ring-brand-600'
                 : 'bg-white text-brand-700 ring-brand-500/30 hover:bg-brand-50 dark:bg-carvao-800 dark:text-brand-300'
@@ -203,7 +203,7 @@ export function ListaCompras({
                         <div className="flex items-center gap-2">
                           <span className="min-w-0 flex-1 text-sm font-medium">
                             {l.item}
-                            {l.manual && <span className="ml-1 text-[10px] font-bold uppercase text-ouro-600">extra</span>}
+                            {l.manual && <span className="ml-1 text-micro font-bold uppercase text-ouro-600">extra</span>}
                           </span>
                           <input
                             type="number"
@@ -288,7 +288,7 @@ export function ListaCompras({
                         <span className="min-w-0 flex-1">
                           <span className={`block text-sm ${comprado ? 'text-carvao-400 line-through' : 'font-medium'}`}>
                             {l.item}
-                            {l.manual && <span className="ml-1 text-[10px] font-bold uppercase text-ouro-600">extra</span>}
+                            {l.manual && <span className="ml-1 text-micro font-bold uppercase text-ouro-600">extra</span>}
                             {!l.manual && l.fonte === 'receita' && (
                               <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-ouro-600/70">rcta</span>
                             )}
@@ -298,7 +298,7 @@ export function ListaCompras({
                             {obs && <span className="ml-1 text-caption italic text-carvao-400">· 📝</span>}
                           </span>
                           {!podeMexerPreco && (fornecedores[l.chave] || precos[l.chave] > 0) && (
-                            <span className="mt-0.5 block text-[10px] font-semibold text-brand-600 dark:text-brand-300">
+                            <span className="mt-0.5 block text-micro font-semibold text-brand-600 dark:text-brand-300">
                               🏪 {fornecedores[l.chave] || 'fornecedor não informado'}
                               {precos[l.chave] > 0 && (
                                 <span className="font-normal text-carvao-400">
@@ -345,7 +345,7 @@ export function ListaCompras({
                                   placeholder="fornecedor"
                                   className="h-7 w-24 rounded-md border border-carvao-200 bg-white px-1.5 text-caption dark:border-carvao-600 dark:bg-carvao-900"
                                 />
-                                <span className="text-[10px] text-carvao-400">R$</span>
+                                <span className="text-micro text-carvao-400">R$</span>
                                 <input
                                   type="number"
                                   min={0}
@@ -391,7 +391,7 @@ export function ListaCompras({
             {editando && podeMexer && onAddManual && (
               <button
                 onClick={() => setNovoItemDia(di)}
-                className="flex w-full items-center gap-1.5 px-4 py-2.5 text-[13px] font-semibold text-brand-600 hover:bg-brand-50 dark:hover:bg-carvao-800/40 print:hidden"
+                className="flex w-full items-center gap-1.5 px-4 py-2.5 text-nota font-semibold text-brand-600 hover:bg-brand-50 dark:hover:bg-carvao-800/40 print:hidden"
               >
                 <Icone nome="somar" tam={16} /> Adicionar item extra
               </button>

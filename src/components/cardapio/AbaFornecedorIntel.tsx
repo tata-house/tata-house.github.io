@@ -291,7 +291,7 @@ export function AbaFornecedorIntel({
                   {/* Itens que fornece */}
                   {itens.length > 0 && (
                     <div className="mb-3">
-                      <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-carvao-400">Itens fornecidos</p>
+                      <p className="mb-2 text-micro font-bold uppercase tracking-widest text-carvao-400">Itens fornecidos</p>
                       <div className="flex flex-wrap gap-1.5">
                         {itens.slice(0, 12).map((it) => (
                           <span key={it} className="rounded-full bg-carvao-100 px-2 py-0.5 text-caption font-semibold text-carvao-600 dark:bg-carvao-700 dark:text-carvao-300">
@@ -316,7 +316,7 @@ export function AbaFornecedorIntel({
                   {/* Histórico de avaliações */}
                   {avs.length > 0 && (
                     <div>
-                      <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-carvao-400">Últimas avaliações</p>
+                      <p className="mb-2 text-micro font-bold uppercase tracking-widest text-carvao-400">Últimas avaliações</p>
                       <div className="space-y-1.5">
                         {avs.slice(0, 4).map((av, i) => (
                           <div key={i} className="flex items-center gap-2 rounded-xl bg-carvao-50 px-3 py-2 dark:bg-carvao-800">
@@ -325,7 +325,7 @@ export function AbaFornecedorIntel({
                               {av.entregaOk ? '✓ entregou' : '✗ problema'}
                             </span>
                             {av.obs && <span className="text-xs text-carvao-400 truncate">{av.obs}</span>}
-                            <span className="ml-auto shrink-0 text-[10px] text-carvao-300">
+                            <span className="ml-auto shrink-0 text-micro text-carvao-300">
                               {new Date(av.em).toLocaleDateString('pt-BR')}
                             </span>
                           </div>

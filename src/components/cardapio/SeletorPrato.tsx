@@ -51,11 +51,11 @@ export function SeletorPrato({
         }`}
       >
         <span className="min-w-0">
-          <span className="block text-[10px] font-bold uppercase tracking-wider text-carvao-400">
+          <span className="block text-micro font-bold uppercase tracking-wider text-carvao-400">
             {rotulo}
           </span>
           <span
-            className={`block truncate text-[13px] font-extrabold uppercase tracking-wide ${
+            className={`block truncate text-nota font-extrabold uppercase tracking-wide ${
               valor ? 'text-carvao-900 dark:text-areia-100' : 'font-semibold normal-case text-carvao-300 dark:text-carvao-500'
             }`}
           >

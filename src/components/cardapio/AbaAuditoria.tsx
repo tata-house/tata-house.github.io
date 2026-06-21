@@ -51,7 +51,7 @@ export function AbaAuditoria({ papel }: { papel: Papel }) {
               <tr className="border-b border-carvao-100 dark:border-carvao-700/60">
                 <th className="px-3 py-2.5 text-left text-caption font-extrabold uppercase tracking-wider text-carvao-400">Papel</th>
                 {PERMISSOES.map((p) => (
-                  <th key={p.id} className="px-2 py-2.5 text-center text-[10px] font-bold uppercase text-carvao-400">
+                  <th key={p.id} className="px-2 py-2.5 text-center text-micro font-bold uppercase text-carvao-400">
                     {p.rotulo}
                   </th>
                 ))}

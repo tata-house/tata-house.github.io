@@ -445,7 +445,7 @@ export default function ManualPage() {
                 <div>
                   <div className="flex items-center gap-2">
                     <p className="font-bold text-gray-800">{e.nome}</p>
-                    <span className="rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-semibold text-gray-600">{e.quem}</span>
+                    <span className="rounded-full bg-gray-200 px-2 py-0.5 text-micro font-semibold text-gray-600">{e.quem}</span>
                   </div>
                   <p className="mt-0.5 text-sm text-gray-600">{e.desc}</p>
                 </div>

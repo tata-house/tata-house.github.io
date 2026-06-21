@@ -54,7 +54,7 @@ function EtapaProgress({ etapa }: { etapa: Etapa }) {
         {ETAPAS.map((e, i) => (
           <span
             key={e.id}
-            className={`text-[10px] font-semibold ${
+            className={`text-micro font-semibold ${
               i === ativo
                 ? 'text-brand-600 dark:text-brand-400'
                 : i < ativo

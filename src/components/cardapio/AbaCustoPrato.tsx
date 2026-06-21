@@ -73,7 +73,7 @@ function DetalheIngredientes({ custo, onFechar }: { custo: CustoPorcao; onFechar
                       <p className="text-sm font-bold text-carvao-700 dark:text-areia-100">
                         R$ {ing.custo.toFixed(2).replace('.', ',')}
                       </p>
-                      <p className="text-[10px] text-carvao-400">
+                      <p className="text-micro text-carvao-400">
                         {total > 0 ? Math.round((ing.custo / total) * 100) : 0}%
                       </p>
                     </>
@@ -179,14 +179,14 @@ export function AbaCustoPrato({
                       <BarraCusto valor={c.custoPorcao} max={maxCusto} />
                     </div>
                     <div className="mt-1 flex items-center gap-2">
-                      <span className="rounded bg-carvao-100 px-1 py-0.5 text-[10px] font-semibold text-carvao-500 dark:bg-carvao-700 dark:text-carvao-300">
+                      <span className="rounded bg-carvao-100 px-1 py-0.5 text-micro font-semibold text-carvao-500 dark:bg-carvao-700 dark:text-carvao-300">
                         {c.categoria}
                       </span>
-                      <span className={`text-[10px] font-semibold ${COR_COBERTURA(c.cobertura)}`}>
+                      <span className={`text-micro font-semibold ${COR_COBERTURA(c.cobertura)}`}>
                         {Math.round(c.cobertura * 100)}% de ingredientes com preço
                       </span>
                       {!c.deMapa && (
-                        <span className="text-[10px] text-carvao-400">estimado</span>
+                        <span className="text-micro text-carvao-400">estimado</span>
                       )}
                     </div>
                   </div>

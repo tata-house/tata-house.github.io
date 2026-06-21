@@ -135,7 +135,7 @@ export function RadarDesperdicio({
             <Cartao key={p.dia} className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">
-                  <span className="text-[10px] font-bold uppercase text-carvao-400">{DIAS_SEMANA[p.dia].slice(0, 3)}</span>{' '}
+                  <span className="text-micro font-bold uppercase text-carvao-400">{DIAS_SEMANA[p.dia].slice(0, 3)}</span>{' '}
                   {p.prato}
                 </p>
                 <p className="text-rotulo text-carvao-500 dark:text-areia-200">
@@ -143,7 +143,7 @@ export function RadarDesperdicio({
                   <strong>~{p.cortePct}% a menos</strong>
                   {custoRef ? <> e evite ~{formatarReais(p.custoEvitado)}</> : null}.
                 </p>
-                <p className="text-[10px] text-carvao-400">
+                <p className="text-micro text-carvao-400">
                   confiança {confianca(p.ocasioes)} · {p.ocasioes} registro(s)
                 </p>
               </div>
@@ -167,7 +167,7 @@ export function RadarDesperdicio({
         </Cartao>
       )}
 
-      <p className="text-[10px] text-carvao-400">
+      <p className="text-micro text-carvao-400">
         Previsões aprendidas dos seus lançamentos de sobra. Quanto mais você registrar, mais preciso fica.
       </p>
     </Secao>

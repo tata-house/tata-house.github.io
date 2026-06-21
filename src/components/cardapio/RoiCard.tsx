@@ -54,7 +54,7 @@ export function RoiCard({
       <div className="grid grid-cols-1 divide-y divide-carvao-100 sm:grid-cols-3 sm:divide-x sm:divide-y-0 dark:divide-carvao-700/60">
         {fontes.map((c) => (
           <div key={c.r} className="px-5 py-3">
-            <p className="text-[10px] font-extrabold uppercase tracking-wider text-carvao-400">
+            <p className="text-micro font-extrabold uppercase tracking-wider text-carvao-400">
               {c.i} {c.r}
             </p>
             <p className="font-display text-xl font-bold text-brand-700 dark:text-brand-300">

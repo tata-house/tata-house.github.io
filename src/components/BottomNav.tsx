@@ -46,7 +46,7 @@ export function BottomNav({
               <span className="flex h-7 w-7 items-center justify-center">
                 <Icone nome={g.id} tam={20} />
               </span>
-              <span className="text-[10px] font-semibold">{g.rotulo}</span>
+              <span className="text-micro font-semibold">{g.rotulo}</span>
             </button>
           );
         })}

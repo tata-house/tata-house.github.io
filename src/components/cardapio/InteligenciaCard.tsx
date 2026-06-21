@@ -113,7 +113,7 @@ export function InteligenciaCard(props: Props) {
       {/* DNA alimentar */}
       {dna && dna.resumo && (
         <div className="mb-4 rounded-2xl bg-brand-50/60 p-3 ring-1 ring-brand-500/15 dark:bg-carvao-800">
-          <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300">DNA alimentar</p>
+          <p className="mb-1 text-micro font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300">DNA alimentar</p>
           <p className="text-sm text-carvao-700 dark:text-areia-100">{dna.resumo}</p>
           {dna.proteinasPreferidas.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -133,7 +133,7 @@ export function InteligenciaCard(props: Props) {
       {/* Resultados de ações anteriores */}
       {comResultado.length > 0 && (
         <div className="mb-4 rounded-2xl bg-areia-50 p-3 ring-1 ring-carvao-100 dark:bg-carvao-800 dark:ring-carvao-700">
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-carvao-500 dark:text-areia-400">
+          <p className="mb-2 text-micro font-bold uppercase tracking-wide text-carvao-500 dark:text-areia-400">
             📊 Resultados das ações comprometidas
           </p>
           <div className="space-y-1.5">
@@ -174,7 +174,7 @@ export function InteligenciaCard(props: Props) {
           <div className="mb-2 flex items-center justify-between gap-2">
             <h3 className="font-display text-sm font-bold text-carvao-800 dark:text-areia-100">{plano.titulo}</h3>
             <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+              className={`rounded-full px-2 py-0.5 text-micro font-bold uppercase ${
                 plano.viabilidade === 'alta'
                   ? 'bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300'
                   : plano.viabilidade === 'media'
@@ -185,7 +185,7 @@ export function InteligenciaCard(props: Props) {
               viabilidade {plano.viabilidade}
             </span>
           </div>
-          <p className="mb-3 text-[13px] text-carvao-600 dark:text-areia-200">{plano.resumo}</p>
+          <p className="mb-3 text-nota text-carvao-600 dark:text-areia-200">{plano.resumo}</p>
           <ol className="space-y-2">
             {plano.acoes.map((a, i) => {
               const jaComprometido = idsDaDescricao.has(a.acao);
@@ -195,7 +195,7 @@ export function InteligenciaCard(props: Props) {
                     {a.prioridade}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[13px] font-medium text-carvao-800 dark:text-areia-100">{a.acao}</p>
+                    <p className="text-nota font-medium text-carvao-800 dark:text-areia-100">{a.acao}</p>
                     <p className="mt-0.5 text-caption text-carvao-400 dark:text-areia-400">
                       {a.base}
                       {a.impactoReais ? ` · economia ~${fmtReais(a.impactoReais)}` : ''}
@@ -227,7 +227,7 @@ export function InteligenciaCard(props: Props) {
       {/* comprometimentos ativos desta semana */}
       {ativasSemana.length > 0 && (
         <div className="mt-4 rounded-2xl bg-brand-50 p-3 ring-1 ring-brand-500/20 dark:bg-brand-900/20 dark:ring-brand-600/30">
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-brand-600 dark:text-brand-400">
+          <p className="mb-2 text-micro font-bold uppercase tracking-wide text-brand-600 dark:text-brand-400">
             📌 Comprometidos esta semana
           </p>
           <ul className="space-y-1">

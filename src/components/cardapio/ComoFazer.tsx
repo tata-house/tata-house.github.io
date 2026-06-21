@@ -128,7 +128,7 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
                   ['Sódio', `${nu.sodio} mg`],
                 ].map(([rot, val]) => (
                   <div key={rot} className="rounded-xl bg-areia-100 px-2 py-1.5 text-center dark:bg-carvao-800">
-                    <p className="text-[10px] uppercase tracking-wide text-carvao-400">{rot}</p>
+                    <p className="text-micro uppercase tracking-wide text-carvao-400">{rot}</p>
                     <p className="text-sm font-bold tabular-nums text-carvao-700 dark:text-areia-100">{val}</p>
                   </div>
                 ))}

@@ -232,7 +232,7 @@ export function AbaNF({
                       {formatarReais(it.precoTotal)}
                     </p>
                     {alerta && (
-                      <p className={`text-[10px] font-semibold ${alerta.cor}`}>{alerta.label}</p>
+                      <p className={`text-micro font-semibold ${alerta.cor}`}>{alerta.label}</p>
                     )}
                   </div>
                 </button>

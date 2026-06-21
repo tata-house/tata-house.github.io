@@ -134,7 +134,7 @@ export function OperacaoDia({
                           ✓
                         </span>
                         <span className="min-w-0">
-                          <span className="block text-[10px] font-bold uppercase tracking-wide text-brand-200">{rot}</span>
+                          <span className="block text-micro font-bold uppercase tracking-wide text-brand-200">{rot}</span>
                           <span className={`block text-subtitulo font-semibold ${feito ? 'text-brand-100 line-through' : ''}`}>{nome}</span>
                         </span>
                       </button>

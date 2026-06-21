@@ -244,7 +244,7 @@ export function AbaSimulador({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-areia-50/70 p-3 ring-1 ring-carvao-100 dark:bg-carvao-900/40 dark:ring-carvao-700/60">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-carvao-400">Custo / refeição</p>
+              <p className="text-micro font-bold uppercase tracking-wider text-carvao-400">Custo / refeição</p>
               <p className="font-display text-xl font-bold tabular-nums">{formatarReais(cenarioSeEu.ref)}</p>
               {atual.custoRef > 0 && (
                 <p className={`text-caption font-bold ${cenarioSeEu.ref > atual.custoRef ? 'text-perigo' : 'text-brand-600'}`}>
@@ -254,7 +254,7 @@ export function AbaSimulador({
               )}
             </div>
             <div className="rounded-2xl bg-areia-50/70 p-3 ring-1 ring-carvao-100 dark:bg-carvao-900/40 dark:ring-carvao-700/60">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-carvao-400">Custo total semana</p>
+              <p className="text-micro font-bold uppercase tracking-wider text-carvao-400">Custo total semana</p>
               <p className="font-display text-xl font-bold tabular-nums">{formatarReais(cenarioSeEu.total)}</p>
               {atual.custo > 0 && (
                 <p className={`text-caption font-bold ${cenarioSeEu.total > atual.custo ? 'text-perigo' : 'text-brand-600'}`}>
@@ -314,7 +314,7 @@ export function AbaSimulador({
                     d.principal ? (
                       <li key={i} className="flex items-center justify-between gap-2">
                         <span className="truncate">
-                          <span className="text-[10px] font-bold uppercase text-carvao-400">{DIAS_SEMANA[i].slice(0, 3)}</span>{' '}
+                          <span className="text-micro font-bold uppercase text-carvao-400">{DIAS_SEMANA[i].slice(0, 3)}</span>{' '}
                           {d.principal}
                         </span>
                         <Pilula tom="neutro">{ROTULO_PROTEINA[proteinaDoPrato(d.principal)]}</Pilula>

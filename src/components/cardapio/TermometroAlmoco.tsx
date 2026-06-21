@@ -78,7 +78,7 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
         <button
           type="button"
           onClick={atualizar}
-          className="text-[10px] font-bold text-carvao-400 hover:text-carvao-600 dark:hover:text-areia-200"
+          className="text-micro font-bold text-carvao-400 hover:text-carvao-600 dark:hover:text-areia-200"
           aria-label="Atualizar"
         >
           ↺ {horaAtualiz}

@@ -43,7 +43,7 @@ export function PrevisaoCard({ semanaId, onPessoasAtualizadas }: Props) {
           <h2 className="font-display text-base font-bold text-carvao-800 dark:text-areia-100">Previsão de consumo</h2>
         </div>
         {previsao.baseSemanas > 0 && (
-          <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold text-brand-700 dark:bg-carvao-700 dark:text-brand-300">
+          <span className="rounded-full bg-brand-100 px-2 py-0.5 text-micro font-bold text-brand-700 dark:bg-carvao-700 dark:text-brand-300">
             {previsao.baseSemanas} semana{previsao.baseSemanas > 1 ? 's' : ''}
           </span>
         )}
@@ -80,7 +80,7 @@ export function PrevisaoCard({ semanaId, onPessoasAtualizadas }: Props) {
                   </div>
                 )}
               </div>
-              <span className="text-[10px] font-bold text-carvao-600 dark:text-areia-300">{DIAS_PT[d.dia]}</span>
+              <span className="text-micro font-bold text-carvao-600 dark:text-areia-300">{DIAS_PT[d.dia]}</span>
               <span className="text-caption font-semibold text-brand-700 dark:text-brand-300">{d.esperado}</span>
               <span className="text-[9px] text-carvao-400">
                 {d.pessimista}–{d.otimista}

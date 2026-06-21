@@ -41,7 +41,7 @@ function ItemCard({ item }: { item: ItemBriefing }) {
       <div className="flex items-start gap-2.5">
         <span className="mt-0.5 text-lg leading-none">{item.icone}</span>
         <div className="min-w-0">
-          <p className={`text-[13px] font-bold ${NIVEL_TEXTO[item.nivel]}`}>{item.titulo}</p>
+          <p className={`text-nota font-bold ${NIVEL_TEXTO[item.nivel]}`}>{item.titulo}</p>
           <p className="mt-0.5 text-rotulo text-carvao-600 dark:text-areia-300">{item.detalhe}</p>
           {item.acao && (
             <p className="mt-1 text-caption font-semibold text-carvao-500 dark:text-areia-400">
@@ -133,7 +133,7 @@ export function BriefingCard(props: Props) {
         <span className="text-2xl">✅</span>
         <div>
           <p className="font-display text-sm font-bold text-brand-700 dark:text-brand-300">{briefing.saudacao}</p>
-          <p className="text-[13px] text-carvao-600 dark:text-areia-300">Tudo em ordem hoje. Nenhum alerta ativo.</p>
+          <p className="text-nota text-carvao-600 dark:text-areia-300">Tudo em ordem hoje. Nenhum alerta ativo.</p>
         </div>
       </div>
     );
@@ -161,7 +161,7 @@ export function BriefingCard(props: Props) {
         </div>
         <div className="flex items-center gap-2">
           {urgentes > 0 && (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-micro font-bold text-white">
               {urgentes}
             </span>
           )}
@@ -176,8 +176,8 @@ export function BriefingCard(props: Props) {
           {/* narração da IA (quando disponível) */}
           {iaTexto && !carregandoIa && (
             <div className="mb-1 rounded-2xl bg-brand-50 p-3 ring-1 ring-brand-200/60 dark:bg-carvao-800 dark:ring-carvao-600">
-              <p className="mb-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-500">Análise IA</p>
-              <p className="text-[13px] text-carvao-700 dark:text-areia-200">{iaTexto}</p>
+              <p className="mb-0.5 text-micro font-bold uppercase tracking-wide text-brand-500">Análise IA</p>
+              <p className="text-nota text-carvao-700 dark:text-areia-200">{iaTexto}</p>
             </div>
           )}
           {carregandoIa && (

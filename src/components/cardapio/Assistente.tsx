@@ -14,8 +14,21 @@ interface Fala {
 
 type Aba = 'chat' | 'objetivos';
 
-export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
-  const [aberto, setAberto] = useState(false);
+export function Assistente({
+  contexto,
+  aberto: abertoProp,
+  aoMudarAberto,
+}: {
+  contexto: ContextoAssistente;
+  aberto?: boolean;
+  aoMudarAberto?: (v: boolean) => void;
+}) {
+  const [abertoInterno, setAbertoInterno] = useState(false);
+  const aberto = abertoProp !== undefined ? abertoProp : abertoInterno;
+  const setAberto = (v: boolean) => {
+    if (aoMudarAberto) aoMudarAberto(v);
+    else setAbertoInterno(v);
+  };
   const [aba, setAba] = useState<Aba>('chat');
   const [entrada, setEntrada] = useState('');
   const [pensando, setPensando] = useState(false);
@@ -56,7 +69,7 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
     <>
       {/* Botão flutuante */}
       <button
-        onClick={() => setAberto((a) => !a)}
+        onClick={() => setAberto(!aberto)}
         aria-label="Inteligência Tatá House"
         className="fixed bottom-20 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-800 text-white shadow-flutuante ring-2 ring-ouro-400/50 transition hover:scale-105 active:scale-95 lg:bottom-5 lg:right-5 print:hidden"
       >
@@ -73,7 +86,7 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
             <Icone nome="chefIA" tam={20} />
             <div className="min-w-0 flex-1">
               <p className="font-display text-sm font-bold tracking-wide">Inteligência Tatá House</p>
-              <p className="text-[10px] uppercase tracking-wider text-brand-200">análise local · sem dados externos</p>
+              <p className="text-micro uppercase tracking-wider text-brand-200">análise local · sem dados externos</p>
             </div>
           </div>
 
@@ -83,7 +96,7 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
               <button
                 key={a}
                 onClick={() => setAba(a)}
-                className={`flex-1 py-2.5 text-[13px] font-semibold transition ${
+                className={`flex-1 py-2.5 text-nota font-semibold transition ${
                   aba === a
                     ? 'border-b-2 border-brand-600 text-brand-700 dark:border-brand-400 dark:text-brand-300'
                     : 'text-carvao-400 hover:text-carvao-700 dark:text-carvao-500'
@@ -100,10 +113,10 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
               <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
                 {proativo && (
                   <div className="rounded-2xl bg-ouro-300/15 p-3 ring-1 ring-ouro-400/30">
-                    <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-ouro-600">Destaque do momento</p>
+                    <p className="mb-1 text-micro font-bold uppercase tracking-wide text-ouro-600">Destaque do momento</p>
                     <p className="text-sm text-carvao-700 dark:text-areia-100">{proativo.texto}</p>
                     {proativo.itens && (
-                      <ul className="mt-1 space-y-0.5 text-[13px]">
+                      <ul className="mt-1 space-y-0.5 text-nota">
                         {proativo.itens.map((it, j) => (
                           <li key={j} className="flex gap-1.5">
                             <span className="text-ouro-500">•</span>
@@ -125,7 +138,7 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
                     >
                       <p>{f.texto}</p>
                       {f.itens && (
-                        <ul className="mt-1.5 space-y-1 text-left text-[13px]">
+                        <ul className="mt-1.5 space-y-1 text-left text-nota">
                           {f.itens.map((it, j) => (
                             <li key={j} className="flex gap-1.5">
                               <span className="text-brand-400">•</span>

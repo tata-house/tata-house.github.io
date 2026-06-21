@@ -289,14 +289,14 @@ export function ChefIA({
                   <button
                     onClick={() => darFeedback(d, 'bom')}
                     title="Boa sugestão"
-                    className={`flex h-7 w-7 items-center justify-center rounded-full text-[13px] transition ${jaDeuBom ? 'bg-brand-500/20' : 'hover:bg-brand-500/10'}`}
+                    className={`flex h-7 w-7 items-center justify-center rounded-full text-nota transition ${jaDeuBom ? 'bg-brand-500/20' : 'hover:bg-brand-500/10'}`}
                   >
                     👍
                   </button>
                   <button
                     onClick={() => darFeedback(d, 'ruim')}
                     title="Sugestão ruim — não mostrar mais"
-                    className="flex h-7 w-7 items-center justify-center rounded-full text-[13px] transition hover:bg-perigo/10"
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-nota transition hover:bg-perigo/10"
                   >
                     👎
                   </button>
@@ -333,11 +333,11 @@ export function ChefIA({
       </ul>
 
       {feedbacks.filter((f) => f.voto === 'ruim').length > 0 && (
-        <p className="text-[10px] text-carvao-400">
+        <p className="text-micro text-carvao-400">
           {feedbacks.filter((f) => f.voto === 'ruim').length} sugestão(ões) descartada(s) pelo time — o Chef IA aprendeu suas preferências.
         </p>
       )}
-      <p className="text-[10px] text-carvao-400">Use 👎 para ensinar o Chef IA sobre o que não funciona na operação.</p>
+      <p className="text-micro text-carvao-400">Use 👎 para ensinar o Chef IA sobre o que não funciona na operação.</p>
     </Cartao>
   );
 }

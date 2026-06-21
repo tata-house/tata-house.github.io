@@ -177,7 +177,7 @@ export function CardapioOrientadoDados({
           <div className="space-y-3">
             {sugestoes.map((s, i) => (
               <Cartao key={i} className="!py-3">
-                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-carvao-400">{s.categoria}</p>
+                <p className="mb-2 text-micro font-bold uppercase tracking-widest text-carvao-400">{s.categoria}</p>
                 <div className="flex items-start gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
@@ -293,7 +293,7 @@ export function CardapioOrientadoDados({
                         {p.nota.toFixed(1)}★
                       </span>
                     )}
-                    <span className="rounded-full bg-carvao-50 px-2 py-0.5 text-[10px] font-semibold text-carvao-400 dark:bg-carvao-700 dark:text-carvao-300">
+                    <span className="rounded-full bg-carvao-50 px-2 py-0.5 text-micro font-semibold text-carvao-400 dark:bg-carvao-700 dark:text-carvao-300">
                       {p.totalServido}×
                     </span>
                   </div>

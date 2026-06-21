@@ -148,33 +148,47 @@ interface ResultadoBusca {
   acao: () => void;
 }
 
+interface AcoesPaleta {
+  irPara: (aba: AbaId) => void;
+  abrirPoster: () => void;
+  abrirPlaquinha: () => void;
+  duplicarSemana: () => void;
+  irSemana: (delta: number) => void;
+}
+
 function useBuscaGlobal(
   estado: ReturnType<typeof useSemana>['estado'],
   precos: Record<string, number>,
   fornecedores: Record<string, string>,
-  irPara: (aba: AbaId) => void,
+  acoes: AcoesPaleta,
 ) {
-  // Ações (paleta de comando) — verbos que levam direto à tarefa
-  const ACOES: { titulo: string; chaves: string; alvo: AbaId }[] = [
-    { titulo: 'Gerar cardápio',           chaves: 'gerar cardapio criar montar semana', alvo: 'cardapio' },
-    { titulo: 'Abrir cotação / preços',   chaves: 'cotacao preco precos catalogo',      alvo: 'cardapio' },
-    { titulo: 'Lista de compras',         chaves: 'lista compras comprar',              alvo: 'compras' },
-    { titulo: 'Estoque',                  chaves: 'estoque inventario saldo',           alvo: 'compras' },
-    { titulo: 'Gerar pedido',             chaves: 'pedido fornecedor encomenda',        alvo: 'compras' },
-    { titulo: 'Relatórios e exportação',  chaves: 'relatorio exportar csv dna ranking', alvo: 'relatorios' },
+  const { irPara } = acoes;
+  // Ações (paleta de comando) — verbos que EXECUTAM, não só apontam
+  const ACOES: { titulo: string; sub: string; chaves: string; run: () => void }[] = [
+    { titulo: 'Ir para o cardápio',       sub: 'Montar a semana',     chaves: 'gerar cardapio criar montar semana', run: () => irPara('cardapio') },
+    { titulo: 'Abrir cotação / preços',   sub: 'Catálogo de preços',  chaves: 'cotacao preco precos catalogo',      run: () => irPara('cardapio') },
+    { titulo: 'Lista de compras',         sub: 'Abrir compras',       chaves: 'lista compras comprar',              run: () => irPara('compras') },
+    { titulo: 'Estoque',                  sub: 'Saldos e mínimos',    chaves: 'estoque inventario saldo',           run: () => irPara('compras') },
+    { titulo: 'Gerar pedido',             sub: 'Pedido por fornecedor', chaves: 'pedido fornecedor encomenda',      run: () => irPara('compras') },
+    { titulo: 'Relatórios e exportação',  sub: 'DNA, custos, rankings', chaves: 'relatorio exportar csv dna ranking', run: () => irPara('relatorios') },
+    { titulo: 'Abrir pôster da semana',   sub: 'Arte para imprimir',  chaves: 'poster cartaz imprimir mural',       run: acoes.abrirPoster },
+    { titulo: 'Plaquinha de avaliação',   sub: 'QR para as mesas',    chaves: 'plaquinha qr avaliar mesa',          run: acoes.abrirPlaquinha },
+    { titulo: 'Duplicar semana anterior', sub: 'Copiar o cardápio',   chaves: 'duplicar copiar semana anterior',    run: acoes.duplicarSemana },
+    { titulo: 'Próxima semana',           sub: 'Avançar',             chaves: 'proxima semana avancar',             run: () => acoes.irSemana(1) },
+    { titulo: 'Semana anterior',          sub: 'Voltar',              chaves: 'anterior semana voltar',             run: () => acoes.irSemana(-1) },
   ];
 
   return (termo: string): ResultadoBusca[] => {
     const t = termo.toLowerCase().trim();
     // Estado vazio: paleta mostra as ações rápidas (estilo Raycast/Linear)
     if (t.length < 2) {
-      return ACOES.map((a) => ({ tipo: 'acao' as const, titulo: a.titulo, subtitulo: 'Ação', acao: () => irPara(a.alvo) }));
+      return ACOES.map((a) => ({ tipo: 'acao' as const, titulo: a.titulo, subtitulo: a.sub, acao: a.run }));
     }
     const res: ResultadoBusca[] = [];
 
     ACOES.forEach((a) => {
       if (a.titulo.toLowerCase().includes(t) || a.chaves.includes(t)) {
-        res.push({ tipo: 'acao', titulo: a.titulo, subtitulo: 'Ação', acao: () => irPara(a.alvo) });
+        res.push({ tipo: 'acao', titulo: a.titulo, subtitulo: a.sub, acao: a.run });
       }
     });
 
@@ -319,7 +333,7 @@ function BuscaGlobal({
           <div className="mt-2 max-h-[60vh] overflow-y-auto rounded-2xl bg-white py-1.5 shadow-2xl ring-1 ring-carvao-200 dark:bg-carvao-900 dark:ring-carvao-600">
             {ORDEM_GRUPO.filter((g) => resultados.some((r) => r.tipo === g)).map((g) => (
               <div key={g} className="px-1.5 pb-1">
-                <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.12em] text-carvao-400">
+                <p className="px-3 pb-1 pt-2 text-micro font-bold uppercase tracking-[0.12em] text-carvao-400">
                   {ROTULO_GRUPO[g]}
                 </p>
                 {resultados.filter((r) => r.tipo === g).map((r) => {
@@ -346,7 +360,7 @@ function BuscaGlobal({
                         {r.subtitulo && <p className="truncate text-caption text-carvao-400">{r.subtitulo}</p>}
                       </div>
                       {ativo && (
-                        <kbd className="hidden shrink-0 rounded bg-white px-1.5 py-0.5 text-[10px] font-semibold text-carvao-400 ring-1 ring-carvao-200 sm:block dark:bg-carvao-900 dark:ring-carvao-600">↵</kbd>
+                        <kbd className="hidden shrink-0 rounded bg-white px-1.5 py-0.5 text-micro font-semibold text-carvao-400 ring-1 ring-carvao-200 sm:block dark:bg-carvao-900 dark:ring-carvao-600">↵</kbd>
                       )}
                     </button>
                   );
@@ -375,6 +389,7 @@ export default function PaginaCardapios() {
   const [plaquinhaAberta, setPlaquinhaAberta] = useState(false);
   const [semanaSheet, setSemanaSheet] = useState(false);
   const [buscaAberta, setBuscaAberta] = useState(false);
+  const [iaAberta, setIaAberta] = useState(false);
   const [abaCompras, setAbaCompras] = useState<'lista' | 'estoque' | 'nf' | 'fornecedores' | 'pedido'>('lista');
   const [abaRelatorios, setAbaRelatorios] = useState<
     'gerencial' | 'custos' | 'rankings' | 'previsao' | 'fornecedores' | 'auditoria'
@@ -447,7 +462,13 @@ export default function PaginaCardapios() {
   const podeEstoque = pode(papel, 'estoque:gerenciar');
   const podeAvaliar = pode(papel, 'cardapio:editar');
 
-  const buscarFn = useBuscaGlobal(estado, precos, fornecedores, irPara);
+  const buscarFn = useBuscaGlobal(estado, precos, fornecedores, {
+    irPara,
+    abrirPoster: () => setPosterAberto(true),
+    abrirPlaquinha: () => setPlaquinhaAberta(true),
+    duplicarSemana: duplicarSemanaAnterior,
+    irSemana,
+  });
 
   // Insight proativo da IA exibido no Início (antes só visível no balão flutuante)
   const insightInicio = useMemo(
@@ -521,7 +542,7 @@ export default function PaginaCardapios() {
               <div className="truncate font-display text-[16px] font-bold tracking-[0.18em] text-carvao-900 dark:text-white sm:text-[18px]">
                 TATÁ&nbsp;HOUSE
               </div>
-              <div className="truncate text-[10px] font-semibold uppercase tracking-[0.28em] text-carvao-400">
+              <div className="truncate text-micro font-semibold uppercase tracking-[0.28em] text-carvao-400">
                 Refeitório do Tatá Sushi
               </div>
             </div>
@@ -691,13 +712,19 @@ export default function PaginaCardapios() {
                   fornecedores={fornecedores}
                 />
                 {insightInicio && (
-                  <div className="flex items-start gap-3 rounded-2xl border border-ouro-400/30 bg-ouro-300/10 px-4 py-3">
+                  <button
+                    onClick={() => setIaAberta(true)}
+                    className="flex w-full items-start gap-3 rounded-2xl border border-ouro-400/30 bg-ouro-300/10 px-4 py-3 text-left transition hover:bg-ouro-300/20"
+                  >
                     <span className="mt-0.5 shrink-0 text-carvao-500 dark:text-ouro-300"><Icone nome="raio" tam={18} /></span>
-                    <div className="min-w-0">
-                      <p className="text-rotulo font-bold uppercase tracking-wide text-ouro-600">Destaque da IA</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-rotulo font-bold text-ouro-600">Destaque da IA</p>
                       <p className="mt-0.5 text-corpo text-carvao-700 dark:text-areia-100">{insightInicio.texto}</p>
+                      <p className="mt-1 flex items-center gap-1 text-caption font-semibold text-brand-600 dark:text-brand-300">
+                        Ver análise completa <Icone nome="proximo" tam={12} />
+                      </p>
                     </div>
-                  </div>
+                  </button>
                 )}
                 <AbaAgora
                   estado={estado}
@@ -1009,7 +1036,7 @@ export default function PaginaCardapios() {
                   <h2 className="font-display text-2xl font-bold text-carvao-900 dark:text-white">Ajustes</h2>
                   <p className="mt-1 text-sm text-carvao-400">Equipe, restrições e configurações de acesso</p>
                 </div>
-                <p className="rounded-2xl bg-brand-50 px-4 py-3 text-[13px] text-brand-700 ring-1 ring-brand-200/60 dark:bg-carvao-850 dark:text-brand-300 dark:ring-carvao-700">
+                <p className="rounded-2xl bg-brand-50 px-4 py-3 text-nota text-brand-700 ring-1 ring-brand-200/60 dark:bg-carvao-850 dark:text-brand-300 dark:ring-carvao-700">
                   💰 A <strong>cotação e o catálogo de preços</strong> agora ficam na aba <strong>Cardápio</strong> — role
                   até a seção “Cotação — catálogo de preços”.
                 </p>
@@ -1048,20 +1075,20 @@ export default function PaginaCardapios() {
             <button
               onClick={duplicarSemanaAnterior}
               disabled={!podeEditarCardapio}
-              className="flex items-center justify-center gap-1.5 rounded-lg border border-carvao-200 px-3 py-2.5 text-[13px] font-semibold text-carvao-700 transition hover:bg-carvao-50 disabled:opacity-40 dark:border-carvao-600 dark:text-areia-200"
+              className="flex items-center justify-center gap-1.5 rounded-lg border border-carvao-200 px-3 py-2.5 text-nota font-semibold text-carvao-700 transition hover:bg-carvao-50 disabled:opacity-40 dark:border-carvao-600 dark:text-areia-200"
             >
               <Icone nome="somar" tam={16} /> Duplicar anterior
             </button>
             <button
               onClick={() => { setSemanaId(deslocarSemana(semanaId, 1)); setSemanaSheet(false); }}
-              className="flex items-center justify-center gap-1.5 rounded-lg border border-carvao-200 px-3 py-2.5 text-[13px] font-semibold text-carvao-700 transition hover:bg-carvao-50 dark:border-carvao-600 dark:text-areia-200"
+              className="flex items-center justify-center gap-1.5 rounded-lg border border-carvao-200 px-3 py-2.5 text-nota font-semibold text-carvao-700 transition hover:bg-carvao-50 dark:border-carvao-600 dark:text-areia-200"
             >
               <Icone nome="proximo" tam={16} /> Próxima semana
             </button>
           </div>
           <label className="flex items-center gap-2 rounded-2xl border border-carvao-200 px-3 py-2 dark:border-carvao-600">
             <Icone nome="calendario" tam={16} className="shrink-0 text-carvao-400" />
-            <span className="shrink-0 text-[13px] font-semibold text-carvao-500">Ir para a semana de</span>
+            <span className="shrink-0 text-nota font-semibold text-carvao-500">Ir para a semana de</span>
             <input
               type="date"
               onChange={(e) => {
@@ -1102,7 +1129,11 @@ export default function PaginaCardapios() {
           if (grupo) setAba(grupo.abas[0] as AbaId);
         }}
       />
-      <Assistente contexto={{ estado, semanaId, precos, historico, fornecedores, aceitacao, estoque, fatores }} />
+      <Assistente
+        contexto={{ estado, semanaId, precos, historico, fornecedores, aceitacao, estoque, fatores }}
+        aberto={iaAberta}
+        aoMudarAberto={setIaAberta}
+      />
       <ToastHost />
     </>
   );

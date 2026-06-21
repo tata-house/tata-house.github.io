@@ -71,7 +71,7 @@ function BadgeProteina({ prato }: { prato: string }) {
   const p = proteinaDoPrato(prato);
   return (
     <span
-      className={`inline-flex items-center whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ring-1 ${COR_PROTEINA[p]}`}
+      className={`inline-flex items-center whitespace-nowrap rounded-full px-2 py-0.5 text-micro font-bold uppercase tracking-wide ring-1 ${COR_PROTEINA[p]}`}
     >
       {ROTULO_PROTEINA[p]}
     </span>
@@ -290,7 +290,7 @@ export function AbaCardapio({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-baseline gap-3">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-carvao-400">Custo / refeição</p>
+                <p className="text-micro font-semibold uppercase tracking-wider text-carvao-400">Custo / refeição</p>
                 <p className="font-display text-2xl font-bold leading-none tabular-nums text-carvao-900 dark:text-areia-50">
                   {custoRef ? formatarReais(custoRef) : '—'}
                 </p>
@@ -519,7 +519,7 @@ export function AbaCardapio({
           </div>
           <ul className="space-y-1.5">
             {explicacao.itens.map((it, i) => (
-              <li key={i} className="flex gap-2 text-[13px] text-carvao-600 dark:text-areia-200">
+              <li key={i} className="flex gap-2 text-nota text-carvao-600 dark:text-areia-200">
                 <span className="mt-0.5 text-brand-400">•</span>
                 <span>{it}</span>
               </li>

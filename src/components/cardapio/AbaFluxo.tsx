@@ -153,7 +153,7 @@ export function AbaFluxo({
         <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
           {estado.dias.map((_, i) => (
             <label key={i} className="text-center">
-              <span className="block text-[10px] font-extrabold uppercase tracking-wide text-carvao-400">
+              <span className="block text-micro font-extrabold uppercase tracking-wide text-carvao-400">
                 {DIAS_SEMANA[i].slice(0, 3)}
               </span>
               <input

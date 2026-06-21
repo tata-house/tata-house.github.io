@@ -147,7 +147,7 @@ export function PrevisaoPresenca({
             return (
               <li key={p.dia} className="flex items-center justify-between gap-3 text-sm">
                 <div className="min-w-0">
-                  <span className="text-[10px] font-bold uppercase text-carvao-400">{DIAS_SEMANA[p.dia].slice(0, 3)}</span>{' '}
+                  <span className="text-micro font-bold uppercase text-carvao-400">{DIAS_SEMANA[p.dia].slice(0, 3)}</span>{' '}
                   <span className="font-semibold">{p.prevista}</span>{' '}
                   <span className="text-caption text-carvao-400">previstas · plano {p.planejada}</span>
                 </div>
@@ -178,7 +178,7 @@ export function PrevisaoPresenca({
           </Botao>
         )}
 
-        <p className="text-[10px] text-carvao-400">
+        <p className="text-micro text-carvao-400">
           Quanto mais a cozinha lançar as refeições servidas de fato, mais certeira fica a previsão — e menos sobra/falta.
         </p>
       </Cartao>

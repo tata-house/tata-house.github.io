@@ -98,7 +98,7 @@ export function Login() {
           </div>
         )}
 
-        <p className="mt-8 text-center text-[10px] text-brand-100/50">
+        <p className="mt-8 text-center text-micro text-brand-100/50">
           Acesso restrito da equipe · Tatá House
         </p>
       </div>

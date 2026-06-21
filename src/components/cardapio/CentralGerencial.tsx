@@ -225,7 +225,7 @@ export function CentralGerencial({
           <button
             key={id}
             onClick={() => setPeriodo(id)}
-            className={`min-h-9 flex-1 rounded-xl px-3 text-[13px] font-semibold transition ${periodo === id ? 'bg-white text-brand-700 shadow-suave dark:bg-carvao-700 dark:text-brand-300' : 'text-carvao-500 dark:text-areia-200'}`}
+            className={`min-h-9 flex-1 rounded-xl px-3 text-nota font-semibold transition ${periodo === id ? 'bg-white text-brand-700 shadow-suave dark:bg-carvao-700 dark:text-brand-300' : 'text-carvao-500 dark:text-areia-200'}`}
           >
             {rot}
           </button>
@@ -241,7 +241,7 @@ export function CentralGerencial({
           { rot: 'Refeições', val: String(kpis.totalRefeicoes || '—'), desc: 'refeições servidas' },
         ].map(({ rot, val, desc }) => (
           <Cartao key={rot} className="text-center">
-            <p className="text-[10px] font-bold uppercase tracking-wide text-carvao-400">{rot}</p>
+            <p className="text-micro font-bold uppercase tracking-wide text-carvao-400">{rot}</p>
             <p className="font-display text-2xl font-black text-brand-700 dark:text-brand-300">{val}</p>
             <p className="text-caption text-carvao-400">{desc}</p>
           </Cartao>
@@ -295,7 +295,7 @@ export function CentralGerencial({
                     <span className="text-carvao-400"> ({r.de} → {r.para})</span>
                   )}
                 </span>
-                <span className="shrink-0 text-[10px] text-carvao-400">{r.papel}</span>
+                <span className="shrink-0 text-micro text-carvao-400">{r.papel}</span>
               </li>
             ))}
           </ul>

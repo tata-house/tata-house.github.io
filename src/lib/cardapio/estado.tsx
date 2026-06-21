@@ -18,6 +18,12 @@ import {
   type AjusteAprendido,
 } from './memoria';
 import { calcularDna, freqBaseDosDados, TOTAL_DIAS_HISTORICO, type DnaAlimentar } from './dna';
+import {
+  PERFIS_FORNECEDORES_SEED,
+  MAPA_FORNECEDORES_SEED,
+  PRECOS_COTACAO_SEED,
+  FUNCIONARIOS_SEED,
+} from './dados-seed';
 import { montarDossie, type DossieIA } from './dossie';
 import type {
   Aceitacao,
@@ -248,9 +254,9 @@ export function usePrecos() {
   const [precos, setPrecos] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    // PRECOS_COMPRAS (planilhas de compras) como base; entradas manuais têm prioridade.
+    // PRECOS_COMPRAS + PRECOS_COTACAO_SEED como base; entradas manuais têm prioridade.
     const local = lerLocal('precos', {});
-    setPrecos({ ...PRECOS_COMPRAS, ...local });
+    setPrecos({ ...PRECOS_COMPRAS, ...PRECOS_COTACAO_SEED, ...local });
   }, []);
 
   const definirPreco = useCallback((itemNorm: string, valor: number | null, nome?: string) => {
@@ -327,7 +333,9 @@ export function useFornecedores() {
   const [fornecedores, setFornecedores] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    setFornecedores(lerLocal('fornecedores', {}));
+    // MAPA_FORNECEDORES_SEED como base; mapeamentos do usuário têm prioridade.
+    const local = lerLocal<Record<string, string>>('fornecedores', {});
+    setFornecedores({ ...MAPA_FORNECEDORES_SEED, ...local });
   }, []);
 
   const definirFornecedor = useCallback((itemNorm: string, marca: string | null) => {
@@ -861,7 +869,16 @@ export function useFuncionarios() {
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
 
   useEffect(() => {
-    setFuncionarios(lerLocal<Funcionario[]>('funcionarios', []));
+    const local = lerLocal<Funcionario[]>('funcionarios', []);
+    // Se o usuário não cadastrou ninguém ainda, usa o seed das conversas reais.
+    // Se já há dados, mescla: seed fornece registros cujos IDs não existem localmente.
+    if (local.length === 0) {
+      setFuncionarios(FUNCIONARIOS_SEED);
+    } else {
+      const idsLocais = new Set(local.map((f) => f.id));
+      const novos = FUNCIONARIOS_SEED.filter((f) => !idsLocais.has(f.id));
+      setFuncionarios([...local, ...novos]);
+    }
   }, []);
 
   const salvar = useCallback((f: Omit<Funcionario, 'id' | 'criadoEm'>) => {
@@ -941,7 +958,9 @@ export function useFornecedorPerfis() {
   const [perfis, setPerfis] = useState<Record<string, PerfilFornecedor>>({});
 
   useEffect(() => {
-    setPerfis(lerLocal('fornecedorPerfis', {}));
+    // PERFIS_FORNECEDORES_SEED como base; perfis editados pelo usuário têm prioridade.
+    const local = lerLocal<Record<string, PerfilFornecedor>>('fornecedorPerfis', {});
+    setPerfis({ ...PERFIS_FORNECEDORES_SEED, ...local });
   }, []);
 
   const salvarPerfil = useCallback((nome: string, dados: Partial<Omit<PerfilFornecedor, 'nome' | 'avaliacoes'>>) => {

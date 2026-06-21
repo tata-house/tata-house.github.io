@@ -31,7 +31,7 @@ export function PlaquinhaQR({
   const baixarImagem = async () => {
     try {
       const L = 720;
-      const A = 1040;
+      const A = 1120;
       const c = document.createElement('canvas');
       c.width = L;
       c.height = A;
@@ -76,9 +76,22 @@ export function PlaquinhaQR({
       ctx.fillRect(qx - 24, qy - 24, s + 48, s + 48);
       ctx.drawImage(qr, qx, qy, s, s);
 
-      ctx.fillStyle = '#96eab7';
-      ctx.font = 'bold 24px sans-serif';
-      ctx.fillText('😋  😐  👎', L / 2, qy + s + 70);
+      // Escala de avaliação com rótulos
+      const opcoes = [
+        { e: '😋', r: 'Adorei' },
+        { e: '😐', r: 'Ok' },
+        { e: '👎', r: 'Não curti' },
+      ];
+      const colW = (L - 120) / 3;
+      opcoes.forEach((o, i) => {
+        const cx = 60 + colW * i + colW / 2;
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '40px sans-serif';
+        ctx.fillText(o.e, cx, qy + s + 80);
+        ctx.fillStyle = '#c9f5da';
+        ctx.font = 'bold 22px sans-serif';
+        ctx.fillText(o.r.toUpperCase(), cx, qy + s + 116);
+      });
 
       const a = document.createElement('a');
       a.href = c.toDataURL('image/png');
@@ -104,31 +117,52 @@ export function PlaquinhaQR({
             <Icone nome="imagem" tam={16} /> Baixar imagem
           </Botao>
           <Botao variante="sucesso" onClick={() => window.print()} className="!min-h-10 !px-5 !py-2 text-sm">
-            🖨️ Imprimir
+            <Icone nome="exportar" tam={16} /> Imprimir
           </Botao>
         </div>
       </div>
 
       {/* A plaquinha (table-tent) */}
-      <div className="poster mx-auto flex w-[92mm] flex-col items-center gap-5 overflow-hidden rounded-3xl bg-gradient-to-b from-brand-800 to-brand-900 px-7 py-9 text-center text-white shadow-flutuante print:rounded-none print:shadow-none">
-        <div>
-          <div className="font-display text-3xl font-black tracking-[0.12em]">TATÁ HOUSE</div>
-          <div className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.3em] text-ouro-300">
-            Refeitório do Tatá Sushi
+      <div className="poster mx-auto flex w-[92mm] flex-col items-center overflow-hidden rounded-3xl bg-gradient-to-b from-brand-800 to-brand-900 text-center text-white shadow-flutuante print:rounded-none print:shadow-none">
+        {/* Régua dourada no topo */}
+        <div className="h-1.5 w-full bg-gradient-to-r from-ouro-400 via-ouro-300 to-ouro-400" />
+        <div className="flex w-full flex-col items-center gap-5 px-7 pb-9 pt-7">
+          <div>
+            <div className="font-display text-3xl font-black tracking-[0.12em]">TATÁ HOUSE</div>
+            <div className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.3em] text-ouro-300">
+              Refeitório do Tatá Sushi
+            </div>
+          </div>
+
+          <div className="h-px w-12 bg-white/25" aria-hidden />
+
+          <div>
+            <div className="font-display text-[26px] font-black leading-tight">
+              Avalie o prato
+              <br />
+              do dia
+            </div>
+            <p className="mt-2 text-sm font-medium text-brand-100">Aponte a câmera e diga o que achou</p>
+          </div>
+
+          <div className="rounded-2xl bg-white p-3 shadow-lg">
+            <QrCode url={url} size={200} />
+          </div>
+
+          {/* Escala de avaliação com rótulos — mais clara que emojis soltos */}
+          <div className="flex w-full items-stretch justify-center gap-2">
+            {[
+              { e: '😋', r: 'Adorei' },
+              { e: '😐', r: 'Ok' },
+              { e: '👎', r: 'Não curti' },
+            ].map((o) => (
+              <div key={o.r} className="flex flex-1 flex-col items-center gap-1 rounded-xl bg-white/10 py-2">
+                <span className="text-2xl leading-none">{o.e}</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide text-brand-100">{o.r}</span>
+              </div>
+            ))}
           </div>
         </div>
-        <div>
-          <div className="font-display text-2xl font-black leading-tight">
-            AVALIE O PRATO
-            <br />
-            DO DIA
-          </div>
-          <p className="mt-1.5 text-sm font-semibold text-brand-100">Aponte a câmera e diga o que achou</p>
-        </div>
-        <div className="rounded-2xl bg-white p-3">
-          <QrCode url={url} size={208} />
-        </div>
-        <div className="text-3xl tracking-widest">😋 😐 👎</div>
       </div>
 
       <p className="mx-auto mt-4 max-w-[120mm] px-4 text-center text-xs text-carvao-400 print:hidden">

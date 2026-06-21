@@ -271,8 +271,10 @@ function BuscaGlobal({
 
   useEffect(() => { setSel(0); }, [termo]);
 
+  // Foco só na montagem — separado do handler para não re-focar a cada tecla
+  useEffect(() => { inputRef.current?.focus(); }, []);
+
   useEffect(() => {
-    inputRef.current?.focus();
     const fn = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { aoFechar(); return; }
       if (e.key === 'ArrowDown') { e.preventDefault(); setSel((s) => Math.min(ordenados.length - 1, s + 1)); }
@@ -544,13 +546,13 @@ export default function PaginaCardapios() {
             >
               <Icone nome="busca" tam={17} />
             </button>
-            <span className="hidden items-center gap-1.5 text-xs font-semibold text-carvao-500 sm:flex dark:text-carvao-400">
+            <span className="hidden items-center gap-1.5 text-xs font-semibold text-carvao-500 sm:flex lg:hidden dark:text-carvao-400">
               <Icone nome="usuario" tam={13} />
               {perfil?.rotulo ?? 'Perfil'}
             </span>
             <button
               onClick={() => { sair(); if (typeof window !== 'undefined') window.location.reload(); }}
-              className="rounded-lg border border-carvao-200 px-3 py-1.5 text-xs font-semibold text-carvao-500 transition hover:border-carvao-300 hover:text-carvao-700 dark:border-carvao-700 dark:text-carvao-400"
+              className="rounded-lg border border-carvao-200 px-3 py-1.5 text-xs font-semibold text-carvao-500 transition hover:border-carvao-300 hover:text-carvao-700 lg:hidden dark:border-carvao-700 dark:text-carvao-400"
             >
               Sair
             </button>
@@ -581,6 +583,24 @@ export default function PaginaCardapios() {
               </button>
             );
           })}
+
+          {/* Rodapé — identidade do perfil e sair (alma do workspace) */}
+          <div className="mt-auto border-t border-carvao-100 pt-3 dark:border-carvao-800">
+            <div className="flex items-center gap-2.5 rounded-xl px-3 py-2">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-700 dark:bg-carvao-800 dark:text-brand-300">
+                <Icone nome="usuario" tam={16} />
+              </span>
+              <div className="min-w-0 leading-tight">
+                <p className="truncate text-rotulo font-bold text-carvao-700 dark:text-areia-100">{perfil?.rotulo ?? 'Perfil'}</p>
+                <button
+                  onClick={() => { sair(); if (typeof window !== 'undefined') window.location.reload(); }}
+                  className="text-caption font-semibold text-carvao-400 transition hover:text-perigo"
+                >
+                  Sair
+                </button>
+              </div>
+            </div>
+          </div>
         </aside>
 
       <main className="min-w-0 flex-1 space-y-4 px-4 pb-28 pt-5 lg:max-w-5xl lg:pb-8">

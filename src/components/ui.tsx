@@ -2,7 +2,58 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
-import { Icone } from './Icones';
+import { Icone, type NomeIcone } from './Icones';
+
+/* ---------------------------------------------------------------------
+   Disclosure — um único idioma de "ver mais" para todo o app.
+   Controlado (passe `aberto`/`aoAlternar`) ou autônomo (estado interno).
+   --------------------------------------------------------------------- */
+
+export function Disclosure({
+  icone,
+  titulo,
+  subtitulo,
+  aberto,
+  aoAlternar,
+  defaultAberto = false,
+  children,
+}: {
+  icone?: NomeIcone;
+  titulo: ReactNode;
+  subtitulo?: ReactNode;
+  aberto?: boolean;
+  aoAlternar?: () => void;
+  defaultAberto?: boolean;
+  children: ReactNode;
+}) {
+  const [interno, setInterno] = useState(defaultAberto);
+  const controlado = aberto !== undefined;
+  const aberta = controlado ? aberto : interno;
+  const alternar = controlado ? aoAlternar : () => setInterno((a) => !a);
+  return (
+    <div className="overflow-hidden rounded-2xl border border-carvao-200 dark:border-carvao-700">
+      <button
+        onClick={alternar}
+        aria-expanded={aberta}
+        className="flex w-full items-center justify-between gap-3 bg-white px-4 py-3 text-left transition hover:bg-areia-50 dark:bg-carvao-900 dark:hover:bg-carvao-850"
+      >
+        <span className="flex items-center gap-2">
+          {icone && <Icone nome={icone} tam={18} className="text-brand-500" />}
+          <span>
+            <span className="block text-subtitulo text-carvao-800 dark:text-areia-100">{titulo}</span>
+            {subtitulo && <span className="block text-caption text-carvao-400">{subtitulo}</span>}
+          </span>
+        </span>
+        <Icone nome="baixo" tam={16} className={`shrink-0 text-carvao-400 transition-transform ${aberta ? 'rotate-180' : ''}`} />
+      </button>
+      {aberta && (
+        <div className="space-y-4 border-t border-carvao-100 bg-areia-50/40 p-3 dark:border-carvao-700 dark:bg-carvao-900/40">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
 
 /* =====================================================================
    Mini design system TATÁ Sushi — Cardápios da Equipe

@@ -3,9 +3,11 @@
 import { useEffect, useRef } from 'react';
 import { QrCode } from '@/components/QrCode';
 import { Botao } from '@/components/ui';
+import { Icone } from '@/components/Icones';
 import { datasDaSemana } from '@/lib/cardapio/estado';
 import { imagemParaDataUrl, useLogo } from '@/lib/cardapio/logo';
 import { proteinaDoPrato } from '@/lib/cardapio/motor';
+import { infoNutricional, indiceNutricionalSemana } from '@/lib/cardapio/nutricional';
 import type { EstadoSemana } from '@/lib/cardapio/tipos';
 
 /* =====================================================================
@@ -39,8 +41,22 @@ export function PosterSemana({
   aoFechar: () => void;
 }) {
   const datas = datasDaSemana(semanaId);
-  const periodo = `${ddmm(datas[0])} ATÉ ${ddmm(datas[6])}`;
+  const periodo = `${ddmm(datas[0])} a ${ddmm(datas[6])}`;
   const urlAvaliar = (typeof window !== 'undefined' ? window.location.origin : '') + '/avaliar';
+
+  // Nutrição — puxada dos mesmos dados do app, para mostrar o cuidado da casa
+  const infosDia = estado.dias.map((d) => infoNutricional(d.principal));
+  const comInfo = infosDia.filter((x): x is NonNullable<typeof x> => !!x);
+  const indice = indiceNutricionalSemana(estado.dias);
+  const mediaNutri = comInfo.length
+    ? {
+        kcal: Math.round(comInfo.reduce((a, p) => a + p.kcal, 0) / comInfo.length),
+        proteinas: Math.round(comInfo.reduce((a, p) => a + p.proteinas, 0) / comInfo.length),
+        carboidratos: Math.round(comInfo.reduce((a, p) => a + p.carboidratos, 0) / comInfo.length),
+        gorduras: Math.round(comInfo.reduce((a, p) => a + p.gorduras, 0) / comInfo.length),
+        fibras: Math.round(comInfo.reduce((a, p) => a + p.fibras, 0) / comInfo.length),
+      }
+    : null;
   const { logo, setLogo } = useLogo();
   const inputLogo = useRef<HTMLInputElement>(null);
 
@@ -78,7 +94,7 @@ export function PosterSemana({
             onClick={() => inputLogo.current?.click()}
             className="!min-h-10 !px-4 !py-2 text-sm"
           >
-            🖼️ {logo ? 'Trocar logo' : 'Enviar logo'}
+            <Icone nome="imagem" tam={16} /> {logo ? 'Trocar logo' : 'Enviar logo'}
           </Botao>
           {logo && (
             <button
@@ -89,7 +105,7 @@ export function PosterSemana({
             </button>
           )}
           <Botao variante="sucesso" onClick={() => window.print()} className="!min-h-10 !px-5 !py-2 text-sm">
-            🖨️ Imprimir pôster
+            <Icone nome="exportar" tam={16} /> Imprimir pôster
           </Botao>
         </div>
       </div>
@@ -133,6 +149,7 @@ export function PosterSemana({
             const prot = dia.principal ? proteinaDoPrato(dia.principal) : 'outros';
             const guarnicoes = [dia.guarnicaoFixa, dia.guarnicao].filter(Boolean).join(' · ');
             const fimDeSemana = i >= 5;
+            const nut = infosDia[i];
             return (
               <section
                 key={i}
@@ -142,7 +159,7 @@ export function PosterSemana({
                     : 'bg-gradient-to-r from-brand-700 via-brand-600 to-brand-700'
                 }`}
               >
-                <div className="flex w-[88px] shrink-0 flex-col items-center justify-center border-r-2 border-white/25 pr-4">
+                <div className="flex w-[84px] shrink-0 flex-col items-center justify-center border-r-2 border-white/25 pr-4">
                   <span className="font-display text-[15px] font-black tracking-[0.08em]">
                     {DIAS_POSTER[i]}
                   </span>
@@ -190,10 +207,59 @@ export function PosterSemana({
                     <p className="py-2 text-sm font-bold uppercase italic text-white/60">A definir</p>
                   )}
                 </div>
+                {/* Nutrição do dia — kcal e proteína, dado real puxado do app */}
+                {dia.principal && nut && (
+                  <div className="flex shrink-0 flex-col items-end justify-center gap-1 border-l-2 border-white/20 pl-4 text-right">
+                    <span className="font-display text-[17px] font-black leading-none text-ouro-300 tabular-nums">
+                      {nut.kcal}
+                      <span className="ml-0.5 text-[9px] font-bold uppercase tracking-wide text-white/70">kcal</span>
+                    </span>
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-white/85 tabular-nums">
+                      {nut.proteinas}g proteína
+                    </span>
+                  </div>
+                )}
               </section>
             );
           })}
         </main>
+
+        {/* Compromisso nutricional da semana — o cuidado da casa, visível */}
+        {mediaNutri && (
+          <section className="mx-9 mb-4 rounded-2xl border border-brand-200 bg-brand-50 px-5 py-3.5">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-700 text-white">
+                  <Icone nome="nutricao" tam={18} />
+                </span>
+                <div className="leading-tight">
+                  <p className="text-[13px] font-black uppercase tracking-wide text-brand-800">Compromisso nutricional</p>
+                  <p className="text-[10px] font-semibold text-brand-700/80">Média por prato principal · cuidamos do que você come</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 rounded-full bg-white px-3 py-1 ring-1 ring-brand-300">
+                <span className="font-display text-[18px] font-black leading-none text-brand-700 tabular-nums">{indice.score}%</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide text-brand-700">{indice.rotulo}</span>
+              </div>
+            </div>
+            <div className="mt-3 grid grid-cols-5 gap-2">
+              {[
+                { rot: 'Calorias', val: `${mediaNutri.kcal}`, un: 'kcal' },
+                { rot: 'Proteína', val: `${mediaNutri.proteinas}`, un: 'g' },
+                { rot: 'Carboid.', val: `${mediaNutri.carboidratos}`, un: 'g' },
+                { rot: 'Gordura', val: `${mediaNutri.gorduras}`, un: 'g' },
+                { rot: 'Fibras', val: `${mediaNutri.fibras}`, un: 'g' },
+              ].map((m) => (
+                <div key={m.rot} className="rounded-xl bg-white px-1 py-1.5 text-center ring-1 ring-brand-100">
+                  <p className="text-[8px] font-bold uppercase tracking-wide text-carvao-400">{m.rot}</p>
+                  <p className="font-display text-[16px] font-black leading-none text-carvao-800 tabular-nums">
+                    {m.val}<span className="ml-0.5 text-[8px] font-bold text-carvao-400">{m.un}</span>
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Rodapé */}
         <footer className="px-9 pb-6">

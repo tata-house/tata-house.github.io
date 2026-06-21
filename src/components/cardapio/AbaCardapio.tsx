@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Botao, Cartao, Pilula, Stepper } from '@/components/ui';
+import { Botao, Cartao, Pilula, Stepper, Disclosure } from '@/components/ui';
 import { Icone } from '@/components/Icones';
 import {
   DADOS,
@@ -658,30 +658,19 @@ export function AbaCardapio({
       </div>
 
       {/* Análise da semana — leitura de apoio, recolhida para os dias dominarem */}
-      <div className="overflow-hidden rounded-2xl border border-carvao-200 dark:border-carvao-700">
-        <button
-          onClick={() => setAnaliseAberta((a) => !a)}
-          className="flex w-full items-center justify-between gap-3 bg-white px-4 py-3 text-left transition hover:bg-areia-50 dark:bg-carvao-900 dark:hover:bg-carvao-850"
-        >
-          <span className="flex items-center gap-2">
-            <Icone nome="insights" tam={18} className="text-brand-500" />
-            <span>
-              <span className="block text-subtitulo text-carvao-800 dark:text-areia-100">Análise da semana</span>
-              <span className="block text-caption text-carvao-400">Termômetro, monotonia, Chef IA, nutrição e previsão de presença</span>
-            </span>
-          </span>
-          <Icone nome="baixo" tam={16} className={`shrink-0 text-carvao-400 transition-transform ${analiseAberta ? 'rotate-180' : ''}`} />
-        </button>
-        {analiseAberta && (
-          <div className="space-y-4 border-t border-carvao-100 bg-areia-50/40 p-3 dark:border-carvao-700 dark:bg-carvao-900/40">
-            <TermometroAlmoco estado={estado} />
-            <AntiMonotonia estado={estado} />
-            <ChefIA estado={estado} precos={precos} />
-            <IndicadorNutricional dias={estado.dias} />
-            <PrevisaoPresenca estado={estado} atualizar={atualizar} podeEditar={podeEditar} />
-          </div>
-        )}
-      </div>
+      <Disclosure
+        icone="insights"
+        titulo="Análise da semana"
+        subtitulo="Termômetro, monotonia, Chef IA, nutrição e previsão de presença"
+        aberto={analiseAberta}
+        aoAlternar={() => setAnaliseAberta((a) => !a)}
+      >
+        <TermometroAlmoco estado={estado} />
+        <AntiMonotonia estado={estado} />
+        <ChefIA estado={estado} precos={precos} />
+        <IndicadorNutricional dias={estado.dias} />
+        <PrevisaoPresenca estado={estado} atualizar={atualizar} podeEditar={podeEditar} />
+      </Disclosure>
 
       {/* Orçamento + itens sem preço */}
       <Cartao className="space-y-3">
@@ -764,42 +753,33 @@ export function AbaCardapio({
       </Cartao>
 
       {/* Cotação completa — fonte única de preços (catálogo + histórico) */}
-      <div className="overflow-hidden rounded-2xl border border-carvao-200 dark:border-carvao-700">
-        <button
-          onClick={() => setCotacaoAberta((a) => !a)}
-          className="flex w-full items-center justify-between gap-3 bg-white px-4 py-3 text-left transition hover:bg-areia-50 dark:bg-carvao-900 dark:hover:bg-carvao-850"
+      {definirPreco && (
+        <Disclosure
+          icone="cotacao"
+          titulo="Cotação — catálogo de preços"
+          subtitulo="Preço, histórico e variação de cada item · fonte única da semana"
+          aberto={cotacaoAberta}
+          aoAlternar={() => setCotacaoAberta((a) => !a)}
         >
-          <span className="flex items-center gap-2">
-            <Icone nome="cotacao" tam={18} className="text-brand-500" />
-            <span>
-              <span className="block text-sm font-bold text-carvao-800 dark:text-areia-100">Cotação — catálogo de preços</span>
-              <span className="block text-[11px] text-carvao-400">Preço, histórico e variação de cada item · fonte única da semana</span>
-            </span>
-          </span>
-          <Icone nome="baixo" tam={16} className={`shrink-0 text-carvao-400 transition-transform ${cotacaoAberta ? 'rotate-180' : ''}`} />
-        </button>
-        {cotacaoAberta && definirPreco && (
-          <div className="space-y-4 border-t border-carvao-100 bg-areia-50/40 p-3 dark:border-carvao-700 dark:bg-carvao-900/40">
-            {/* Colar cotação da semana (WhatsApp / arquivo) */}
-            <AbaCotacao
+          {/* Colar cotação da semana (WhatsApp / arquivo) */}
+          <AbaCotacao
+            definirPreco={definirPreco}
+            definirFornecedor={definirFornecedor}
+            cadastrarItem={cadastrarItem}
+            registrarOferta={registrarOferta}
+            itensExtras={itensExtras}
+          />
+          {/* Catálogo item a item — histórico e variação */}
+          <div className="border-t border-carvao-200 pt-4 dark:border-carvao-700">
+            <AbaPrecos
+              precos={precos}
               definirPreco={definirPreco}
-              definirFornecedor={definirFornecedor}
-              cadastrarItem={cadastrarItem}
-              registrarOferta={registrarOferta}
+              fornecedores={fornecedores}
               itensExtras={itensExtras}
             />
-            {/* Catálogo item a item — histórico e variação */}
-            <div className="border-t border-carvao-200 pt-4 dark:border-carvao-700">
-              <AbaPrecos
-                precos={precos}
-                definirPreco={definirPreco}
-                fornecedores={fornecedores}
-                itensExtras={itensExtras}
-              />
-            </div>
           </div>
-        )}
-      </div>
+        </Disclosure>
+      )}
     </div>
   );
 }

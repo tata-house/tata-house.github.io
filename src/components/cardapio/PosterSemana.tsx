@@ -76,6 +76,192 @@ export function PosterSemana({
     return () => window.removeEventListener('keydown', esc);
   }, [aoFechar]);
 
+  // Baixar como imagem PNG — desenha o pôster num canvas (igual à plaquinha),
+  // funciona em qualquer aparelho, sem depender da impressão do navegador.
+  const baixarImagem = async () => {
+    try {
+      const W = 1000, H = 1500, M = 56;
+      const c = document.createElement('canvas');
+      c.width = W; c.height = H;
+      const ctx = c.getContext('2d');
+      if (!ctx) return;
+      const rrect = (x: number, y: number, w: number, h: number, r: number) => {
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+        else ctx.rect(x, y, w, h);
+      };
+      const fit = (text: string, maxW: number) => {
+        if (ctx.measureText(text).width <= maxW) return text;
+        let t = text;
+        while (t.length > 1 && ctx.measureText(t + '…').width > maxW) t = t.slice(0, -1);
+        return t + '…';
+      };
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, W, H);
+
+      // Cabeçalho
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#92713a';
+      ctx.font = 'bold 20px sans-serif';
+      ctx.fillText('TATÁ HOUSE', M, 74);
+      ctx.fillStyle = '#055d2f';
+      ctx.font = '900 52px Georgia, serif';
+      ctx.fillText('Cardápio da semana', M, 130);
+      // pílula do período
+      ctx.font = 'bold 20px sans-serif';
+      const pw = ctx.measureText(periodo.toUpperCase()).width + 36;
+      ctx.fillStyle = '#007638';
+      rrect(M, 152, pw, 38, 19); ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(periodo.toUpperCase(), M + 18, 178);
+
+      // QR no canto superior direito
+      try {
+        const qr = new Image();
+        qr.crossOrigin = 'anonymous';
+        await new Promise<void>((res, rej) => {
+          qr.onload = () => res();
+          qr.onerror = () => rej(new Error('qr'));
+          qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=1&data=${encodeURIComponent(urlAvaliar)}`;
+        });
+        ctx.drawImage(qr, W - M - 150, 50, 150, 150);
+        ctx.fillStyle = '#7c828c';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Avalie o prato', W - M - 75, 218);
+        ctx.textAlign = 'left';
+      } catch { /* segue sem QR */ }
+
+      // régua
+      ctx.fillStyle = '#c8a96b';
+      ctx.fillRect(M, 238, W - 2 * M, 4);
+
+      // Dias
+      const x0 = M, cw = W - 2 * M;
+      const cardH = 132, gap = 10;
+      let y = 262;
+      estado.dias.forEach((dia, i) => {
+        const fim = i >= 5;
+        ctx.fillStyle = fim ? '#055d2f' : '#007638';
+        rrect(x0, y, cw, cardH, 18); ctx.fill();
+
+        // dia + data
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 22px Georgia, serif';
+        ctx.fillText(DIAS_POSTER[i], x0 + 78, y + cardH / 2 - 4);
+        ctx.fillStyle = '#c9f5da';
+        ctx.font = 'bold 15px sans-serif';
+        ctx.fillText(ddmm(datas[i]), x0 + 78, y + cardH / 2 + 22);
+
+        // separador
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x0 + 156, y + 18); ctx.lineTo(x0 + 156, y + cardH - 18); ctx.stroke();
+
+        const dx = x0 + 178;
+        const nut = infosDia[i];
+        const colDir = 150; // largura reservada à nutrição
+        const maxTexto = cw - 178 - colDir;
+
+        if (dia.principal) {
+          ctx.textAlign = 'left';
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '800 25px sans-serif';
+          ctx.fillText(fit(dia.principal, maxTexto), dx, y + 44);
+          const guarn = [dia.guarnicaoFixa, dia.guarnicao].filter(Boolean).join(' · ');
+          if (guarn) {
+            ctx.fillStyle = '#c9f5da';
+            ctx.font = '600 17px sans-serif';
+            ctx.fillText(fit(guarn, maxTexto), dx, y + 72);
+          }
+          const extras: string[] = [];
+          if (dia.salada) extras.push('Salada ' + dia.salada);
+          if (dia.sobremesa) extras.push('Sobremesa ' + dia.sobremesa);
+          if (extras.length) {
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.font = '500 15px sans-serif';
+            ctx.fillText(fit(extras.join('   •   '), maxTexto), dx, y + 98);
+          }
+          // nutrição
+          if (nut) {
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#e3b45c';
+            ctx.font = '900 30px Georgia, serif';
+            ctx.fillText(String(nut.kcal), x0 + cw - 24, y + cardH / 2 - 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('KCAL', x0 + cw - 24, y + cardH / 2 + 16);
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.font = '600 14px sans-serif';
+            ctx.fillText(`${nut.proteinas}g prot.`, x0 + cw - 24, y + cardH / 2 + 38);
+          }
+        } else {
+          ctx.textAlign = 'left';
+          ctx.fillStyle = 'rgba(255,255,255,0.55)';
+          ctx.font = 'italic 700 18px sans-serif';
+          ctx.fillText('A definir', dx, y + cardH / 2 + 6);
+        }
+        y += cardH + gap;
+      });
+
+      // Faixa nutricional
+      if (mediaNutri) {
+        const bandH = 132;
+        ctx.fillStyle = '#e9fbf0';
+        rrect(x0, y, cw, bandH, 18); ctx.fill();
+        ctx.strokeStyle = '#96eab7'; ctx.lineWidth = 1.5;
+        rrect(x0, y, cw, bandH, 18); ctx.stroke();
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#055d2f';
+        ctx.font = '900 22px sans-serif';
+        ctx.fillText('Informação nutricional', x0 + 28, y + 38);
+        ctx.fillStyle = '#007638';
+        ctx.font = '600 14px sans-serif';
+        ctx.fillText('Média por prato principal · cuidamos do que você come', x0 + 28, y + 60);
+        const macros: [string, string][] = [
+          [`${mediaNutri.kcal}`, 'Calorias'],
+          [`${mediaNutri.proteinas}g`, 'Proteína'],
+          [`${mediaNutri.carboidratos}g`, 'Carboidrato'],
+          [`${mediaNutri.gorduras}g`, 'Gordura'],
+          [`${mediaNutri.fibras}g`, 'Fibras'],
+        ];
+        const bw = (cw - 56 - 4 * 12) / 5;
+        macros.forEach(([val, rot], j) => {
+          const bx = x0 + 28 + j * (bw + 12);
+          const by = y + 74;
+          ctx.fillStyle = '#ffffff';
+          rrect(bx, by, bw, 44, 12); ctx.fill();
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#23262c';
+          ctx.font = '900 20px Georgia, serif';
+          ctx.fillText(val, bx + bw / 2, by + 22);
+          ctx.fillStyle = '#7c828c';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillText(rot.toUpperCase(), bx + bw / 2, by + 38);
+        });
+        y += bandH;
+      }
+
+      // Rodapé
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#055d2f';
+      ctx.font = 'bold 18px Georgia, serif';
+      ctx.fillText('BOM APETITE', W / 2, H - 46);
+      ctx.fillStyle = '#aab0b9';
+      ctx.font = '600 12px sans-serif';
+      ctx.fillText('Cardápio sujeito a alteração', W / 2, H - 24);
+
+      const a = document.createElement('a');
+      a.href = c.toDataURL('image/png');
+      a.download = 'cardapio-tata-house.png';
+      a.click();
+    } catch {
+      alert('Não consegui baixar a imagem aqui. Use “Baixar / Imprimir” e escolha “Salvar como PDF”.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-carvao-200 py-6 dark:bg-carvao-950 print:bg-white print:py-0">
       {/* Controles (somem na impressão) */}
@@ -96,15 +282,18 @@ export function PosterSemana({
               Remover
             </button>
           )}
+          <Botao variante="secundario" onClick={baixarImagem} className="!min-h-10 !px-4 !py-2 text-sm">
+            <Icone nome="imagem" tam={16} /> Baixar imagem
+          </Botao>
           <Botao variante="sucesso" onClick={() => window.print()} className="!min-h-10 !px-5 !py-2 text-sm">
-            <Icone nome="exportar" tam={16} /> Baixar / Imprimir
+            <Icone nome="exportar" tam={16} /> Imprimir
           </Botao>
         </div>
       </div>
 
-      {/* Dica de download — o caminho confiável em qualquer aparelho */}
+      {/* Dica — duas formas de salvar */}
       <p className="mx-auto mb-4 max-w-[210mm] px-4 text-center text-xs text-carvao-500 dark:text-carvao-400 print:hidden">
-        Para baixar: toque em <strong>Baixar / Imprimir</strong> e escolha <strong>“Salvar como PDF”</strong> no destino da impressão.
+        <strong>Baixar imagem</strong> salva um PNG no aparelho · <strong>Imprimir</strong> abre a opção “Salvar como PDF”.
       </p>
 
       {/* Folha A4 */}

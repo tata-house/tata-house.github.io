@@ -288,10 +288,10 @@ type ItemIA = { nome: string; preco: number; marca?: string };
 
 async function chamarGemini(texto: string, apiKey: string): Promise<LinhaCotacao[]> {
   const resp = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODELO}:generateContent?key=${encodeURIComponent(apiKey)}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODELO}:generateContent`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
       body: JSON.stringify({
         contents: [{ parts: [{ text: `${PROMPT_IA}\n\nCOTAÇÃO:\n${texto.slice(0, 16000)}` }] }],
         generationConfig: { temperature: 0.1, responseMimeType: 'application/json' },

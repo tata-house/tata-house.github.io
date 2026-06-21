@@ -92,6 +92,17 @@ export function AbaCardapio({
   const { estimativas, gerarEstimativas } = useEstimativas();
   const { aceitacao } = useAceitacao();
   const [opDia, setOpDia] = useState(false);
+  const [gerarAberto, setGerarAberto] = useState(false);
+  const [formPersonAberto, setFormPersonAberto] = useState(false);
+  const [personalizado, setPersonalizado] = useState({
+    eventos: '',
+    proteinasPrefer: [] as string[],
+    proteinasEvitar: [] as string[],
+    publico: '',
+    limCusto: '',
+    restricoes: '',
+    regras: '',
+  });
   const avisos = validarSemana(estado.dias, precos);
   const temPrecos = Object.keys(precos).length > 0;
 
@@ -128,6 +139,25 @@ export function AbaCardapio({
     );
     if (sugestao) atualizar((e) => ({ ...e, dias: sugestao }));
   };
+
+  const gerarPersonalizado = () => {
+    const lim = parseFloat(personalizado.limCusto.replace(',', '.'));
+    if (!isNaN(lim) && lim > 0) atualizar((e) => ({ ...e, orcamento: lim }));
+    const sugestao = sugerirSemanaCriativa(
+      estado.dias.map((d) => d.pessoas),
+      precos,
+      { aceitacao, frequencia, criativo: true },
+    );
+    if (sugestao) atualizar((e) => ({ ...e, dias: sugestao }));
+    setGerarAberto(false);
+    setFormPersonAberto(false);
+  };
+
+  const toggleProtein = (lista: 'proteinasPrefer' | 'proteinasEvitar', p: string) =>
+    setPersonalizado((prev) => {
+      const cur = prev[lista];
+      return { ...prev, [lista]: cur.includes(p) ? cur.filter((x) => x !== p) : [...cur, p] };
+    });
 
   const custoSemana = estado.dias.reduce(
     (acc, d) => {
@@ -216,17 +246,12 @@ export function AbaCardapio({
               )}
             </div>
             {podeEditar && (
-              <div className="flex shrink-0 gap-2">
-                <Botao variante="secundario" className="!min-h-10 !px-3 !py-2 text-[13px]" onClick={() => gerar('historica')}>
-                  📅 Cardápio Antigo
-                </Botao>
-                <Botao variante="sucesso" className="!min-h-10 !px-3 !py-2 text-[13px]" onClick={() => gerar('economica')}>
-                  <Icone nome="raio" tam={16} /> Sugerir
-                </Botao>
-                <Botao variante="secundario" className="!min-h-10 !px-3 !py-2 text-[13px]" onClick={() => gerar('criativa')}>
-                  Nova
-                </Botao>
-              </div>
+              <button
+                onClick={() => { setGerarAberto((a) => !a); setFormPersonAberto(false); }}
+                className="shrink-0 rounded-xl border border-carvao-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-carvao-600 transition hover:bg-areia-100 dark:border-carvao-600 dark:bg-carvao-800 dark:text-areia-200"
+              >
+                🎛️ Gerar cardápio
+              </button>
             )}
           </div>
           {/* medidor de regras */}
@@ -258,6 +283,162 @@ export function AbaCardapio({
           </div>
         </Cartao>
       </div>
+
+      {/* Painel de geração — 4 modos */}
+      {podeEditar && gerarAberto && (
+        <div className="rounded-2xl border border-brand-200 bg-brand-50 p-4 dark:border-brand-900 dark:bg-carvao-900">
+          <p className="mb-3 text-[11px] font-bold uppercase tracking-wide text-brand-700 dark:text-brand-300">Escolha o modo de geração</p>
+          <div className="grid grid-cols-2 gap-2">
+            {([
+              { id: 'historica', icone: '📅', titulo: 'Antigo', desc: 'Baseado no histórico da operação' },
+              { id: 'economica', icone: '⚖️', titulo: 'Mesclado', desc: 'Tradição equilibrada com variedade' },
+              { id: 'criativa', icone: '✨', titulo: 'Novo', desc: 'Maior liberdade para novas ideias' },
+            ] as const).map((m) => (
+              <button
+                key={m.id}
+                onClick={() => { gerar(m.id); setGerarAberto(false); }}
+                className="flex items-start gap-2 rounded-xl border border-carvao-200 bg-white p-3 text-left transition hover:border-brand-400 hover:bg-brand-50 dark:border-carvao-700 dark:bg-carvao-800"
+              >
+                <span className="mt-0.5 text-xl leading-none">{m.icone}</span>
+                <div>
+                  <p className="text-sm font-bold text-carvao-800 dark:text-areia-100">{m.titulo}</p>
+                  <p className="text-[11px] text-carvao-500 dark:text-carvao-400">{m.desc}</p>
+                </div>
+              </button>
+            ))}
+            {/* Personalizado — expande formulário */}
+            <button
+              onClick={() => setFormPersonAberto((a) => !a)}
+              className={`flex items-start gap-2 rounded-xl border p-3 text-left transition ${
+                formPersonAberto
+                  ? 'border-brand-400 bg-brand-100 dark:border-brand-500 dark:bg-brand-950/60'
+                  : 'border-brand-300 bg-brand-50 hover:bg-brand-100 dark:border-brand-700 dark:bg-brand-950/30'
+              }`}
+            >
+              <span className="mt-0.5 text-xl leading-none">🎛️</span>
+              <div>
+                <p className="text-sm font-bold text-brand-800 dark:text-brand-200">Personalizado</p>
+                <p className="text-[11px] text-brand-600 dark:text-brand-400">Eventos, metas, proteínas, custo…</p>
+              </div>
+            </button>
+          </div>
+
+          {/* Formulário personalizado */}
+          {formPersonAberto && <div className="mt-4 space-y-3 border-t border-brand-200 pt-4 dark:border-brand-800">
+            <p className="text-[11px] font-bold uppercase tracking-wide text-brand-700 dark:text-brand-300">Configurar geração personalizada</p>
+
+            {/* Proteínas preferidas */}
+            <div>
+              <p className="mb-1 text-[11px] font-semibold text-carvao-500">Proteínas para priorizar</p>
+              <div className="flex flex-wrap gap-1.5">
+                {(['bovina', 'frango', 'suína', 'peixe', 'ovo'] as const).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => toggleProtein('proteinasPrefer', p)}
+                    className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                      personalizado.proteinasPrefer.includes(p)
+                        ? 'bg-brand-600 text-white'
+                        : 'bg-carvao-100 text-carvao-600 hover:bg-carvao-200 dark:bg-carvao-700 dark:text-carvao-300'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Proteínas a evitar */}
+            <div>
+              <p className="mb-1 text-[11px] font-semibold text-carvao-500">Proteínas a evitar</p>
+              <div className="flex flex-wrap gap-1.5">
+                {(['bovina', 'frango', 'suína', 'peixe', 'ovo'] as const).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => toggleProtein('proteinasEvitar', p)}
+                    className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                      personalizado.proteinasEvitar.includes(p)
+                        ? 'bg-[#b04c41] text-white'
+                        : 'bg-carvao-100 text-carvao-600 hover:bg-carvao-200 dark:bg-carvao-700 dark:text-carvao-300'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              {/* Público */}
+              <div>
+                <label className="mb-1 block text-[11px] font-semibold text-carvao-500">Público</label>
+                <select
+                  value={personalizado.publico}
+                  onChange={(e) => setPersonalizado((p) => ({ ...p, publico: e.target.value }))}
+                  className="w-full rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-[12px] dark:border-carvao-600 dark:bg-carvao-800"
+                >
+                  <option value="">Geral</option>
+                  <option value="executivo">Executivo</option>
+                  <option value="operacional">Operacional</option>
+                  <option value="misto">Misto</option>
+                </select>
+              </div>
+              {/* Limite de custo */}
+              <div>
+                <label className="mb-1 block text-[11px] font-semibold text-carvao-500">Limite custo/refeição (R$)</label>
+                <input
+                  type="number"
+                  min={0}
+                  step={0.5}
+                  placeholder="ex: 18,50"
+                  value={personalizado.limCusto}
+                  onChange={(e) => setPersonalizado((p) => ({ ...p, limCusto: e.target.value }))}
+                  className="w-full rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-[12px] dark:border-carvao-600 dark:bg-carvao-800"
+                />
+              </div>
+            </div>
+
+            {/* Eventos */}
+            <div>
+              <label className="mb-1 block text-[11px] font-semibold text-carvao-500">Eventos / datas especiais</label>
+              <input
+                type="text"
+                placeholder="ex: Festa de aniversário na sexta"
+                value={personalizado.eventos}
+                onChange={(e) => setPersonalizado((p) => ({ ...p, eventos: e.target.value }))}
+                className="w-full rounded-xl border border-carvao-200 bg-white px-3 py-1.5 text-[12px] dark:border-carvao-600 dark:bg-carvao-800"
+              />
+            </div>
+
+            {/* Restrições */}
+            <div>
+              <label className="mb-1 block text-[11px] font-semibold text-carvao-500">Restrições alimentares do grupo</label>
+              <input
+                type="text"
+                placeholder="ex: sem glúten, sem lactose"
+                value={personalizado.restricoes}
+                onChange={(e) => setPersonalizado((p) => ({ ...p, restricoes: e.target.value }))}
+                className="w-full rounded-xl border border-carvao-200 bg-white px-3 py-1.5 text-[12px] dark:border-carvao-600 dark:bg-carvao-800"
+              />
+            </div>
+
+            {/* Regras livres */}
+            <div>
+              <label className="mb-1 block text-[11px] font-semibold text-carvao-500">Regras específicas (opcional)</label>
+              <textarea
+                rows={2}
+                placeholder="ex: Evitar frituras na segunda; priorizar proteína vegetal às quintas"
+                value={personalizado.regras}
+                onChange={(e) => setPersonalizado((p) => ({ ...p, regras: e.target.value }))}
+                className="w-full resize-none rounded-xl border border-carvao-200 bg-white px-3 py-1.5 text-[12px] dark:border-carvao-600 dark:bg-carvao-800"
+              />
+            </div>
+
+            <Botao variante="sucesso" className="w-full" onClick={gerarPersonalizado}>
+              ✨ Gerar cardápio personalizado
+            </Botao>
+          </div>}
+        </div>
+      )}
 
       {/* Detalhe das regras quebradas */}
       {avisos.some((a) => a.nivel !== 'ok') && (

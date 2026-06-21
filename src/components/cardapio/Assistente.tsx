@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { PERGUNTAS_SUGERIDAS, insightProativo, responder, responderAsync, type ContextoAssistente } from '@/lib/cardapio/assistente';
 import { montarDossieCompleto } from '@/lib/cardapio/estado';
+import { InteligenciaCard } from './InteligenciaCard';
 
 interface Fala {
   de: 'voce' | 'assistente';
@@ -10,12 +11,15 @@ interface Fala {
   itens?: string[];
 }
 
+type Aba = 'chat' | 'objetivos';
+
 export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
   const [aberto, setAberto] = useState(false);
+  const [aba, setAba] = useState<Aba>('chat');
   const [entrada, setEntrada] = useState('');
   const [pensando, setPensando] = useState(false);
   const [falas, setFalas] = useState<Fala[]>([
-    { de: 'assistente', texto: 'Oi! Sou o assistente da Tatá House. Posso analisar custos, preços, aceitação e estoque. Pergunte ou escolha abaixo 👇' },
+    { de: 'assistente', texto: 'Oi! Posso analisar custos, preços, aceitação e estoque. Pergunte ou use as sugestões abaixo.' },
   ]);
 
   const proativo = useMemo(() => insightProativo(contexto), [contexto]);
@@ -23,6 +27,7 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
   const perguntar = async (pergunta: string) => {
     const p = pergunta.trim();
     if (!p || pensando) return;
+    setAba('chat');
     setFalas((f) => [...f, { de: 'voce', texto: p }]);
     setEntrada('');
     setPensando(true);
@@ -48,116 +53,152 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
 
   return (
     <>
+      {/* Botão flutuante */}
       <button
         onClick={() => setAberto((a) => !a)}
-        aria-label="Assistente"
+        aria-label="Inteligência Tatá House"
         className="fixed bottom-20 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-800 text-2xl text-white shadow-flutuante ring-2 ring-ouro-400/50 transition hover:scale-105 active:scale-95 lg:bottom-5 lg:right-5 print:hidden"
       >
-        {aberto ? '✕' : '🤖'}
+        {aberto ? '✕' : '🧠'}
         {proativo && !aberto && (
           <span className="absolute right-1 top-1 h-3.5 w-3.5 rounded-full bg-ouro-400 ring-2 ring-white" aria-hidden />
         )}
       </button>
 
       {aberto && (
-        <div className="fixed bottom-36 right-4 z-50 flex max-h-[70vh] w-[min(92vw,380px)] flex-col overflow-hidden rounded-3xl bg-white shadow-flutuante ring-1 ring-carvao-200 animate-subir lg:bottom-24 lg:right-5 dark:bg-carvao-850 dark:ring-carvao-700 print:hidden">
+        <div className="fixed bottom-36 right-4 z-50 flex max-h-[80vh] w-[min(96vw,420px)] flex-col overflow-hidden rounded-3xl bg-white shadow-flutuante ring-1 ring-carvao-200 animate-subir lg:bottom-24 lg:right-5 dark:bg-carvao-850 dark:ring-carvao-700 print:hidden">
+          {/* Cabeçalho */}
           <div className="flex items-center gap-2 bg-gradient-to-r from-brand-800 to-brand-600 px-4 py-3 text-white">
-            <span className="text-xl">🤖</span>
-            <div>
-              <p className="font-display text-sm font-bold tracking-wide">Assistente Tatá House</p>
-              <p className="text-[10px] uppercase tracking-wider text-brand-200">análise inteligente local</p>
+            <span className="text-xl">🧠</span>
+            <div className="min-w-0 flex-1">
+              <p className="font-display text-sm font-bold tracking-wide">Inteligência Tatá House</p>
+              <p className="text-[10px] uppercase tracking-wider text-brand-200">análise local · sem dados externos</p>
             </div>
           </div>
 
-          <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
-            {proativo && (
-              <div className="rounded-2xl bg-ouro-300/15 p-3 ring-1 ring-ouro-400/30">
-                <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-ouro-600">Sugestão do dia</p>
-                <p className="text-sm text-carvao-700 dark:text-areia-100">{proativo.texto}</p>
-                {proativo.itens && (
-                  <ul className="mt-1 space-y-0.5 text-[13px]">
-                    {proativo.itens.map((it, j) => (
-                      <li key={j} className="flex gap-1.5">
-                        <span className="text-ouro-500">•</span>
-                        <span>{it}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )}
-            {falas.map((f, i) => (
-              <div key={i} className={f.de === 'voce' ? 'text-right' : ''}>
-                <div
-                  className={`inline-block max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
-                    f.de === 'voce'
-                      ? 'bg-brand-600 text-white'
-                      : 'bg-areia-100 text-carvao-700 dark:bg-carvao-700 dark:text-areia-100'
-                  }`}
-                >
-                  <p>{f.texto}</p>
-                  {f.itens && (
-                    <ul className="mt-1.5 space-y-1 text-left text-[13px]">
-                      {f.itens.map((it, j) => (
-                        <li key={j} className="flex gap-1.5">
-                          <span className="text-brand-500">•</span>
-                          <span>{it}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
-            ))}
-            {pensando && (
-              <div className="text-left">
-                <div className="inline-block rounded-2xl bg-areia-100 px-3 py-2 text-sm text-carvao-500 dark:bg-carvao-700 dark:text-areia-300">
-                  <span className="inline-flex gap-1">
-                    <span className="animate-pulse">●</span>
-                    <span className="animate-pulse [animation-delay:150ms]">●</span>
-                    <span className="animate-pulse [animation-delay:300ms]">●</span>
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* sugestões rápidas */}
-          <div className="flex gap-1.5 overflow-x-auto border-t border-carvao-100 px-3 py-2 dark:border-carvao-700">
-            {PERGUNTAS_SUGERIDAS.slice(0, 4).map((p) => (
+          {/* Abas */}
+          <div className="flex border-b border-carvao-100 dark:border-carvao-700">
+            {(['chat', 'objetivos'] as const).map((a) => (
               <button
-                key={p}
-                onClick={() => perguntar(p)}
-                className="shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-3 py-1 text-[11px] font-semibold text-brand-700 transition hover:bg-brand-100 dark:bg-carvao-700 dark:text-brand-300"
+                key={a}
+                onClick={() => setAba(a)}
+                className={`flex-1 py-2.5 text-[13px] font-semibold transition ${
+                  aba === a
+                    ? 'border-b-2 border-brand-600 text-brand-700 dark:border-brand-400 dark:text-brand-300'
+                    : 'text-carvao-400 hover:text-carvao-700 dark:text-carvao-500'
+                }`}
               >
-                {p}
+                {a === 'chat' ? '💬 Perguntar' : '🎯 Objetivos'}
               </button>
             ))}
           </div>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              perguntar(entrada);
-            }}
-            className="flex gap-2 border-t border-carvao-100 p-3 dark:border-carvao-700"
-          >
-            <input
-              value={entrada}
-              onChange={(e) => setEntrada(e.target.value)}
-              disabled={pensando}
-              placeholder="Pergunte algo…"
-              className="min-h-10 flex-1 rounded-2xl border border-carvao-200 bg-white px-3 py-2 text-sm disabled:opacity-60 dark:border-carvao-600 dark:bg-carvao-900"
-            />
-            <button
-              type="submit"
-              disabled={pensando}
-              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-700 text-white transition hover:bg-brand-800 disabled:opacity-60"
-              aria-label="Enviar"
-            >
-              ➤
-            </button>
-          </form>
+          {/* Conteúdo Chat */}
+          {aba === 'chat' && (
+            <>
+              <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
+                {proativo && (
+                  <div className="rounded-2xl bg-ouro-300/15 p-3 ring-1 ring-ouro-400/30">
+                    <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-ouro-600">Destaque do momento</p>
+                    <p className="text-sm text-carvao-700 dark:text-areia-100">{proativo.texto}</p>
+                    {proativo.itens && (
+                      <ul className="mt-1 space-y-0.5 text-[13px]">
+                        {proativo.itens.map((it, j) => (
+                          <li key={j} className="flex gap-1.5">
+                            <span className="text-ouro-500">•</span>
+                            <span>{it}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+                {falas.map((f, i) => (
+                  <div key={i} className={f.de === 'voce' ? 'text-right' : ''}>
+                    <div
+                      className={`inline-block max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
+                        f.de === 'voce'
+                          ? 'bg-brand-600 text-white'
+                          : 'bg-areia-100 text-carvao-700 dark:bg-carvao-700 dark:text-areia-100'
+                      }`}
+                    >
+                      <p>{f.texto}</p>
+                      {f.itens && (
+                        <ul className="mt-1.5 space-y-1 text-left text-[13px]">
+                          {f.itens.map((it, j) => (
+                            <li key={j} className="flex gap-1.5">
+                              <span className="text-brand-400">•</span>
+                              <span>{it}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {pensando && (
+                  <div>
+                    <div className="inline-block rounded-2xl bg-areia-100 px-3 py-2 dark:bg-carvao-700">
+                      <span className="inline-flex gap-1 text-carvao-400">
+                        <span className="animate-pulse">●</span>
+                        <span className="animate-pulse [animation-delay:150ms]">●</span>
+                        <span className="animate-pulse [animation-delay:300ms]">●</span>
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Sugestões rápidas */}
+              <div className="flex gap-1.5 overflow-x-auto border-t border-carvao-100 px-3 py-2 dark:border-carvao-700">
+                {PERGUNTAS_SUGERIDAS.slice(0, 4).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => perguntar(p)}
+                    className="shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-3 py-1 text-[11px] font-semibold text-brand-700 transition hover:bg-brand-100 dark:bg-carvao-700 dark:text-brand-300"
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+
+              <form
+                onSubmit={(e) => { e.preventDefault(); perguntar(entrada); }}
+                className="flex gap-2 border-t border-carvao-100 p-3 dark:border-carvao-700"
+              >
+                <input
+                  value={entrada}
+                  onChange={(e) => setEntrada(e.target.value)}
+                  disabled={pensando}
+                  placeholder="Pergunte algo sobre a operação…"
+                  className="min-h-10 flex-1 rounded-2xl border border-carvao-200 bg-white px-3 py-2 text-sm disabled:opacity-60 dark:border-carvao-600 dark:bg-carvao-900"
+                />
+                <button
+                  type="submit"
+                  disabled={pensando}
+                  className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-700 text-white transition hover:bg-brand-800 disabled:opacity-60"
+                  aria-label="Enviar"
+                >
+                  ➤
+                </button>
+              </form>
+            </>
+          )}
+
+          {/* Conteúdo Objetivos */}
+          {aba === 'objetivos' && (
+            <div className="flex-1 overflow-y-auto p-4">
+              <InteligenciaCard
+                estado={contexto.estado}
+                semanaId={contexto.semanaId}
+                precos={contexto.precos}
+                aceitacao={contexto.aceitacao}
+                estoque={contexto.estoque}
+                historico={contexto.historico}
+                fornecedores={contexto.fornecedores}
+              />
+            </div>
+          )}
         </div>
       )}
     </>

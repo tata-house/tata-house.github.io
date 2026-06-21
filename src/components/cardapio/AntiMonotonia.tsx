@@ -88,7 +88,7 @@ export function AntiMonotonia({ estado }: { estado: EstadoSemana }) {
         <div
           key={i}
           className={`flex items-start gap-2 text-sm ${
-            a.critico ? 'text-[#b04c41]' : 'text-[#9a6c17] dark:text-[#e3b45c]'
+            a.critico ? 'text-perigo' : 'text-[#9a6c17] dark:text-[#e3b45c]'
           }`}
         >
           <span aria-hidden>{a.critico ? '⛔' : '⚠️'}</span>

@@ -172,7 +172,7 @@ export function AbaPrecos({
                     )}
 
                     {variacao !== undefined && Math.abs(variacao) > 0.001 && (
-                      <p className={`text-xs font-bold ${variacao > 0 ? 'text-[#b04c41]' : 'text-brand-600'}`}>
+                      <p className={`text-xs font-bold ${variacao > 0 ? 'text-perigo' : 'text-brand-600'}`}>
                         {variacao > 0 ? '▲' : '▼'} {variacao > 0 ? '+' : ''}
                         {Math.round(variacao * 100)}% desde o último preço
                       </p>

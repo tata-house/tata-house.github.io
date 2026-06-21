@@ -83,7 +83,7 @@ export function PosterSemana({
           {logo && (
             <button
               onClick={() => setLogo(null)}
-              className="text-xs font-bold uppercase tracking-wide text-carvao-400 hover:text-[#b04c41]"
+              className="text-xs font-bold uppercase tracking-wide text-carvao-400 hover:text-perigo"
             >
               Remover
             </button>

@@ -78,7 +78,7 @@ export function AbaRadar({
                   {r.variacao !== null && (
                     <span
                       className={`text-sm font-bold ${
-                        r.variacao > 0.001 ? 'text-[#b04c41]' : r.variacao < -0.001 ? 'text-brand-600' : 'text-carvao-400'
+                        r.variacao > 0.001 ? 'text-perigo' : r.variacao < -0.001 ? 'text-brand-600' : 'text-carvao-400'
                       }`}
                     >
                       {seta(r.tendencia)} {r.variacao > 0 ? '+' : ''}

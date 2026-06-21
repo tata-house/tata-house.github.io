@@ -146,11 +146,11 @@ export function ConciliacaoSemana({
           <div className={`flex items-start gap-3 rounded-xl px-3 py-2.5 ring-1 ${
             alertaCustoIrreal.tipo === 'baixo'
               ? 'bg-blue-500/8 ring-blue-400/30'
-              : 'bg-[#b04c41]/8 ring-[#b04c41]/25'
+              : 'bg-perigo/8 ring-perigo/25'
           }`}>
             <span className="mt-0.5 text-lg">{alertaCustoIrreal.tipo === 'baixo' ? '⚠️' : '🔴'}</span>
             <div className="min-w-0 flex-1">
-              <p className={`text-[13px] font-semibold ${alertaCustoIrreal.tipo === 'baixo' ? 'text-blue-700 dark:text-blue-300' : 'text-[#b04c41]'}`}>
+              <p className={`text-[13px] font-semibold ${alertaCustoIrreal.tipo === 'baixo' ? 'text-blue-700 dark:text-blue-300' : 'text-perigo'}`}>
                 Custo por refeição {alertaCustoIrreal.tipo === 'baixo' ? 'muito baixo' : 'muito alto'}
               </p>
               <p className="text-[11px] text-carvao-400">
@@ -190,14 +190,14 @@ export function ConciliacaoSemana({
       {/* Quantidade comprada acima do necessário */}
       {alertasQtd.length > 0 && (
         <section className="space-y-2">
-          <h4 className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.15em] text-[#b04c41]">
+          <h4 className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.15em] text-perigo">
             📦 Comprado além do necessário
-            <span className="rounded-full bg-[#b04c41]/15 px-2 py-0.5 text-[10px] font-black">{alertasQtd.length}</span>
+            <span className="rounded-full bg-perigo/15 px-2 py-0.5 text-[10px] font-black">{alertasQtd.length}</span>
           </h4>
           {alertasQtd.map((a, i) => (
             <div
               key={i}
-              className="flex items-center gap-3 rounded-xl bg-[#b04c41]/5 px-3 py-2.5 ring-1 ring-[#b04c41]/20"
+              className="flex items-center gap-3 rounded-xl bg-perigo/5 px-3 py-2.5 ring-1 ring-perigo/20"
             >
               <div className="min-w-0 flex-1">
                 <p className="text-[13px] font-semibold leading-tight">{a.item}</p>
@@ -206,13 +206,13 @@ export function ConciliacaoSemana({
                   {a.custoExcesso > 0 && <> · excesso ≈ {formatarReais(a.custoExcesso)}</>}
                 </p>
               </div>
-              <span className="shrink-0 rounded-full bg-[#b04c41]/10 px-2.5 py-1 text-[11px] font-black text-[#b04c41]">
+              <span className="shrink-0 rounded-full bg-perigo/10 px-2.5 py-1 text-[11px] font-black text-perigo">
                 +{formatarQtd(a.excesso)} {a.unid}
               </span>
             </div>
           ))}
           {custoExcessoTotal > 0 && (
-            <p className="text-right text-[11px] font-bold text-[#b04c41]">
+            <p className="text-right text-[11px] font-bold text-perigo">
               Custo total do excesso ≈ {formatarReais(custoExcessoTotal)}
             </p>
           )}

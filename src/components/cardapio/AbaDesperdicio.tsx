@@ -207,7 +207,7 @@ export function AbaDesperdicio({
                       {podeEditar && (
                         <button
                           onClick={() => removerComUndo(r)}
-                          className="flex h-9 w-9 items-center justify-center rounded-full text-carvao-300 hover:bg-[#b04c41]/10 hover:text-[#b04c41]"
+                          className="flex h-9 w-9 items-center justify-center rounded-full text-carvao-300 hover:bg-perigo/10 hover:text-perigo"
                           aria-label="Remover"
                         >
                           ✕

@@ -27,7 +27,7 @@ export function IndicadorNutricional({ dias }: { dias: DiaCardapio[] }) {
       ? { texto: 'text-brand-700 dark:text-brand-300', bg: 'bg-brand-500', anel: 'ring-brand-500/30' }
       : cor === 'ouro'
         ? { texto: 'text-ouro-600 dark:text-ouro-300', bg: 'bg-ouro-400', anel: 'ring-ouro-400/30' }
-        : { texto: 'text-[#b04c41]', bg: 'bg-[#b04c41]', anel: 'ring-[#b04c41]/30' };
+        : { texto: 'text-perigo', bg: 'bg-perigo', anel: 'ring-perigo/30' };
 
   /* Media dos macros da semana */
   const infos = pratosComInfo.map((x) => x.info!);

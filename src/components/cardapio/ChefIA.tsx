@@ -230,14 +230,14 @@ export function ChefIA({
   const COR: Record<Tom, string> = {
     verde: 'text-brand-700 dark:text-brand-300',
     ouro: 'text-[#9a6c17] dark:text-[#e3b45c]',
-    vermelho: 'text-[#b04c41]',
+    vermelho: 'text-perigo',
     azul: 'text-carvao-600 dark:text-areia-200',
     roxo: 'text-[#7c5fa0] dark:text-[#b99cd8]',
   };
   const BG: Record<Tom, string> = {
     verde: 'bg-brand-500/5 ring-brand-500/20',
     ouro: 'bg-ouro-400/8 ring-ouro-400/20',
-    vermelho: 'bg-[#b04c41]/5 ring-[#b04c41]/20',
+    vermelho: 'bg-perigo/5 ring-perigo/20',
     azul: 'bg-carvao-100/50 ring-carvao-200/60 dark:bg-carvao-800/40 dark:ring-carvao-600/40',
     roxo: 'bg-[#7c5fa0]/5 ring-[#7c5fa0]/20',
   };
@@ -296,7 +296,7 @@ export function ChefIA({
                   <button
                     onClick={() => darFeedback(d, 'ruim')}
                     title="Sugestão ruim — não mostrar mais"
-                    className="flex h-7 w-7 items-center justify-center rounded-full text-[13px] transition hover:bg-[#b04c41]/10"
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-[13px] transition hover:bg-perigo/10"
                   >
                     👎
                   </button>
@@ -315,7 +315,7 @@ export function ChefIA({
                   />
                   <button
                     onClick={() => confirmarVeto(hash)}
-                    className="rounded-lg bg-[#b04c41] px-3 py-1 text-[12px] font-bold text-white"
+                    className="rounded-lg bg-perigo px-3 py-1 text-[12px] font-bold text-white"
                   >
                     Descartar
                   </button>

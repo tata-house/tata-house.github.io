@@ -21,9 +21,9 @@ export function Botao({
     primario: 'bg-brand-700 text-white hover:bg-brand-800 shadow-suave',
     secundario:
       'bg-white text-brand-700 ring-2 ring-brand-600/40 hover:bg-brand-50 hover:ring-brand-600 dark:bg-carvao-800 dark:text-brand-300 dark:ring-brand-500/40 dark:hover:bg-carvao-700',
-    perigo: 'bg-[#b04c41] text-white hover:bg-[#9b4038] shadow-suave',
+    perigo: 'bg-perigo text-white hover:bg-perigo-escuro shadow-suave',
     sucesso: 'bg-brand-600 text-white hover:bg-brand-700 shadow-suave',
-    alerta: 'bg-[#d18a3a] text-white hover:bg-[#bd7a2f] shadow-suave',
+    alerta: 'bg-alerta text-white hover:bg-alerta-escuro shadow-suave',
   };
   return (
     <button
@@ -94,8 +94,8 @@ const TOM_PILULA = {
   neutro: 'bg-carvao-100 text-carvao-600 ring-carvao-200 dark:bg-carvao-700 dark:text-areia-200 dark:ring-carvao-600',
   verde: 'bg-brand-500/12 text-brand-700 ring-brand-500/30 dark:text-brand-300',
   ouro: 'bg-ouro-400/15 text-[#8a6a2e] ring-ouro-400/30 dark:text-ouro-300',
-  vermelho: 'bg-[#b04c41]/12 text-[#b04c41] ring-[#b04c41]/30 dark:text-[#e89a90]',
-  azul: 'bg-[#2d6f8e]/12 text-[#2d6f8e] ring-[#2d6f8e]/30 dark:text-[#7cb8d4]',
+  vermelho: 'bg-perigo/12 text-perigo ring-perigo/30 dark:text-perigo-claro',
+  azul: 'bg-info/12 text-info ring-info/30 dark:text-info-claro',
 } as const;
 
 export function Pilula({
@@ -133,8 +133,8 @@ export function Kpi({
     neutro: 'from-carvao-300 to-carvao-400',
     verde: 'from-brand-500 to-brand-600',
     ouro: 'from-ouro-300 to-ouro-500',
-    vermelho: 'from-[#c96a5f] to-[#b04c41]',
-    azul: 'from-[#4d92b0] to-[#2d6f8e]',
+    vermelho: 'from-[#c96a5f] to-perigo',
+    azul: 'from-[#4d92b0] to-info',
   }[tom];
   return (
     <div className="group relative overflow-hidden rounded-3xl border border-carvao-100 bg-white p-4 shadow-suave transition-all duration-200 hover:-translate-y-0.5 hover:shadow-flutuante motion-reduce:transform-none motion-reduce:transition-none dark:border-carvao-700/70 dark:bg-carvao-850">
@@ -175,8 +175,8 @@ export function BarraMini({ valor, tom = 'verde' }: { valor: number; tom?: keyof
     neutro: 'bg-carvao-300',
     verde: 'bg-brand-500',
     ouro: 'bg-ouro-400',
-    vermelho: 'bg-[#b04c41]',
-    azul: 'bg-[#2d6f8e]',
+    vermelho: 'bg-perigo',
+    azul: 'bg-info',
   }[tom];
   return (
     <div className="h-2 w-full overflow-hidden rounded-full bg-carvao-100 dark:bg-carvao-700">

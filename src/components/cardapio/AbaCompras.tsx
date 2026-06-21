@@ -338,7 +338,7 @@ export function AbaCompras({
             </p>
           )}
           {emailStatus === 'erro' && (
-            <p className="rounded-xl bg-[#b04c41]/10 px-3 py-2 text-[12px] font-bold text-[#b04c41] ring-1 ring-[#b04c41]/25">
+            <p className="rounded-xl bg-perigo/10 px-3 py-2 text-[12px] font-bold text-perigo ring-1 ring-perigo/25">
               ⚠️ Falha no envio do e-mail — verifique a configuração RESEND_API_KEY na Vercel.
             </p>
           )}
@@ -372,7 +372,7 @@ export function AbaCompras({
                         atualizar((e) => ({ ...e, notasFiscais: (e.notasFiscais ?? []).filter((_, i) => i !== ni) }))
                       }
                       aria-label="Remover nota fiscal"
-                      className="flex h-8 w-8 items-center justify-center rounded-full text-carvao-300 hover:bg-[#b04c41]/10 hover:text-[#b04c41]"
+                      className="flex h-8 w-8 items-center justify-center rounded-full text-carvao-300 hover:bg-perigo/10 hover:text-perigo"
                     >
                       <Icone nome="fechar" tam={16} />
                     </button>
@@ -497,7 +497,7 @@ export function AbaCompras({
                       />
                       <button
                         onClick={() => setItensNota((p) => p.filter((_, i) => i !== idx))}
-                        className="col-span-1 flex items-center justify-center rounded-lg text-carvao-300 hover:text-[#b04c41]"
+                        className="col-span-1 flex items-center justify-center rounded-lg text-carvao-300 hover:text-perigo"
                       >
                         <Icone nome="fechar" tam={14} />
                       </button>
@@ -585,7 +585,7 @@ export function AbaCompras({
               <p className="text-xs font-semibold tabular-nums text-carvao-400">
                 {compradas}/{linhas.length} comprados · {recebidas}/{linhas.length} recebidos
                 {custo.itensComPreco > 0 && <> · ≈ {formatarReais(custo.total)}</>}
-                {divergencias > 0 && <span className="font-extrabold text-[#b04c41]"> · ⚠ {divergencias} divergências</span>}
+                {divergencias > 0 && <span className="font-extrabold text-perigo"> · ⚠ {divergencias} divergências</span>}
                 {notasDoDia > 0 && (
                   <span className="font-bold text-brand-600">
                     {' '}
@@ -710,7 +710,7 @@ export function AbaCompras({
                                 l.manual ? rmManual(di, Number(l.chave.split(':')[1])) : setAjuste(di, l.chave, null, true)
                               }
                               aria-label={`Remover ${l.item}`}
-                              className="flex h-8 w-8 items-center justify-center rounded-full text-carvao-300 hover:bg-[#b04c41]/10 hover:text-[#b04c41] print:hidden"
+                              className="flex h-8 w-8 items-center justify-center rounded-full text-carvao-300 hover:bg-perigo/10 hover:text-perigo print:hidden"
                             >
                               <Icone nome="fechar" tam={15} />
                             </button>
@@ -778,7 +778,7 @@ export function AbaCompras({
                                 )
                               )}
                               {acima && (
-                                <span className="block text-[10px] font-extrabold text-[#b04c41]">
+                                <span className="block text-[10px] font-extrabold text-perigo">
                                   ▲ acima do cotado ({formatarReais(precos[l.chave])})
                                 </span>
                               )}

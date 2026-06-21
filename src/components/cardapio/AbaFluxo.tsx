@@ -254,7 +254,7 @@ export function AbaFluxo({
               ? 'Meta informada pelo setor de compras.'
               : 'Meta derivada de R$ 15.000/mês (≈ 4,33 semanas). Defina o orçamento da semana na aba Cardápio para ajustar.'}
             {pctCusto >= 95 && (
-              <span className="font-bold text-[#b04c41]"> · ⚠️ orçamento quase esgotado ({pctCusto.toFixed(0)}%).</span>
+              <span className="font-bold text-perigo"> · ⚠️ orçamento quase esgotado ({pctCusto.toFixed(0)}%).</span>
             )}
           </p>
         </Cartao>
@@ -262,8 +262,8 @@ export function AbaFluxo({
 
       {/* Aviso de preço pendente antes de fechar */}
       {exigePrecoAntes && itensSemPreco > 0 && (
-        <Cartao className="!py-3 ring-1 ring-[#b04c41]/30">
-          <p className="text-sm font-semibold text-[#b04c41]">
+        <Cartao className="!py-3 ring-1 ring-perigo/30">
+          <p className="text-sm font-semibold text-perigo">
             ⛔ {itensSemPreco} {itensSemPreco === 1 ? 'item' : 'itens'} sem preço.
           </p>
           <p className="mt-0.5 text-xs text-carvao-500 dark:text-areia-200">

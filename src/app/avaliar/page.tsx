@@ -24,7 +24,7 @@ const OPCOES: { v: Voto; emoji: string; rotulo: string }[] = [
 const COR_VOTO: Record<Voto, string> = {
   bom:  'bg-brand-500/20 ring-brand-500/50 text-brand-700 dark:text-brand-200',
   ok:   'bg-ouro-400/20 ring-ouro-400/50 text-ouro-700 dark:text-ouro-200',
-  ruim: 'bg-[#c96a5f]/20 ring-[#c96a5f]/40 text-[#b04c41] dark:text-[#e89a90]',
+  ruim: 'bg-[#c96a5f]/20 ring-[#c96a5f]/40 text-perigo dark:text-perigo-claro',
 };
 
 function BotaoVoto({

@@ -195,7 +195,7 @@ export function AbaSimulador({
             a cotação real quando possível.
           </p>
           {tipado.itensSemPreco > 0 && (
-            <p className="rounded-xl bg-[#b04c41]/10 px-2.5 py-1.5 text-[11px] font-semibold text-[#b04c41] ring-1 ring-[#b04c41]/20">
+            <p className="rounded-xl bg-perigo/10 px-2.5 py-1.5 text-[11px] font-semibold text-perigo ring-1 ring-perigo/20">
               ⚠️ {tipado.itensSemPreco} itens sem nenhuma referência de preço — a simulação está incompleta. Lance um
               preço (Cotação) ou registre o item no histórico.
             </p>
@@ -247,7 +247,7 @@ export function AbaSimulador({
               <p className="text-[10px] font-bold uppercase tracking-wider text-carvao-400">Custo / refeição</p>
               <p className="font-display text-xl font-bold tabular-nums">{formatarReais(cenarioSeEu.ref)}</p>
               {atual.custoRef > 0 && (
-                <p className={`text-[11px] font-bold ${cenarioSeEu.ref > atual.custoRef ? 'text-[#b04c41]' : 'text-brand-600'}`}>
+                <p className={`text-[11px] font-bold ${cenarioSeEu.ref > atual.custoRef ? 'text-perigo' : 'text-brand-600'}`}>
                   {cenarioSeEu.ref >= atual.custoRef ? '▲ +' : '▼ '}
                   {formatarReais(Math.abs(cenarioSeEu.ref - atual.custoRef))} vs atual
                 </p>
@@ -257,7 +257,7 @@ export function AbaSimulador({
               <p className="text-[10px] font-bold uppercase tracking-wider text-carvao-400">Custo total semana</p>
               <p className="font-display text-xl font-bold tabular-nums">{formatarReais(cenarioSeEu.total)}</p>
               {atual.custo > 0 && (
-                <p className={`text-[11px] font-bold ${cenarioSeEu.total > atual.custo ? 'text-[#b04c41]' : 'text-brand-600'}`}>
+                <p className={`text-[11px] font-bold ${cenarioSeEu.total > atual.custo ? 'text-perigo' : 'text-brand-600'}`}>
                   {cenarioSeEu.total >= atual.custo ? '▲ +' : '▼ '}
                   {formatarReais(Math.abs(cenarioSeEu.total - atual.custo))} vs atual
                 </p>

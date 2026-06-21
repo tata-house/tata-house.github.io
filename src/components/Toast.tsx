@@ -52,7 +52,7 @@ export function ToastHost() {
         <div
           key={m.id}
           className={`animate-subir pointer-events-auto flex items-center gap-3 rounded-full py-2.5 pl-4 pr-2 text-sm font-semibold text-white shadow-flutuante ${
-            m.tom === 'erro' ? 'bg-[#b04c41]' : m.tom === 'info' ? 'bg-carvao-800' : 'bg-brand-600'
+            m.tom === 'erro' ? 'bg-perigo' : m.tom === 'info' ? 'bg-carvao-800' : 'bg-brand-600'
           }`}
         >
           <span className="flex items-center gap-2">

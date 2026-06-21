@@ -62,7 +62,7 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
     <div
       className={`space-y-3 rounded-2xl p-4 ring-1 ${
         alerta
-          ? 'bg-[#b04c41]/10 ring-[#b04c41]/30'
+          ? 'bg-perigo/10 ring-perigo/30'
           : 'bg-brand-500/8 ring-brand-400/20'
       }`}
     >
@@ -70,7 +70,7 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
       <div className="flex items-center justify-between gap-2">
         <p
           className={`text-[11px] font-extrabold uppercase tracking-[0.2em] ${
-            alerta ? 'text-[#b04c41]' : 'text-brand-600 dark:text-brand-300'
+            alerta ? 'text-perigo' : 'text-brand-600 dark:text-brand-300'
           }`}
         >
           🌡️ Termômetro do almoço
@@ -87,9 +87,9 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
 
       {/* Alerta de tendência negativa */}
       {alerta && (
-        <div className="flex items-start gap-2 rounded-xl bg-[#b04c41]/10 px-3 py-2.5 ring-1 ring-[#b04c41]/25">
+        <div className="flex items-start gap-2 rounded-xl bg-perigo/10 px-3 py-2.5 ring-1 ring-perigo/25">
           <span aria-hidden className="mt-0.5 text-base">⚠️</span>
-          <p className="text-sm font-bold text-[#b04c41]">
+          <p className="text-sm font-bold text-perigo">
             {Math.round(taxaRuimRecente * 100)}% de "Não gostei" nos últimos 30 min ({janela.length} votos) — verifique o prato antes do próximo serviço
           </p>
         </div>
@@ -105,9 +105,9 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
           <p className="font-display text-xl font-black text-ouro-600 dark:text-ouro-300">{ok}</p>
           <p className="text-[11px] font-bold text-ouro-600 dark:text-ouro-400">😐 Ok</p>
         </div>
-        <div className="rounded-xl bg-[#b04c41]/10 py-2.5">
-          <p className="font-display text-xl font-black text-[#b04c41]">{ruim}</p>
-          <p className="text-[11px] font-bold text-[#b04c41]">👎 Não gostei</p>
+        <div className="rounded-xl bg-perigo/10 py-2.5">
+          <p className="font-display text-xl font-black text-perigo">{ruim}</p>
+          <p className="text-[11px] font-bold text-perigo">👎 Não gostei</p>
         </div>
       </div>
 
@@ -116,7 +116,7 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
         <div className="flex h-2 flex-1 overflow-hidden rounded-full bg-carvao-100 dark:bg-carvao-800">
           <div className="bg-brand-500 transition-all duration-500" style={{ width: barBom }} />
           <div className="bg-ouro-400 transition-all duration-500" style={{ width: barOk }} />
-          <div className="bg-[#b04c41] transition-all duration-500" style={{ width: barRuim }} />
+          <div className="bg-perigo transition-all duration-500" style={{ width: barRuim }} />
         </div>
         <p className="text-xs font-semibold tabular-nums text-carvao-400">{total} votos</p>
       </div>
@@ -129,7 +129,7 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
           {' · '}
           <span className="font-semibold text-ouro-600">{janela.filter((v) => v.voto === 'ok').length} 😐</span>
           {' · '}
-          <span className="font-semibold text-[#b04c41]">{ruimRecente} 👎</span>
+          <span className="font-semibold text-perigo">{ruimRecente} 👎</span>
           {' '}({janela.length} votos)
         </p>
       )}

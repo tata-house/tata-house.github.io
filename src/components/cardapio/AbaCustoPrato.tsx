@@ -9,11 +9,11 @@ import type { CustoPorcao } from '@/lib/cardapio/custo-prato';
 const COR_COBERTURA = (c: number) =>
   c >= 0.9 ? 'text-brand-600 dark:text-brand-400' :
   c >= 0.6 ? 'text-ouro-600 dark:text-ouro-300' :
-  'text-[#b04c41] dark:text-[#e89a90]';
+  'text-perigo dark:text-perigo-claro';
 
 function BarraCusto({ valor, max }: { valor: number; max: number }) {
   const pct = max > 0 ? (valor / max) * 100 : 0;
-  const cor = pct > 70 ? 'bg-[#b04c41]' : pct > 40 ? 'bg-ouro-400' : 'bg-brand-500';
+  const cor = pct > 70 ? 'bg-perigo' : pct > 40 ? 'bg-ouro-400' : 'bg-brand-500';
   return (
     <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-carvao-100 dark:bg-carvao-700">
       <div className={`h-full rounded-full transition-all ${cor}`} style={{ width: `${pct}%` }} />

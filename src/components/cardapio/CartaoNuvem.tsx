@@ -87,7 +87,7 @@ export function CartaoNuvem() {
               ? `✓ Sincronização automática ativa — última: ${new Date(ultimaSync).toLocaleString('pt-BR')}`
               : 'Sincronização automática ativa. Os dados são salvos e atualizados entre aparelhos automaticamente.'}
         </p>
-        {erro && <p className="text-xs font-semibold text-[#b04c41]">Erro ao sincronizar: {erro}</p>}
+        {erro && <p className="text-xs font-semibold text-perigo">Erro ao sincronizar: {erro}</p>}
         <Botao variante="secundario" onClick={atualizarAgora} disabled={sincronizando} className="w-full">
           {sincronizando ? 'Aguarde…' : '🔄 Atualizar agora'}
         </Botao>

@@ -26,7 +26,7 @@ function notaTom(nota: number | null): string {
   if (nota === null) return 'text-carvao-400';
   if (nota >= 4) return 'text-brand-600 dark:text-brand-300';
   if (nota >= 3) return 'text-[#9a6c17] dark:text-[#e3b45c]';
-  return 'text-[#b04c41]';
+  return 'text-perigo';
 }
 
 export function DnaCard() {
@@ -170,12 +170,12 @@ export function DnaCard() {
           {/* Problemas */}
           {dna.problemas.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#b04c41]">⚠️ Pontos de atenção</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-perigo">⚠️ Pontos de atenção</p>
               <div className="flex flex-wrap gap-1.5">
                 {dna.problemas.map((p) => (
                   <span
                     key={p.prato}
-                    className="flex items-center gap-1.5 rounded-full bg-[#b04c41]/10 px-2.5 py-1 text-[12px] font-semibold text-[#b04c41] ring-1 ring-[#b04c41]/25"
+                    className="flex items-center gap-1.5 rounded-full bg-perigo/10 px-2.5 py-1 text-[12px] font-semibold text-perigo ring-1 ring-perigo/25"
                     title={`${p.nota !== null ? `nota ${p.nota}` : 'sem nota'}${p.desperdicio !== null ? ` · ${Math.round(p.desperdicio * 100)}% sobra` : ''}`}
                   >
                     {p.prato}

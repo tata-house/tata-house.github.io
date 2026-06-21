@@ -246,7 +246,7 @@ export function ListaCompras({
                                 : onAjuste!(di, l.chave, null, true)
                             }
                             aria-label={`Remover ${l.item}`}
-                            className="flex h-8 w-8 items-center justify-center rounded-full text-carvao-300 hover:bg-[#b04c41]/10 hover:text-[#b04c41]"
+                            className="flex h-8 w-8 items-center justify-center rounded-full text-carvao-300 hover:bg-perigo/10 hover:text-perigo"
                           >
                             <Icone nome="fechar" tam={15} />
                           </button>
@@ -365,7 +365,7 @@ export function ListaCompras({
                                 </button>
                                 <button
                                   onClick={() => { setAddFornDe(null); setNovoForn(''); setNovoPreco(''); }}
-                                  className="flex h-7 w-7 items-center justify-center rounded-md text-carvao-400 hover:text-[#b04c41]"
+                                  className="flex h-7 w-7 items-center justify-center rounded-md text-carvao-400 hover:text-perigo"
                                   aria-label="Cancelar"
                                 >
                                   <Icone nome="fechar" tam={14} />

@@ -173,7 +173,7 @@ export function AbaAceitacao({
                   <div key={r.prato} className="space-y-1">
                     <div className="flex items-center justify-between gap-2 text-sm">
                       <span className="truncate font-semibold">{r.prato}</span>
-                      <span className="shrink-0 font-bold text-[#b04c41]">{r.media.toFixed(1)}</span>
+                      <span className="shrink-0 font-bold text-perigo">{r.media.toFixed(1)}</span>
                     </div>
                     <BarraMini valor={r.media / 5} tom="vermelho" />
                   </div>
@@ -253,7 +253,7 @@ export function AbaAceitacao({
                         {e.fator === 0 ? 'fechado' : `${e.fator > 1 ? '+' : ''}${Math.round((e.fator - 1) * 100)}%`}
                       </Pilula>
                       {podeEditar && (
-                        <button onClick={() => rmEvento(e.id)} className="text-carvao-300 hover:text-[#b04c41]" aria-label="Remover">
+                        <button onClick={() => rmEvento(e.id)} className="text-carvao-300 hover:text-perigo" aria-label="Remover">
                           ✕
                         </button>
                       )}

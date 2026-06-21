@@ -181,7 +181,7 @@ export function CardapioOrientadoDados({
                 <div className="flex items-start gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold text-[#b04c41] dark:text-[#e89a90] line-through opacity-70">{s.pratoAtual}</p>
+                      <p className="text-sm font-semibold text-perigo dark:text-perigo-claro line-through opacity-70">{s.pratoAtual}</p>
                       <span className="text-xs text-carvao-400">{fmt(s.custoPorcaoAtual)}/pax</span>
                     </div>
                     <div className="my-1 flex items-center gap-1 text-xs text-carvao-400">
@@ -288,7 +288,7 @@ export function CardapioOrientadoDados({
                       <span className={`text-sm font-bold ${
                         p.nota >= 4 ? 'text-brand-600 dark:text-brand-400' :
                         p.nota >= 3 ? 'text-ouro-600 dark:text-ouro-300' :
-                        'text-[#b04c41] dark:text-[#e89a90]'
+                        'text-perigo dark:text-perigo-claro'
                       }`}>
                         {p.nota.toFixed(1)}★
                       </span>

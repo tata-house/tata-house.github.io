@@ -14,7 +14,7 @@ import { infoNutricional } from '@/lib/cardapio/nutricional';
 function rotuloIndice(v: number): { texto: string; cor: string; bg: string } {
   if (v >= 80) return { texto: 'equilibrado', cor: 'text-brand-700 dark:text-brand-300', bg: 'bg-brand-500' };
   if (v >= 60) return { texto: 'moderado', cor: 'text-[#9a6c17] dark:text-[#e3b45c]', bg: 'bg-ouro-400' };
-  return { texto: 'pesado', cor: 'text-[#b04c41]', bg: 'bg-[#b04c41]' };
+  return { texto: 'pesado', cor: 'text-perigo', bg: 'bg-perigo' };
 }
 
 export function NutricaoPrato({ prato }: { prato: string }) {
@@ -69,7 +69,7 @@ export function NutricaoPrato({ prato }: { prato: string }) {
       {alertas.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1.5">
           {alertas.map((a) => (
-            <span key={a} className="rounded-full bg-[#b04c41]/8 px-2 py-0.5 text-[10px] font-bold text-[#b04c41] ring-1 ring-[#b04c41]/15">
+            <span key={a} className="rounded-full bg-perigo/8 px-2 py-0.5 text-[10px] font-bold text-perigo ring-1 ring-perigo/15">
               {a}
             </span>
           ))}

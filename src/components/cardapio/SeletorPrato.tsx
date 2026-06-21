@@ -81,7 +81,7 @@ export function SeletorPrato({
             <button
               type="button"
               onClick={() => escolher('')}
-              className="w-full rounded-xl px-3 py-2.5 text-left text-[14px] font-semibold text-[#b04c41] hover:bg-areia-100 dark:hover:bg-carvao-700"
+              className="w-full rounded-xl px-3 py-2.5 text-left text-[14px] font-semibold text-perigo hover:bg-areia-100 dark:hover:bg-carvao-700"
             >
               ✕ Limpar seleção
             </button>

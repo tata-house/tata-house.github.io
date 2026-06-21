@@ -50,12 +50,33 @@ const config: Config = {
           500: '#b08d4f',
           600: '#92713a',
         },
+        // Proteínas — cor semântica de cada tipo (badges, acentos, rankings).
+        // Antes espalhadas como hex cru em vários componentes; agora token único.
+        bovina: { DEFAULT: '#8a3b34', claro: '#e0867c' },
+        frango: { DEFAULT: '#b07c1e', claro: '#e3b45c', escuro: '#9a6c17' },
+        suina:  { DEFAULT: '#b05a7e', claro: '#dd92b4', escuro: '#9c4a6c' },
+        peixe:  { DEFAULT: '#2d6f8e', claro: '#7cb8d4' },
+        ovo:    { DEFAULT: '#c8a96b', claro: '#dcc492' },
+        // Estados semânticos — perigo / alerta / info (mapeiam os hex repetidos).
+        perigo: { DEFAULT: '#b04c41', escuro: '#9b4038', claro: '#e89a90' },
+        alerta: { DEFAULT: '#d18a3a', escuro: '#bd7a2f', claro: '#e3b45c' },
+        info:   { DEFAULT: '#2d6f8e', claro: '#7cb8d4' },
         // Tokens semânticos (mapeados às CSS vars em globals.css)
         superficie: 'rgb(var(--superficie) / <alpha-value>)',
         'superficie-2': 'rgb(var(--superficie-2) / <alpha-value>)',
         linha: 'rgb(var(--linha) / <alpha-value>)',
         texto: 'rgb(var(--texto) / <alpha-value>)',
         'texto-suave': 'rgb(var(--texto-suave) / <alpha-value>)',
+      },
+      // Escala tipográfica fechada — 6 papéis. Substitui os ~10 tamanhos
+      // ad-hoc em px espalhados pelas telas. Cada um carrega tamanho + leading.
+      fontSize: {
+        caption: ['11px', { lineHeight: '1.35' }],
+        rotulo: ['12px', { lineHeight: '1.35', letterSpacing: '0.01em' }],
+        corpo: ['14px', { lineHeight: '1.5' }],
+        subtitulo: ['15px', { lineHeight: '1.4', fontWeight: '600' }],
+        titulo: ['19px', { lineHeight: '1.25', fontWeight: '600' }],
+        heroi: ['28px', { lineHeight: '1.05', fontWeight: '700' }],
       },
       fontFamily: {
         sans: [

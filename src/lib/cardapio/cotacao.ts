@@ -266,6 +266,115 @@ export function parsearCotacao(texto: string): LinhaCotacao[] {
   return linhas;
 }
 
+/* ------------------- integração Gemini IA ----------------------------- */
+
+const GEMINI_MODELO = 'gemini-1.5-flash';
+
+const PROMPT_IA = `Você é especialista em cotações de alimentos para restaurante industrial brasileiro.
+Extraia TODOS os produtos com preço desta lista recebida via WhatsApp de fornecedores.
+
+REGRAS:
+- Cabeçalhos de categoria (*ACÉM*, *SUÍNOS*, *BOVINOS CONGELADOS*, FRANGOS etc.) → IGNORE
+- Saudações, datas, dias da semana, mensagens de status ("WG atualizada") → IGNORE
+- Fornecedores por seção: Vita Frango, Jampac, Apetito Foods, WG, Frito Sul
+- "Produto - Marca valor" → marca é o nome após o traço (Ribeiro, RRX, FazCarne etc.)
+- Remova qualificadores: Resf/Resfriado/Cong/Congelado/RF/CG/FIFO do nome
+- Preço como número com ponto decimal (ex: 31.90)
+
+Responda APENAS com JSON array válido (sem markdown):
+[{"nome":"Frango inteiro","preco":7.00,"marca":"Vita Frango"},...]`;
+
+type ItemIA = { nome: string; preco: number; marca?: string };
+
+async function chamarGemini(texto: string, apiKey: string): Promise<LinhaCotacao[]> {
+  const resp = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODELO}:generateContent?key=${encodeURIComponent(apiKey)}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: `${PROMPT_IA}\n\nCOTAÇÃO:\n${texto.slice(0, 16000)}` }] }],
+        generationConfig: { temperature: 0.1, responseMimeType: 'application/json' },
+      }),
+    },
+  );
+  if (!resp.ok) {
+    const err: { error?: { message?: string } } = await resp.json().catch(() => ({}));
+    throw new Error(err?.error?.message ?? `HTTP ${resp.status}`);
+  }
+  const data: { candidates?: { content?: { parts?: { text?: string }[] } }[] } = await resp.json();
+  const txt = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '[]';
+  const items: ItemIA[] = JSON.parse(txt);
+  return items
+    .filter((it) => it.nome && it.preco > 0)
+    .map((it) => ({
+      nome: it.nome.trim(),
+      preco: it.preco,
+      marca: it.marca?.trim() || null,
+      unid: null,
+      item: casarItem(it.nome),
+    }));
+}
+
+/**
+ * Combina resultados da lógica (preços confiáveis) e da IA (contexto e nomes):
+ * - Lógica é autoritativa em preços e matches já conhecidos
+ * - IA preenche gaps: fornecedor não detectado, item canônico para "soltos"
+ * - Itens que a IA achou mas a lógica não capturou são adicionados ao final
+ */
+function combinarResultados(logica: LinhaCotacao[], ia: LinhaCotacao[]): LinhaCotacao[] {
+  if (!ia.length) return logica;
+
+  // Fila de itens IA por preço (em centavos) para consumo sequencial
+  const filaIA = new Map<number, LinhaCotacao[]>();
+  for (const l of ia) {
+    const k = Math.round(l.preco * 100);
+    filaIA.set(k, [...(filaIA.get(k) ?? []), l]);
+  }
+
+  const iaConsumidos = new Set<LinhaCotacao>();
+
+  const resultado = logica.map((l): LinhaCotacao => {
+    const k = Math.round(l.preco * 100);
+    const fila = filaIA.get(k) ?? [];
+    const par = fila.shift(); // consome o primeiro candidato ao mesmo preço
+    if (par) iaConsumidos.add(par);
+    return {
+      nome: l.nome,                          // nome da lógica (mais fiel ao texto)
+      preco: l.preco,                        // preço da lógica é autoritativo
+      marca: l.marca || par?.marca || null,  // inline > IA > nada
+      unid: l.unid,
+      item: l.item || par?.item || null,     // lógica > IA > nada
+    };
+  });
+
+  // Itens que a IA achou mas a lógica não capturou
+  for (const l of ia) {
+    if (!iaConsumidos.has(l)) resultado.push(l);
+  }
+
+  return resultado;
+}
+
+/**
+ * Versão combo: lógica + Gemini.
+ * A lógica cuida de preços e formatos conhecidos; a IA resolve gaps de contexto
+ * (fornecedor, nomes ambíguos, formatos inesperados). Se a IA falhar, retorna
+ * o resultado da lógica pura sem interromper o fluxo.
+ */
+export async function parsearCotacaoComIA(
+  texto: string,
+  apiKey: string,
+): Promise<{ linhas: LinhaCotacao[]; comIA: boolean; erroIA?: string }> {
+  const logica = parsearCotacao(texto); // sempre roda primeiro
+  try {
+    const ia = await chamarGemini(texto, apiKey);
+    return { linhas: combinarResultados(logica, ia), comIA: true };
+  } catch (e) {
+    return { linhas: logica, comIA: false, erroIA: e instanceof Error ? e.message : String(e) };
+  }
+}
+
 /**
  * Extrai o remetente mais frequente de uma conversa exportada do WhatsApp.
  * Útil para detectar o nome do fornecedor automaticamente quando o usuário

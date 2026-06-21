@@ -441,7 +441,7 @@ export default function PaginaCardapios() {
       {/* ── Cabeçalho ────────────────────────────────────── */}
       <header className="sticky top-0 z-40 border-b border-carvao-100 bg-white print:hidden dark:border-carvao-800 dark:bg-carvao-950">
         <div className="h-[3px] w-full bg-brand-600" />
-        <div className="mx-auto flex h-14 max-w-5xl items-center gap-3 px-4">
+        <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4">
 
           {/* Marca */}
           <div className="flex min-w-0 items-center gap-3">
@@ -495,7 +495,31 @@ export default function PaginaCardapios() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl space-y-4 px-4 pb-28 pt-5 lg:pb-8">
+      <div className="mx-auto flex max-w-6xl gap-6 px-0 lg:px-4">
+
+        {/* ── Sidebar desktop — mesma lógica de grupos do menu mobile ─── */}
+        <aside className="sticky top-[59px] hidden h-[calc(100vh-59px)] w-52 shrink-0 flex-col gap-1 border-r border-carvao-100 py-6 pr-3 lg:flex dark:border-carvao-800 print:hidden">
+          {gruposVisiveis.map((g) => {
+            const ativo = g.id === grupoAtivo.id;
+            return (
+              <button
+                key={g.id}
+                onClick={() => setAba(g.abas[0] as AbaId)}
+                aria-current={ativo ? 'page' : undefined}
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-subtitulo font-semibold transition ${
+                  ativo
+                    ? 'bg-brand-50 text-brand-700 dark:bg-carvao-800 dark:text-brand-300'
+                    : 'text-carvao-500 hover:bg-carvao-50 hover:text-carvao-800 dark:text-carvao-400 dark:hover:bg-carvao-800/60'
+                }`}
+              >
+                <Icone nome={g.id} tam={19} />
+                {g.rotulo}
+              </button>
+            );
+          })}
+        </aside>
+
+      <main className="min-w-0 flex-1 space-y-4 px-4 pb-28 pt-5 lg:max-w-5xl lg:pb-8">
 
         {/* ── Barra de semana ─────────────────────────────── */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-carvao-100 pb-5 dark:border-carvao-800">
@@ -554,22 +578,7 @@ export default function PaginaCardapios() {
           </div>
         </div>
 
-        {/* ── Navegação desktop ────────────────────────────── */}
-        <nav className="hidden border-b border-carvao-100 lg:flex dark:border-carvao-800 print:hidden">
-          {ABAS.filter((a) => abasPermitidas.includes(a.id)).map((a) => (
-            <button
-              key={a.id}
-              onClick={() => setAba(a.id)}
-              className={`relative shrink-0 whitespace-nowrap px-5 pb-3.5 pt-1 text-[13px] font-semibold transition ${
-                aba === a.id
-                  ? 'text-brand-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:rounded-full after:bg-brand-600 dark:text-brand-400 dark:after:bg-brand-400'
-                  : 'text-carvao-400 hover:text-carvao-700 dark:text-carvao-500 dark:hover:text-carvao-200'
-              }`}
-            >
-              {a.rotulo}
-            </button>
-          ))}
-        </nav>
+        {/* Desktop: navegação na sidebar à esquerda. Mobile: BottomNav inferior. */}
 
         {/* ── Conteúdo ─────────────────────────────────────── */}
         {!pronto ? (
@@ -950,6 +959,7 @@ export default function PaginaCardapios() {
           </>
         )}
       </main>
+      </div>
 
       {/* ── Sheet: Seletor de semana ─────────────────────── */}
       <BottomSheet titulo="Escolher semana" aberto={semanaSheet} aoFechar={() => setSemanaSheet(false)}>

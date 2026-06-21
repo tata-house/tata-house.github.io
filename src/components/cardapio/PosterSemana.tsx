@@ -97,10 +97,15 @@ export function PosterSemana({
             </button>
           )}
           <Botao variante="sucesso" onClick={() => window.print()} className="!min-h-10 !px-5 !py-2 text-sm">
-            <Icone nome="exportar" tam={16} /> Imprimir pôster
+            <Icone nome="exportar" tam={16} /> Baixar / Imprimir
           </Botao>
         </div>
       </div>
+
+      {/* Dica de download — o caminho confiável em qualquer aparelho */}
+      <p className="mx-auto mb-4 max-w-[210mm] px-4 text-center text-xs text-carvao-500 dark:text-carvao-400 print:hidden">
+        Para baixar: toque em <strong>Baixar / Imprimir</strong> e escolha <strong>“Salvar como PDF”</strong> no destino da impressão.
+      </p>
 
       {/* Folha A4 */}
       <div className="poster mx-auto flex min-h-[287mm] w-full max-w-[210mm] flex-col overflow-hidden bg-white text-carvao-900 shadow-flutuante print:min-h-[275mm] print:max-w-none print:shadow-none">

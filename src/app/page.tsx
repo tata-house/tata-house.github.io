@@ -19,7 +19,6 @@ import { AbaFluxo } from '@/components/cardapio/AbaFluxo';
 import { AbaRadar } from '@/components/cardapio/AbaRadar';
 import { CentralGerencial } from '@/components/cardapio/CentralGerencial';
 import { Configuracoes } from '@/components/cardapio/Configuracoes';
-import { CartaoNuvem } from '@/components/cardapio/CartaoNuvem';
 import { Assistente } from '@/components/cardapio/Assistente';
 import { insightProativo } from '@/lib/cardapio/assistente';
 import { PosterSemana } from '@/components/cardapio/PosterSemana';
@@ -783,6 +782,16 @@ export default function PaginaCardapios() {
                 {abaCardapioSeg === 'operacao' && (
                   <div className="space-y-6">
                     <AbaContagem contagens={contagens} onRegistrar={registrarContagem} />
+                    {/* Registrar sobra do dia — tarefa operacional diária */}
+                    <AbaDesperdicio
+                      estado={estado}
+                      precos={precos}
+                      fatores={fatores}
+                      registros={desperdicio}
+                      adicionar={addDesperdicio}
+                      remover={rmDesperdicio}
+                      podeEditar={podeEstoque}
+                    />
                     <AbaFluxo
                       estado={estado}
                       atualizar={atualizar}
@@ -806,15 +815,6 @@ export default function PaginaCardapios() {
                       rmEvento={rmEvento}
                       desperdicio={desperdicio}
                       podeEditar={podeAvaliar}
-                    />
-                    <AbaDesperdicio
-                      estado={estado}
-                      precos={precos}
-                      fatores={fatores}
-                      registros={desperdicio}
-                      adicionar={addDesperdicio}
-                      remover={rmDesperdicio}
-                      podeEditar={podeEstoque}
                     />
                   </div>
                 )}
@@ -850,41 +850,18 @@ export default function PaginaCardapios() {
                 </div>
 
                 {abaCompras === 'lista' && (
-                  <>
-                    {/* A partir da lista — NF e Pedido são fluxo; Estoque e Fornecedores, ferramentas */}
-                    <div className="flex flex-wrap gap-2">
-                      {([
-                        { id: 'nf' as const,           rotulo: 'Lançar nota fiscal', tom: 'acao' },
-                        { id: 'pedido' as const,       rotulo: 'Gerar pedido',       tom: 'acao' },
-                        { id: 'fornecedores' as const, rotulo: 'Fornecedores',       tom: 'ferr' },
-                        { id: 'estoque' as const,      rotulo: 'Estoque',            tom: 'ferr' },
-                      ]).map((a) => (
-                        <button
-                          key={a.id}
-                          onClick={() => setAbaCompras(a.id)}
-                          className={`rounded-xl px-3 py-2 text-rotulo font-semibold transition ${
-                            a.tom === 'acao'
-                              ? 'bg-brand-600 text-white hover:bg-brand-700'
-                              : 'border border-carvao-200 text-carvao-600 hover:bg-carvao-50 dark:border-carvao-700 dark:text-areia-200 dark:hover:bg-carvao-800'
-                          }`}
-                        >
-                          {a.rotulo}
-                        </button>
-                      ))}
-                    </div>
-                    <AbaCompras
-                      estado={estado}
-                      atualizar={atualizar}
-                      papel={papel}
-                      precos={precos}
-                      fornecedores={fornecedores}
-                      ofertas={ofertas}
-                      fatores={fatores}
-                      definirPreco={definirPreco}
-                      definirFornecedor={definirFornecedor}
-                      registrarOferta={registrarOferta}
-                    />
-                  </>
+                  <AbaCompras
+                    estado={estado}
+                    atualizar={atualizar}
+                    papel={papel}
+                    precos={precos}
+                    fornecedores={fornecedores}
+                    ofertas={ofertas}
+                    fatores={fatores}
+                    definirPreco={definirPreco}
+                    definirFornecedor={definirFornecedor}
+                    registrarOferta={registrarOferta}
+                  />
                 )}
 
                 {abaCompras === 'estoque' && (
@@ -1053,11 +1030,6 @@ export default function PaginaCardapios() {
                   <h2 className="font-display text-2xl font-bold text-carvao-900 dark:text-white">Ajustes</h2>
                   <p className="mt-1 text-sm text-carvao-400">Equipe, restrições e configurações de acesso</p>
                 </div>
-                <p className="rounded-2xl bg-brand-50 px-4 py-3 text-nota text-brand-700 ring-1 ring-brand-200/60 dark:bg-carvao-850 dark:text-brand-300 dark:ring-carvao-700">
-                  💰 A <strong>cotação e o catálogo de preços</strong> agora ficam na aba <strong>Cardápio</strong> — role
-                  até a seção “Cotação — catálogo de preços”.
-                </p>
-
                 {/* Equipe e restrições alimentares */}
                 <SecaoAjuste titulo="Equipe e restrições alimentares">
                   <AbaFuncionarios
@@ -1075,9 +1047,6 @@ export default function PaginaCardapios() {
                     <Configuracoes />
                   </SecaoAjuste>
                 )}
-
-                {/* Backup na nuvem (aparece só com Supabase configurado) */}
-                <CartaoNuvem />
               </div>
             )}
           </>

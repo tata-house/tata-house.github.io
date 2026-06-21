@@ -40,7 +40,7 @@ export function Disclosure({
         <span className="flex items-center gap-2">
           {icone && <Icone nome={icone} tam={18} className="text-brand-500" />}
           <span>
-            <span className="block text-subtitulo text-carvao-800 dark:text-areia-100">{titulo}</span>
+            <span className="block text-subtitulo font-semibold text-carvao-800 dark:text-areia-100">{titulo}</span>
             {subtitulo && <span className="block text-caption text-carvao-400">{subtitulo}</span>}
           </span>
         </span>
@@ -135,7 +135,7 @@ export const estiloInput =
   'w-full min-h-12 rounded-2xl border border-carvao-200 bg-white px-4 py-3 text-base text-carvao-900 placeholder:text-carvao-300 transition focus:border-carvao-400 focus:outline-none focus:ring-2 focus:ring-carvao-900/10 dark:border-carvao-600 dark:bg-carvao-900 dark:text-areia-100 dark:placeholder:text-carvao-500 dark:focus:border-carvao-400 dark:focus:ring-white/10';
 
 export const estiloRotulo =
-  'mb-1.5 block text-xs font-bold uppercase tracking-[0.12em] text-carvao-400 dark:text-carvao-300';
+  'mb-1.5 block text-rotulo font-semibold text-carvao-500 dark:text-carvao-300';
 
 /* ---------------------------------------------------------------------
    Primitivos de leitura gerencial (dashboard, indicadores, rankings).
@@ -160,7 +160,7 @@ export function Pilula({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-tight ring-1 ${TOM_PILULA[tom]} ${className}`}
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-caption font-bold tracking-tight ring-1 ${TOM_PILULA[tom]} ${className}`}
     >
       {children}
     </span>
@@ -191,11 +191,11 @@ export function Kpi({
     <div className="group relative overflow-hidden rounded-3xl border border-carvao-100 bg-white p-4 shadow-suave transition-all duration-200 hover:-translate-y-0.5 hover:shadow-flutuante motion-reduce:transform-none motion-reduce:transition-none dark:border-carvao-700/70 dark:bg-carvao-850">
       <span className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r transition-all duration-200 group-hover:h-1.5 ${barra}`} />
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-carvao-500 dark:text-carvao-300">{rotulo}</p>
+        <p className="text-rotulo font-semibold text-carvao-500 dark:text-carvao-300">{rotulo}</p>
         {icone && <span className="text-base leading-none opacity-70">{icone}</span>}
       </div>
-      <p className="mt-1 font-display text-[26px] font-bold leading-none text-carvao-900 tabular-nums dark:text-areia-50">{valor}</p>
-      {detalhe && <p className="mt-1.5 text-[11px] font-semibold text-carvao-400">{detalhe}</p>}
+      <p className="mt-1 font-display text-heroi font-bold leading-none text-carvao-900 tabular-nums dark:text-areia-50">{valor}</p>
+      {detalhe && <p className="mt-1.5 text-caption font-semibold text-carvao-400">{detalhe}</p>}
     </div>
   );
 }

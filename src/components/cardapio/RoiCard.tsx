@@ -39,7 +39,7 @@ export function RoiCard({
   return (
     <Cartao className="overflow-hidden !p-0">
       <div className="bg-gradient-to-r from-brand-800 via-brand-700 to-brand-600 px-5 py-4 text-white">
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-200">
+        <p className="text-caption font-extrabold uppercase tracking-[0.18em] text-brand-200">
           💎 Valor gerado no mês
         </p>
         <p className="font-display text-3xl font-bold">

@@ -71,7 +71,7 @@ export function AbaPrecos({
           <Pilula tom="ouro">{cadEst} estimados</Pilula>
           <Botao
             variante="secundario"
-            className="ml-auto !min-h-9 !px-3 !py-1.5 text-[12px]"
+            className="ml-auto !min-h-9 !px-3 !py-1.5 text-rotulo"
             onClick={() => gerarEstimativas(itens.map((i) => normalizar(i.n)), precos)}
           >
             <Icone nome="raio" tam={15} /> Estimar sem preço
@@ -121,7 +121,7 @@ export function AbaPrecos({
                           {ROTULO_TIPO_PRECO[pr.tipo]}
                         </Pilula>
                       </span>
-                      <span className="block text-[11px] text-carvao-400">
+                      <span className="block text-caption text-carvao-400">
                         {i.u}
                         {fornecedores[k] && <span className="font-semibold text-brand-600"> · ↓ {fornecedores[k]}</span>}
                       </span>
@@ -147,7 +147,7 @@ export function AbaPrecos({
                       }}
                       className="w-20 rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-right font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                     />
-                    <span className="w-6 text-[11px] text-carvao-400">/{i.u}</span>
+                    <span className="w-6 text-caption text-carvao-400">/{i.u}</span>
                   </div>
                 </div>
 
@@ -191,7 +191,7 @@ export function AbaPrecos({
                           onChange={(e) => definirEstimativa(k, e.target.value === '' ? null : Number(e.target.value))}
                           className="w-24 rounded-xl border border-ouro-400/40 bg-white px-2 py-1.5 text-right font-bold tabular-nums dark:bg-carvao-900"
                         />
-                        <span className="text-[11px] text-carvao-400">
+                        <span className="text-caption text-carvao-400">
                           {pr.tipo === 'historico'
                             ? 'preço histórico (Mai/Jun 2026) — confirme se mudou.'
                             : pr.tipo === 'estimado'

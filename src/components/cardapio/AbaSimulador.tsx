@@ -190,12 +190,12 @@ export function AbaSimulador({
             )}
             {tipado.itensSemPreco > 0 && <Pilula tom="vermelho">{tipado.itensSemPreco} sem referência</Pilula>}
           </div>
-          <p className="text-[11px] text-carvao-400">
+          <p className="text-caption text-carvao-400">
             Sem cotação, o app usa o <strong>preço médio de mercado</strong> (histórico) automaticamente — confirme com
             a cotação real quando possível.
           </p>
           {tipado.itensSemPreco > 0 && (
-            <p className="rounded-xl bg-perigo/10 px-2.5 py-1.5 text-[11px] font-semibold text-perigo ring-1 ring-perigo/20">
+            <p className="rounded-xl bg-perigo/10 px-2.5 py-1.5 text-caption font-semibold text-perigo ring-1 ring-perigo/20">
               ⚠️ {tipado.itensSemPreco} itens sem nenhuma referência de preço — a simulação está incompleta. Lance um
               preço (Cotação) ou registre o item no histórico.
             </p>
@@ -247,7 +247,7 @@ export function AbaSimulador({
               <p className="text-[10px] font-bold uppercase tracking-wider text-carvao-400">Custo / refeição</p>
               <p className="font-display text-xl font-bold tabular-nums">{formatarReais(cenarioSeEu.ref)}</p>
               {atual.custoRef > 0 && (
-                <p className={`text-[11px] font-bold ${cenarioSeEu.ref > atual.custoRef ? 'text-perigo' : 'text-brand-600'}`}>
+                <p className={`text-caption font-bold ${cenarioSeEu.ref > atual.custoRef ? 'text-perigo' : 'text-brand-600'}`}>
                   {cenarioSeEu.ref >= atual.custoRef ? '▲ +' : '▼ '}
                   {formatarReais(Math.abs(cenarioSeEu.ref - atual.custoRef))} vs atual
                 </p>
@@ -257,7 +257,7 @@ export function AbaSimulador({
               <p className="text-[10px] font-bold uppercase tracking-wider text-carvao-400">Custo total semana</p>
               <p className="font-display text-xl font-bold tabular-nums">{formatarReais(cenarioSeEu.total)}</p>
               {atual.custo > 0 && (
-                <p className={`text-[11px] font-bold ${cenarioSeEu.total > atual.custo ? 'text-perigo' : 'text-brand-600'}`}>
+                <p className={`text-caption font-bold ${cenarioSeEu.total > atual.custo ? 'text-perigo' : 'text-brand-600'}`}>
                   {cenarioSeEu.total >= atual.custo ? '▲ +' : '▼ '}
                   {formatarReais(Math.abs(cenarioSeEu.total - atual.custo))} vs atual
                 </p>
@@ -275,7 +275,7 @@ export function AbaSimulador({
               ↺ Limpar cenário
             </button>
           )}
-          <p className="text-[11px] text-carvao-400">
+          <p className="text-caption text-carvao-400">
             Arraste para simular alta de preço ou mudança no movimento. Recalcula na hora — <strong>não altera</strong> o
             cardápio.
           </p>
@@ -341,7 +341,7 @@ export function AbaSimulador({
               <li key={m.dia} className="flex items-center justify-between gap-3 px-4 py-2.5">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold">{m.prato}</p>
-                  <p className="text-[11px] text-carvao-400">{DIAS_SEMANA[m.dia]}</p>
+                  <p className="text-caption text-carvao-400">{DIAS_SEMANA[m.dia]}</p>
                 </div>
                 <span className="shrink-0 font-bold">{formatarReais(m.custo)}</span>
               </li>

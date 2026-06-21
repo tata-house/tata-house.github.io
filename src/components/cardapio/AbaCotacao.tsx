@@ -139,7 +139,7 @@ export function AbaCotacao({
 
         {/* Upload de arquivo */}
         <div className="flex items-center gap-3">
-          <label className="cursor-pointer rounded-full border border-dashed border-carvao-300 px-4 py-2 text-[12px] font-bold text-carvao-500 transition hover:border-brand-400 hover:text-brand-600 dark:border-carvao-600 dark:text-carvao-400">
+          <label className="cursor-pointer rounded-full border border-dashed border-carvao-300 px-4 py-2 text-rotulo font-bold text-carvao-500 transition hover:border-brand-400 hover:text-brand-600 dark:border-carvao-600 dark:text-carvao-400">
             📂 Importar arquivo (CSV / TXT)
             <input
               type="file"
@@ -148,7 +148,7 @@ export function AbaCotacao({
               onChange={importarArquivo}
             />
           </label>
-          <span className="text-[11px] text-carvao-400">O conteúdo é adicionado à área de texto</span>
+          <span className="text-caption text-carvao-400">O conteúdo é adicionado à área de texto</span>
         </div>
 
         <textarea
@@ -159,7 +159,7 @@ export function AbaCotacao({
           className="w-full rounded-2xl border border-carvao-200 bg-white px-4 py-3 font-mono text-xs leading-relaxed dark:border-carvao-600 dark:bg-carvao-900"
         />
         <div>
-          <label className="mb-1 block text-[11px] font-bold uppercase tracking-widest text-carvao-400">
+          <label className="mb-1 block text-caption font-bold uppercase tracking-widest text-carvao-400">
             Fornecedor (detectado ou informe)
           </label>
           <input
@@ -207,7 +207,7 @@ export function AbaCotacao({
                         />
                         <span className="min-w-0">
                           <span className="block truncate text-sm font-semibold">{c.item}</span>
-                          <span className="block text-[11px] text-carvao-400">
+                          <span className="block text-caption text-carvao-400">
                             {c.marca ? `${c.marca} · ` : ''}
                             {c.ofertas > 1 ? `melhor de ${c.ofertas} ofertas` : '1 oferta'}
                           </span>
@@ -248,7 +248,7 @@ export function AbaCotacao({
                 </h3>
                 <button
                   onClick={cadastrarTodos}
-                  className="rounded-full bg-brand-700 px-4 py-2 text-[12px] font-extrabold uppercase tracking-wide text-white shadow-suave hover:bg-brand-800"
+                  className="rounded-full bg-brand-700 px-4 py-2 text-rotulo font-extrabold uppercase tracking-wide text-white shadow-suave hover:bg-brand-800"
                 >
                   ➕ Cadastrar todos de uma vez
                 </button>
@@ -265,7 +265,7 @@ export function AbaCotacao({
                     <li key={`${idx}-${s.nome}`} className="flex items-center justify-between gap-3 py-2">
                       <span className="min-w-0">
                         <span className="block truncate text-sm font-semibold">{s.nome}</span>
-                        <span className="block text-[11px] text-carvao-400">
+                        <span className="block text-caption text-carvao-400">
                           {formatarReais(s.preco)}
                           {s.marca ? ` · ${s.marca}` : ''}
                         </span>
@@ -285,7 +285,7 @@ export function AbaCotacao({
                           </select>
                           <button
                             onClick={() => cadastrar(idx, s)}
-                            className="rounded-full bg-brand-700 px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wide text-white hover:bg-brand-800"
+                            className="rounded-full bg-brand-700 px-3 py-1.5 text-caption font-extrabold uppercase tracking-wide text-white hover:bg-brand-800"
                           >
                             ➕ Cadastrar
                           </button>

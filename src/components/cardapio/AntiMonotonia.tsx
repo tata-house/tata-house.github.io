@@ -81,7 +81,7 @@ export function AntiMonotonia({ estado }: { estado: EstadoSemana }) {
 
   return (
     <div className="space-y-2.5 rounded-2xl bg-ouro-300/10 p-4 ring-1 ring-ouro-400/30">
-      <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-ouro-600 dark:text-ouro-300">
+      <p className="text-caption font-extrabold uppercase tracking-[0.2em] text-ouro-600 dark:text-ouro-300">
         🔁 Radar de monotonia
       </p>
       {alertas.map((a, i) => (
@@ -94,7 +94,7 @@ export function AntiMonotonia({ estado }: { estado: EstadoSemana }) {
           <span aria-hidden>{a.critico ? '⛔' : '⚠️'}</span>
           <div>
             <p className="font-semibold leading-snug">{a.msg}</p>
-            <p className="text-[11px] opacity-60">{a.detalhe}</p>
+            <p className="text-caption opacity-60">{a.detalhe}</p>
           </div>
         </div>
       ))}

@@ -91,7 +91,7 @@ export function CartaoNuvem() {
         <Botao variante="secundario" onClick={atualizarAgora} disabled={sincronizando} className="w-full">
           {sincronizando ? 'Aguarde…' : '🔄 Atualizar agora'}
         </Botao>
-        <p className="text-[11px] text-carvao-400">
+        <p className="text-caption text-carvao-400">
           Ao abrir o app, ele já traz o que há de mais novo da nuvem, e suas alterações sobem sozinhas.
           Use "Atualizar agora" se quiser puxar as novidades sem reabrir o app.
         </p>

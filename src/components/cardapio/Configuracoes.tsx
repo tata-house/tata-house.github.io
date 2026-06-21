@@ -50,7 +50,7 @@ export function Configuracoes() {
             </Botao>
           </div>
         ))}
-        <p className="text-[11px] text-carvao-400">
+        <p className="text-caption text-carvao-400">
           Dica de segurança: troque os PINs padrão (1234 / 1111 / 2222) por números só seus. Para acesso individual por
           pessoa (e auditoria por usuário), a etapa de banco de dados (Supabase Auth) é o próximo passo.
         </p>

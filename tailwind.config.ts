@@ -71,12 +71,12 @@ const config: Config = {
       // Escala tipográfica fechada — 6 papéis. Substitui os ~10 tamanhos
       // ad-hoc em px espalhados pelas telas. Cada um carrega tamanho + leading.
       fontSize: {
-        caption: ['11px', { lineHeight: '1.35' }],
-        rotulo: ['12px', { lineHeight: '1.35', letterSpacing: '0.01em' }],
+        caption: ['11px', { lineHeight: '1.4' }],
+        rotulo: ['12px', { lineHeight: '1.4' }],
         corpo: ['14px', { lineHeight: '1.5' }],
-        subtitulo: ['15px', { lineHeight: '1.4', fontWeight: '600' }],
-        titulo: ['19px', { lineHeight: '1.25', fontWeight: '600' }],
-        heroi: ['28px', { lineHeight: '1.05', fontWeight: '700' }],
+        subtitulo: ['15px', { lineHeight: '1.45' }],
+        titulo: ['19px', { lineHeight: '1.25' }],
+        heroi: ['28px', { lineHeight: '1.05' }],
       },
       fontFamily: {
         sans: [

@@ -95,7 +95,7 @@ export function OperacaoDia({
             ← Sair
           </button>
           <h2 className="font-display text-base font-black tracking-wide">⚡ Operação do Dia</h2>
-          <span className="text-[11px] font-bold uppercase tracking-wide text-ouro-300">{DIAS_SEMANA[di]}</span>
+          <span className="text-caption font-bold uppercase tracking-wide text-ouro-300">{DIAS_SEMANA[di]}</span>
         </div>
       </div>
 
@@ -113,7 +113,7 @@ export function OperacaoDia({
             {/* Produzir */}
             {produzir.length > 0 && (
               <section className="space-y-2">
-                <h3 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-ouro-300">
+                <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-ouro-300">
                   🍳 Produzir ({feitasProd}/{produzir.length})
                 </h3>
                 {produzir.map(([rot, nome]) => {
@@ -135,12 +135,12 @@ export function OperacaoDia({
                         </span>
                         <span className="min-w-0">
                           <span className="block text-[10px] font-bold uppercase tracking-wide text-brand-200">{rot}</span>
-                          <span className={`block text-[15px] font-semibold ${feito ? 'text-brand-100 line-through' : ''}`}>{nome}</span>
+                          <span className={`block text-subtitulo font-semibold ${feito ? 'text-brand-100 line-through' : ''}`}>{nome}</span>
                         </span>
                       </button>
                       <ComoFazer
                         prato={nome}
-                        className="shrink-0 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-bold text-white ring-1 ring-white/20 transition hover:bg-white/25"
+                        className="shrink-0 rounded-full bg-white/15 px-2.5 py-1 text-caption font-bold text-white ring-1 ring-white/20 transition hover:bg-white/25"
                       />
                     </div>
                   );
@@ -151,7 +151,7 @@ export function OperacaoDia({
             {/* Receber / conferir */}
             {receber.length > 0 && (
               <section className="space-y-2">
-                <h3 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-ouro-300">📥 Receber e conferir</h3>
+                <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-ouro-300">📥 Receber e conferir</h3>
                 {receber.map((l) => (
                   <button
                     key={l.chave}
@@ -159,7 +159,7 @@ export function OperacaoDia({
                     className="flex w-full items-center gap-3 rounded-2xl bg-white/10 px-4 py-3.5 text-left ring-1 ring-white/15 transition hover:bg-white/15"
                   >
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/15 text-sm">📦</span>
-                    <span className="min-w-0 flex-1 text-[15px] font-semibold">{l.item}</span>
+                    <span className="min-w-0 flex-1 text-subtitulo font-semibold">{l.item}</span>
                     <span className="shrink-0 text-sm font-bold tabular-nums text-brand-100">
                       {formatarQtd(l.qtd)} {l.unid}
                     </span>
@@ -171,7 +171,7 @@ export function OperacaoDia({
             {/* Ainda comprar */}
             {comprar.length > 0 && (
               <section className="space-y-2">
-                <h3 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-ouro-300">🛒 Ainda comprar</h3>
+                <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-ouro-300">🛒 Ainda comprar</h3>
                 {comprar.map((l) => (
                   <button
                     key={l.chave}
@@ -179,7 +179,7 @@ export function OperacaoDia({
                     className="flex w-full items-center gap-3 rounded-2xl bg-white/10 px-4 py-3.5 text-left ring-1 ring-white/15 transition hover:bg-white/15"
                   >
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/15 text-sm font-bold text-transparent">✓</span>
-                    <span className="min-w-0 flex-1 text-[15px] font-semibold">{l.item}</span>
+                    <span className="min-w-0 flex-1 text-subtitulo font-semibold">{l.item}</span>
                     <span className="shrink-0 text-sm font-bold tabular-nums text-brand-100">
                       {formatarQtd(l.qtd)} {l.unid}
                     </span>
@@ -195,7 +195,7 @@ export function OperacaoDia({
               </Cartao>
             )}
 
-            <p className="text-center text-[11px] text-brand-100/50">
+            <p className="text-center text-caption text-brand-100/50">
               Toque para concluir. Recebimento e compras já atualizam a aba Compras automaticamente.
             </p>
           </>

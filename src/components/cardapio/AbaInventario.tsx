@@ -189,7 +189,7 @@ export function AbaInventario({
 
         {podeEditar && (
           <Cartao className="space-y-2">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-carvao-400">➕ Cadastrar produto</p>
+            <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">➕ Cadastrar produto</p>
             <div className="flex flex-wrap gap-2">
               <input
                 className={`${estiloInput} min-w-0 flex-1`}
@@ -225,7 +225,7 @@ export function AbaInventario({
                 Cadastrar
               </Botao>
             </div>
-            <p className="text-[11px] text-carvao-400">
+            <p className="text-caption text-carvao-400">
               O produto entra no estoque e já aparece na contagem deste mês.
             </p>
           </Cartao>
@@ -267,7 +267,7 @@ export function AbaInventario({
                         )}
                       </div>
                       <div className="flex flex-wrap items-center gap-2 text-sm">
-                        <span className="text-[11px] text-carvao-400">
+                        <span className="text-caption text-carvao-400">
                           esperado <strong>{formatarQtd(it.esperado)}</strong> {it.unid}
                         </span>
                         <label className="flex items-center gap-1">
@@ -308,7 +308,7 @@ export function AbaInventario({
                 </Botao>
               </div>
             )}
-            <p className="text-[11px] text-carvao-400">
+            <p className="text-caption text-carvao-400">
               <strong>Esperado</strong> é o saldo do estoque. <strong>Contado</strong> é o que você encontrou na
               prateleira. As <strong>divergências</strong> grandes (≥20%) ficam em vermelho. Ao finalizar, dá para
               ajustar o estoque para o valor contado.
@@ -319,7 +319,7 @@ export function AbaInventario({
         {/* Histórico */}
         {mesesAnteriores.length > 0 && (
           <div className="space-y-2">
-            <h3 className="text-[11px] font-extrabold uppercase tracking-wider text-carvao-400">Inventários anteriores</h3>
+            <h3 className="text-caption font-extrabold uppercase tracking-wider text-carvao-400">Inventários anteriores</h3>
             <Cartao className="!p-0">
               <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
                 {mesesAnteriores.map((inv) => {

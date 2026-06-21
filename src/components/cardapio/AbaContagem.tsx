@@ -223,7 +223,7 @@ export function AbaContagem({
                 );
               })}
             </div>
-            <div className="mt-4 flex gap-4 text-[11px] text-carvao-400">
+            <div className="mt-4 flex gap-4 text-caption text-carvao-400">
               <span className="flex items-center gap-1"><span className="h-2 w-4 rounded bg-brand-500" />Almoço</span>
               <span className="flex items-center gap-1"><span className="h-2 w-4 rounded bg-ouro-400" />Jantar</span>
               <span className="flex items-center gap-1"><span className="h-2 w-4 rounded bg-[#2d6f8e]" />Marmitas</span>

@@ -135,7 +135,7 @@ export function PrevisaoPresenca({
       }
     >
       <Cartao className="space-y-3">
-        <p className="text-[12px] text-carvao-500 dark:text-areia-200">
+        <p className="text-rotulo text-carvao-500 dark:text-areia-200">
           Aprendi a presença real por dia da semana ({rotuloConf} confiança) e ajustei pela aceitação dos pratos. Veja a
           previsão para esta semana:
         </p>
@@ -149,13 +149,13 @@ export function PrevisaoPresenca({
                 <div className="min-w-0">
                   <span className="text-[10px] font-bold uppercase text-carvao-400">{DIAS_SEMANA[p.dia].slice(0, 3)}</span>{' '}
                   <span className="font-semibold">{p.prevista}</span>{' '}
-                  <span className="text-[11px] text-carvao-400">previstas · plano {p.planejada}</span>
+                  <span className="text-caption text-carvao-400">previstas · plano {p.planejada}</span>
                 </div>
                 {sugerir ? (
                   podeEditar ? (
                     <button
                       onClick={() => aplicarUm(p)}
-                      className="shrink-0 rounded-full bg-brand-600/10 px-2.5 py-1 text-[11px] font-bold text-brand-700 ring-1 ring-brand-600/20 transition hover:bg-brand-600/20 dark:text-brand-300"
+                      className="shrink-0 rounded-full bg-brand-600/10 px-2.5 py-1 text-caption font-bold text-brand-700 ring-1 ring-brand-600/20 transition hover:bg-brand-600/20 dark:text-brand-300"
                     >
                       {delta > 0 ? `▲ ajustar +${delta}` : `▼ ajustar ${delta}`}
                     </button>

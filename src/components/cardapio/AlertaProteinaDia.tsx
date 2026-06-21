@@ -115,7 +115,7 @@ export function AlertaProteinaDia({
               {a.prato} · {a.pessoasPrevistas} pessoas previstas ·{' '}
               {a.estoqueItens.map((e) => `${e.qtd.toFixed(1)} ${e.unid}`).join(', ')} disponível
             </p>
-            <p className="mt-0.5 text-[11px] text-amber-600 dark:text-amber-500">
+            <p className="mt-0.5 text-caption text-amber-600 dark:text-amber-500">
               Estimar ~{(a.pessoasPrevistas * 0.2).toFixed(1)} kg necessário (200g/pessoa)
             </p>
           </div>

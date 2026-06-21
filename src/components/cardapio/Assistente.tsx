@@ -156,7 +156,7 @@ export function Assistente({ contexto }: { contexto: ContextoAssistente }) {
                   <button
                     key={p}
                     onClick={() => perguntar(p)}
-                    className="shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-3 py-1 text-[11px] font-semibold text-brand-700 transition hover:bg-brand-100 dark:bg-carvao-700 dark:text-brand-300"
+                    className="shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-3 py-1 text-caption font-semibold text-brand-700 transition hover:bg-brand-100 dark:bg-carvao-700 dark:text-brand-300"
                   >
                     {p}
                   </button>

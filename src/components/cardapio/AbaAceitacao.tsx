@@ -116,7 +116,7 @@ export function AbaAceitacao({
                 <Cartao key={i} className="flex flex-wrap items-center justify-between gap-3 !py-3">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{d.principal}</p>
-                    <p className="text-[11px] text-carvao-400">
+                    <p className="text-caption text-carvao-400">
                       {DIAS_SEMANA[i]}
                       {(() => {
                         const a = aceitacao[normalizar(d.principal)];
@@ -192,7 +192,7 @@ export function AbaAceitacao({
                 <li key={c.prato} className="flex items-center justify-between gap-3 px-4 py-2.5">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{c.prato}</p>
-                    <p className="text-[11px] text-carvao-400">
+                    <p className="text-caption text-carvao-400">
                       nota {c.media.toFixed(1)} · {formatarQtd(c.sobra)} de sobra
                     </p>
                   </div>
@@ -246,7 +246,7 @@ export function AbaAceitacao({
                   <li key={e.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold">{e.rotulo}</p>
-                      <p className="text-[11px] text-carvao-400">{e.data.split('-').reverse().join('/')}</p>
+                      <p className="text-caption text-carvao-400">{e.data.split('-').reverse().join('/')}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Pilula tom={e.fator < 1 ? 'vermelho' : 'verde'}>

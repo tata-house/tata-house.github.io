@@ -302,14 +302,14 @@ function BuscaGlobal({
             value={termo}
             onChange={(e) => setTermo(e.target.value)}
             placeholder="Buscar cardápio, ingrediente, fornecedor, relatório…"
-            className="flex-1 bg-transparent text-[15px] text-carvao-800 outline-none placeholder:text-carvao-400 dark:text-areia-100"
+            className="flex-1 bg-transparent text-subtitulo text-carvao-800 outline-none placeholder:text-carvao-400 dark:text-areia-100"
           />
           {termo && (
             <button onClick={() => setTermo('')} className="text-carvao-400 hover:text-carvao-600">
               <Icone nome="fechar" tam={16} />
             </button>
           )}
-          <kbd className="hidden rounded bg-carvao-100 px-1.5 py-0.5 text-[11px] font-semibold text-carvao-400 sm:block dark:bg-carvao-700">
+          <kbd className="hidden rounded bg-carvao-100 px-1.5 py-0.5 text-caption font-semibold text-carvao-400 sm:block dark:bg-carvao-700">
             esc
           </kbd>
         </div>
@@ -534,7 +534,7 @@ export default function PaginaCardapios() {
           >
             <Icone nome="busca" tam={14} />
             <span>Buscar…</span>
-            <kbd className="ml-auto text-[11px] font-semibold text-carvao-300 dark:text-carvao-600">⌘K</kbd>
+            <kbd className="ml-auto text-caption font-semibold text-carvao-300 dark:text-carvao-600">⌘K</kbd>
           </button>
 
           {/* Ações do header */}
@@ -748,7 +748,7 @@ export default function PaginaCardapios() {
                   <div className="space-y-6">
                     <div className="flex items-center gap-3">
                       <div className="h-px flex-1 bg-carvao-100 dark:bg-carvao-700" />
-                      <span className="text-xs font-bold uppercase tracking-widest text-carvao-400">
+                      <span className="text-rotulo font-bold text-carvao-500 dark:text-carvao-300">
                         Avaliação da semana
                       </span>
                       <div className="h-px flex-1 bg-carvao-100 dark:bg-carvao-700" />
@@ -1087,7 +1087,7 @@ export default function PaginaCardapios() {
             >
               <span>{rotuloSemana(id)}</span>
               {id === semanaAtualId && (
-                <span className="text-[11px] font-bold text-brand-600 dark:text-brand-400">atual</span>
+                <span className="text-caption font-bold text-brand-600 dark:text-brand-400">atual</span>
               )}
             </button>
           ))}
@@ -1113,7 +1113,7 @@ export default function PaginaCardapios() {
 function SecaoAjuste({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-xs font-bold uppercase tracking-widest text-carvao-400">{titulo}</h2>
+      <h2 className="text-subtitulo font-bold text-carvao-600 dark:text-carvao-300">{titulo}</h2>
       <div className="border-t border-carvao-100 pt-4 dark:border-carvao-800">{children}</div>
     </div>
   );

@@ -149,7 +149,7 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
         {etapa === 'rascunho' && (
           <>
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-carvao-400">Próximo passo</p>
+              <p className="text-xs font-bold text-carvao-400">Próximo passo</p>
               <h2 className="mt-2 font-display text-3xl font-bold text-carvao-900 dark:text-white">
                 Monte o cardápio
               </h2>
@@ -169,7 +169,7 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
         {etapa === 'cozinha' && (
           <>
             <div>
-              <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-ouro-600 dark:text-ouro-400">
+              <p className="flex items-center gap-2 text-xs font-bold text-ouro-600 dark:text-ouro-400">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ouro-500" />
                 Com a cozinha
               </p>
@@ -197,7 +197,7 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
         {etapa === 'compras' && (
           <>
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-carvao-400">Em andamento</p>
+              <p className="text-xs font-bold text-carvao-400">Em andamento</p>
               <h2 className="mt-2 font-display text-3xl font-bold text-carvao-900 dark:text-white">
                 Lista de compras
               </h2>
@@ -217,7 +217,7 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
         {etapa === 'recebimento' && (
           <>
             <div>
-              <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-ouro-600 dark:text-ouro-400">
+              <p className="flex items-center gap-2 text-xs font-bold text-ouro-600 dark:text-ouro-400">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ouro-500" />
                 Aguardando entrega
               </p>
@@ -240,7 +240,7 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
         {etapa === 'concluido' && (
           <>
             <div>
-              <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-600 dark:text-brand-400">
+              <p className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-brand-400">
                 <Icone nome="check" tam={12} />
                 Semana concluída
               </p>

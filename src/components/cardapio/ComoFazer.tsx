@@ -45,7 +45,7 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
         }}
         className={
           className ||
-          'inline-flex items-center gap-1 rounded-full bg-brand-600/10 px-2.5 py-1 text-[11px] font-bold text-brand-700 ring-1 ring-brand-600/20 transition hover:bg-brand-600/20 dark:text-brand-300'
+          'inline-flex items-center gap-1 rounded-full bg-brand-600/10 px-2.5 py-1 text-caption font-bold text-brand-700 ring-1 ring-brand-600/20 transition hover:bg-brand-600/20 dark:text-brand-300'
         }
       >
         👨‍🍳 Como fazer
@@ -71,7 +71,7 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
           {/* Modo de preparo */}
           {passos && passos.length > 0 ? (
             <div className="space-y-2">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-carvao-400">Modo de preparo</p>
+              <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">Modo de preparo</p>
               <ol className="space-y-2">
                 {passos.map((p, i) => (
                   <li key={i} className="flex gap-3 text-sm">
@@ -92,7 +92,7 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
           {/* Ingredientes (por pessoa) */}
           {ingredientes.length > 0 && (
             <div className="space-y-1.5">
-              <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-carvao-400">
+              <p className="flex items-center gap-2 text-caption font-bold uppercase tracking-wider text-carvao-400">
                 Ingredientes <Pilula tom="neutro">por pessoa</Pilula>
               </p>
               <ul className="divide-y divide-carvao-100 rounded-2xl ring-1 ring-carvao-100 dark:divide-carvao-700/60 dark:ring-carvao-700/60">
@@ -100,7 +100,7 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
                   <li key={i} className="flex items-center justify-between gap-3 px-3 py-2 text-sm">
                     <span className="text-carvao-700 dark:text-areia-100">
                       {ing.item}
-                      {ing.opcional && <span className="ml-1 text-[11px] text-carvao-400">(opcional)</span>}
+                      {ing.opcional && <span className="ml-1 text-caption text-carvao-400">(opcional)</span>}
                     </span>
                     <span className="shrink-0 font-semibold tabular-nums text-carvao-500 dark:text-areia-200">
                       {formatarQtd(ing.porPessoa)} {ing.unid}
@@ -108,7 +108,7 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
                   </li>
                 ))}
               </ul>
-              <p className="text-[11px] text-carvao-400">
+              <p className="text-caption text-carvao-400">
                 Quantidades por pessoa — o app multiplica pelo nº de refeições do dia. Temperos a gosto.
               </p>
             </div>
@@ -117,7 +117,7 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
           {/* Nutrição por porção */}
           {nu && (
             <div className="space-y-1.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-carvao-400">Nutrição por porção</p>
+              <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">Nutrição por porção</p>
               <div className="grid grid-cols-3 gap-2">
                 {[
                   ['Calorias', `${nu.kcal} kcal`],
@@ -139,10 +139,10 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
           {/* Substituições */}
           {receita?.substituicoes && receita.substituicoes.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-carvao-400">Substituições</p>
+              <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">Substituições</p>
               <ul className="flex flex-wrap gap-1.5">
                 {receita.substituicoes.map((s, i) => (
-                  <li key={i} className="rounded-full bg-carvao-100 px-2.5 py-1 text-[12px] text-carvao-600 dark:bg-carvao-700 dark:text-areia-200">
+                  <li key={i} className="rounded-full bg-carvao-100 px-2.5 py-1 text-rotulo text-carvao-600 dark:bg-carvao-700 dark:text-areia-200">
                     🔄 {s}
                   </li>
                 ))}
@@ -153,7 +153,7 @@ export function ComoFazer({ prato, className = '' }: { prato: string; className?
           {/* Observação operacional */}
           {receita?.obsOperacional && (
             <div className="rounded-2xl bg-brand-500/8 px-3 py-2.5 ring-1 ring-brand-500/20">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-brand-700 dark:text-brand-300">
+              <p className="text-caption font-bold uppercase tracking-wider text-brand-700 dark:text-brand-300">
                 💡 Dica de produção
               </p>
               <p className="mt-0.5 text-sm text-carvao-700 dark:text-areia-100">{receita.obsOperacional}</p>

@@ -69,7 +69,7 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
       {/* Cabeçalho */}
       <div className="flex items-center justify-between gap-2">
         <p
-          className={`text-[11px] font-extrabold uppercase tracking-[0.2em] ${
+          className={`text-caption font-extrabold uppercase tracking-[0.2em] ${
             alerta ? 'text-perigo' : 'text-brand-600 dark:text-brand-300'
           }`}
         >
@@ -99,15 +99,15 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
       <div className="grid grid-cols-3 gap-2 text-center">
         <div className="rounded-xl bg-brand-500/10 py-2.5">
           <p className="font-display text-xl font-black text-brand-600 dark:text-brand-300">{bom}</p>
-          <p className="text-[11px] font-bold text-brand-600 dark:text-brand-400">😋 Gostei</p>
+          <p className="text-caption font-bold text-brand-600 dark:text-brand-400">😋 Gostei</p>
         </div>
         <div className="rounded-xl bg-ouro-400/10 py-2.5">
           <p className="font-display text-xl font-black text-ouro-600 dark:text-ouro-300">{ok}</p>
-          <p className="text-[11px] font-bold text-ouro-600 dark:text-ouro-400">😐 Ok</p>
+          <p className="text-caption font-bold text-ouro-600 dark:text-ouro-400">😐 Ok</p>
         </div>
         <div className="rounded-xl bg-perigo/10 py-2.5">
           <p className="font-display text-xl font-black text-perigo">{ruim}</p>
-          <p className="text-[11px] font-bold text-perigo">👎 Não gostei</p>
+          <p className="text-caption font-bold text-perigo">👎 Não gostei</p>
         </div>
       </div>
 
@@ -123,7 +123,7 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
 
       {/* Janela dos últimos 30 min */}
       {janela.length > 0 && (
-        <p className="text-[11px] text-carvao-400">
+        <p className="text-caption text-carvao-400">
           Últimos 30 min:{' '}
           <span className="font-semibold text-brand-600 dark:text-brand-300">{janela.filter((v) => v.voto === 'bom').length} 😋</span>
           {' · '}

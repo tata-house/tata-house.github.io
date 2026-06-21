@@ -124,7 +124,7 @@ export function RadarDesperdicio({
           <p className="text-sm font-semibold text-brand-700 dark:text-brand-300">
             ✅ Nenhum risco previsto para os pratos desta semana.
           </p>
-          <p className="text-[11px] text-carvao-400">
+          <p className="text-caption text-carvao-400">
             O radar aprendeu com {padroes.size} prato(s) do histórico. Os pratos planejados não têm padrão de sobra
             relevante.
           </p>
@@ -138,7 +138,7 @@ export function RadarDesperdicio({
                   <span className="text-[10px] font-bold uppercase text-carvao-400">{DIAS_SEMANA[p.dia].slice(0, 3)}</span>{' '}
                   {p.prato}
                 </p>
-                <p className="text-[12px] text-carvao-500 dark:text-areia-200">
+                <p className="text-rotulo text-carvao-500 dark:text-areia-200">
                   Costuma sobrar <strong>~{Math.round(p.taxa * 100)}%</strong> — produza{' '}
                   <strong>~{p.cortePct}% a menos</strong>
                   {custoRef ? <> e evite ~{formatarReais(p.custoEvitado)}</> : null}.
@@ -155,8 +155,8 @@ export function RadarDesperdicio({
 
       {observar.length > 0 && (
         <Cartao className="space-y-1.5 bg-areia-50/60 dark:bg-carvao-900/40">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-carvao-400">👁️ Vigiar quando voltarem</p>
-          <ul className="space-y-1 text-[12px]">
+          <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">👁️ Vigiar quando voltarem</p>
+          <ul className="space-y-1 text-rotulo">
             {observar.map((p) => (
               <li key={p.prato} className="flex items-center justify-between gap-2">
                 <span className="truncate">{p.prato}</span>

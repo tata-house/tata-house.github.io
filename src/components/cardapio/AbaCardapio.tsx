@@ -279,7 +279,7 @@ export function AbaCardapio({
       >
         <span>
           <span className="block text-sm font-extrabold tracking-wide">⚡ Operação do Dia</span>
-          <span className="block text-[11px] text-brand-100">O que produzir, receber e comprar hoje — em um toque.</span>
+          <span className="block text-caption text-brand-100">O que produzir, receber e comprar hoje — em um toque.</span>
         </span>
         <span className="shrink-0 text-lg">→</span>
       </button>
@@ -310,7 +310,7 @@ export function AbaCardapio({
             {podeEditar && (
               <button
                 onClick={() => { setGerarAberto((a) => !a); setFormPersonAberto(false); }}
-                className="flex shrink-0 items-center gap-1.5 rounded-xl border border-carvao-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-carvao-600 transition hover:bg-areia-100 dark:border-carvao-600 dark:bg-carvao-800 dark:text-areia-200"
+                className="flex shrink-0 items-center gap-1.5 rounded-xl border border-carvao-200 bg-white px-3 py-1.5 text-rotulo font-semibold text-carvao-600 transition hover:bg-areia-100 dark:border-carvao-600 dark:bg-carvao-800 dark:text-areia-200"
               >
                 <Icone nome="controles" tam={14} /> Gerar cardápio
               </button>
@@ -349,7 +349,7 @@ export function AbaCardapio({
       {/* Painel de geração — 4 modos */}
       {podeEditar && gerarAberto && (
         <div className="rounded-2xl border border-brand-200 bg-brand-50 p-4 dark:border-brand-900 dark:bg-carvao-900">
-          <p className="mb-3 text-[11px] font-bold uppercase tracking-wide text-brand-700 dark:text-brand-300">Escolha o modo de geração</p>
+          <p className="mb-3 text-caption font-bold uppercase tracking-wide text-brand-700 dark:text-brand-300">Escolha o modo de geração</p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {([
               { id: 'historica', icone: '📅', titulo: 'Antigo', desc: 'Baseado no histórico da operação' },
@@ -364,7 +364,7 @@ export function AbaCardapio({
                 <span className="mt-0.5 text-xl leading-none">{m.icone}</span>
                 <div>
                   <p className="text-sm font-bold text-carvao-800 dark:text-areia-100">{m.titulo}</p>
-                  <p className="text-[11px] text-carvao-500 dark:text-carvao-400">{m.desc}</p>
+                  <p className="text-caption text-carvao-500 dark:text-carvao-400">{m.desc}</p>
                 </div>
               </button>
             ))}
@@ -380,24 +380,24 @@ export function AbaCardapio({
               <span className="mt-0.5 leading-none text-brand-600 dark:text-brand-300"><Icone nome="controles" tam={20} /></span>
               <div>
                 <p className="text-sm font-bold text-brand-800 dark:text-brand-200">Personalizado</p>
-                <p className="text-[11px] text-brand-600 dark:text-brand-400">Eventos, metas, proteínas, custo…</p>
+                <p className="text-caption text-brand-600 dark:text-brand-400">Eventos, metas, proteínas, custo…</p>
               </div>
             </button>
           </div>
 
           {/* Formulário personalizado */}
           {formPersonAberto && <div className="mt-4 space-y-3 border-t border-brand-200 pt-4 dark:border-brand-800">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-brand-700 dark:text-brand-300">Configurar geração personalizada</p>
+            <p className="text-caption font-bold uppercase tracking-wide text-brand-700 dark:text-brand-300">Configurar geração personalizada</p>
 
             {/* Proteínas preferidas */}
             <div>
-              <p className="mb-1 text-[11px] font-semibold text-carvao-500">Proteínas para priorizar</p>
+              <p className="mb-1 text-caption font-semibold text-carvao-500">Proteínas para priorizar</p>
               <div className="flex flex-wrap gap-1.5">
                 {(['bovina', 'frango', 'suína', 'peixe', 'ovo'] as const).map((p) => (
                   <button
                     key={p}
                     onClick={() => toggleProtein('proteinasPrefer', p)}
-                    className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                    className={`rounded-full px-3 py-1 text-caption font-semibold transition ${
                       personalizado.proteinasPrefer.includes(p)
                         ? 'bg-brand-600 text-white'
                         : 'bg-carvao-100 text-carvao-600 hover:bg-carvao-200 dark:bg-carvao-700 dark:text-carvao-300'
@@ -411,13 +411,13 @@ export function AbaCardapio({
 
             {/* Proteínas a evitar */}
             <div>
-              <p className="mb-1 text-[11px] font-semibold text-carvao-500">Proteínas a evitar</p>
+              <p className="mb-1 text-caption font-semibold text-carvao-500">Proteínas a evitar</p>
               <div className="flex flex-wrap gap-1.5">
                 {(['bovina', 'frango', 'suína', 'peixe', 'ovo'] as const).map((p) => (
                   <button
                     key={p}
                     onClick={() => toggleProtein('proteinasEvitar', p)}
-                    className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                    className={`rounded-full px-3 py-1 text-caption font-semibold transition ${
                       personalizado.proteinasEvitar.includes(p)
                         ? 'bg-perigo text-white'
                         : 'bg-carvao-100 text-carvao-600 hover:bg-carvao-200 dark:bg-carvao-700 dark:text-carvao-300'
@@ -432,11 +432,11 @@ export function AbaCardapio({
             <div className="grid grid-cols-2 gap-2">
               {/* Público */}
               <div>
-                <label className="mb-1 block text-[11px] font-semibold text-carvao-500">Público</label>
+                <label className="mb-1 block text-caption font-semibold text-carvao-500">Público</label>
                 <select
                   value={personalizado.publico}
                   onChange={(e) => setPersonalizado((p) => ({ ...p, publico: e.target.value }))}
-                  className="w-full rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-[12px] dark:border-carvao-600 dark:bg-carvao-800"
+                  className="w-full rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-rotulo dark:border-carvao-600 dark:bg-carvao-800"
                 >
                   <option value="">Geral</option>
                   <option value="executivo">Executivo</option>
@@ -446,7 +446,7 @@ export function AbaCardapio({
               </div>
               {/* Limite de custo */}
               <div>
-                <label className="mb-1 block text-[11px] font-semibold text-carvao-500">Limite custo/refeição (R$)</label>
+                <label className="mb-1 block text-caption font-semibold text-carvao-500">Limite custo/refeição (R$)</label>
                 <input
                   type="number"
                   min={0}
@@ -454,44 +454,44 @@ export function AbaCardapio({
                   placeholder="ex: 18,50"
                   value={personalizado.limCusto}
                   onChange={(e) => setPersonalizado((p) => ({ ...p, limCusto: e.target.value }))}
-                  className="w-full rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-[12px] dark:border-carvao-600 dark:bg-carvao-800"
+                  className="w-full rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-rotulo dark:border-carvao-600 dark:bg-carvao-800"
                 />
               </div>
             </div>
 
             {/* Eventos */}
             <div>
-              <label className="mb-1 block text-[11px] font-semibold text-carvao-500">Eventos / datas especiais</label>
+              <label className="mb-1 block text-caption font-semibold text-carvao-500">Eventos / datas especiais</label>
               <input
                 type="text"
                 placeholder="ex: Festa de aniversário na sexta"
                 value={personalizado.eventos}
                 onChange={(e) => setPersonalizado((p) => ({ ...p, eventos: e.target.value }))}
-                className="w-full rounded-xl border border-carvao-200 bg-white px-3 py-1.5 text-[12px] dark:border-carvao-600 dark:bg-carvao-800"
+                className="w-full rounded-xl border border-carvao-200 bg-white px-3 py-1.5 text-rotulo dark:border-carvao-600 dark:bg-carvao-800"
               />
             </div>
 
             {/* Restrições */}
             <div>
-              <label className="mb-1 block text-[11px] font-semibold text-carvao-500">Restrições alimentares do grupo</label>
+              <label className="mb-1 block text-caption font-semibold text-carvao-500">Restrições alimentares do grupo</label>
               <input
                 type="text"
                 placeholder="ex: sem glúten, sem lactose"
                 value={personalizado.restricoes}
                 onChange={(e) => setPersonalizado((p) => ({ ...p, restricoes: e.target.value }))}
-                className="w-full rounded-xl border border-carvao-200 bg-white px-3 py-1.5 text-[12px] dark:border-carvao-600 dark:bg-carvao-800"
+                className="w-full rounded-xl border border-carvao-200 bg-white px-3 py-1.5 text-rotulo dark:border-carvao-600 dark:bg-carvao-800"
               />
             </div>
 
             {/* Regras livres */}
             <div>
-              <label className="mb-1 block text-[11px] font-semibold text-carvao-500">Regras específicas (opcional)</label>
+              <label className="mb-1 block text-caption font-semibold text-carvao-500">Regras específicas (opcional)</label>
               <textarea
                 rows={2}
                 placeholder="ex: Evitar frituras na segunda; priorizar proteína vegetal às quintas"
                 value={personalizado.regras}
                 onChange={(e) => setPersonalizado((p) => ({ ...p, regras: e.target.value }))}
-                className="w-full resize-none rounded-xl border border-carvao-200 bg-white px-3 py-1.5 text-[12px] dark:border-carvao-600 dark:bg-carvao-800"
+                className="w-full resize-none rounded-xl border border-carvao-200 bg-white px-3 py-1.5 text-rotulo dark:border-carvao-600 dark:bg-carvao-800"
               />
             </div>
 
@@ -640,7 +640,7 @@ export function AbaCardapio({
                     )}
                   </p>
                   {fonte === 'estimado' && (
-                    <p className="rounded-xl bg-perigo/10 px-2.5 py-1.5 text-[11px] font-semibold text-perigo ring-1 ring-perigo/20">
+                    <p className="rounded-xl bg-perigo/10 px-2.5 py-1.5 text-caption font-semibold text-perigo ring-1 ring-perigo/20">
                       ⚠️ Este prato não tem receita cadastrada — os ingredientes são um chute. Escolha um prato com
                       receita ou complete os itens na lista de compras.
                     </p>
@@ -675,7 +675,7 @@ export function AbaCardapio({
       {/* Orçamento + itens sem preço */}
       <Cartao className="space-y-3">
         <label className="block">
-          <span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-carvao-400">
+          <span className="mb-1 block text-caption font-bold uppercase tracking-wider text-carvao-400">
             Orçamento da semana (R$)
           </span>
           <input
@@ -704,7 +704,7 @@ export function AbaCardapio({
               {podeEditar && (
                 <Botao
                   variante="secundario"
-                  className="!min-h-8 !px-3 !py-1 text-[11px]"
+                  className="!min-h-8 !px-3 !py-1 text-caption"
                   onClick={() => gerarEstimativas(normsSemana, precos)}
                 >
                   <Icone nome="raio" tam={13} /> Estimar por mercado
@@ -715,7 +715,7 @@ export function AbaCardapio({
               {semPreco.slice(0, 16).map(([norm, s]) => (
                 <span
                   key={norm}
-                  className="flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold ring-1 ring-carvao-200 dark:bg-carvao-800 dark:ring-carvao-600"
+                  className="flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-caption font-semibold ring-1 ring-carvao-200 dark:bg-carvao-800 dark:ring-carvao-600"
                 >
                   {s.item}
                   <span className="text-carvao-400">R$</span>
@@ -729,7 +729,7 @@ export function AbaCardapio({
                       const v = Number(e.target.value);
                       if (v > 0) definirPreco?.(norm, v);
                     }}
-                    className="w-14 rounded-md border border-carvao-200 bg-white px-1 py-0.5 text-right text-[11px] font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
+                    className="w-14 rounded-md border border-carvao-200 bg-white px-1 py-0.5 text-right text-caption font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                   />
                   <span className="text-carvao-400">/{s.unid}</span>
                 </span>
@@ -737,7 +737,7 @@ export function AbaCardapio({
               {semPreco.length > 16 && (
                 <button
                   onClick={() => setCotacaoAberta(true)}
-                  className="self-center text-[11px] font-semibold text-brand-600 underline-offset-2 hover:underline dark:text-brand-300"
+                  className="self-center text-caption font-semibold text-brand-600 underline-offset-2 hover:underline dark:text-brand-300"
                 >
                   +{semPreco.length - 16} na cotação completa ↓
                 </button>

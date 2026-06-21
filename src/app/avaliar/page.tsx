@@ -46,7 +46,7 @@ function BotaoVoto({
       }`}
     >
       <span className="text-3xl">{op.emoji}</span>
-      <span className="text-[11px] font-bold uppercase tracking-wide">{op.rotulo}</span>
+      <span className="text-caption font-bold uppercase tracking-wide">{op.rotulo}</span>
     </button>
   );
 }
@@ -62,7 +62,7 @@ function SecaoAvaliacao({
 }) {
   return (
     <div className="space-y-2">
-      <p className="text-[12px] font-extrabold uppercase tracking-[0.2em] text-brand-200">{titulo}</p>
+      <p className="text-rotulo font-extrabold uppercase tracking-[0.2em] text-brand-200">{titulo}</p>
       <div className="flex gap-2">
         {OPCOES.map((op) => (
           <BotaoVoto
@@ -127,7 +127,7 @@ export default function PaginaAvaliar() {
     <main className="flex min-h-screen flex-col items-center justify-center gap-8 bg-gradient-to-b from-brand-800 via-brand-700 to-brand-900 px-6 py-10 text-center text-white">
       <div className="space-y-1">
         <div className="font-display text-sm font-bold uppercase tracking-[0.4em] text-brand-200">Tatá House</div>
-        <div className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-ouro-300">Diga como foi o almoço</div>
+        <div className="text-caption font-extrabold uppercase tracking-[0.3em] text-ouro-300">Diga como foi o almoço</div>
       </div>
 
       {!pronto ? (
@@ -161,7 +161,7 @@ export default function PaginaAvaliar() {
         <div className="w-full max-w-md space-y-6">
           {/* Cabeçalho do prato */}
           <div className="space-y-1">
-            <p className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-brand-200">
+            <p className="text-caption font-extrabold uppercase tracking-[0.25em] text-brand-200">
               {DIAS_SEMANA[diaIdx]} · prato do dia
             </p>
             <h1 className="font-display text-3xl font-black uppercase leading-tight sm:text-4xl">{prato}</h1>
@@ -178,7 +178,7 @@ export default function PaginaAvaliar() {
 
             {/* Comentário livre */}
             <div className="space-y-2">
-              <p className="text-[12px] font-extrabold uppercase tracking-[0.2em] text-brand-200">
+              <p className="text-rotulo font-extrabold uppercase tracking-[0.2em] text-brand-200">
                 💬 Comentário livre
               </p>
               <textarea

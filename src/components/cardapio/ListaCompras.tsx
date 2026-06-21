@@ -152,7 +152,7 @@ export function ListaCompras({
       </div>
 
       {editando && (
-        <p className="rounded-xl bg-ouro-300/15 px-3 py-2 text-[12px] font-semibold text-ouro-600 ring-1 ring-ouro-400/30">
+        <p className="rounded-xl bg-ouro-300/15 px-3 py-2 text-rotulo font-semibold text-ouro-600 ring-1 ring-ouro-400/30">
           ✏️ Modo edição — ajuste quantidades, troque unidades, remova ou adicione itens. Tudo fica registrado no histórico.
         </p>
       )}
@@ -179,7 +179,7 @@ export function ListaCompras({
                 ) : null}
               </div>
               {servido.length > 0 && (
-                <p className="mt-0.5 text-[11px] text-carvao-500 dark:text-areia-200">
+                <p className="mt-0.5 text-caption text-carvao-500 dark:text-areia-200">
                   <span className="font-semibold">Cardápio:</span> {servido.join(' · ')}
                 </p>
               )}
@@ -258,11 +258,11 @@ export function ListaCompras({
                             defaultValue={obs ?? ''}
                             placeholder="Observação / justificativa (ex.: cozinha pediu mais 5 kg)"
                             onBlur={(e) => onAjuste!(di, l.chave, null, undefined, e.target.value)}
-                            className="mt-2 w-full rounded-lg border border-carvao-200 bg-white px-2 py-1.5 text-[12px] dark:border-carvao-600 dark:bg-carvao-900"
+                            className="mt-2 w-full rounded-lg border border-carvao-200 bg-white px-2 py-1.5 text-rotulo dark:border-carvao-600 dark:bg-carvao-900"
                           />
                         )}
                         {obs && obsAberta !== `${di}:${l.chave}` && (
-                          <p className="mt-1 text-[11px] italic text-carvao-400">📝 {obs}</p>
+                          <p className="mt-1 text-caption italic text-carvao-400">📝 {obs}</p>
                         )}
                       </li>
                     );
@@ -277,7 +277,7 @@ export function ListaCompras({
                         className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-areia-50 disabled:cursor-default dark:hover:bg-carvao-800/40"
                       >
                         <span
-                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border text-[11px] font-bold ${
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border text-caption font-bold ${
                             comprado
                               ? 'border-brand-600 bg-brand-600 text-white'
                               : 'border-carvao-300 text-transparent dark:border-carvao-500'
@@ -295,7 +295,7 @@ export function ListaCompras({
                             {!l.manual && l.fonte === 'fallback' && (
                               <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-carvao-400">est.</span>
                             )}
-                            {obs && <span className="ml-1 text-[11px] italic text-carvao-400">· 📝</span>}
+                            {obs && <span className="ml-1 text-caption italic text-carvao-400">· 📝</span>}
                           </span>
                           {!podeMexerPreco && (fornecedores[l.chave] || precos[l.chave] > 0) && (
                             <span className="mt-0.5 block text-[10px] font-semibold text-brand-600 dark:text-brand-300">
@@ -319,12 +319,12 @@ export function ListaCompras({
                         const editandoForn = addFornDe === `${di}:${l.chave}`;
                         return (
                           <div className="flex flex-wrap items-center gap-1.5 px-4 pb-2.5 pl-12 print:hidden">
-                            <span className="text-[11px]">🏪</span>
+                            <span className="text-caption">🏪</span>
                             {opcoes.length > 0 ? (
                               <select
                                 value={fornecedores[l.chave] ?? ''}
                                 onChange={(e) => escolherFornecedor(l.chave, l.item, e.target.value)}
-                                className="h-7 max-w-[60%] rounded-md border border-carvao-200 bg-white px-1.5 text-[11px] font-semibold text-brand-700 dark:border-carvao-600 dark:bg-carvao-900 dark:text-brand-300"
+                                className="h-7 max-w-[60%] rounded-md border border-carvao-200 bg-white px-1.5 text-caption font-semibold text-brand-700 dark:border-carvao-600 dark:bg-carvao-900 dark:text-brand-300"
                               >
                                 {!fornecedores[l.chave] && <option value="">escolher fornecedor…</option>}
                                 {opcoes.map((o) => (
@@ -334,7 +334,7 @@ export function ListaCompras({
                                 ))}
                               </select>
                             ) : (
-                              <span className="text-[11px] text-carvao-400">sem fornecedor cadastrado</span>
+                              <span className="text-caption text-carvao-400">sem fornecedor cadastrado</span>
                             )}
                             {editandoForn ? (
                               <span className="flex items-center gap-1">
@@ -343,7 +343,7 @@ export function ListaCompras({
                                   value={novoForn}
                                   onChange={(e) => setNovoForn(e.target.value)}
                                   placeholder="fornecedor"
-                                  className="h-7 w-24 rounded-md border border-carvao-200 bg-white px-1.5 text-[11px] dark:border-carvao-600 dark:bg-carvao-900"
+                                  className="h-7 w-24 rounded-md border border-carvao-200 bg-white px-1.5 text-caption dark:border-carvao-600 dark:bg-carvao-900"
                                 />
                                 <span className="text-[10px] text-carvao-400">R$</span>
                                 <input
@@ -354,7 +354,7 @@ export function ListaCompras({
                                   value={novoPreco}
                                   onChange={(e) => setNovoPreco(e.target.value)}
                                   placeholder="0,00"
-                                  className="h-7 w-16 rounded-md border border-carvao-200 bg-white px-1.5 text-right text-[11px] font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
+                                  className="h-7 w-16 rounded-md border border-carvao-200 bg-white px-1.5 text-right text-caption font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                                 />
                                 <button
                                   onClick={() => salvarNovoForn(l.chave, l.item)}
@@ -374,7 +374,7 @@ export function ListaCompras({
                             ) : (
                               <button
                                 onClick={() => { setAddFornDe(`${di}:${l.chave}`); setNovoForn(''); setNovoPreco(''); }}
-                                className="flex items-center gap-0.5 rounded-md px-1.5 py-1 text-[11px] font-semibold text-brand-600 hover:bg-brand-50 dark:text-brand-300 dark:hover:bg-carvao-800"
+                                className="flex items-center gap-0.5 rounded-md px-1.5 py-1 text-caption font-semibold text-brand-600 hover:bg-brand-50 dark:text-brand-300 dark:hover:bg-carvao-800"
                               >
                                 <Icone nome="somar" tam={12} /> outro
                               </button>

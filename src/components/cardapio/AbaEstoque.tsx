@@ -98,7 +98,7 @@ export function AbaEstoque({
       >
         <span>
           <span className="block text-sm font-extrabold text-brand-700 dark:text-brand-300">📋 Inventário mensal</span>
-          <span className="block text-[11px] text-carvao-500 dark:text-areia-200">
+          <span className="block text-caption text-carvao-500 dark:text-areia-200">
             Conte o estoque do mês e veja as divergências (esperado × contado).
           </span>
         </span>
@@ -119,7 +119,7 @@ export function AbaEstoque({
                 <li key={n.norm} className="flex items-center justify-between gap-3 px-4 py-2.5">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{n.item}</p>
-                    <p className="text-[11px] text-carvao-400">
+                    <p className="text-caption text-carvao-400">
                       precisa {formatarQtd(n.qtd)} {n.unid} · em estoque {formatarQtd(n.emEstoque)} {n.unid}
                     </p>
                   </div>
@@ -207,7 +207,7 @@ export function AbaEstoque({
                         {e.item}
                         {baixo && <Pilula tom="vermelho">baixo</Pilula>}
                       </p>
-                      <p className="text-[11px] text-carvao-400">unidade: {e.unid}</p>
+                      <p className="text-caption text-carvao-400">unidade: {e.unid}</p>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <label className="flex items-center gap-1">

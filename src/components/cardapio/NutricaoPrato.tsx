@@ -55,7 +55,7 @@ export function NutricaoPrato({ prato }: { prato: string }) {
           {info.porcao !== '—' && <span className="font-bold text-carvao-400">· {info.porcao}</span>}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className={`flex items-center gap-1 rounded-full bg-white px-2.5 py-0.5 text-[11px] font-black ring-1 ring-carvao-100 dark:bg-carvao-800 dark:ring-carvao-700 ${idx.cor}`}>
+          <span className={`flex items-center gap-1 rounded-full bg-white px-2.5 py-0.5 text-caption font-black ring-1 ring-carvao-100 dark:bg-carvao-800 dark:ring-carvao-700 ${idx.cor}`}>
             {info.indiceSaudavel}% {idx.texto}
           </span>
           <Icone nome="baixo" tam={14} className={`text-carvao-400 transition-transform ${aberto ? 'rotate-180' : ''}`} />
@@ -74,7 +74,7 @@ export function NutricaoPrato({ prato }: { prato: string }) {
         {macros.map(([rot, val]) => (
           <div key={rot} className="rounded-lg bg-white px-1 py-1 text-center ring-1 ring-carvao-100 dark:bg-carvao-800 dark:ring-carvao-700/60">
             <p className="text-[8px] font-bold uppercase leading-tight text-carvao-400">{rot}</p>
-            <p className="text-[12px] font-black leading-tight tabular-nums text-carvao-700 dark:text-areia-100">{val}</p>
+            <p className="text-rotulo font-black leading-tight tabular-nums text-carvao-700 dark:text-areia-100">{val}</p>
           </div>
         ))}
       </div>

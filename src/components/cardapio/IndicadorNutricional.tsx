@@ -43,12 +43,12 @@ export function IndicadorNutricional({ dias }: { dias: DiaCardapio[] }) {
     <div className="space-y-3 rounded-2xl bg-carvao-50 p-4 ring-1 ring-carvao-200 dark:bg-carvao-900/60 dark:ring-carvao-700/60">
       {/* Cabeçalho */}
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-carvao-400">
+        <p className="text-caption font-extrabold uppercase tracking-[0.2em] text-carvao-400">
           🥗 Índice Nutricional Tata House
         </p>
         <div className={`flex items-center gap-2 rounded-full px-3 py-1 ring-1 ${corScore.anel} bg-white dark:bg-carvao-800`}>
           <span className={`text-[13px] font-black ${corScore.texto}`}>{score}%</span>
-          <span className={`text-[11px] font-bold ${corScore.texto}`}>{rotulo}</span>
+          <span className={`text-caption font-bold ${corScore.texto}`}>{rotulo}</span>
         </div>
       </div>
 
@@ -81,7 +81,7 @@ export function IndicadorNutricional({ dias }: { dias: DiaCardapio[] }) {
       {detalhes.length > 0 && (
         <ul className="space-y-1">
           {detalhes.map((d, i) => (
-            <li key={i} className="flex items-start gap-1.5 text-[11px] text-carvao-500 dark:text-carvao-300">
+            <li key={i} className="flex items-start gap-1.5 text-caption text-carvao-500 dark:text-carvao-300">
               <span className="shrink-0 text-[10px]">•</span>
               {d}
             </li>

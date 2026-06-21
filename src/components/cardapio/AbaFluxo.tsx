@@ -131,7 +131,7 @@ export function AbaFluxo({
         ].map((c) => (
           <Cartao key={c.rotulo} className="!p-4 text-center">
             <div className="font-display text-2xl font-bold">{c.valor}</div>
-            <div className="text-[11px] font-bold uppercase tracking-wider text-carvao-400">{c.rotulo}</div>
+            <div className="text-caption font-bold uppercase tracking-wider text-carvao-400">{c.rotulo}</div>
           </Cartao>
         ))}
       </div>
@@ -249,7 +249,7 @@ export function AbaFluxo({
               style={{ width: `${pctCusto}%`, backgroundColor: corMeta }}
             />
           </div>
-          <p className="text-[11px] text-carvao-400">
+          <p className="text-caption text-carvao-400">
             {estado.orcamento
               ? 'Meta informada pelo setor de compras.'
               : 'Meta derivada de R$ 15.000/mês (≈ 4,33 semanas). Defina o orçamento da semana na aba Cardápio para ajustar.'}
@@ -273,7 +273,7 @@ export function AbaFluxo({
           {irPara && (
             <button
               onClick={() => irPara('compras')}
-              className="mt-2 rounded-full bg-carvao-100 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-carvao-600 hover:bg-carvao-200 dark:bg-carvao-700 dark:text-carvao-300"
+              className="mt-2 rounded-full bg-carvao-100 px-3 py-1.5 text-caption font-bold uppercase tracking-wide text-carvao-600 hover:bg-carvao-200 dark:bg-carvao-700 dark:text-carvao-300"
             >
               Ir para Preços →
             </button>
@@ -303,7 +303,7 @@ export function AbaFluxo({
 
       {/* Observações da cozinha */}
       <Cartao>
-        <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-carvao-400">
+        <label className="mb-1 block text-caption font-bold uppercase tracking-wider text-carvao-400">
           Observações da cozinha
         </label>
         <textarea

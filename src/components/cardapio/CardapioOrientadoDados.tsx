@@ -152,7 +152,7 @@ export function CardapioOrientadoDados({
                     <p className="text-xs text-carvao-400">
                       Hoje: {fmt(p.atual)} · Projetado: {fmt(p.projecao4s)} em 4 semanas
                     </p>
-                    <p className="text-[11px] text-carvao-400">
+                    <p className="text-caption text-carvao-400">
                       Confiança: {Math.round(p.confianca * 100)}% · {p.pontos} pontos de histórico
                     </p>
                   </div>
@@ -195,7 +195,7 @@ export function CardapioOrientadoDados({
                 </div>
                 <p className="mt-2 text-xs text-carvao-500">{s.motivo}</p>
                 {s.economiaEstimadaDia > 0 && (
-                  <p className="mt-1 text-[11px] font-semibold text-brand-600 dark:text-brand-400">
+                  <p className="mt-1 text-caption font-semibold text-brand-600 dark:text-brand-400">
                     Economia estimada: {fmt(s.economiaEstimadaDia)}/dia
                   </p>
                 )}
@@ -278,7 +278,7 @@ export function CardapioOrientadoDados({
                     <p className="truncate text-sm font-semibold text-carvao-800 dark:text-areia-100">
                       {p.prato}
                     </p>
-                    <p className="text-[11px] text-carvao-400">
+                    <p className="text-caption text-carvao-400">
                       servido {p.totalServido}× no histórico
                       {p.nota !== null ? ` · ${p.nota.toFixed(1)}★ aceitação` : ' · sem avaliação ainda'}
                     </p>
@@ -301,7 +301,7 @@ export function CardapioOrientadoDados({
               ))}
             </ul>
           </Cartao>
-          <p className="mt-2 text-[11px] text-carvao-400 text-center">
+          <p className="mt-2 text-caption text-carvao-400 text-center">
             Frequência de todos os anos de operação registrados · Avaliações acumulam conforme a equipe registra
           </p>
         </Secao>

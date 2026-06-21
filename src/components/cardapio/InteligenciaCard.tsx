@@ -120,7 +120,7 @@ export function InteligenciaCard(props: Props) {
               {dna.proteinasPreferidas.map((p) => (
                 <span
                   key={p.rotulo}
-                  className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-carvao-600 ring-1 ring-carvao-200 dark:bg-carvao-700 dark:text-areia-200 dark:ring-carvao-600"
+                  className="rounded-full bg-white px-2 py-0.5 text-caption font-semibold text-carvao-600 ring-1 ring-carvao-200 dark:bg-carvao-700 dark:text-areia-200 dark:ring-carvao-600"
                 >
                   {p.rotulo} {p.pct}%{p.nota !== null ? ` · ${p.nota}★` : ''}
                 </span>
@@ -139,8 +139,8 @@ export function InteligenciaCard(props: Props) {
           <div className="space-y-1.5">
             {comResultado.map((a) => (
               <div key={a.id} className="rounded-xl bg-white px-3 py-2 ring-1 ring-carvao-100 dark:bg-carvao-850 dark:ring-carvao-700">
-                <p className="truncate text-[12px] font-medium text-carvao-700 dark:text-areia-200">{a.descricao}</p>
-                <p className={`text-[11px] font-semibold ${COR_AVALIACAO[a.resultado!.avaliacao]}`}>
+                <p className="truncate text-rotulo font-medium text-carvao-700 dark:text-areia-200">{a.descricao}</p>
+                <p className={`text-caption font-semibold ${COR_AVALIACAO[a.resultado!.avaliacao]}`}>
                   {rotuloResultado(a.resultado!, a.metrica)}
                 </p>
               </div>
@@ -191,12 +191,12 @@ export function InteligenciaCard(props: Props) {
               const jaComprometido = idsDaDescricao.has(a.acao);
               return (
                 <li key={i} className="flex items-start gap-2.5 rounded-xl bg-white p-2.5 ring-1 ring-carvao-100 dark:bg-carvao-850 dark:ring-carvao-700">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-[11px] font-bold text-white mt-0.5">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-caption font-bold text-white mt-0.5">
                     {a.prioridade}
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-[13px] font-medium text-carvao-800 dark:text-areia-100">{a.acao}</p>
-                    <p className="mt-0.5 text-[11px] text-carvao-400 dark:text-areia-400">
+                    <p className="mt-0.5 text-caption text-carvao-400 dark:text-areia-400">
                       {a.base}
                       {a.impactoReais ? ` · economia ~${fmtReais(a.impactoReais)}` : ''}
                     </p>
@@ -207,7 +207,7 @@ export function InteligenciaCard(props: Props) {
                     <button
                       onClick={() => handleComprometer(a)}
                       title="Vou fazer isso esta semana"
-                      className="mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold text-brand-600 ring-1 ring-brand-400/40 hover:bg-brand-50 dark:text-brand-400 dark:ring-brand-500/30 dark:hover:bg-brand-900/20 transition"
+                      className="mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-caption font-bold text-brand-600 ring-1 ring-brand-400/40 hover:bg-brand-50 dark:text-brand-400 dark:ring-brand-500/30 dark:hover:bg-brand-900/20 transition"
                     >
                       📌 Vou fazer
                     </button>
@@ -232,7 +232,7 @@ export function InteligenciaCard(props: Props) {
           </p>
           <ul className="space-y-1">
             {ativasSemana.map((a) => (
-              <li key={a.id} className="text-[12px] text-carvao-700 dark:text-areia-200">
+              <li key={a.id} className="text-rotulo text-carvao-700 dark:text-areia-200">
                 · {a.descricao}
               </li>
             ))}

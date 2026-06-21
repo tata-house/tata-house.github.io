@@ -49,7 +49,7 @@ export function AbaAuditoria({ papel }: { papel: Papel }) {
           <table className="w-full min-w-[640px] border-collapse text-sm">
             <thead>
               <tr className="border-b border-carvao-100 dark:border-carvao-700/60">
-                <th className="px-3 py-2.5 text-left text-[11px] font-extrabold uppercase tracking-wider text-carvao-400">Papel</th>
+                <th className="px-3 py-2.5 text-left text-caption font-extrabold uppercase tracking-wider text-carvao-400">Papel</th>
                 {PERMISSOES.map((p) => (
                   <th key={p.id} className="px-2 py-2.5 text-center text-[10px] font-bold uppercase text-carvao-400">
                     {p.rotulo}
@@ -86,7 +86,7 @@ export function AbaAuditoria({ papel }: { papel: Papel }) {
         titulo="🛡️ Trilha de auditoria"
         acao={
           registros.length > 0 && (
-            <Botao variante="secundario" className="!min-h-9 !px-3 !py-1.5 !text-[11px]" onClick={limpar}>
+            <Botao variante="secundario" className="!min-h-9 !px-3 !py-1.5 !text-caption" onClick={limpar}>
               Limpar
             </Botao>
           )
@@ -104,7 +104,7 @@ export function AbaAuditoria({ papel }: { papel: Papel }) {
                       <span className="font-semibold">{r.acao}</span>{' '}
                       <span className="text-carvao-500 dark:text-areia-200">· {r.alvo}</span>
                     </p>
-                    <p className="text-[11px] text-carvao-400">
+                    <p className="text-caption text-carvao-400">
                       {(r.de !== undefined || r.para !== undefined) && (
                         <>
                           {fmt(r.de)} → <strong>{fmt(r.para)}</strong> ·{' '}

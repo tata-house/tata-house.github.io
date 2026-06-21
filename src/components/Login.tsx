@@ -34,7 +34,7 @@ export function Login() {
         <div className="mb-8 text-center">
           <div className="mx-auto mb-3 h-1.5 w-16 rounded-full bg-gradient-to-r from-ouro-300 to-ouro-500" />
           <h1 className="font-display text-3xl font-black tracking-[0.18em]">TATÁ&nbsp;HOUSE</h1>
-          <p className="mt-1 text-[11px] font-extrabold uppercase tracking-[0.3em] text-ouro-300">
+          <p className="mt-1 text-caption font-extrabold uppercase tracking-[0.3em] text-ouro-300">
             Refeitório do Tatá Sushi
           </p>
         </div>
@@ -54,8 +54,8 @@ export function Login() {
               >
                 <span className="text-2xl">{p.icone}</span>
                 <span className="min-w-0">
-                  <span className="block text-[15px] font-bold">{p.rotulo}</span>
-                  <span className="block text-[11px] leading-tight text-brand-100/80">{p.descricao}</span>
+                  <span className="block text-subtitulo font-bold">{p.rotulo}</span>
+                  <span className="block text-caption leading-tight text-brand-100/80">{p.descricao}</span>
                 </span>
               </button>
             ))}
@@ -71,9 +71,9 @@ export function Login() {
             <div className="rounded-2xl bg-white/10 px-4 py-4 ring-1 ring-white/15">
               <div className="mb-3 flex items-center gap-3">
                 <span className="text-2xl">{perfil.icone}</span>
-                <span className="text-[15px] font-bold">{perfil.rotulo}</span>
+                <span className="text-subtitulo font-bold">{perfil.rotulo}</span>
               </div>
-              <label className="block text-[11px] font-bold uppercase tracking-wide text-brand-100/80">PIN de acesso</label>
+              <label className="block text-caption font-bold uppercase tracking-wide text-brand-100/80">PIN de acesso</label>
               <input
                 autoFocus
                 type="password"

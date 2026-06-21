@@ -294,7 +294,7 @@ export function AbaFornecedorIntel({
                       <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-carvao-400">Itens fornecidos</p>
                       <div className="flex flex-wrap gap-1.5">
                         {itens.slice(0, 12).map((it) => (
-                          <span key={it} className="rounded-full bg-carvao-100 px-2 py-0.5 text-[11px] font-semibold text-carvao-600 dark:bg-carvao-700 dark:text-carvao-300">
+                          <span key={it} className="rounded-full bg-carvao-100 px-2 py-0.5 text-caption font-semibold text-carvao-600 dark:bg-carvao-700 dark:text-carvao-300">
                             {it} {precos[it] ? `· R$ ${precos[it].toFixed(2)}` : ''}
                           </span>
                         ))}

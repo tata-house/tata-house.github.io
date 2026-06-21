@@ -69,7 +69,7 @@ export function AbaRadar({
               <li key={r.norm} className="flex items-center justify-between gap-3 px-4 py-2.5">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold">{r.item}</p>
-                  <p className="text-[11px] text-carvao-400">
+                  <p className="text-caption text-carvao-400">
                     {formatarReais(r.atual)}/{r.unid}
                     {r.fornecedor && <span className="text-brand-600"> · ↓ {r.fornecedor}</span>}
                   </p>

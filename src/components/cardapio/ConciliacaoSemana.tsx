@@ -136,7 +136,7 @@ export function ConciliacaoSemana({
 
   return (
     <div className="space-y-4 rounded-2xl bg-carvao-50 p-4 ring-1 ring-carvao-200 dark:bg-carvao-900/60 dark:ring-carvao-700/60">
-      <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-carvao-400">
+      <p className="text-caption font-extrabold uppercase tracking-[0.2em] text-carvao-400">
         🔍 Conciliação automática
       </p>
 
@@ -153,7 +153,7 @@ export function ConciliacaoSemana({
               <p className={`text-[13px] font-semibold ${alertaCustoIrreal.tipo === 'baixo' ? 'text-blue-700 dark:text-blue-300' : 'text-perigo'}`}>
                 Custo por refeição {alertaCustoIrreal.tipo === 'baixo' ? 'muito baixo' : 'muito alto'}
               </p>
-              <p className="text-[11px] text-carvao-400">
+              <p className="text-caption text-carvao-400">
                 Média calculada: {formatarReais(alertaCustoIrreal.valor)}/refeição —{' '}
                 {alertaCustoIrreal.tipo === 'baixo'
                   ? `abaixo de ${formatarReais(CUSTO_MIN_POR_REFEICAO)}. Verifique se os preços dos principais itens foram cadastrados.`
@@ -175,11 +175,11 @@ export function ConciliacaoSemana({
             <div key={i} className="flex items-center gap-3 rounded-xl bg-ouro-300/10 px-3 py-2.5 ring-1 ring-ouro-400/25">
               <div className="min-w-0 flex-1">
                 <p className="text-[13px] font-semibold leading-tight">{a.item}</p>
-                <p className="text-[11px] text-carvao-400">
+                <p className="text-caption text-carvao-400">
                   Cotado {formatarReais(a.atual)}/{a.unid} · média recente {formatarReais(a.medio)}/{a.unid}
                 </p>
               </div>
-              <span className="shrink-0 rounded-full bg-ouro-400/25 px-2.5 py-1 text-[11px] font-black text-ouro-700 dark:text-ouro-300">
+              <span className="shrink-0 rounded-full bg-ouro-400/25 px-2.5 py-1 text-caption font-black text-ouro-700 dark:text-ouro-300">
                 +{Math.round(a.variacao * 100)}%
               </span>
             </div>
@@ -201,18 +201,18 @@ export function ConciliacaoSemana({
             >
               <div className="min-w-0 flex-1">
                 <p className="text-[13px] font-semibold leading-tight">{a.item}</p>
-                <p className="text-[11px] text-carvao-400">
+                <p className="text-caption text-carvao-400">
                   Necessário {formatarQtd(a.necessario)} {a.unid} · comprado {formatarQtd(a.comprado)} {a.unid}
                   {a.custoExcesso > 0 && <> · excesso ≈ {formatarReais(a.custoExcesso)}</>}
                 </p>
               </div>
-              <span className="shrink-0 rounded-full bg-perigo/10 px-2.5 py-1 text-[11px] font-black text-perigo">
+              <span className="shrink-0 rounded-full bg-perigo/10 px-2.5 py-1 text-caption font-black text-perigo">
                 +{formatarQtd(a.excesso)} {a.unid}
               </span>
             </div>
           ))}
           {custoExcessoTotal > 0 && (
-            <p className="text-right text-[11px] font-bold text-perigo">
+            <p className="text-right text-caption font-bold text-perigo">
               Custo total do excesso ≈ {formatarReais(custoExcessoTotal)}
             </p>
           )}

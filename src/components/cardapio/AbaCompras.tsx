@@ -270,7 +270,7 @@ export function AbaCompras({
       <div className="flex items-center justify-end print:hidden">
         <button
           onClick={() => setMostrarBasicos(!mostrarBasicos)}
-          className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide ring-1 transition ${
+          className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-caption font-bold uppercase tracking-wide ring-1 transition ${
             mostrarBasicos
               ? 'bg-ouro-300/20 text-ouro-700 ring-ouro-400/40 hover:bg-ouro-300/30 dark:text-ouro-300'
               : 'bg-carvao-100/60 text-carvao-400 ring-carvao-200/60 hover:bg-carvao-100 dark:bg-carvao-800/60 dark:ring-carvao-700/60'
@@ -311,7 +311,7 @@ export function AbaCompras({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="font-display text-lg font-semibold">📑 Notas fiscais</h3>
             {(podeComprar || podeReceber) && (
-              <label className="cursor-pointer rounded-full bg-ouro-300/20 px-3.5 py-2 text-[11px] font-bold uppercase tracking-wide text-ouro-600 ring-1 ring-ouro-400/40 hover:bg-ouro-300/30">
+              <label className="cursor-pointer rounded-full bg-ouro-300/20 px-3.5 py-2 text-caption font-bold uppercase tracking-wide text-ouro-600 ring-1 ring-ouro-400/40 hover:bg-ouro-300/30">
                 📸 Foto da nota fiscal
                 <input
                   type="file"
@@ -333,12 +333,12 @@ export function AbaCompras({
             )}
           </div>
           {emailStatus === 'ok' && (
-            <p className="rounded-xl bg-brand-500/10 px-3 py-2 text-[12px] font-bold text-brand-700 ring-1 ring-brand-500/30">
+            <p className="rounded-xl bg-brand-500/10 px-3 py-2 text-rotulo font-bold text-brand-700 ring-1 ring-brand-500/30">
               ✉️ E-mail enviado para compras@tatasushi.com.br
             </p>
           )}
           {emailStatus === 'erro' && (
-            <p className="rounded-xl bg-perigo/10 px-3 py-2 text-[12px] font-bold text-perigo ring-1 ring-perigo/25">
+            <p className="rounded-xl bg-perigo/10 px-3 py-2 text-rotulo font-bold text-perigo ring-1 ring-perigo/25">
               ⚠️ Falha no envio do e-mail — verifique a configuração RESEND_API_KEY na Vercel.
             </p>
           )}
@@ -359,7 +359,7 @@ export function AbaCompras({
                     <img src={n.foto} alt="Nota fiscal" className="h-14 w-14 rounded-xl object-cover ring-2 ring-brand-500/50" />
                   </a>
                   <span>
-                    <span className="block text-[11px] font-bold uppercase text-brand-600">
+                    <span className="block text-caption font-bold uppercase text-brand-600">
                       {n.dias.map((d) => DIAS_SEMANA[d].slice(0, 3)).join(' · ')}
                     </span>
                     <span className="block text-[10px] text-carvao-400">
@@ -444,12 +444,12 @@ export function AbaCompras({
                   value={fornecedorNota}
                   onChange={(e) => setFornecedorNota(e.target.value)}
                 />
-                <p className="text-[12px] font-semibold text-carvao-500">Itens da nota — preencha o que estiver na nota fiscal:</p>
+                <p className="text-rotulo font-semibold text-carvao-500">Itens da nota — preencha o que estiver na nota fiscal:</p>
                 <div className="max-h-60 space-y-2 overflow-y-auto">
                   {itensNota.map((item, idx) => (
                     <div key={idx} className="grid grid-cols-12 gap-1.5 rounded-xl bg-areia-50 p-2 ring-1 ring-carvao-100 dark:bg-carvao-800/60">
                       <input
-                        className="col-span-5 rounded-lg border border-carvao-200 bg-white px-2 py-1 text-[12px] dark:border-carvao-600 dark:bg-carvao-900"
+                        className="col-span-5 rounded-lg border border-carvao-200 bg-white px-2 py-1 text-rotulo dark:border-carvao-600 dark:bg-carvao-900"
                         placeholder="Produto"
                         value={item.produto}
                         onChange={(e) => {
@@ -464,7 +464,7 @@ export function AbaCompras({
                       </datalist>
                       <input
                         type="number" min={0} step="0.1"
-                        className="col-span-2 rounded-lg border border-carvao-200 bg-white px-1 py-1 text-center text-[12px] dark:border-carvao-600 dark:bg-carvao-900"
+                        className="col-span-2 rounded-lg border border-carvao-200 bg-white px-1 py-1 text-center text-rotulo dark:border-carvao-600 dark:bg-carvao-900"
                         placeholder="Qtd"
                         value={item.qtd}
                         onChange={(e) => {
@@ -474,7 +474,7 @@ export function AbaCompras({
                         }}
                       />
                       <select
-                        className="col-span-2 rounded-lg border border-carvao-200 bg-white px-1 py-1 text-[11px] dark:border-carvao-600 dark:bg-carvao-900"
+                        className="col-span-2 rounded-lg border border-carvao-200 bg-white px-1 py-1 text-caption dark:border-carvao-600 dark:bg-carvao-900"
                         value={item.unid}
                         onChange={(e) => {
                           const n = [...itensNota];
@@ -486,7 +486,7 @@ export function AbaCompras({
                       </select>
                       <input
                         type="number" min={0} step="0.01"
-                        className="col-span-2 rounded-lg border border-carvao-200 bg-white px-1 py-1 text-right text-[12px] dark:border-carvao-600 dark:bg-carvao-900"
+                        className="col-span-2 rounded-lg border border-carvao-200 bg-white px-1 py-1 text-right text-rotulo dark:border-carvao-600 dark:bg-carvao-900"
                         placeholder="R$/u"
                         value={item.precoUnit}
                         onChange={(e) => {
@@ -601,7 +601,7 @@ export function AbaCompras({
                 {podeComprar && compradas < linhas.length && (
                   <button
                     onClick={() => comprarTudo(di)}
-                    className="flex items-center gap-1.5 rounded-full bg-carvao-900 px-3 py-1.5 text-[12px] font-bold text-white dark:bg-areia-100 dark:text-carvao-900"
+                    className="flex items-center gap-1.5 rounded-full bg-carvao-900 px-3 py-1.5 text-rotulo font-bold text-white dark:bg-areia-100 dark:text-carvao-900"
                   >
                     <Icone nome="check" tam={15} /> Comprar tudo
                   </button>
@@ -609,7 +609,7 @@ export function AbaCompras({
                 {podeReceber && compradas > 0 && recebidas < compradas && (
                   <button
                     onClick={() => receberTudo(di)}
-                    className="flex items-center gap-1.5 rounded-full bg-brand-600 px-3 py-1.5 text-[12px] font-bold text-white hover:bg-brand-700"
+                    className="flex items-center gap-1.5 rounded-full bg-brand-600 px-3 py-1.5 text-rotulo font-bold text-white hover:bg-brand-700"
                   >
                     <Icone nome="compras" tam={15} /> Receber tudo
                   </button>
@@ -662,7 +662,7 @@ export function AbaCompras({
                                   const v = e.target.value;
                                   definirPreco!(l.chave, v === '' ? null : Number(v), l.item);
                                 }}
-                                className="h-7 w-16 rounded-md border border-carvao-200 bg-white px-1.5 text-right text-[11px] font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
+                                className="h-7 w-16 rounded-md border border-carvao-200 bg-white px-1.5 text-right text-caption font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                               />
                               <span className="text-[10px] text-carvao-400">/{l.unid}</span>
                               <input
@@ -671,7 +671,7 @@ export function AbaCompras({
                                 placeholder="fornecedor"
                                 title="Fornecedor mais barato deste item"
                                 onBlur={(e) => definirFornecedor?.(l.chave, e.target.value.trim() || null)}
-                                className="h-7 w-28 rounded-md border border-carvao-200 bg-white px-2 text-[11px] dark:border-carvao-600 dark:bg-carvao-900"
+                                className="h-7 w-28 rounded-md border border-carvao-200 bg-white px-2 text-caption dark:border-carvao-600 dark:bg-carvao-900"
                               />
                             </div>
                           ) : (
@@ -726,12 +726,12 @@ export function AbaCompras({
                             placeholder="Observação (ex: fornecedor preferencial, ajuste manual...)"
                             value={estado.ajustes[di]?.[l.chave]?.obs ?? ''}
                             onChange={(e) => setAjuste(di, l.chave, null, undefined, e.target.value)}
-                            className="w-full rounded-lg border border-carvao-100 bg-white/60 px-2 py-1 text-[11px] text-carvao-500 placeholder-carvao-300 dark:border-carvao-700/60 dark:bg-carvao-900/40 print:hidden"
+                            className="w-full rounded-lg border border-carvao-100 bg-white/60 px-2 py-1 text-caption text-carvao-500 placeholder-carvao-300 dark:border-carvao-700/60 dark:bg-carvao-900/40 print:hidden"
                           />
                         </div>
                       )}
                       {!podeAjustarQtd && estado.ajustes[di]?.[l.chave]?.obs && (
-                        <p className="mt-1 text-[11px] italic text-carvao-400">
+                        <p className="mt-1 text-caption italic text-carvao-400">
                           📝 {estado.ajustes[di][l.chave].obs}
                         </p>
                       )}
@@ -745,7 +745,7 @@ export function AbaCompras({
                             <div className="space-y-1">
                               <span className="text-xs font-bold text-brand-600">✓ {ddmm(l.status.compradoEm)}</span>
                               {podeComprar ? (
-                                <div className="flex items-center gap-1 text-[11px]">
+                                <div className="flex items-center gap-1 text-caption">
                                   <input
                                     type="number"
                                     min={0}
@@ -786,7 +786,7 @@ export function AbaCompras({
                           ) : podeComprar ? (
                             <button
                               onClick={() => setStatus(di, l.chave, { compradoEm: hojeIso(), compradoQtd: l.qtd })}
-                              className="w-full rounded-lg bg-carvao-900 px-2 py-1.5 text-[11px] font-bold text-white dark:bg-areia-100 dark:text-carvao-900 print:hidden"
+                              className="w-full rounded-lg bg-carvao-900 px-2 py-1.5 text-caption font-bold text-white dark:bg-areia-100 dark:text-carvao-900 print:hidden"
                             >
                               Marcar
                             </button>
@@ -826,7 +826,7 @@ export function AbaCompras({
                                   value={l.status.recebidoQtd ?? ''}
                                   title="Quantidade conferida no recebimento"
                                   onChange={(e) => setStatus(di, l.chave, { recebidoQtd: Number(e.target.value) })}
-                                  className="block h-8 w-12 rounded-md border border-carvao-200 bg-white px-1 text-center text-[11px] font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
+                                  className="block h-8 w-12 rounded-md border border-carvao-200 bg-white px-1 text-center text-caption font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                                 />
                               )}
                               {veioMenos && (
@@ -838,7 +838,7 @@ export function AbaCompras({
                           ) : podeReceber && l.status.compradoEm ? (
                             <button
                               onClick={() => setStatus(di, l.chave, { recebidoOk: true, recebidoQtd: l.status.compradoQtd ?? l.qtd })}
-                              className="w-full rounded-lg bg-brand-600 px-2 py-1.5 text-[11px] font-bold text-white print:hidden"
+                              className="w-full rounded-lg bg-brand-600 px-2 py-1.5 text-caption font-bold text-white print:hidden"
                             >
                               Dar OK
                             </button>

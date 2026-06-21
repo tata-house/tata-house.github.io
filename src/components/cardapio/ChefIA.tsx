@@ -255,7 +255,7 @@ export function ChefIA({
           <p className="mt-1 text-sm text-carvao-400">Nenhuma recomendação no momento. Continue assim.</p>
         </div>
         {feedbacks.length > 0 && (
-          <p className="text-[11px] text-carvao-400">{feedbacks.filter((f) => f.voto === 'ruim').length} sugestão(ões) descartada(s) pelo time.</p>
+          <p className="text-caption text-carvao-400">{feedbacks.filter((f) => f.voto === 'ruim').length} sugestão(ões) descartada(s) pelo time.</p>
         )}
       </Cartao>
     ) : null;
@@ -267,7 +267,7 @@ export function ChefIA({
         <span className="text-lg">🤖</span>
         <h3 className="font-display text-sm font-bold">Chef IA</h3>
         <Pilula tom="azul">{dicas.length}</Pilula>
-        <span className="text-[11px] text-carvao-400">
+        <span className="text-caption text-carvao-400">
           {expandido ? 'recomendações baseadas em dados reais' : 'recomendações para esta semana'}
         </span>
       </div>
@@ -281,7 +281,7 @@ export function ChefIA({
               <div className="flex items-start gap-2">
                 <span className="mt-0.5 shrink-0 text-base">{d.icone}</span>
                 <div className="min-w-0 flex-1">
-                  <p className={`text-[11px] font-extrabold uppercase tracking-wide ${COR[d.tom]}`}>{d.titulo}</p>
+                  <p className={`text-caption font-extrabold uppercase tracking-wide ${COR[d.tom]}`}>{d.titulo}</p>
                   <p className={`mt-0.5 text-sm ${COR[d.tom]}`}>{d.texto}</p>
                 </div>
                 {/* Feedback */}
@@ -307,7 +307,7 @@ export function ChefIA({
                 <div className="mt-2 flex gap-2">
                   <input
                     autoFocus
-                    className="flex-1 rounded-lg border border-carvao-200 bg-white px-2 py-1 text-[12px] dark:border-carvao-600 dark:bg-carvao-900"
+                    className="flex-1 rounded-lg border border-carvao-200 bg-white px-2 py-1 text-rotulo dark:border-carvao-600 dark:bg-carvao-900"
                     placeholder="Por que não é útil? (opcional)"
                     value={motivoTexto}
                     onChange={(e) => setMotivoTexto(e.target.value)}
@@ -315,13 +315,13 @@ export function ChefIA({
                   />
                   <button
                     onClick={() => confirmarVeto(hash)}
-                    className="rounded-lg bg-perigo px-3 py-1 text-[12px] font-bold text-white"
+                    className="rounded-lg bg-perigo px-3 py-1 text-rotulo font-bold text-white"
                   >
                     Descartar
                   </button>
                   <button
                     onClick={() => { setMotivoAberto(null); setMotivoTexto(''); }}
-                    className="rounded-lg bg-carvao-100 px-2 py-1 text-[12px] dark:bg-carvao-700"
+                    className="rounded-lg bg-carvao-100 px-2 py-1 text-rotulo dark:bg-carvao-700"
                   >
                     Cancelar
                   </button>

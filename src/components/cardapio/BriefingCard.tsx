@@ -42,9 +42,9 @@ function ItemCard({ item }: { item: ItemBriefing }) {
         <span className="mt-0.5 text-lg leading-none">{item.icone}</span>
         <div className="min-w-0">
           <p className={`text-[13px] font-bold ${NIVEL_TEXTO[item.nivel]}`}>{item.titulo}</p>
-          <p className="mt-0.5 text-[12px] text-carvao-600 dark:text-areia-300">{item.detalhe}</p>
+          <p className="mt-0.5 text-rotulo text-carvao-600 dark:text-areia-300">{item.detalhe}</p>
           {item.acao && (
-            <p className="mt-1 text-[11px] font-semibold text-carvao-500 dark:text-areia-400">
+            <p className="mt-1 text-caption font-semibold text-carvao-500 dark:text-areia-400">
               → {item.acao}
             </p>
           )}
@@ -152,7 +152,7 @@ export function BriefingCard(props: Props) {
           <span className="text-xl">🗓️</span>
           <div>
             <p className="font-display text-sm font-bold text-carvao-800 dark:text-areia-100">{briefing.saudacao}</p>
-            <p className="text-[12px] text-carvao-500 dark:text-areia-400">
+            <p className="text-rotulo text-carvao-500 dark:text-areia-400">
               {urgentes > 0
                 ? `${urgentes} alerta${urgentes > 1 ? 's' : ''} urgente${urgentes > 1 ? 's' : ''}`
                 : `${briefing.itens.length} item${briefing.itens.length > 1 ? 'ns' : ''} para atenção`}

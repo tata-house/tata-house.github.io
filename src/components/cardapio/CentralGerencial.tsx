@@ -243,7 +243,7 @@ export function CentralGerencial({
           <Cartao key={rot} className="text-center">
             <p className="text-[10px] font-bold uppercase tracking-wide text-carvao-400">{rot}</p>
             <p className="font-display text-2xl font-black text-brand-700 dark:text-brand-300">{val}</p>
-            <p className="text-[11px] text-carvao-400">{desc}</p>
+            <p className="text-caption text-carvao-400">{desc}</p>
           </Cartao>
         ))}
       </div>
@@ -251,7 +251,7 @@ export function CentralGerencial({
       {/* Índice nutricional resumido */}
       <Cartao className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-wide text-carvao-400">🥗 Índice Nutricional — semana atual</p>
+          <p className="text-caption font-bold uppercase tracking-wide text-carvao-400">🥗 Índice Nutricional — semana atual</p>
           <p className="font-display text-2xl font-black text-brand-700 dark:text-brand-300">{nutri.score}% {nutri.rotulo}</p>
         </div>
         <div className="h-3 w-32 overflow-hidden rounded-full bg-carvao-100 dark:bg-carvao-800">
@@ -261,7 +261,7 @@ export function CentralGerencial({
 
       {/* Relatórios exportáveis */}
       <div className="space-y-2">
-        <h3 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-carvao-400">📥 Exportar relatórios (CSV)</h3>
+        <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-carvao-400">📥 Exportar relatórios (CSV)</h3>
         <div className="grid gap-2 sm:grid-cols-2">
           {RELATORIOS.map((r) => (
             <button
@@ -272,7 +272,7 @@ export function CentralGerencial({
               <span className="shrink-0 text-2xl">{r.icone}</span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold">{r.titulo}</p>
-                <p className="text-[11px] text-carvao-400">{r.desc}</p>
+                <p className="text-caption text-carvao-400">{r.desc}</p>
               </div>
               <Icone nome="exportar" tam={18} className="shrink-0 text-brand-500" />
             </button>
@@ -287,7 +287,7 @@ export function CentralGerencial({
           <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
             {auditoria.slice(0, 10).map((r, i) => (
               <li key={i} className="flex items-center gap-3 py-2 text-sm">
-                <span className="shrink-0 text-[11px] tabular-nums text-carvao-400">{r.em.slice(0, 10)}</span>
+                <span className="shrink-0 text-caption tabular-nums text-carvao-400">{r.em.slice(0, 10)}</span>
                 <span className="min-w-0 flex-1 truncate">
                   <strong className="font-semibold">{r.acao}</strong>
                   {' — '}{r.alvo}
@@ -301,7 +301,7 @@ export function CentralGerencial({
           </ul>
           <button
             onClick={exportarAuditoria}
-            className="flex items-center gap-1.5 text-[12px] font-bold text-brand-600 hover:text-brand-700"
+            className="flex items-center gap-1.5 text-rotulo font-bold text-brand-600 hover:text-brand-700"
           >
             <Icone nome="exportar" tam={14} /> Exportar auditoria completa
           </button>

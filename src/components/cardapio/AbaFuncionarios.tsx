@@ -411,7 +411,7 @@ export function AbaFuncionarios({
                 </p>
                 <button
                   onClick={importarTodos}
-                  className="rounded-full bg-brand-600 px-3 py-1.5 text-[11px] font-bold text-white hover:bg-brand-700"
+                  className="rounded-full bg-brand-600 px-3 py-1.5 text-caption font-bold text-white hover:bg-brand-700"
                 >
                   Importar todos
                 </button>
@@ -444,7 +444,7 @@ export function AbaFuncionarios({
                     ) : (
                       <button
                         onClick={() => importarExtraido(idx)}
-                        className="shrink-0 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-bold text-brand-700 hover:bg-brand-100 dark:bg-carvao-700 dark:text-brand-300"
+                        className="shrink-0 rounded-full bg-brand-50 px-2.5 py-1 text-caption font-bold text-brand-700 hover:bg-brand-100 dark:bg-carvao-700 dark:text-brand-300"
                       >
                         Adicionar
                       </button>
@@ -488,7 +488,7 @@ export function AbaFuncionarios({
                   {f.restricoes.length > 0 ? (
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {f.restricoes.map((r, i) => (
-                        <span key={i} className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${RESTRICAO_COR[r.tipo]}`}>
+                        <span key={i} className={`rounded-full px-2 py-0.5 text-caption font-semibold ${RESTRICAO_COR[r.tipo]}`}>
                           {RESTRICAO_EMOJI[r.tipo]} {r.alimento}
                           {r.obs && ` · ${r.obs}`}
                         </span>

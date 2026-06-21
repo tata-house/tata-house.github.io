@@ -48,7 +48,7 @@ export function PrevisaoCard({ semanaId, onPessoasAtualizadas }: Props) {
           </span>
         )}
       </div>
-      <p className="mb-4 text-[12px] text-carvao-500 dark:text-areia-400">
+      <p className="mb-4 text-rotulo text-carvao-500 dark:text-areia-400">
         Pessimista · Esperado · Otimista por dia (com intervalo de confiança)
       </p>
 
@@ -81,7 +81,7 @@ export function PrevisaoCard({ semanaId, onPessoasAtualizadas }: Props) {
                 )}
               </div>
               <span className="text-[10px] font-bold text-carvao-600 dark:text-areia-300">{DIAS_PT[d.dia]}</span>
-              <span className="text-[11px] font-semibold text-brand-700 dark:text-brand-300">{d.esperado}</span>
+              <span className="text-caption font-semibold text-brand-700 dark:text-brand-300">{d.esperado}</span>
               <span className="text-[9px] text-carvao-400">
                 {d.pessimista}–{d.otimista}
               </span>
@@ -96,15 +96,15 @@ export function PrevisaoCard({ semanaId, onPessoasAtualizadas }: Props) {
       {/* totais */}
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
         <div className="rounded-2xl bg-areia-50 py-2 dark:bg-carvao-800">
-          <p className="text-[11px] text-carvao-500">Pessimista</p>
+          <p className="text-caption text-carvao-500">Pessimista</p>
           <p className="font-display text-lg font-bold text-carvao-700 dark:text-areia-100">{previsao.totalPessimista}</p>
         </div>
         <div className="rounded-2xl bg-brand-50 py-2 dark:bg-carvao-800">
-          <p className="text-[11px] text-brand-600">Esperado</p>
+          <p className="text-caption text-brand-600">Esperado</p>
           <p className="font-display text-lg font-bold text-brand-700 dark:text-brand-300">{previsao.totalEsperado}</p>
         </div>
         <div className="rounded-2xl bg-ouro-50 py-2 dark:bg-carvao-800">
-          <p className="text-[11px] text-ouro-600">Otimista</p>
+          <p className="text-caption text-ouro-600">Otimista</p>
           <p className="font-display text-lg font-bold text-ouro-700 dark:text-ouro-300">{previsao.totalOtimista}</p>
         </div>
       </div>
@@ -120,7 +120,7 @@ export function PrevisaoCard({ semanaId, onPessoasAtualizadas }: Props) {
       )}
 
       {previsao.baseSemanas === 0 && (
-        <p className="mt-3 text-center text-[11px] text-carvao-400">
+        <p className="mt-3 text-center text-caption text-carvao-400">
           Registre as contagens reais de refeições para afinar a previsão semana a semana.
         </p>
       )}

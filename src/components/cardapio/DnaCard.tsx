@@ -43,12 +43,12 @@ export function DnaCard() {
       {/* Cabeçalho */}
       <div className="bg-gradient-to-r from-carvao-900 via-carvao-800 to-brand-800 px-5 py-4 text-white">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-200">
+          <p className="text-caption font-extrabold uppercase tracking-[0.18em] text-brand-200">
             🧬 DNA Alimentar da casa
           </p>
           <button
             onClick={recalcular}
-            className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-bold text-white/90 transition hover:bg-white/20"
+            className="rounded-full bg-white/10 px-2.5 py-1 text-caption font-bold text-white/90 transition hover:bg-white/20"
             title="Recalcular com os dados atuais"
           >
             <Icone nome="raio" tam={12} /> atualizar
@@ -57,7 +57,7 @@ export function DnaCard() {
         <p className="mt-1.5 text-sm leading-relaxed text-areia-100/90">{dna.resumo}</p>
 
         {/* Stats históricos */}
-        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-brand-200/80">
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-caption text-brand-200/80">
           {dna.totalDiasHistorico > 0 && (
             <span>📅 {dna.totalDiasHistorico} dias de operação</span>
           )}
@@ -85,7 +85,7 @@ export function DnaCard() {
         <div className="space-y-5 px-5 pb-5">
           {/* Perfil de proteínas */}
           <div className="space-y-2">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-carvao-400">
+            <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">
               Perfil de proteínas — {TOTAL_DIAS_HISTORICO} dias
             </p>
             {dna.perfilProteinas
@@ -111,13 +111,13 @@ export function DnaCard() {
           {/* Mais servidos no histórico */}
           {dna.topPorFrequencia.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-carvao-400">
+              <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">
                 📈 Mais servidos no histórico
               </p>
               <div className="divide-y divide-carvao-50 dark:divide-carvao-800">
                 {dna.topPorFrequencia.map((p, i) => (
                   <div key={p.prato} className="flex items-center gap-2 py-1.5">
-                    <span className="w-5 shrink-0 text-center text-[11px] font-bold text-carvao-300">
+                    <span className="w-5 shrink-0 text-center text-caption font-bold text-carvao-300">
                       {i + 1}
                     </span>
                     <span
@@ -127,9 +127,9 @@ export function DnaCard() {
                     <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-carvao-800 dark:text-areia-100">
                       {p.prato}
                     </span>
-                    <span className="shrink-0 text-[11px] text-carvao-400">{p.frequencia}×</span>
+                    <span className="shrink-0 text-caption text-carvao-400">{p.frequencia}×</span>
                     {p.nota !== null && (
-                      <span className={`shrink-0 text-[11px] font-bold ${notaTom(p.nota)}`}>
+                      <span className={`shrink-0 text-caption font-bold ${notaTom(p.nota)}`}>
                         {p.nota}★
                       </span>
                     )}
@@ -142,7 +142,7 @@ export function DnaCard() {
           {/* Campeões de qualidade */}
           {dna.campeoes.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-brand-600 dark:text-brand-300">
+              <p className="text-caption font-bold uppercase tracking-wider text-brand-600 dark:text-brand-300">
                 🏆 Campeões da casa
                 {dna.baseAvaliacoes === 0 && (
                   <span className="ml-1 font-medium normal-case tracking-normal text-carvao-400">· por frequência no histórico</span>
@@ -152,14 +152,14 @@ export function DnaCard() {
                 {dna.campeoes.map((c) => (
                   <span
                     key={c.prato}
-                    className="flex items-center gap-1.5 rounded-full bg-brand-500/10 px-2.5 py-1 text-[12px] font-semibold text-brand-700 ring-1 ring-brand-500/25 dark:text-brand-300"
+                    className="flex items-center gap-1.5 rounded-full bg-brand-500/10 px-2.5 py-1 text-rotulo font-semibold text-brand-700 ring-1 ring-brand-500/25 dark:text-brand-300"
                     title={`servido ${c.frequencia}×${c.nota !== null ? ` · nota ${c.nota}` : ''}`}
                   >
                     {c.prato}
                     {c.nota !== null ? (
-                      <span className="text-[11px] opacity-70">{c.nota}★</span>
+                      <span className="text-caption opacity-70">{c.nota}★</span>
                     ) : (
-                      <span className="text-[11px] opacity-70">{c.frequencia}×</span>
+                      <span className="text-caption opacity-70">{c.frequencia}×</span>
                     )}
                   </span>
                 ))}
@@ -170,17 +170,17 @@ export function DnaCard() {
           {/* Problemas */}
           {dna.problemas.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-perigo">⚠️ Pontos de atenção</p>
+              <p className="text-caption font-bold uppercase tracking-wider text-perigo">⚠️ Pontos de atenção</p>
               <div className="flex flex-wrap gap-1.5">
                 {dna.problemas.map((p) => (
                   <span
                     key={p.prato}
-                    className="flex items-center gap-1.5 rounded-full bg-perigo/10 px-2.5 py-1 text-[12px] font-semibold text-perigo ring-1 ring-perigo/25"
+                    className="flex items-center gap-1.5 rounded-full bg-perigo/10 px-2.5 py-1 text-rotulo font-semibold text-perigo ring-1 ring-perigo/25"
                     title={`${p.nota !== null ? `nota ${p.nota}` : 'sem nota'}${p.desperdicio !== null ? ` · ${Math.round(p.desperdicio * 100)}% sobra` : ''}`}
                   >
                     {p.prato}
                     {p.desperdicio !== null && p.desperdicio >= 0.2 && (
-                      <span className="text-[11px] opacity-70">{Math.round(p.desperdicio * 100)}% sobra</span>
+                      <span className="text-caption opacity-70">{Math.round(p.desperdicio * 100)}% sobra</span>
                     )}
                   </span>
                 ))}
@@ -189,7 +189,7 @@ export function DnaCard() {
           )}
 
           {dna.baseAvaliacoes === 0 && (
-            <p className="text-[11px] text-carvao-400">
+            <p className="text-caption text-carvao-400">
               Os campeões acima vêm da frequência no histórico. Conforme a equipe avaliar os pratos, o ranking
               passa a considerar as notas e os pontos de atenção aparecem.
             </p>

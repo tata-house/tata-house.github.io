@@ -197,7 +197,7 @@ export function AbaNF({
                 {resultado.totalNF && <span className="font-semibold text-carvao-700 dark:text-carvao-300">Total: {formatarReais(resultado.totalNF)}</span>}
               </div>
             </div>
-            <span className="shrink-0 rounded-xl bg-brand-50 px-2 py-1 text-[11px] font-bold text-brand-700 dark:bg-carvao-700 dark:text-brand-300">
+            <span className="shrink-0 rounded-xl bg-brand-50 px-2 py-1 text-caption font-bold text-brand-700 dark:bg-carvao-700 dark:text-brand-300">
               {resultado.itens.length} {resultado.itens.length === 1 ? 'item' : 'itens'}
             </span>
           </div>

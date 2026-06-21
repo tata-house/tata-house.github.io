@@ -84,7 +84,7 @@ function Secao({ id, emoji, titulo, subtitulo, children }: {
           {subtitulo && <p className="mt-0.5 text-sm text-gray-500">{subtitulo}</p>}
         </div>
       </div>
-      <div className="space-y-4 text-[15px] leading-relaxed text-gray-700">{children}</div>
+      <div className="space-y-4 text-subtitulo leading-relaxed text-gray-700">{children}</div>
     </section>
   );
 }
@@ -486,7 +486,7 @@ export default function ManualPage() {
                 {[['😋','Ótimo'],['😐','Regular'],['👎','Ruim']].map(([e, r]) => (
                   <div key={r} className="flex flex-1 flex-col items-center gap-1 rounded-xl bg-white p-3 ring-1 ring-gray-200">
                     <span className="text-2xl">{e}</span>
-                    <span className="text-[11px] font-semibold text-gray-600">{r}</span>
+                    <span className="text-caption font-semibold text-gray-600">{r}</span>
                   </div>
                 ))}
               </div>
@@ -764,7 +764,7 @@ export default function ManualPage() {
           <div className="mb-2 text-3xl">🍱</div>
           <p className="font-display text-lg font-bold">Tatá House</p>
           <p className="mt-1 text-sm text-green-200">Sistema de Gestão de Cardápio</p>
-          <p className="mt-3 text-[12px] text-green-300">
+          <p className="mt-3 text-rotulo text-green-300">
             Dúvidas? Fale com o gestor responsável da sua unidade.
           </p>
         </div>

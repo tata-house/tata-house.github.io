@@ -3,6 +3,8 @@
    Página estática de documentação para funcionários.
    ===================================================================== */
 
+import { Icone } from '@/components/Icones';
+
 export const metadata = {
   title: 'Manual do Sistema — Tatá House',
   description: 'Guia completo do sistema de gestão do cardápio Tatá House.',
@@ -16,8 +18,8 @@ function Capa() {
       <div className="pointer-events-none absolute inset-0 opacity-10"
         style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 20%, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       <div className="relative z-10">
-        <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 text-5xl shadow-lg">
-          
+        <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 shadow-lg">
+          <Icone nome="gerencial" tam={40} className="text-white" />
         </div>
         <h1 className="font-display text-3xl font-bold text-white drop-shadow">
           Manual do Sistema

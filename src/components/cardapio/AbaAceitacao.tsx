@@ -5,6 +5,7 @@ import { toast } from '@/components/Toast';
 import { QrCode } from '@/components/QrCode';
 import { PlaquinhaQR } from './PlaquinhaQR';
 import { BarraMini, Botao, Cartao, EstadoVazio, Pilula, Secao, estiloInput, estiloRotulo } from '@/components/ui';
+import { Icone } from '@/components/Icones';
 import { DIAS_SEMANA, formatarQtd, normalizar } from '@/lib/cardapio/motor';
 import type { Aceitacao, EstadoSemana, EventoDemanda, RegistroDesperdicio } from '@/lib/cardapio/tipos';
 
@@ -69,10 +70,10 @@ export function AbaAceitacao({
     setFator('1.2');
   };
 
-  const VOTOS: { v: 'bom' | 'ok' | 'ruim'; e: string; rot: string; tom: 'verde' | 'ouro' | 'vermelho' }[] = [
-    { v: 'bom', e: '', rot: 'Gostei', tom: 'verde' },
-    { v: 'ok', e: '', rot: 'Neutro', tom: 'ouro' },
-    { v: 'ruim', e: '', rot: 'Não', tom: 'vermelho' },
+  const VOTOS: { v: 'bom' | 'ok' | 'ruim'; icone: 'check' | 'subtrair' | 'fechar'; cor: string; rot: string; tom: 'verde' | 'ouro' | 'vermelho' }[] = [
+    { v: 'bom',  icone: 'check',    cor: 'text-brand-600 dark:text-brand-400', rot: 'Gostei', tom: 'verde' },
+    { v: 'ok',   icone: 'subtrair', cor: 'text-ouro-600 dark:text-ouro-300',   rot: 'Neutro', tom: 'ouro' },
+    { v: 'ruim', icone: 'fechar',   cor: 'text-perigo',                         rot: 'Não gostei', tom: 'vermelho' },
   ];
 
   const pratosSemana = estado.dias.map((d) => d.principal).filter(Boolean);
@@ -131,12 +132,12 @@ export function AbaAceitacao({
                         disabled={!podeEditar}
                         onClick={() => {
                           avaliar(d.principal, b.v);
-                          toast(`${b.e} registrado para ${d.principal}`, 'info');
+                          toast(`${b.rot} registrado para ${d.principal}`, 'info');
                         }}
-                        className="flex h-11 w-11 items-center justify-center rounded-2xl bg-areia-100 text-xl transition hover:scale-110 disabled:opacity-40 dark:bg-carvao-700"
+                        className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-areia-100 transition hover:scale-110 disabled:opacity-40 dark:bg-carvao-700 ${b.cor}`}
                         title={b.rot}
                       >
-                        {b.e}
+                        <Icone nome={b.icone} tam={20} />
                       </button>
                     ))}
                   </div>

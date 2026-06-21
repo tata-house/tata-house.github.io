@@ -17,11 +17,13 @@ export function AbaCotacao({
   definirPreco,
   definirFornecedor,
   cadastrarItem,
+  registrarOferta,
   itensExtras = {},
 }: {
   definirPreco: (itemNorm: string, valor: number | null, nome?: string) => void;
   definirFornecedor?: (itemNorm: string, marca: string | null) => void;
   cadastrarItem?: (norm: string, nome: string, unid: string) => void;
+  registrarOferta?: (itemNorm: string, fornecedor: string, preco: number) => void;
   itensExtras?: Record<string, { n: string; u: string }>;
 }) {
   const [texto, setTexto] = useState('');
@@ -64,8 +66,12 @@ export function AbaCotacao({
 
   const aplicar = () => {
     selecionados.forEach((c) => {
-      definirPreco(normalizar(c.item), c.preco, c.item);
-      definirFornecedor?.(normalizar(c.item), fornecedorNome || c.marca);
+      const norm = normalizar(c.item);
+      const forn = fornecedorNome || c.marca;
+      definirPreco(norm, c.preco, c.item);
+      definirFornecedor?.(norm, forn);
+      // guarda o preço por fornecedor para a lista poder trocar depois
+      if (forn) registrarOferta?.(norm, forn, c.preco);
     });
     setAplicado(selecionados.length);
   };
@@ -75,7 +81,9 @@ export function AbaCotacao({
     const unid = unidades[idx] ?? s.unid ?? 'kg';
     cadastrarItem?.(norm, s.nome, unid);
     definirPreco(norm, s.preco, s.nome);
-    definirFornecedor?.(norm, fornecedorNome || s.marca);
+    const forn = fornecedorNome || s.marca;
+    definirFornecedor?.(norm, forn);
+    if (forn) registrarOferta?.(norm, forn, s.preco);
     setCadastrados((c) => new Set(c).add(idx));
   };
 

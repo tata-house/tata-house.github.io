@@ -50,18 +50,22 @@ export function AbaCompras({
   papel,
   precos,
   fornecedores = {},
+  ofertas = {},
   fatores,
   definirPreco,
   definirFornecedor,
+  registrarOferta,
 }: {
   estado: EstadoSemana;
   atualizar: (fn: (e: EstadoSemana) => EstadoSemana) => void;
   papel: Papel;
   precos: Record<string, number>;
   fornecedores?: Record<string, string>;
+  ofertas?: Record<string, { fornecedor: string; preco: number }[]>;
   fatores?: Record<string, number>;
   definirPreco?: (itemNorm: string, valor: number | null, nome?: string) => void;
   definirFornecedor?: (itemNorm: string, marca: string | null) => void;
+  registrarOferta?: (itemNorm: string, fornecedor: string, preco: number) => void;
 }) {
   const { mostrarBasicos, setMostrarBasicos } = useMostrarBasicos();
   const [novoItemDia, setNovoItemDia] = useState<number | null>(null);
@@ -284,6 +288,13 @@ export function AbaCompras({
           podeComprar={podeComprar}
           podeEditar={podeAjustarQtd}
           mostrarBasicos={mostrarBasicos}
+          precos={precos}
+          fornecedores={fornecedores}
+          ofertas={ofertas}
+          podePreco={podePreco}
+          definirPreco={definirPreco}
+          definirFornecedor={definirFornecedor}
+          registrarOferta={registrarOferta}
           onAjuste={(dia, chave, qtd, removido, obs, unid) => setAjuste(dia, chave, qtd, removido, obs, unid)}
           onAddManual={addManual}
           onRmManual={rmManual}

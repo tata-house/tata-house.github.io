@@ -14,7 +14,7 @@
 import { useMemo, useState } from 'react';
 import { Botao, Cartao, Modal, Pilula, estiloInput } from '@/components/ui';
 import { Icone } from '@/components/Icones';
-import { DADOS, DIAS_SEMANA, formatarQtd, linhasDoDia, normalizar } from '@/lib/cardapio/motor';
+import { DADOS, DIAS_SEMANA, formatarQtd, formatarReais, linhasDoDia, normalizar } from '@/lib/cardapio/motor';
 import type { EstadoSemana } from '@/lib/cardapio/tipos';
 
 function hojeIso(): string {
@@ -28,6 +28,13 @@ export function ListaCompras({
   podeComprar,
   podeEditar = false,
   mostrarBasicos = false,
+  precos = {},
+  fornecedores = {},
+  ofertas = {},
+  podePreco = false,
+  definirPreco,
+  definirFornecedor,
+  registrarOferta,
   onAjuste,
   onAddManual,
   onRmManual,
@@ -39,6 +46,13 @@ export function ListaCompras({
   podeComprar: boolean;
   podeEditar?: boolean;
   mostrarBasicos?: boolean;
+  precos?: Record<string, number>;
+  fornecedores?: Record<string, string>;
+  ofertas?: Record<string, { fornecedor: string; preco: number }[]>;
+  podePreco?: boolean;
+  definirPreco?: (itemNorm: string, valor: number | null, nome?: string) => void;
+  definirFornecedor?: (itemNorm: string, marca: string | null) => void;
+  registrarOferta?: (itemNorm: string, fornecedor: string, preco: number) => void;
   onAjuste?: (dia: number, chave: string, qtd: number | null, removido?: boolean, obs?: string, unid?: string) => void;
   onAddManual?: (dia: number, item: string, unid: string, qtd: number) => void;
   onRmManual?: (dia: number, idx: number) => void;
@@ -48,7 +62,43 @@ export function ListaCompras({
   const [editando, setEditando] = useState(false);
   const [novoItemDia, setNovoItemDia] = useState<number | null>(null);
   const [obsAberta, setObsAberta] = useState<string | null>(null);
+  const [addFornDe, setAddFornDe] = useState<string | null>(null);
+  const [novoForn, setNovoForn] = useState('');
+  const [novoPreco, setNovoPreco] = useState('');
   const n = normalizar(busca);
+
+  const podeMexerPreco = podePreco && !!definirPreco;
+
+  /** Opções de fornecedor de um item: ofertas salvas + o fornecedor atual. */
+  const opcoesFornecedor = (chave: string): { fornecedor: string; preco: number }[] => {
+    const lista = [...(ofertas[chave] ?? [])];
+    const atualForn = fornecedores[chave];
+    const atualPreco = precos[chave];
+    if (atualForn && !lista.some((o) => o.fornecedor.toLowerCase() === atualForn.toLowerCase())) {
+      lista.push({ fornecedor: atualForn, preco: atualPreco ?? 0 });
+    }
+    return lista.sort((a, b) => a.preco - b.preco);
+  };
+
+  /** Troca o fornecedor ativo de um item: o preço da semana segue a escolha. */
+  const escolherFornecedor = (chave: string, item: string, fornecedor: string) => {
+    const opc = opcoesFornecedor(chave).find((o) => o.fornecedor === fornecedor);
+    if (!opc) return;
+    definirFornecedor?.(chave, fornecedor);
+    if (opc.preco > 0) definirPreco?.(chave, opc.preco, item);
+  };
+
+  const salvarNovoForn = (chave: string, item: string) => {
+    const f = novoForn.trim();
+    const p = Number(novoPreco.replace(',', '.'));
+    if (!f || !(p > 0)) return;
+    registrarOferta?.(chave, f, p);
+    definirFornecedor?.(chave, f);
+    definirPreco?.(chave, p, item);
+    setAddFornDe(null);
+    setNovoForn('');
+    setNovoPreco('');
+  };
 
   const podeMexer = podeEditar && !!onAjuste;
 
@@ -235,21 +285,103 @@ export function ListaCompras({
                         >
                           ✓
                         </span>
-                        <span className={`min-w-0 flex-1 text-sm ${comprado ? 'text-carvao-400 line-through' : 'font-medium'}`}>
-                          {l.item}
-                          {l.manual && <span className="ml-1 text-[10px] font-bold uppercase text-ouro-600">extra</span>}
-                          {!l.manual && l.fonte === 'receita' && (
-                            <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-ouro-600/70">rcta</span>
+                        <span className="min-w-0 flex-1">
+                          <span className={`block text-sm ${comprado ? 'text-carvao-400 line-through' : 'font-medium'}`}>
+                            {l.item}
+                            {l.manual && <span className="ml-1 text-[10px] font-bold uppercase text-ouro-600">extra</span>}
+                            {!l.manual && l.fonte === 'receita' && (
+                              <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-ouro-600/70">rcta</span>
+                            )}
+                            {!l.manual && l.fonte === 'fallback' && (
+                              <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-carvao-400">est.</span>
+                            )}
+                            {obs && <span className="ml-1 text-[11px] italic text-carvao-400">· 📝</span>}
+                          </span>
+                          {!podeMexerPreco && (fornecedores[l.chave] || precos[l.chave] > 0) && (
+                            <span className="mt-0.5 block text-[10px] font-semibold text-brand-600 dark:text-brand-300">
+                              🏪 {fornecedores[l.chave] || 'fornecedor não informado'}
+                              {precos[l.chave] > 0 && (
+                                <span className="font-normal text-carvao-400">
+                                  {' · '}{formatarReais(precos[l.chave])}/{unidAtual}
+                                </span>
+                              )}
+                            </span>
                           )}
-                          {!l.manual && l.fonte === 'fallback' && (
-                            <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-carvao-400">est.</span>
-                          )}
-                          {obs && <span className="ml-1 text-[11px] italic text-carvao-400">· 📝</span>}
                         </span>
-                        <span className={`shrink-0 text-sm font-bold tabular-nums ${comprado ? 'text-carvao-400' : ''}`}>
+                        <span className={`shrink-0 self-start text-sm font-bold tabular-nums ${comprado ? 'text-carvao-400' : ''}`}>
                           {formatarQtd(l.qtd)} {unidAtual}
                         </span>
                       </button>
+
+                      {/* Seletor de fornecedor — o preço da semana segue a escolha */}
+                      {podeMexerPreco && (() => {
+                        const opcoes = opcoesFornecedor(l.chave);
+                        const editandoForn = addFornDe === `${di}:${l.chave}`;
+                        return (
+                          <div className="flex flex-wrap items-center gap-1.5 px-4 pb-2.5 pl-12 print:hidden">
+                            <span className="text-[11px]">🏪</span>
+                            {opcoes.length > 0 ? (
+                              <select
+                                value={fornecedores[l.chave] ?? ''}
+                                onChange={(e) => escolherFornecedor(l.chave, l.item, e.target.value)}
+                                className="h-7 max-w-[60%] rounded-md border border-carvao-200 bg-white px-1.5 text-[11px] font-semibold text-brand-700 dark:border-carvao-600 dark:bg-carvao-900 dark:text-brand-300"
+                              >
+                                {!fornecedores[l.chave] && <option value="">escolher fornecedor…</option>}
+                                {opcoes.map((o) => (
+                                  <option key={o.fornecedor} value={o.fornecedor}>
+                                    {o.fornecedor}{o.preco > 0 ? ` — ${formatarReais(o.preco)}/${unidAtual}` : ''}
+                                  </option>
+                                ))}
+                              </select>
+                            ) : (
+                              <span className="text-[11px] text-carvao-400">sem fornecedor cadastrado</span>
+                            )}
+                            {editandoForn ? (
+                              <span className="flex items-center gap-1">
+                                <input
+                                  autoFocus
+                                  value={novoForn}
+                                  onChange={(e) => setNovoForn(e.target.value)}
+                                  placeholder="fornecedor"
+                                  className="h-7 w-24 rounded-md border border-carvao-200 bg-white px-1.5 text-[11px] dark:border-carvao-600 dark:bg-carvao-900"
+                                />
+                                <span className="text-[10px] text-carvao-400">R$</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  step="0.01"
+                                  inputMode="decimal"
+                                  value={novoPreco}
+                                  onChange={(e) => setNovoPreco(e.target.value)}
+                                  placeholder="0,00"
+                                  className="h-7 w-16 rounded-md border border-carvao-200 bg-white px-1.5 text-right text-[11px] font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
+                                />
+                                <button
+                                  onClick={() => salvarNovoForn(l.chave, l.item)}
+                                  className="flex h-7 w-7 items-center justify-center rounded-md bg-brand-600 text-white"
+                                  aria-label="Salvar fornecedor"
+                                >
+                                  <Icone nome="check" tam={14} />
+                                </button>
+                                <button
+                                  onClick={() => { setAddFornDe(null); setNovoForn(''); setNovoPreco(''); }}
+                                  className="flex h-7 w-7 items-center justify-center rounded-md text-carvao-400 hover:text-[#b04c41]"
+                                  aria-label="Cancelar"
+                                >
+                                  <Icone nome="fechar" tam={14} />
+                                </button>
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => { setAddFornDe(`${di}:${l.chave}`); setNovoForn(''); setNovoPreco(''); }}
+                                className="flex items-center gap-0.5 rounded-md px-1.5 py-1 text-[11px] font-semibold text-brand-600 hover:bg-brand-50 dark:text-brand-300 dark:hover:bg-carvao-800"
+                              >
+                                <Icone nome="somar" tam={12} /> outro
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </li>
                   );
                 })}

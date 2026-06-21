@@ -51,6 +51,7 @@ import {
   useFornecedorPerfis,
   useHistoricoPrecos,
   useItensExtras,
+  useOfertas,
   usePapel,
   usePrecos,
   useSemana,
@@ -274,6 +275,7 @@ export default function PaginaCardapios() {
   const { estado, atualizar, pronto } = useSemana(semanaId);
   const { precos, definirPreco } = usePrecos();
   const { fornecedores, definirFornecedor } = useFornecedores();
+  const { ofertas, registrarOferta } = useOfertas();
   const { itensExtras, cadastrarItem } = useItensExtras();
   const { fatores, aprenderDeSemana } = useAprendizado();
   const { papel } = usePapel();
@@ -550,6 +552,9 @@ export default function PaginaCardapios() {
                   podeEditar={podeEditarCardapio}
                   precos={precos}
                   definirPreco={definirPreco}
+                  definirFornecedor={definirFornecedor}
+                  cadastrarItem={cadastrarItem}
+                  registrarOferta={registrarOferta}
                   fornecedores={fornecedores}
                   itensExtras={itensExtras}
                 />
@@ -635,9 +640,11 @@ export default function PaginaCardapios() {
                     papel={papel}
                     precos={precos}
                     fornecedores={fornecedores}
+                    ofertas={ofertas}
                     fatores={fatores}
                     definirPreco={definirPreco}
                     definirFornecedor={definirFornecedor}
+                    registrarOferta={registrarOferta}
                   />
                 )}
 
@@ -771,18 +778,12 @@ export default function PaginaCardapios() {
               <div className="space-y-8">
                 <div className="border-b border-carvao-100 pb-4 dark:border-carvao-800">
                   <h2 className="font-display text-2xl font-bold text-carvao-900 dark:text-white">Ajustes</h2>
-                  <p className="mt-1 text-sm text-carvao-400">Preços, fornecedores e configurações de acesso</p>
+                  <p className="mt-1 text-sm text-carvao-400">Equipe, restrições e configurações de acesso</p>
                 </div>
-                {/* Catálogo de preços */}
-                <SecaoAjuste titulo="Catálogo de preços e fornecedores">
-                  <AbaCotacaoInline
-                    precos={precos}
-                    definirPreco={definirPreco}
-                    definirFornecedor={definirFornecedor}
-                    cadastrarItem={cadastrarItem}
-                    itensExtras={itensExtras}
-                  />
-                </SecaoAjuste>
+                <p className="rounded-2xl bg-brand-50 px-4 py-3 text-[13px] text-brand-700 ring-1 ring-brand-200/60 dark:bg-carvao-850 dark:text-brand-300 dark:ring-carvao-700">
+                  💰 A <strong>cotação e o catálogo de preços</strong> agora ficam na aba <strong>Cardápio</strong> — role
+                  até a seção “Cotação — catálogo de preços”.
+                </p>
 
                 {/* Equipe e restrições alimentares */}
                 <SecaoAjuste titulo="Equipe e restrições alimentares">
@@ -885,32 +886,5 @@ function SecaoAjuste({ titulo, children }: { titulo: string; children: React.Rea
       <h2 className="text-xs font-bold uppercase tracking-widest text-carvao-400">{titulo}</h2>
       <div className="border-t border-carvao-100 pt-4 dark:border-carvao-800">{children}</div>
     </div>
-  );
-}
-
-/* ── Cotação inline (em Ajustes) ─────────────────────────── */
-
-import { AbaCotacao } from '@/components/cardapio/AbaCotacao';
-
-function AbaCotacaoInline({
-  precos,
-  definirPreco,
-  definirFornecedor,
-  cadastrarItem,
-  itensExtras,
-}: {
-  precos: Record<string, number>;
-  definirPreco: (itemNorm: string, valor: number | null, nome?: string) => void;
-  definirFornecedor?: (itemNorm: string, marca: string | null) => void;
-  cadastrarItem?: (norm: string, nome: string, unid: string) => void;
-  itensExtras?: Record<string, { n: string; u: string }>;
-}) {
-  return (
-    <AbaCotacao
-      definirPreco={definirPreco}
-      definirFornecedor={definirFornecedor}
-      cadastrarItem={cadastrarItem}
-      itensExtras={itensExtras ?? {}}
-    />
   );
 }

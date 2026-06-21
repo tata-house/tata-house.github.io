@@ -34,6 +34,7 @@ import { AntiMonotonia } from './AntiMonotonia';
 import { TermometroAlmoco } from './TermometroAlmoco';
 import { IndicadorNutricional } from './IndicadorNutricional';
 import { AbaPrecos } from './AbaPrecos';
+import { AbaCotacao } from './AbaCotacao';
 
 /** Mescla receitas da biblioteca com histórico do dados.json, sem duplicatas. */
 function mesclarOpcoes(receitas: string[], historico: string[]): string[] {
@@ -83,6 +84,9 @@ export function AbaCardapio({
   podeEditar,
   precos,
   definirPreco,
+  definirFornecedor,
+  cadastrarItem,
+  registrarOferta,
   fornecedores = {},
   itensExtras = {},
 }: {
@@ -91,6 +95,9 @@ export function AbaCardapio({
   podeEditar: boolean;
   precos: Record<string, number>;
   definirPreco?: (itemNorm: string, valor: number | null, nome?: string) => void;
+  definirFornecedor?: (itemNorm: string, marca: string | null) => void;
+  cadastrarItem?: (norm: string, nome: string, unid: string) => void;
+  registrarOferta?: (itemNorm: string, fornecedor: string, preco: number) => void;
   fornecedores?: Record<string, string>;
   itensExtras?: Record<string, { n: string; u: string }>;
 }) {
@@ -760,13 +767,24 @@ export function AbaCardapio({
           <Icone nome="baixo" tam={16} className={`shrink-0 text-carvao-400 transition-transform ${cotacaoAberta ? 'rotate-180' : ''}`} />
         </button>
         {cotacaoAberta && definirPreco && (
-          <div className="border-t border-carvao-100 bg-areia-50/40 p-3 dark:border-carvao-700 dark:bg-carvao-900/40">
-            <AbaPrecos
-              precos={precos}
+          <div className="space-y-4 border-t border-carvao-100 bg-areia-50/40 p-3 dark:border-carvao-700 dark:bg-carvao-900/40">
+            {/* Colar cotação da semana (WhatsApp / arquivo) */}
+            <AbaCotacao
               definirPreco={definirPreco}
-              fornecedores={fornecedores}
+              definirFornecedor={definirFornecedor}
+              cadastrarItem={cadastrarItem}
+              registrarOferta={registrarOferta}
               itensExtras={itensExtras}
             />
+            {/* Catálogo item a item — histórico e variação */}
+            <div className="border-t border-carvao-200 pt-4 dark:border-carvao-700">
+              <AbaPrecos
+                precos={precos}
+                definirPreco={definirPreco}
+                fornecedores={fornecedores}
+                itensExtras={itensExtras}
+              />
+            </div>
           </div>
         )}
       </div>

@@ -355,6 +355,59 @@ export function useFornecedores() {
   return { fornecedores, definirFornecedor };
 }
 
+/* ------------------- ofertas por fornecedor --------------------------- */
+
+export interface Oferta {
+  fornecedor: string;
+  preco: number;
+}
+
+/** chave = item normalizado → lista de ofertas (um preço por fornecedor). */
+export type Ofertas = Record<string, Oferta[]>;
+
+/**
+ * Preços por fornecedor de cada item. Acumula as cotações aplicadas (e
+ * adições manuais) para que a compra possa trocar de fornecedor na lista
+ * e o custo acompanhe o preço daquele fornecedor.
+ */
+export function useOfertas() {
+  const [ofertas, setOfertas] = useState<Ofertas>({});
+
+  useEffect(() => {
+    setOfertas(lerLocal('ofertas', {}));
+  }, []);
+
+  /** Insere/atualiza o preço de um fornecedor para um item (dedupe por nome). */
+  const registrarOferta = useCallback((itemNorm: string, fornecedor: string, preco: number) => {
+    const nome = fornecedor.trim();
+    if (!nome || !(preco > 0)) return;
+    setOfertas((atual) => {
+      const lista = atual[itemNorm] ?? [];
+      const i = lista.findIndex((o) => o.fornecedor.toLowerCase() === nome.toLowerCase());
+      const nova = i >= 0
+        ? lista.map((o, j) => (j === i ? { fornecedor: nome, preco } : o))
+        : [...lista, { fornecedor: nome, preco }];
+      const novo = { ...atual, [itemNorm]: nova };
+      gravarLocal('ofertas', novo);
+      return novo;
+    });
+  }, []);
+
+  /** Remove a oferta de um fornecedor para um item. */
+  const removerOferta = useCallback((itemNorm: string, fornecedor: string) => {
+    setOfertas((atual) => {
+      const lista = (atual[itemNorm] ?? []).filter((o) => o.fornecedor.toLowerCase() !== fornecedor.toLowerCase());
+      const novo = { ...atual };
+      if (lista.length) novo[itemNorm] = lista;
+      else delete novo[itemNorm];
+      gravarLocal('ofertas', novo);
+      return novo;
+    });
+  }, []);
+
+  return { ofertas, registrarOferta, removerOferta };
+}
+
 /* ------------------- aprendizado de quantidades ----------------------- */
 
 /**

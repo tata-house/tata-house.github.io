@@ -35,6 +35,7 @@ export interface PratoDna {
   frequencia: number; // vezes servido no histórico (dados.json + app)
   desperdicio: number | null; // taxa média de sobra (0–1)
   score: number; // índice combinado (-1 a +1)
+  porHistorico?: boolean; // campeão por frequência (sem avaliação ainda)
 }
 
 export interface DnaAlimentar {
@@ -206,6 +207,24 @@ export function calcularDna(
     .filter((p) => p.desperdicio === null || p.desperdicio <= 0.1)
     .sort((a, b) => b.score - a.score || b.frequencia - a.frequencia)
     .slice(0, 6);
+
+  // Poucos campeões por avaliação? Completa com os MAIS SERVIDOS do histórico —
+  // preferência revelada: o que a casa repetiu por anos é o que funciona. Assim
+  // o ranking reflete a operação real desde o primeiro dia, sem depender de notas.
+  if (campeoes.length < 6) {
+    const jaInclusos = new Set(campeoes.map((c) => normalizar(c.prato)));
+    const ehProblema = new Set(
+      pratos
+        .filter((p) => (p.nota !== null && p.nota < 3) || (p.desperdicio !== null && p.desperdicio >= 0.2))
+        .map((p) => normalizar(p.prato)),
+    );
+    const porFrequencia = [...pratos]
+      .filter((p) => p.frequencia >= 3 && !jaInclusos.has(normalizar(p.prato)) && !ehProblema.has(normalizar(p.prato)))
+      .sort((a, b) => b.frequencia - a.frequencia)
+      .slice(0, 6 - campeoes.length)
+      .map((p) => ({ ...p, porHistorico: true }));
+    campeoes.push(...porFrequencia);
+  }
 
   // --- problemas: nota baixa OU muito desperdício ---
   const problemas = pratos

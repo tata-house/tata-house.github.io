@@ -143,7 +143,10 @@ export function DnaCard() {
           {dna.campeoes.length > 0 && (
             <div className="space-y-1.5">
               <p className="text-[11px] font-bold uppercase tracking-wider text-brand-600 dark:text-brand-300">
-                🏆 Campeões — mais aceitos pela equipe
+                🏆 Campeões da casa
+                {dna.baseAvaliacoes === 0 && (
+                  <span className="ml-1 font-medium normal-case tracking-normal text-carvao-400">· por frequência no histórico</span>
+                )}
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {dna.campeoes.map((c) => (
@@ -153,7 +156,11 @@ export function DnaCard() {
                     title={`servido ${c.frequencia}×${c.nota !== null ? ` · nota ${c.nota}` : ''}`}
                   >
                     {c.prato}
-                    {c.nota !== null && <span className="text-[11px] opacity-70">{c.nota}★</span>}
+                    {c.nota !== null ? (
+                      <span className="text-[11px] opacity-70">{c.nota}★</span>
+                    ) : (
+                      <span className="text-[11px] opacity-70">{c.frequencia}×</span>
+                    )}
                   </span>
                 ))}
               </div>
@@ -183,7 +190,8 @@ export function DnaCard() {
 
           {dna.baseAvaliacoes === 0 && (
             <p className="text-[11px] text-carvao-400">
-              Campeões e problemas aparecerão conforme a equipe avaliar os pratos.
+              Os campeões acima vêm da frequência no histórico. Conforme a equipe avaliar os pratos, o ranking
+              passa a considerar as notas e os pontos de atenção aparecem.
             </p>
           )}
         </div>

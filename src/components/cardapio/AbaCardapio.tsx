@@ -342,7 +342,7 @@ export function AbaCardapio({
       {podeEditar && gerarAberto && (
         <div className="rounded-2xl border border-brand-200 bg-brand-50 p-4 dark:border-brand-900 dark:bg-carvao-900">
           <p className="mb-3 text-[11px] font-bold uppercase tracking-wide text-brand-700 dark:text-brand-300">Escolha o modo de geração</p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {([
               { id: 'historica', icone: '📅', titulo: 'Antigo', desc: 'Baseado no histórico da operação' },
               { id: 'economica', icone: '⚖️', titulo: 'Mesclado', desc: 'Tradição equilibrada com variedade' },

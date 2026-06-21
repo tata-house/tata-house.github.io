@@ -11,22 +11,36 @@
    ===================================================================== */
 
 import { DADOS, normalizar } from './motor';
+import { resolverPreco } from './precos';
+import { PRECOS_COMPRAS, UNIDADES_COMPRAS } from './precos-compras';
+
+export type Confianca = 'alta' | 'media' | 'baixa' | 'sem-historico';
 
 export interface LinhaCotacao {
-  nome: string; // nome do produto como veio na cotação (limpo)
+  nome: string;
   preco: number;
-  marca: string | null; // marca/frigorífico após " - " quando existe, ou fornecedor
-  unid: string | null; // unidade declarada (formato D)
-  /** item do histórico casado automaticamente (nome canônico) ou null */
+  marca: string | null;
+  unid: string | null;
   item: string | null;
+  // Validação contra histórico TATÁ House
+  precoHistorico?: number | null;
+  deltaHistorico?: number | null; // fração: +0.3 = 30% acima
+  confianca?: Confianca;
+  alerta?: string | null;
+  origemHistorico?: string | null;
 }
 
 export interface ItemCotado {
-  item: string; // nome canônico no histórico
-  unid: string; // unidade padrão do item no histórico
-  preco: number; // menor preço entre as ofertas
-  marca: string | null; // marca da oferta mais barata
-  ofertas: number; // quantas linhas da cotação apontaram para este item
+  item: string;
+  unid: string;
+  preco: number;
+  marca: string | null;
+  ofertas: number;
+  precoHistorico?: number | null;
+  deltaHistorico?: number | null;
+  confianca?: Confianca;
+  alerta?: string | null;
+  origemHistorico?: string | null;
 }
 
 const RE_PRECO = /\d{1,3}(?:\.\d{3})?,\d{2}/g;
@@ -184,6 +198,62 @@ function detectarFornecedor(linha: string): string | null {
   return limpo || null;
 }
 
+/* ─── Validação histórica ──────────────────────────────────────────── */
+
+/**
+ * Cruza o preço cotado com o histórico real do TATÁ (planilhas Mai/Jun 2026).
+ * Atribui confiança e alerta sem inventar nada.
+ */
+function validarLinha(l: LinhaCotacao): LinhaCotacao {
+  const normItem = l.item ? normalizar(l.item) : null;
+  const normNome = normalizar(l.nome);
+
+  // Tenta resolver pelo item canônico primeiro, depois pelo nome bruto
+  let hist = normItem ? resolverPreco(normItem, {}) : { valor: 0, tipo: 'sem' as const };
+  if (hist.valor === 0) hist = resolverPreco(normNome, {});
+
+  if (hist.valor === 0 || hist.tipo === 'sem') {
+    return { ...l, precoHistorico: null, deltaHistorico: null, confianca: 'sem-historico', alerta: null, origemHistorico: null };
+  }
+
+  const precoHist = hist.valor;
+  const delta = (l.preco - precoHist) / precoHist;
+  const deltaAbs = Math.abs(delta);
+
+  let confianca: Confianca = deltaAbs <= 0.12 ? 'alta' : deltaAbs <= 0.30 ? 'media' : 'baixa';
+  let alerta: string | null = null;
+
+  if (confianca === 'baixa') {
+    const sinal = delta > 0 ? '+' : '';
+    alerta = `${sinal}${(delta * 100).toFixed(0)}% vs histórico R$${precoHist.toFixed(2)}`;
+    if (delta < -0.45) alerta += ' — verificar unidade';
+  }
+
+  // Valida unidade: se a cotação declarou uma unidade diferente do padrão, alerta
+  const keyHist = normItem ?? normNome;
+  const unidEsperada = (UNIDADES_COMPRAS[keyHist] ?? '').toLowerCase();
+  if (l.unid && unidEsperada && l.unid !== unidEsperada) {
+    const avisoUnid = `unidade "${l.unid}" ≠ padrão "${unidEsperada}" — confirmar`;
+    alerta = alerta ? `${alerta} · ${avisoUnid}` : avisoUnid;
+    if (confianca === 'alta') confianca = 'media';
+  }
+
+  const origemHistorico = hist.tipo === 'historico' ? 'planilha Mai/Jun 2026' : 'estimado';
+  return { ...l, precoHistorico: precoHist, deltaHistorico: delta, confianca, alerta, origemHistorico };
+}
+
+/** Top 40 itens do histórico formatados para incluir no prompt do Groq. */
+function buildContextoHistorico(): string {
+  const linhas = Object.entries(PRECOS_COMPRAS)
+    .filter(([, v]) => v > 0)
+    .slice(0, 40)
+    .map(([item, preco]) => {
+      const unid = (UNIDADES_COMPRAS[item] ?? 'kg').toLowerCase();
+      return `  ${item}: R$${preco.toFixed(2)}/${unid}`;
+    });
+  return `PREÇOS REAIS TATÁ HOUSE (Mai/Jun 2026 — use para validar, nunca para inventar):\n${linhas.join('\n')}`;
+}
+
 export function parsearCotacao(texto: string, fornecedoresCustom: string[] = []): LinhaCotacao[] {
   const linhas: LinhaCotacao[] = [];
   let fornecedorSecao: string | null = null;
@@ -265,7 +335,8 @@ export function parsearCotacao(texto: string, fornecedoresCustom: string[] = [])
       marca = fornecedorSecao;
     }
 
-    linhas.push({ nome, preco, marca, unid, item: casarItem(nome) });
+    const novaLinha: LinhaCotacao = { nome, preco, marca, unid, item: casarItem(nome) };
+    linhas.push(validarLinha(novaLinha));
   }
   return linhas;
 }
@@ -278,16 +349,21 @@ function buildPromptIA(fornecedores: string[]): string {
   const listForn = fornecedores.length
     ? fornecedores.join(', ')
     : 'Vita Frango, Jampac, Apetito Foods, WG, Frito Sul';
-  return `Você é especialista em cotações de alimentos para restaurante industrial brasileiro.
-Extraia TODOS os produtos com preço desta lista recebida via WhatsApp de fornecedores.
+  return `Você é o comprador do TATÁ House, restaurante industrial em SP.
+Extraia TODOS os produtos com preço desta cotação recebida de fornecedores.
+
+${buildContextoHistorico()}
+
+FORNECEDORES CADASTRADOS: ${listForn}
 
 REGRAS:
-- Cabeçalhos de categoria (*ACÉM*, *SUÍNOS*, *BOVINOS CONGELADOS*, FRANGOS etc.) → IGNORE
-- Saudações, datas, dias da semana, mensagens de status → IGNORE
-- Fornecedores cadastrados: ${listForn}
-- "Produto - Marca valor" → marca é o nome após o traço
+- Cabeçalhos de categoria (*ACÉM*, *SUÍNOS*, *BOVINOS* etc.) → IGNORE
+- Saudações, datas, dias da semana, status → IGNORE
 - Remova qualificadores: Resf/Resfriado/Cong/Congelado/RF/CG/FIFO do nome
+- "Produto - Marca valor" → marca é o texto após o traço
 - Preço como número com ponto decimal (ex: 31.90)
+- Nunca invente preço — extraia apenas do texto fornecido
+- Nunca invente fornecedor — use apenas os cadastrados acima
 
 Responda APENAS com JSON array válido (sem markdown):
 [{"nome":"Frango inteiro","preco":7.00,"marca":"Vita Frango"},...]`;
@@ -348,15 +424,16 @@ function combinarResultados(logica: LinhaCotacao[], ia: LinhaCotacao[]): LinhaCo
   const resultado = logica.map((l): LinhaCotacao => {
     const k = Math.round(l.preco * 100);
     const fila = filaIA.get(k) ?? [];
-    const par = fila.shift(); // consome o primeiro candidato ao mesmo preço
+    const par = fila.shift();
     if (par) iaConsumidos.add(par);
-    return {
-      nome: l.nome,                          // nome da lógica (mais fiel ao texto)
-      preco: l.preco,                        // preço da lógica é autoritativo
-      marca: l.marca || par?.marca || null,  // inline > IA > nada
+    const merged: LinhaCotacao = {
+      nome: l.nome,
+      preco: l.preco,
+      marca: l.marca || par?.marca || null,
       unid: l.unid,
-      item: l.item || par?.item || null,     // lógica > IA > nada
+      item: l.item || par?.item || null,
     };
+    return validarLinha(merged);
   });
 
   // Itens que a IA achou mas a lógica não capturou
@@ -435,12 +512,22 @@ export function agruparCotacao(
         preco: l.preco,
         marca: l.marca,
         ofertas: 1,
+        precoHistorico: l.precoHistorico,
+        deltaHistorico: l.deltaHistorico,
+        confianca: l.confianca,
+        alerta: l.alerta,
+        origemHistorico: l.origemHistorico,
       });
     } else {
       atual.ofertas++;
       if (l.preco < atual.preco) {
         atual.preco = l.preco;
         atual.marca = l.marca;
+        atual.precoHistorico = l.precoHistorico;
+        atual.deltaHistorico = l.deltaHistorico;
+        atual.confianca = l.confianca;
+        atual.alerta = l.alerta;
+        atual.origemHistorico = l.origemHistorico;
       }
     }
   }

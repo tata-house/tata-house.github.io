@@ -70,7 +70,7 @@ export function AbaNF({
     setCarregando(true);
     setErro(null);
     try {
-      const chaveEfetiva = groqKey.trim() || (process.env.NEXT_PUBLIC_GROQ_KEY ?? '');
+      const chaveEfetiva = (process.env.NEXT_PUBLIC_GROQ_KEY ?? '').trim() || groqKey.trim();
       const res = await lerNotaFiscalViaIA(fileData.base64, fileData.mimeType, chaveEfetiva);
       setResultado(res);
       if (res.erro) {
@@ -110,7 +110,7 @@ export function AbaNF({
     setTimeout(() => setAplicado(false), 3000);
   };
 
-  const temChave = !!(groqKey.trim() || process.env.NEXT_PUBLIC_GROQ_KEY);
+  const temChave = !!(process.env.NEXT_PUBLIC_GROQ_KEY || groqKey.trim());
 
   return (
     <div className="space-y-5">

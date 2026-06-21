@@ -125,15 +125,38 @@ function limparLinha(bruta: string): string {
     .trim();
 }
 
+/**
+ * Detecta se uma linha sem preço é um cabeçalho de fornecedor.
+ * Heurística: linha curta (≤60 chars), sem vírgula-decimal, contém letras.
+ * Exemplos: "VITAFRANGO WG", "Jampac", "BOVINOS", "C. Frango"
+ */
+function detectarFornecedor(linha: string): string | null {
+  if (linha.length < 2 || linha.length > 80) return null;
+  // se tiver preço (N,NN) não é cabeçalho
+  if (/\d,\d\d/.test(linha)) return null;
+  // precisa ter pelo menos uma letra
+  if (!/[a-zA-ZÀ-ÿ]/.test(linha)) return null;
+  // linhas muito longas provavelmente são descrições ou frases, não fornecedores
+  const words = linha.trim().split(/\s+/);
+  if (words.length > 6) return null;
+  return linha.replace(/[:.\-–]+$/, '').trim() || null;
+}
+
 export function parsearCotacao(texto: string): LinhaCotacao[] {
   const linhas: LinhaCotacao[] = [];
+  let fornecedorSecao: string | null = null; // supplier detected from section header
 
   for (const bruta of texto.split(/\r?\n/)) {
     const linha = limparLinha(bruta);
-    if (!linha || linha.length < 4) continue;
+    if (!linha || linha.length < 2) continue;
 
     const precos = linha.match(RE_PRECO);
-    if (!precos) continue; // cabeçalho de seção/fornecedor — ignorar
+    if (!precos) {
+      // Sem preço → pode ser cabeçalho de fornecedor ou categoria
+      const forn = detectarFornecedor(linha);
+      if (forn) fornecedorSecao = forn;
+      continue;
+    }
 
     let nome = '';
     let preco = 0;
@@ -167,6 +190,11 @@ export function parsearCotacao(texto: string): LinhaCotacao[] {
     if (sep.length > 1) {
       marca = sep[sep.length - 1].trim() || null;
       nome = sep.slice(0, -1).join(' - ').trim();
+    }
+
+    // se não veio marca inline, herda o fornecedor do cabeçalho de seção
+    if (!marca && fornecedorSecao) {
+      marca = fornecedorSecao;
     }
 
     linhas.push({ nome, preco, marca, unid, item: casarItem(nome) });

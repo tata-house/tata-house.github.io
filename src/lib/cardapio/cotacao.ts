@@ -260,8 +260,13 @@ export function parsearCotacao(texto: string, fornecedoresCustom: string[] = [])
   const fornecedorConhecido = buildLookupFornecedor(fornecedoresCustom);
 
   for (const bruta of texto.split(/\r?\n/)) {
-    // Detecta início de mensagem WhatsApp ANTES de limpar a linha
-    const temPrefitoWA = /^\[[^\]]*\]\s*[^:]*:/.test(bruta);
+    // Extrai remetente do prefixo WA "[data] Remetente:" ANTES de limpar
+    const mWA = bruta.match(/^\[[^\]]*\]\s*([^:\n]{1,60}):/);
+    const temPrefitoWA = !!mWA;
+    if (mWA) {
+      const fk = fornecedorConhecido(mWA[1].trim());
+      if (fk) fornecedorSecao = fk;
+    }
     const linha = limparLinha(bruta);
     if (!linha || linha.length < 2) continue;
 
@@ -365,8 +370,9 @@ REGRAS:
 - Nunca invente preço — extraia apenas do texto fornecido
 - Nunca invente fornecedor — use apenas os cadastrados acima
 
-Responda APENAS com JSON array válido (sem markdown):
-[{"nome":"Frango inteiro","preco":7.00,"marca":"Vita Frango"},...]`;
+Responda APENAS com JSON no formato {"items":[...]} (sem markdown):
+{"items":[{"nome":"Frango inteiro","preco":7.00,"marca":"Vita Frango"},...]}`;
+
 }
 
 type ItemIA = { nome: string; preco: number; marca?: string };

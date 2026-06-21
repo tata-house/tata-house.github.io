@@ -113,8 +113,9 @@ export function AbaCotacao({
     salvarTexto();
     setIaCarregando(true);
     resetarResultados();
+    const chaveEfetiva = groqKey.trim() || (process.env.NEXT_PUBLIC_GROQ_KEY ?? '');
     try {
-      const { linhas, comIA, erroIA } = await parsearCotacaoComIA(texto, groqKey, fornecedoresList);
+      const { linhas, comIA, erroIA } = await parsearCotacaoComIA(texto, chaveEfetiva, fornecedoresList);
       setLido(linhas);
       setModoUsado(comIA ? 'combo' : 'logica');
       if (erroIA) setIaErro(erroIA);
@@ -211,7 +212,7 @@ export function AbaCotacao({
     reader.readAsText(file, 'UTF-8');
   };
 
-  const temKey = groqKey.trim().length > 0;
+  const temKey = !!(groqKey.trim() || process.env.NEXT_PUBLIC_GROQ_KEY);
 
   return (
     <div className="space-y-4">

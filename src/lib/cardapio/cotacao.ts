@@ -268,7 +268,7 @@ export function parsearCotacao(texto: string): LinhaCotacao[] {
 
 /* ------------------- integração Gemini IA ----------------------------- */
 
-const GEMINI_MODELO = 'gemini-1.5-flash';
+const GEMINI_MODELO = 'gemini-2.0-flash';
 
 const PROMPT_IA = `Você é especialista em cotações de alimentos para restaurante industrial brasileiro.
 Extraia TODOS os produtos com preço desta lista recebida via WhatsApp de fornecedores.

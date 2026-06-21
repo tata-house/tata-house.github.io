@@ -34,6 +34,7 @@ import { AbaNF } from '@/components/cardapio/AbaNF';
 import { AlertaProteinaDia } from '@/components/cardapio/AlertaProteinaDia';
 import { AbaCustoPrato } from '@/components/cardapio/AbaCustoPrato';
 import { AbaFornecedorIntel } from '@/components/cardapio/AbaFornecedorIntel';
+import { AbaPedido } from '@/components/cardapio/AbaPedido';
 import { CardapioOrientadoDados } from '@/components/cardapio/CardapioOrientadoDados';
 import {
   deslocarSemana,
@@ -270,7 +271,7 @@ export default function PaginaCardapios() {
   const [plaquinhaAberta, setPlaquinhaAberta] = useState(false);
   const [semanaSheet, setSemanaSheet] = useState(false);
   const [buscaAberta, setBuscaAberta] = useState(false);
-  const [abaCompras, setAbaCompras] = useState<'lista' | 'precos' | 'estoque' | 'nf' | 'fornecedores'>('lista');
+  const [abaCompras, setAbaCompras] = useState<'lista' | 'precos' | 'estoque' | 'nf' | 'fornecedores' | 'pedido'>('lista');
   const [abaRelatorios, setAbaRelatorios] = useState<'central' | 'cenarios' | 'auditoria'>('central');
 
   const { estado, atualizar, pronto } = useSemana(semanaId);
@@ -605,17 +606,27 @@ export default function PaginaCardapios() {
               <div className="space-y-4">
                 {/* segmento Lista / Preços / Estoque / NF */}
                 <div className="flex gap-4 border-b border-carvao-100 dark:border-carvao-800">
-                  {(['lista', 'precos', 'estoque', 'nf', 'fornecedores'] as const).map((seg) => (
+                  {(['lista', 'precos', 'estoque', 'nf', 'fornecedores', 'pedido'] as const).map((seg) => (
                     <button
                       key={seg}
                       onClick={() => setAbaCompras(seg)}
-                      className={`relative pb-3 text-sm font-semibold transition ${
+                      className={`relative whitespace-nowrap pb-3 text-sm font-semibold transition ${
                         abaCompras === seg
                           ? 'text-brand-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:rounded-full after:bg-brand-600 dark:text-brand-400'
                           : 'text-carvao-400 hover:text-carvao-600 dark:text-carvao-500'
                       }`}
                     >
-                      {seg === 'lista' ? 'Lista de compras' : seg === 'precos' ? 'Preços' : seg === 'estoque' ? 'Estoque' : seg === 'nf' ? '📄 Nota fiscal' : '🏪 Fornecedores'}
+                      {seg === 'lista'
+                        ? 'Lista de compras'
+                        : seg === 'precos'
+                        ? 'Preços'
+                        : seg === 'estoque'
+                        ? 'Estoque'
+                        : seg === 'nf'
+                        ? '📄 Nota fiscal'
+                        : seg === 'fornecedores'
+                        ? '🏪 Fornecedores'
+                        : '📋 Pedido'}
                     </button>
                   ))}
                 </div>
@@ -674,6 +685,18 @@ export default function PaginaCardapios() {
                     precos={precos}
                     onSalvarPerfil={salvarPerfilFornecedor}
                     onAdicionarAvaliacao={adicionarAvaliacaoFornecedor}
+                  />
+                )}
+
+                {abaCompras === 'pedido' && (
+                  <AbaPedido
+                    estado={estado}
+                    semanaId={semanaId}
+                    fatores={fatores}
+                    fornecedores={fornecedores}
+                    perfis={perfisFornecedores}
+                    precos={precos}
+                    papel={papel}
                   />
                 )}
               </div>

@@ -74,8 +74,12 @@ export async function lerNotaFiscalViaIA(
     );
 
     if (!res.ok) {
-      const err = await res.text().catch(() => res.statusText);
-      return { itens: [], erro: `Gemini ${res.status}: ${err}` };
+      const corpo = await res.text().catch(() => res.statusText);
+      const ehAutenticacao = res.status === 401 || corpo.includes('UNAUTHENTICATED') || corpo.includes('ACCESS_TOKEN_TYPE_UNSUPPORTED');
+      const mensagem = ehAutenticacao
+        ? `Chave de API inválida (HTTP 401). Acesse aistudio.google.com/apikey, gere uma chave que começa com "AIza" e atualize o secret GEMINI_API_KEY no GitHub.`
+        : `Gemini ${res.status}: ${corpo}`;
+      return { itens: [], erro: mensagem };
     }
 
     const json = await res.json();

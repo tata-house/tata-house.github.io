@@ -79,7 +79,7 @@ export async function extrairRestricoesDaConversa(
         }),
       },
     );
-    if (!res.ok) return [];
+    if (!res.ok) return [];  // silencioso — chamado em background
     const json = await res.json();
     const txt: string = json.candidates?.[0]?.content?.parts?.[0]?.text ?? '[]';
     const data = JSON.parse(txt);
@@ -122,7 +122,13 @@ async function chamarGemini(apiKey: string, prompt: string): Promise<RespostaIA>
       }),
     },
   );
-  if (!res.ok) throw new Error(`Gemini ${res.status}`);
+  if (!res.ok) {
+    const corpo = await res.text().catch(() => res.statusText);
+    const ehAutenticacao = res.status === 401 || corpo.includes('UNAUTHENTICATED') || corpo.includes('ACCESS_TOKEN_TYPE_UNSUPPORTED');
+    throw new Error(ehAutenticacao
+      ? 'Chave Gemini inválida — acesse aistudio.google.com/apikey e atualize o secret GEMINI_API_KEY no GitHub com uma chave AIza…'
+      : `Gemini ${res.status}: ${corpo}`);
+  }
   const json = await res.json();
   const texto = json.candidates?.[0]?.content?.parts?.[0]?.text ?? '{}';
   return extrairJson(texto);

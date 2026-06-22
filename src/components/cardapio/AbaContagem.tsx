@@ -1,8 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Cartao, Kpi, estiloInput, estiloRotulo, Botao } from '@/components/ui';
 import { DIAS_SEMANA, formatarReais, linhasDoDia } from '@/lib/cardapio/motor';
+import { calcularStats, calcularTendenciaMensal } from '@/lib/cardapio/refeicoes';
+import { MEDIA_POR_DIA } from '@/lib/cardapio/media-diaria';
+import type { StatsRefeicoes, MesTendencia } from '@/lib/cardapio/refeicoes';
 import type { ContagemRefeicoesDia, EstadoSemana, Papel } from '@/lib/cardapio/tipos';
 
 const DIAS_ABREV = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
@@ -51,6 +54,41 @@ function mediasPorDiaSemana(contagens: ContagemRefeicoesDia[]): Record<number, {
     v.marmitas = Math.round(v.marmitas / v.n);
   });
   return acc;
+}
+
+function GraficoMensal({ dados }: { dados: MesTendencia[] }) {
+  const max = Math.max(...dados.map((d) => d.total), 1);
+  const mesAtualIdx = dados.length - 1;
+  return (
+    <div className="space-y-1.5">
+      <div className="flex h-14 items-end gap-1">
+        {dados.map((d, i) => {
+          const pct = (d.total / max) * 100;
+          const isAtual = i === mesAtualIdx;
+          return (
+            <div key={i} className="group relative flex flex-1 flex-col items-center gap-0.5">
+              <div className="pointer-events-none absolute -top-7 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-carvao-900 px-2 py-1 text-micro font-semibold text-white group-hover:block">
+                {d.total.toLocaleString('pt-BR')}
+              </div>
+              <div className="flex w-full flex-1 items-end">
+                <div
+                  className={`w-full rounded-t-sm transition-all ${d.total === 0 ? 'bg-carvao-100 dark:bg-carvao-800' : isAtual ? 'bg-brand-600' : 'bg-brand-200 dark:bg-brand-800'}`}
+                  style={{ height: d.total === 0 ? '3px' : `${pct}%` }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="flex gap-1">
+        {dados.map((d, i) => (
+          <span key={i} className={`flex-1 text-center text-micro ${i === mesAtualIdx ? 'font-bold text-brand-600 dark:text-brand-400' : 'text-carvao-400'}`}>
+            {d.mes}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function MiniBar({ valor, max, cor }: { valor: number; max: number; cor: string }) {
@@ -173,6 +211,20 @@ export function AbaContagem({
 
   const maxMedMedia = Math.max(...Object.values(medias).map((v) => Math.max(v.almoco, v.jantar, v.marmitas)), 1);
 
+  /* ── Stats históricos (dataset completo) ─────────────────────────── */
+  const [statsHist, setStatsHist] = useState<StatsRefeicoes | null>(null);
+  const [tendencia, setTendencia] = useState<MesTendencia[]>([]);
+  useEffect(() => {
+    setStatsHist(calcularStats());
+    setTendencia(calcularTendenciaMensal());
+  }, []);
+
+  /* ── Alerta de pico para o dia selecionado ──────────────────────── */
+  const dowAtivo = new Date(DATAS_SEMANA[diaAtivo]).getDay();
+  const mediaDiaAtivo = MEDIA_POR_DIA[dowAtivo];
+  const isPico = diaAtivo === DIA_HOJE_IDX && totaisDia[diaAtivo] > 0
+    && totaisDia[diaAtivo] >= Math.round(mediaDiaAtivo.total * 1.2);
+
   /* ── Registro do dia activo ─────────────────────────────────────────── */
   const regAtivo = contagens.find((c) => c.data === DATAS_SEMANA[diaAtivo]);
 
@@ -183,7 +235,7 @@ export function AbaContagem({
       <Cartao className="space-y-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <p className="text-sm font-extrabold uppercase tracking-widest text-carvao-400">
-            Refeições da semana
+            Refeições
           </p>
           {custoPorRefeicao !== null && (
             <span className="rounded-full bg-brand-500/10 px-3 py-1 text-sm font-extrabold text-brand-700 ring-1 ring-brand-500/30 dark:text-brand-300">
@@ -225,14 +277,26 @@ export function AbaContagem({
         {/* Formulário do dia selecionado */}
         {podeContar && (
           <div className="space-y-3 rounded-2xl bg-carvao-50 p-4 dark:bg-carvao-800/50">
-            <p className="text-xs font-bold text-carvao-500 dark:text-carvao-400">
-              {DIAS_SEMANA[diaAtivo]}, {displayData(DATAS_SEMANA[diaAtivo])}
-              {regAtivo && (
-                <span className="ml-2 font-normal text-carvao-400">
-                  · já registrado: {regAtivo.almoco}A · {regAtivo.jantar}J · {regAtivo.marmitas}M
+            <div className="flex flex-wrap items-center justify-between gap-1">
+              <p className="text-xs font-bold text-carvao-500 dark:text-carvao-400">
+                {DIAS_SEMANA[diaAtivo]}, {displayData(DATAS_SEMANA[diaAtivo])}
+                {regAtivo && (
+                  <span className="ml-2 font-normal text-carvao-400">
+                    · já registrado: {regAtivo.almoco}A · {regAtivo.jantar}J · {regAtivo.marmitas}M
+                  </span>
+                )}
+              </p>
+              {isPico && (
+                <span className="rounded-full bg-ouro-400/20 px-2 py-0.5 text-micro font-bold text-ouro-700 dark:text-ouro-300">
+                  Pico ↑{Math.round(((totaisDia[diaAtivo] - mediaDiaAtivo.total) / mediaDiaAtivo.total) * 100)}%
                 </span>
               )}
-            </p>
+            </div>
+            {isPico && (
+              <p className="rounded-xl bg-ouro-300/15 px-3 py-2 text-xs text-ouro-700 dark:text-ouro-300">
+                Dia acima da média histórica ({mediaDiaAtivo.total}). Revise porções e estoque.
+              </p>
+            )}
             <div className="grid grid-cols-3 gap-3">
               <div>
                 <label className={estiloRotulo}>Almoço</label>
@@ -337,6 +401,41 @@ export function AbaContagem({
               ))}
             </div>
           </Cartao>
+        </>
+      )}
+
+      {/* ── Stats históricos — tendência e totais de longo prazo ──── */}
+      {statsHist && (
+        <>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="rounded-2xl bg-carvao-50 px-3 py-2.5 dark:bg-carvao-800/50">
+              <p className="text-micro uppercase tracking-wider text-carvao-400">Este ano</p>
+              <p className="mt-0.5 text-xl font-black tabular-nums text-carvao-800 dark:text-white">
+                {statsHist.anoAtual.toLocaleString('pt-BR')}
+              </p>
+            </div>
+            <div className="rounded-2xl bg-carvao-50 px-3 py-2.5 dark:bg-carvao-800/50">
+              <p className="text-micro uppercase tracking-wider text-carvao-400">Ano passado</p>
+              <p className="mt-0.5 text-xl font-black tabular-nums text-carvao-800 dark:text-white">
+                {statsHist.anoPassado.toLocaleString('pt-BR')}
+              </p>
+            </div>
+            <div className="col-span-2 rounded-2xl bg-carvao-50 px-3 py-2.5 dark:bg-carvao-800/50">
+              <p className="text-micro uppercase tracking-wider text-carvao-400">Total histórico</p>
+              <p className="mt-0.5 text-xl font-black tabular-nums text-carvao-800 dark:text-white">
+                {statsHist.totalHistorico.toLocaleString('pt-BR')}
+              </p>
+              <p className="text-micro text-carvao-400">{statsHist.diasRegistrados.toLocaleString('pt-BR')} dias registrados</p>
+            </div>
+          </div>
+          {tendencia.length > 0 && (
+            <Cartao>
+              <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-carvao-400">
+                Últimos 12 meses
+              </p>
+              <GraficoMensal dados={tendencia} />
+            </Cartao>
+          )}
         </>
       )}
 

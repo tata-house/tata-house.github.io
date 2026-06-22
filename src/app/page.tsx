@@ -9,7 +9,6 @@ import { BottomSheet, Skeleton, Kpi } from '@/components/ui';
 import { resumoSemana } from '@/lib/cardapio/indicadores';
 import { formatarReais } from '@/lib/cardapio/motor';
 import { AbaAgora } from '@/components/cardapio/AbaAgora';
-import { ContadorRefeicoes } from '@/components/cardapio/ContadorRefeicoes';
 import { AbaAceitacao } from '@/components/cardapio/AbaAceitacao';
 import { PlaquinhaQR } from '@/components/cardapio/PlaquinhaQR';
 import { AbaCardapio } from '@/components/cardapio/AbaCardapio';
@@ -766,7 +765,6 @@ export default function PaginaCardapios() {
 
                 {abaCardapioSeg === 'operacao' && (
                   <div className="space-y-6">
-                    <ContadorRefeicoes custoRefSemana={kpisRelatorios.custoRef} />
                     <AbaContagem
                       contagens={contagens}
                       onRegistrar={registrarContagem}

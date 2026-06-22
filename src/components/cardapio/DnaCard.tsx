@@ -148,7 +148,7 @@ export function DnaCard() {
   return (
     <Cartao className="space-y-4 !p-0 overflow-hidden">
       {/* Cabeçalho */}
-      <div className="bg-gradient-to-r from-carvao-900 via-carvao-800 to-brand-800 px-5 py-4 text-white">
+      <div className="bg-gradient-to-br from-carvao-900 via-carvao-850 to-brand-900 px-5 py-4 text-white">
         <div className="flex items-center justify-between gap-2">
           <p className="flex items-center gap-2 text-caption font-extrabold uppercase tracking-[0.18em] text-brand-200">
             <Icone nome="gerencial" tam={14} /> DNA alimentar da casa

@@ -21,7 +21,6 @@ import { AbaRadar } from '@/components/cardapio/AbaRadar';
 import { CentralGerencial } from '@/components/cardapio/CentralGerencial';
 import { Configuracoes } from '@/components/cardapio/Configuracoes';
 import { Assistente } from '@/components/cardapio/Assistente';
-import { insightProativo } from '@/lib/cardapio/assistente';
 import { PosterSemana } from '@/components/cardapio/PosterSemana';
 import { BriefingCard } from '@/components/cardapio/BriefingCard';
 import { AbaAuditoria } from '@/components/cardapio/AbaAuditoria';
@@ -473,12 +472,6 @@ export default function PaginaCardapios() {
     irSemana,
   });
 
-  // Insight proativo da IA exibido no Início (antes só visível no balão flutuante)
-  const insightInicio = useMemo(
-    () => insightProativo({ estado, semanaId, precos, historico, fornecedores, aceitacao, estoque, fatores }),
-    [estado, semanaId, precos, historico, fornecedores, aceitacao, estoque, fatores],
-  );
-
   // KPIs-herói do topo de Relatórios — leitura gerencial de 5 segundos
   const kpisRelatorios = useMemo(() => {
     const r = resumoSemana(estado, precos, fatores);
@@ -716,28 +709,8 @@ export default function PaginaCardapios() {
                   estoque={estoque}
                   historico={historico}
                   fornecedores={fornecedores}
+                  onOpenIA={() => setIaAberta(true)}
                 />
-                {insightInicio && (
-                  <button
-                    onClick={() => setIaAberta(true)}
-                    className="flex w-full items-start gap-3 rounded-2xl border border-ouro-400/30 bg-ouro-300/10 px-4 py-3.5 text-left transition hover:bg-ouro-300/20"
-                  >
-                    <span className="mt-0.5 shrink-0 text-ouro-500 dark:text-ouro-300"><Icone nome="raio" tam={18} /></span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-corpo font-semibold leading-snug text-carvao-800 dark:text-areia-100">{insightInicio.texto}</p>
-                      {insightInicio.itens && (
-                        <ul className="mt-1.5 space-y-0.5">
-                          {insightInicio.itens.slice(0, 2).map((item, i) => (
-                            <li key={i} className="text-caption text-carvao-500 dark:text-areia-400">· {item}</li>
-                          ))}
-                        </ul>
-                      )}
-                      <p className="mt-2 flex items-center gap-1 text-caption font-bold text-ouro-600 dark:text-ouro-300">
-                        Analisar com IA <Icone nome="proximo" tam={11} />
-                      </p>
-                    </div>
-                  </button>
-                )}
                 <AbaAgora
                   estado={estado}
                   precos={precos}

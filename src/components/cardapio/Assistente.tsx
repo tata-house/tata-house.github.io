@@ -72,7 +72,7 @@ export function Assistente({
       <button
         onClick={() => setAberto(!aberto)}
         aria-label="Inteligência Tatá House"
-        className="fixed bottom-20 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-800 text-white shadow-flutuante ring-2 ring-ouro-400/50 transition hover:scale-105 active:scale-95 lg:bottom-5 lg:right-5 print:hidden"
+        className="fixed bottom-20 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-800 text-white shadow-flutuante transition hover:scale-105 active:scale-95 lg:bottom-5 lg:right-5 print:hidden"
       >
         <Icone nome={aberto ? 'fechar' : 'chefIA'} tam={24} />
         {proativo && !aberto && (
@@ -113,7 +113,7 @@ export function Assistente({
             <>
               <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
                 {estrategia ? (
-                  <div className="rounded-2xl bg-gradient-to-br from-carvao-900 to-brand-900 p-3.5 text-white">
+                  <div className="rounded-2xl bg-gradient-to-br from-carvao-900 via-carvao-850 to-brand-900 p-3.5 text-white">
                     <p className="text-sm font-semibold leading-snug">{estrategia.titulo}</p>
                     <ul className="mt-2 space-y-1.5">
                       {estrategia.itens.map((it, j) => (

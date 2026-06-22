@@ -23,7 +23,7 @@ import { custoTipado, resolverPreco } from '@/lib/cardapio/precos';
 import { RECEITAS_POR_CATEGORIA, GUARNICOES_FIXAS } from '@/lib/cardapio/receitas';
 import { useEstimativas } from '@/lib/cardapio/estimativas';
 import { useAceitacao, semanasComConteudo, lerSemana } from '@/lib/cardapio/estado';
-import type { DiaCardapio, EstadoSemana, Proteina } from '@/lib/cardapio/tipos';
+import type { Aceitacao, DiaCardapio, EstadoSemana, Proteina } from '@/lib/cardapio/tipos';
 import { SeletorPrato } from './SeletorPrato';
 import { OperacaoDia } from './OperacaoDia';
 import { ChefIA } from './ChefIA';
@@ -75,6 +75,51 @@ function BadgeProteina({ prato }: { prato: string }) {
     >
       {ROTULO_PROTEINA[p]}
     </span>
+  );
+}
+
+function PratoIntel({
+  prato,
+  aceitacao,
+  frequencia,
+  custo,
+  pessoas,
+}: {
+  prato: string;
+  aceitacao: Aceitacao;
+  frequencia: Record<string, number>;
+  custo: { total: number; itensSemPreco: number; itensEstimados: number };
+  pessoas: number;
+}) {
+  const norm = normalizar(prato);
+  const av = aceitacao[norm];
+  const nota = av && av.n >= 2 ? av.somaNotas / av.n : null;
+  const freq = frequencia[norm] ?? 0;
+  const custoPessoa = custo.total > 0 && pessoas > 0 ? custo.total / pessoas : null;
+
+  return (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-rotulo">
+      {nota !== null ? (
+        <span className={nota >= 4 ? 'font-semibold text-emerald-600 dark:text-emerald-400' : nota >= 3 ? 'font-semibold text-ouro-600 dark:text-ouro-300' : 'font-semibold text-perigo'}>
+          {nota.toFixed(1)}★{' '}
+          <span className="font-normal text-carvao-400">({av!.n})</span>
+        </span>
+      ) : (
+        <span className="text-carvao-400">sem avaliações</span>
+      )}
+      {freq >= 2 && (
+        <span className={freq >= 3 ? 'text-ouro-600 dark:text-ouro-300' : 'text-carvao-400'}>
+          {freq}× recente
+        </span>
+      )}
+      {custo.itensSemPreco > 0 ? (
+        <span className="font-semibold text-perigo">preço incompleto</span>
+      ) : custo.itensEstimados > 0 && custoPessoa ? (
+        <span className="text-ouro-600 dark:text-ouro-300">≈ {formatarReais(custoPessoa)}/pessoa</span>
+      ) : custoPessoa ? (
+        <span className="text-carvao-500 dark:text-areia-400">{formatarReais(custoPessoa)}/pessoa</span>
+      ) : null}
+    </div>
   );
 }
 
@@ -619,26 +664,13 @@ export function AbaCardapio({
 
               {dia.principal && (
                 <>
-                  <p className="text-xs text-carvao-400">
-                    {fonte === 'combo' ? (
-                      <span className="font-semibold text-brand-600">● Histórico operacional</span>
-                    ) : fonte === 'mapa' ? (
-                      <span className="font-semibold text-brand-600">● Histórico por componente</span>
-                    ) : fonte === 'receita' ? (
-                      <span className="font-semibold text-[#9a6c17] dark:text-[#e3b45c]">○ Receita (sem histórico)</span>
-                    ) : fonte === 'estimado' ? (
-                      <span className="font-semibold text-perigo">▲ Ingredientes estimados</span>
-                    ) : null}
-                    {' · '}
-                    {lista.length} itens de compra
-                    {custo.total > 0 && <> · ≈ {formatarReais(custo.total)}</>}
-                    {custo.itensEstimados > 0 && (
-                      <span className="font-semibold text-[#9a6c17] dark:text-[#e3b45c]"> · {custo.itensEstimados} estimado(s)</span>
-                    )}
-                    {custo.itensSemPreco > 0 && (
-                      <span className="font-semibold text-perigo"> · {custo.itensSemPreco} sem preço</span>
-                    )}
-                  </p>
+                  <PratoIntel
+                    prato={dia.principal}
+                    aceitacao={aceitacao}
+                    frequencia={frequencia}
+                    custo={custo}
+                    pessoas={dia.pessoas}
+                  />
                   {fonte === 'estimado' && (
                     <p className="rounded-xl bg-perigo/10 px-2.5 py-1.5 text-caption font-semibold text-perigo ring-1 ring-perigo/20">
                       Este prato não tem receita cadastrada — os ingredientes são um chute. Escolha um prato com

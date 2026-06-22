@@ -23,6 +23,7 @@ interface Props {
   estoque: Estoque;
   historico: HistoricoPrecos;
   fornecedores: Record<string, string>;
+  onOpenIA?: () => void;
 }
 
 const NIVEL_COR: Record<NivelAlerta, string> = {
@@ -57,6 +58,7 @@ function ItemCard({ item }: { item: ItemBriefing }) {
 }
 
 export function BriefingCard(props: Props) {
+  const { onOpenIA } = props;
   const [expandido, setExpandido] = useState(true);
   const [iaTexto, setIaTexto] = useState<string | null>(null);
   const [carregandoIa, setCarregandoIa] = useState(false);
@@ -151,7 +153,7 @@ export function BriefingCard(props: Props) {
       <div className="rounded-3xl bg-brand-50 px-5 py-4 ring-1 ring-brand-200/60 dark:bg-carvao-850 dark:ring-carvao-700">
         <div className="flex items-start gap-3">
           <span className="mt-0.5 shrink-0 text-lg leading-none">{insightOk ? '⚡' : '✓'}</span>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="font-display text-sm font-bold text-brand-700 dark:text-brand-300">{briefing.saudacao}</p>
             {insightOk ? (
               <>
@@ -165,6 +167,14 @@ export function BriefingCard(props: Props) {
                       </li>
                     ))}
                   </ul>
+                )}
+                {onOpenIA && (
+                  <button
+                    onClick={onOpenIA}
+                    className="mt-2.5 text-caption font-semibold text-brand-600 transition hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+                  >
+                    Analisar com IA →
+                  </button>
                 )}
               </>
             ) : (

@@ -252,48 +252,49 @@ export function DnaCard() {
 
           {/* Campeões de qualidade */}
           {dna.campeoes.length > 0 && (
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <p className="text-caption font-bold uppercase tracking-wider text-brand-600 dark:text-brand-300">
                 Campeões da casa
                 {dna.baseAvaliacoes === 0 && (
-                  <span className="ml-1 font-medium normal-case tracking-normal text-carvao-400">· por frequência no histórico</span>
+                  <span className="ml-1 font-medium normal-case tracking-normal text-carvao-400">· por frequência</span>
                 )}
               </p>
-              <div className="flex flex-wrap gap-1.5">
-                {dna.campeoes.map((c) => (
-                  <span
-                    key={c.prato}
-                    className="flex items-center gap-1.5 rounded-full bg-brand-500/10 px-2.5 py-1 text-rotulo font-semibold text-brand-700 ring-1 ring-brand-500/25 dark:text-brand-300"
-                    title={`servido ${c.frequencia}×${c.nota !== null ? ` · nota ${c.nota}` : ''}`}
-                  >
-                    {c.prato}
-                    {c.nota !== null ? (
-                      <span className="text-caption opacity-70">{c.nota}★</span>
-                    ) : (
-                      <span className="text-caption opacity-70">{c.frequencia}×</span>
-                    )}
-                  </span>
+              <ul className="space-y-1">
+                {dna.campeoes.map((c, i) => (
+                  <li key={c.prato} className="flex items-center gap-2.5">
+                    <span className="shrink-0 text-sm">
+                      {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`}
+                    </span>
+                    <span className="flex-1 text-sm font-semibold text-carvao-800 dark:text-areia-100">{c.prato}</span>
+                    <span className="shrink-0 text-xs text-carvao-400">
+                      {c.nota !== null ? `${c.nota}★` : `${c.frequencia}×`}
+                    </span>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           )}
 
-          {/* Problemas */}
+          {/* Pontos de atenção */}
           {dna.problemas.length > 0 && (
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <p className="text-caption font-bold uppercase tracking-wider text-perigo">Pontos de atenção</p>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="space-y-1.5">
                 {dna.problemas.map((p) => (
-                  <span
+                  <div
                     key={p.prato}
-                    className="flex items-center gap-1.5 rounded-full bg-perigo/10 px-2.5 py-1 text-rotulo font-semibold text-perigo ring-1 ring-perigo/25"
-                    title={`${p.nota !== null ? `nota ${p.nota}` : 'sem nota'}${p.desperdicio !== null ? ` · ${Math.round(p.desperdicio * 100)}% sobra` : ''}`}
+                    className="rounded-xl bg-perigo/5 px-3 py-2.5 ring-1 ring-perigo/15"
                   >
-                    {p.prato}
-                    {p.desperdicio !== null && p.desperdicio >= 0.2 && (
-                      <span className="text-caption opacity-70">{Math.round(p.desperdicio * 100)}% sobra</span>
-                    )}
-                  </span>
+                    <p className="text-sm font-semibold text-carvao-800 dark:text-areia-100">{p.prato}</p>
+                    <p className="mt-0.5 text-xs text-carvao-400">
+                      {p.nota !== null ? `Nota ${p.nota} ` : ''}
+                      {p.desperdicio !== null && p.desperdicio >= 0.1
+                        ? `· ${Math.round(p.desperdicio * 100)}% de sobra — revise a quantidade`
+                        : p.nota !== null
+                        ? '— verifique preparo e temperatura'
+                        : 'avalie com a equipe'}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>

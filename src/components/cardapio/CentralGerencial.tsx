@@ -222,15 +222,17 @@ export function CentralGerencial({
 
   return (
     <div className="space-y-6">
-      {/* Cabeçalho */}
-      <div className="rounded-2xl bg-gradient-to-r from-carvao-800 to-carvao-600 p-5 text-white dark:from-carvao-900 dark:to-carvao-700">
-        <div className="flex items-center gap-3">
-          
-          <div>
-            <h2 className="font-display text-xl font-bold">Central Gerencial</h2>
-            <p className="text-sm text-carvao-200">Visão executiva — exporte tudo para Excel / Google Sheets em CSV</p>
-          </div>
-        </div>
+      {/* Cabeçalho narrativo */}
+      <div className="space-y-1">
+        <p className="text-micro font-bold uppercase tracking-[0.18em] text-carvao-400">Central gerencial</p>
+        <p className="text-lg font-extrabold text-carvao-900 dark:text-white">
+          {kpis.semanas === 1
+            ? 'Esta semana em números'
+            : kpis.semanas <= 4
+            ? `Últimas ${kpis.semanas} semanas`
+            : 'Histórico completo'}
+        </p>
+        <p className="text-xs text-carvao-400">Exporte para Excel ou Google Sheets em CSV</p>
       </div>
 
       {/* Seletor de período */}

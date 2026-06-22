@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Cartao, EstadoVazio, Kpi, Secao } from '@/components/ui';
 import { calcularCustosSemana } from '@/lib/cardapio/custo-prato';
+import { normalizar } from '@/lib/cardapio/motor';
 import type { DiaCardapio } from '@/lib/cardapio/tipos';
 import type { CustoPorcao } from '@/lib/cardapio/custo-prato';
 
@@ -106,7 +107,20 @@ export function AbaCustoPrato({
   const [filtro, setFiltro] = useState<string>('Todos');
 
   const custos = useMemo(() => calcularCustosSemana(dias, precos), [dias, precos]);
-  const semDados = dias.filter((d) => d.principal).length - custos.filter((c) => c.categoria === 'Principal').length;
+
+  const principaisSemDados = useMemo(() => {
+    const normsComDados = new Set(custos.filter((c) => c.categoria === 'Principal').map((c) => c.norm));
+    const vistos = new Set<string>();
+    return dias
+      .filter((d) => d.principal)
+      .map((d) => d.principal as string)
+      .filter((p) => {
+        const n = normalizar(p);
+        if (vistos.has(n)) return false;
+        vistos.add(n);
+        return !normsComDados.has(n);
+      });
+  }, [dias, custos]);
 
   const categorias = ['Todos', ...Array.from(new Set(custos.map((c) => c.categoria)))];
   const filtrados = filtro === 'Todos' ? custos : custos.filter((c) => c.categoria === filtro);
@@ -135,11 +149,6 @@ export function AbaCustoPrato({
         <Kpi rotulo="Mais barato" valor={`R$ ${(maisBarato?.custoPorcao ?? 0).toFixed(2).replace('.', ',')}`} tom="verde" />
       </div>
 
-      {semDados > 0 && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-800/40 dark:bg-amber-950/30 dark:text-amber-300">
-          {semDados} prato(s) sem dados de ingredientes no sistema — não aparecem no ranking.
-        </div>
-      )}
 
       {/* Filtro por categoria */}
       <div className="flex gap-2 overflow-x-auto pb-1">
@@ -190,6 +199,21 @@ export function AbaCustoPrato({
                     </div>
                   </div>
                 </button>
+              </li>
+            ))}
+            {(filtro === 'Todos' || filtro === 'Principal') && principaisSemDados.map((prato) => (
+              <li key={`sem-${prato}`} className="flex items-center gap-3 px-4 py-3 opacity-50">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="truncate text-sm font-semibold text-carvao-600 dark:text-carvao-400">{prato}</p>
+                    <span className="shrink-0 text-xs text-carvao-400">sem dados</span>
+                  </div>
+                  <div className="mt-1.5 h-1.5 w-full rounded-full bg-carvao-100 dark:bg-carvao-700" />
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className="rounded bg-carvao-100 px-1 py-0.5 text-micro font-semibold text-carvao-400 dark:bg-carvao-700">Principal</span>
+                    <span className="text-micro text-carvao-400">ingredientes não cadastrados</span>
+                  </div>
+                </div>
               </li>
             ))}
           </ul>

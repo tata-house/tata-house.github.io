@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Botao, Cartao, Modal, Pilula, estiloInput } from '@/components/ui';
 import { Icone } from '@/components/Icones';
 import {
@@ -214,6 +214,19 @@ export function AbaCompras({
       };
     });
 
+  const missao = useMemo(() => {
+    let total = 0, comprado = 0, recebido = 0, estimado = 0;
+    DIAS_SEMANA.forEach((_, dia) => {
+      linhasDoDia(estado, dia, fatores, { mostrarBasicos }).forEach((l) => {
+        total++;
+        if (l.status.compradoEm) comprado++;
+        if (l.status.recebidoOk) recebido++;
+        estimado += (precos[l.chave] ?? 0) * l.qtd;
+      });
+    });
+    return { total, aComprar: total - comprado, comprado, recebido, estimado };
+  }, [estado, precos, fatores, mostrarBasicos]);
+
   // ações em lote — sobre todos os itens do dia
   const comprarTudo = (dia: number) =>
     atualizar((e) => {
@@ -237,6 +250,31 @@ export function AbaCompras({
 
   return (
     <div className="space-y-4">
+      {/* Barra de missão */}
+      {missao.total > 0 && (
+        <div className="rounded-2xl bg-carvao-50 px-4 py-3 dark:bg-carvao-800/50 print:hidden">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="text-xs font-bold text-carvao-700 dark:text-carvao-200">
+              {missao.aComprar === 0 ? 'Compras concluídas ✓' : `${missao.aComprar} iten${missao.aComprar !== 1 ? 's' : ''} para comprar`}
+            </p>
+            {missao.estimado > 0 && (
+              <p className="text-xs font-bold text-brand-600 dark:text-brand-400">{formatarReais(missao.estimado)}</p>
+            )}
+          </div>
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-carvao-200 dark:bg-carvao-700">
+            <div
+              className={`h-full rounded-full transition-all ${missao.aComprar === 0 ? 'bg-brand-500' : 'bg-ouro-400'}`}
+              style={{ width: `${missao.total > 0 ? Math.round((missao.comprado / missao.total) * 100) : 0}%` }}
+            />
+          </div>
+          <div className="mt-1.5 flex gap-4 text-micro text-carvao-400">
+            <span><strong className="text-carvao-700 dark:text-areia-200">{missao.comprado}</strong> comprado{missao.comprado !== 1 ? 's' : ''}</span>
+            <span><strong className="text-carvao-700 dark:text-areia-200">{missao.recebido}</strong> recebido{missao.recebido !== 1 ? 's' : ''}</span>
+            <span><strong className="text-carvao-700 dark:text-areia-200">{missao.total}</strong> no total</span>
+          </div>
+        </div>
+      )}
+
       {/* Modo + ações */}
       <div className="flex items-center gap-2 print:hidden">
         <div className="flex flex-1 gap-1 rounded-2xl bg-carvao-100/70 p-1 dark:bg-carvao-800/70">

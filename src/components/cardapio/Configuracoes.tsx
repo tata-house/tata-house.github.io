@@ -22,11 +22,12 @@ export function Configuracoes() {
 
   return (
     <div className="space-y-4">
-      <div className="space-y-1">
-        <p className="text-micro font-bold uppercase tracking-[0.18em] text-carvao-400">Segurança</p>
-        <p className="text-sm text-carvao-500 dark:text-areia-300">
-          Substitua os PINs padrão por números próprios. Compartilhe só com quem precisa.
-        </p>
+      <div className="flex items-start gap-3 rounded-2xl bg-carvao-50 px-4 py-3.5 dark:bg-carvao-800/50">
+        <span className="text-xl">🔒</span>
+        <div>
+          <p className="text-sm font-bold text-carvao-900 dark:text-white">Área segura</p>
+          <p className="text-xs text-carvao-500 dark:text-areia-400">Substitua os PINs padrão. Compartilhe somente com quem precisa de acesso.</p>
+        </div>
       </div>
 
       {PERFIS.map((p, i) => {

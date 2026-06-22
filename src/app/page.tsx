@@ -28,6 +28,7 @@ import { LinhaTempoCasa } from '@/components/cardapio/LinhaTempoCasa';
 import { PrevisaoCard } from '@/components/cardapio/PrevisaoCard';
 import { RoiCard } from '@/components/cardapio/RoiCard';
 import { AbaFuncionarios } from '@/components/cardapio/AbaFuncionarios';
+import { ContadorRefeicoes } from '@/components/cardapio/ContadorRefeicoes';
 import { AbaContagem } from '@/components/cardapio/AbaContagem';
 import { AbaNF } from '@/components/cardapio/AbaNF';
 import { AlertaProteinaDia } from '@/components/cardapio/AlertaProteinaDia';
@@ -721,6 +722,7 @@ export default function PaginaCardapios() {
                   papel={papel}
                   irPara={(alvo) => irPara(alvo as AbaId)}
                 />
+                <ContadorRefeicoes custoRefSemana={kpisRelatorios.custoRef ?? null} />
               </div>
             )}
 

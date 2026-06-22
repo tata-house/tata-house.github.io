@@ -3,11 +3,109 @@
 import { useMemo } from 'react';
 import { Cartao, EstadoVazio, Kpi, Pilula, Secao } from '@/components/ui';
 import { formatarReais } from '@/lib/cardapio/motor';
-import { analisarRadar, fraseAlerta } from '@/lib/cardapio/radar';
+import { analisarRadar, type RadarItem } from '@/lib/cardapio/radar';
 import type { HistoricoPrecos } from '@/lib/cardapio/tipos';
 
 function seta(t: 'subindo' | 'caindo' | 'estável') {
   return t === 'subindo' ? '▲' : t === 'caindo' ? '▼' : '▬';
+}
+
+/* ── Parecer do comprador ────────────────────────────────────────────
+   Lê o radar e fala como um comprador sênior: abre com a conclusão
+   (economia possível, quantas frentes) e justifica com as recomendações
+   priorizadas. Não despeja dados — entrega decisão pronta. */
+
+interface Recomendacao {
+  tom: 'troca' | 'reforco' | 'atencao';
+  texto: string;
+}
+
+function montarParecer(radar: RadarItem[]): { recomendacoes: Recomendacao[]; economia: number; unidEconomia: string } {
+  const recs: Recomendacao[] = [];
+  let economia = 0;
+  let unidEconomia = 'kg';
+
+  const altasSubst = radar.filter((r) => r.alerta === 'alta' && r.substituir);
+  altasSubst.forEach((r) => {
+    const pct = Math.round(Math.abs(r.variacao ?? 0) * 100);
+    economia += r.substituir!.economia;
+    unidEconomia = r.unid || unidEconomia;
+    recs.push({
+      tom: 'troca',
+      texto: `${r.item} subiu ${pct}%${r.fornecedor ? ` na ${r.fornecedor}` : ''} — trocar por ${r.substituir!.item} economiza ${formatarReais(r.substituir!.economia)}/${r.unid}.`,
+    });
+  });
+
+  // altas sem substituto — atenção pura
+  radar
+    .filter((r) => r.alerta === 'alta' && !r.substituir)
+    .slice(0, 2)
+    .forEach((r) => {
+      const pct = Math.round(Math.abs(r.variacao ?? 0) * 100);
+      recs.push({
+        tom: 'atencao',
+        texto: `${r.item} subiu ${pct}%${r.fornecedor ? ` na ${r.fornecedor}` : ''} e não tem substituto óbvio — renegocie ou cote outro fornecedor.`,
+      });
+    });
+
+  // quedas — oportunidade de reforçar
+  radar
+    .filter((r) => r.alerta === 'queda')
+    .slice(0, 2)
+    .forEach((r) => {
+      const pct = Math.round(Math.abs(r.variacao ?? 0) * 100);
+      recs.push({
+        tom: 'reforco',
+        texto: `${r.item} caiu ${pct}%${r.fornecedor ? ` na ${r.fornecedor}` : ''} — bom momento para reforçar o estoque.`,
+      });
+    });
+
+  return { recomendacoes: recs, economia, unidEconomia };
+}
+
+const TOM_REC: Record<Recomendacao['tom'], { ponto: string; rotulo: string }> = {
+  troca:   { ponto: 'bg-emerald-500', rotulo: 'Trocar' },
+  reforco: { ponto: 'bg-[#60a5fa]',   rotulo: 'Reforçar' },
+  atencao: { ponto: 'bg-ouro-400',    rotulo: 'Atenção' },
+};
+
+function ParecerComprador({ radar }: { radar: RadarItem[] }) {
+  const { recomendacoes, economia, unidEconomia } = useMemo(() => montarParecer(radar), [radar]);
+
+  if (recomendacoes.length === 0) {
+    return (
+      <div className="rounded-3xl bg-gradient-to-br from-carvao-900 via-carvao-850 to-brand-900 px-5 py-5 text-white">
+        <p className="text-micro font-bold uppercase tracking-[0.18em] text-brand-200/80">Parecer do comprador</p>
+        <p className="mt-2 text-sm text-areia-100/80">
+          Nenhum movimento anormal de preço nesta cotação. Os fornecedores atuais estão dentro do histórico — pode comprar com segurança.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-carvao-900 via-carvao-850 to-brand-900 text-white">
+      <div className="px-5 pt-5">
+        <p className="text-micro font-bold uppercase tracking-[0.18em] text-brand-200/80">Parecer do comprador</p>
+        <p className="mt-2 font-display text-xl font-bold leading-snug">
+          {economia >= 0.01
+            ? `Identifiquei ${formatarReais(economia)}/${unidEconomia} de economia possível nesta cotação.`
+            : `${recomendacoes.length} ${recomendacoes.length === 1 ? 'ponto pede' : 'pontos pedem'} sua atenção nesta cotação.`}
+        </p>
+      </div>
+      <ul className="mt-3.5 space-y-px bg-white/5 px-2 pb-2">
+        {recomendacoes.map((r, i) => (
+          <li key={i} className="flex items-start gap-3 rounded-xl px-3 py-2.5">
+            <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${TOM_REC[r.tom].ponto}`} />
+            <div className="min-w-0">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-white/50">{TOM_REC[r.tom].rotulo}</span>
+              <p className="text-sm leading-snug text-areia-50">{r.texto}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export function AbaRadar({
@@ -40,25 +138,14 @@ export function AbaRadar({
 
   return (
     <div className="space-y-5">
+      {/* Parecer do comprador — abre com a conclusão, não com dados */}
+      <ParecerComprador radar={radar} />
+
       <div className="grid grid-cols-3 gap-3">
         <Kpi rotulo="Itens monitorados" valor={radar.length} tom="azul" />
         <Kpi rotulo="Alertas ativos" valor={alertas.length} tom={alertas.length ? 'vermelho' : 'verde'} />
         <Kpi rotulo="Fornecedores" valor={fornecedoresUsados.length} tom="neutro" />
       </div>
-
-      {/* Alertas com frase pronta */}
-      {alertas.length > 0 && (
-        <Secao titulo="Alertas de preço">
-          <div className="space-y-2">
-            {alertas.slice(0, 8).map((r) => (
-              <Cartao key={r.norm} className="flex items-start gap-3 !py-3">
-                <Pilula tom={r.alerta === 'alta' ? 'vermelho' : 'azul'}>{r.alerta === 'alta' ? 'Alta' : 'Queda'}</Pilula>
-                <p className="text-sm text-carvao-600 dark:text-areia-200">{fraseAlerta(r)}</p>
-              </Cartao>
-            ))}
-          </div>
-        </Secao>
-      )}
 
       {/* Tendência por item */}
       <Secao titulo="Tendência de preços">

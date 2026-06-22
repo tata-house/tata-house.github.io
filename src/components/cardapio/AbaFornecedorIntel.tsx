@@ -172,28 +172,46 @@ function CartaoRecomendacao({ perfis, porFornecedor }: {
   const emAlerta = avaliados.filter((f) => f.entregaOk < 0.7);
   const inicial = melhor.nome[0]?.toUpperCase() ?? '?';
 
+  // Confiança da recomendação: quanto mais avaliações + melhor entrega, mais sólida
+  const confianca = Math.min(98, Math.round(40 + Math.min(melhor.nAvaliacoes, 8) * 5 + melhor.entregaOk * 18));
+  const itensForn = porFornecedor.get(melhor.nome)?.length ?? 0;
+  const base = [
+    `${melhor.nAvaliacoes} ${melhor.nAvaliacoes === 1 ? 'avaliação' : 'avaliações'}`,
+    `${Math.round(melhor.entregaOk * 100)}% de entregas no prazo`,
+    itensForn > 0 ? `fornece ${itensForn} ${itensForn === 1 ? 'item' : 'itens'}` : null,
+  ].filter(Boolean).join(', ');
+
   return (
-    <div className="rounded-2xl bg-brand-50 px-4 py-3 ring-1 ring-brand-200/60 dark:bg-carvao-800 dark:ring-carvao-600">
-      <p className="mb-2.5 text-micro font-bold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-300">
-        Melhor fornecedor agora
-      </p>
+    <div className="rounded-2xl bg-brand-50 px-4 py-3.5 ring-1 ring-brand-200/60 dark:bg-carvao-800 dark:ring-carvao-600">
+      <div className="mb-2.5 flex items-center justify-between gap-2">
+        <p className="text-micro font-bold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-300">
+          Recomendação de compra
+        </p>
+        <span className="flex items-center gap-1 text-micro font-bold text-emerald-600 dark:text-emerald-400">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          {confianca}% confiança
+        </span>
+      </div>
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-sm font-bold text-white">
           {inicial}
         </div>
         <div className="min-w-0">
-          <p className="font-bold text-carvao-900 dark:text-white">{melhor.nome}</p>
+          <p className="text-sm font-bold text-carvao-900 dark:text-white">
+            Priorize <span className="text-brand-700 dark:text-brand-300">{melhor.nome}</span>
+          </p>
           <p className="text-xs text-carvao-400">
             {'★'.repeat(Math.round(melhor.qualidade))}{'☆'.repeat(5 - Math.round(melhor.qualidade))}
-            {' · '}{Math.round(melhor.entregaOk * 100)}% entrega ok
-            {' · '}{melhor.nAvaliacoes} aval.
-            {porFornecedor.get(melhor.nome) && ` · ${porFornecedor.get(melhor.nome)!.length} iten(s)`}
+            {' · '}melhor combinação de qualidade e entrega agora
           </p>
         </div>
       </div>
+      <p className="mt-2.5 text-caption leading-snug text-carvao-500 dark:text-areia-300">
+        Base: {base}.
+      </p>
       {emAlerta.length > 0 && (
-        <p className="mt-2.5 text-xs font-semibold text-ouro-700 dark:text-ouro-300">
-          ⚠️ {emAlerta.map((f) => f.nome).join(', ')} com taxa de entrega abaixo de 70%
+        <p className="mt-2 text-xs font-semibold text-ouro-700 dark:text-ouro-300">
+          ⚠️ Evite {emAlerta.map((f) => f.nome).join(', ')} — entrega abaixo de 70%.
         </p>
       )}
     </div>

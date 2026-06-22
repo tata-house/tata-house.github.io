@@ -59,6 +59,29 @@ export function LinhaTempoCasa() {
         )}
       </div>
 
+      {/* Conquistas da casa — marcos que geram orgulho */}
+      {lt.conquistas.length > 0 && (
+        <div className="border-b border-carvao-100 px-5 py-4 dark:border-carvao-700">
+          <p className="mb-3 text-micro font-bold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
+            Conquistas da casa
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            {lt.conquistas.map((c) => (
+              <div
+                key={c.titulo}
+                className="flex items-start gap-2.5 rounded-2xl bg-areia-50 px-3 py-2.5 dark:bg-carvao-800/60"
+              >
+                <span className="text-lg leading-none">{c.icone}</span>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-carvao-400">{c.titulo}</p>
+                  <p className="mt-0.5 text-sm font-bold leading-snug text-carvao-800 dark:text-areia-100">{c.valor}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Capítulos por ano */}
       <ol className="relative space-y-0 px-5 py-4">
         {lt.capitulos.map((c, i) => (

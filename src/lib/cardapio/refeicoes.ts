@@ -83,6 +83,12 @@ export interface CapituloCasa {
   destaque: string;
 }
 
+export interface ConquistaCasa {
+  icone: string;
+  titulo: string;
+  valor: string;
+}
+
 export interface LinhaTempoCasa {
   capitulos: CapituloCasa[];
   totalRefeicoes: number;
@@ -90,6 +96,14 @@ export interface LinhaTempoCasa {
   inicio: string; // "set/2024"
   mesRecorde: { rotulo: string; total: number } | null;
   sparkline: number[]; // volume mensal normalizado, ordem cronológica
+  conquistas: ConquistaCasa[];
+}
+
+const DIA_SEMANA_NOME = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+
+function dataPorExtenso(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  return `${d} ${MES_NOME[m - 1]}/${String(y).slice(2)}`;
 }
 
 const MES_NOME = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
@@ -158,6 +172,31 @@ export function linhaDoTempoCasa(): LinhaTempoCasa | null {
   const max = Math.max(...mesesOrd.map((m) => porMes.get(m)!), 1);
   const sparkline = mesesOrd.map((m) => Math.round((porMes.get(m)! / max) * 100));
 
+  // ── Conquistas da casa — marcos reais, extraídos das contagens ──
+  const conquistas: ConquistaCasa[] = [];
+
+  // Dia mais movimentado de toda a operação
+  let diaRecorde: { data: string; total: number } | null = null;
+  for (const k of datas) {
+    const t = dados[k][2];
+    if (!diaRecorde || t > diaRecorde.total) diaRecorde = { data: k, total: t };
+  }
+
+  // Marco de volume total (milhar redondo já alcançado)
+  const marco = Math.floor(total / 1000) * 1000;
+  if (marco >= 1000) {
+    conquistas.push({ icone: '🍽️', titulo: 'Refeições servidas', valor: `+${marco.toLocaleString('pt-BR')}` });
+  }
+  if (mesRecorde) {
+    const mr = mesRecorde as { rotulo: string; total: number };
+    conquistas.push({ icone: '🏆', titulo: 'Mês recorde', valor: `${mr.rotulo} · ${mr.total.toLocaleString('pt-BR')}` });
+  }
+  if (diaRecorde) {
+    const dow = new Date(diaRecorde.data + 'T12:00:00').getDay();
+    conquistas.push({ icone: '🔥', titulo: 'Dia mais movimentado', valor: `${diaRecorde.total} refeições · ${DIA_SEMANA_NOME[dow]}, ${dataPorExtenso(diaRecorde.data)}` });
+  }
+  conquistas.push({ icone: '📅', titulo: 'Operação registrada', valor: `${datas.length} dias` });
+
   return {
     capitulos,
     totalRefeicoes: total,
@@ -165,6 +204,7 @@ export function linhaDoTempoCasa(): LinhaTempoCasa | null {
     inicio: rotuloMes(datas[0].slice(0, 7)),
     mesRecorde,
     sparkline,
+    conquistas,
   };
 }
 

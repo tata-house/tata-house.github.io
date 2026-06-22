@@ -25,54 +25,89 @@ const COR_PROTEINA: Record<Proteina, string> = {
 
 /* ── Narrativa de descoberta ─────────────────────────────── */
 
-function gerarDescoberta(dna: DnaAlimentar): string[] {
-  const insights: string[] = [];
+interface Descoberta {
+  conclusao: string;      // a frase de abertura — a leitura da casa
+  insights: string[];     // observações de apoio
+  recomendacao: string | null; // o que o gestor deveria fazer
+}
 
+function gerarDescoberta(dna: DnaAlimentar): Descoberta | null {
   const proteinas = dna.perfilProteinas.filter((p) => p.proteina !== 'outros');
   const top = proteinas[0];
+  if (!top) return null;
+
   const melhorProt = [...proteinas]
     .filter((p) => p.notaMedia !== null)
     .sort((a, b) => (b.notaMedia ?? 0) - (a.notaMedia ?? 0))[0];
 
-  if (top && melhorProt) {
-    if (top.proteina === melhorProt.proteina) {
-      insights.push(`${top.rotulo} domina ${top.pct}% do cardápio e também é a proteína mais bem avaliada (${melhorProt.notaMedia}★). Escolha sólida e aprovada.`);
-    } else {
-      insights.push(`${top.rotulo} lidera em frequência (${top.pct}%), mas ${melhorProt.rotulo} tem a maior aceitação (${melhorProt.notaMedia}★). Há espaço para equilibrar.`);
-    }
-  }
+  // Conclusão de abertura — a casa em uma frase
+  const conclusao = top.pct >= 40
+    ? `A casa tem preferência clara por ${top.rotulo.toLowerCase()} — ${top.pct}% de todo o cardápio.`
+    : `${top.rotulo} é a base do cardápio (${top.pct}%), com boa variedade entre as proteínas.`;
 
+  const insights: string[] = [];
+
+  // Campeão
   const campeaoComNota = dna.campeoes.find((c) => c.nota !== null && !c.porHistorico);
   if (campeaoComNota) {
-    insights.push(`"${campeaoComNota.prato}" é o favorito absoluto — ${campeaoComNota.nota}★ de nota e servido ${campeaoComNota.frequencia}× na operação.`);
+    insights.push(`O campeão é "${campeaoComNota.prato}" — ${campeaoComNota.nota}★ e servido ${campeaoComNota.frequencia}× na operação.`);
   } else if (dna.campeoes.length > 0) {
-    const c = dna.campeoes[0];
-    insights.push(`"${c.prato}" é o prato mais servido da casa — ${c.frequencia}× na operação histórica.`);
+    insights.push(`O prato mais servido da casa é "${dna.campeoes[0].prato}" — ${dna.campeoes[0].frequencia}× na operação.`);
   }
 
+  // Proteína com pior aceitação (sinal de atenção)
+  const piorProt = [...proteinas]
+    .filter((p) => p.notaMedia !== null && p.freq >= 3)
+    .sort((a, b) => (a.notaMedia ?? 5) - (b.notaMedia ?? 5))[0];
+  if (piorProt && piorProt.notaMedia !== null && piorProt.notaMedia < 3.5 && piorProt.proteina !== melhorProt?.proteina) {
+    insights.push(`${piorProt.rotulo} tem a menor aceitação (${piorProt.notaMedia}★) — apesar de ${piorProt.pct}% do cardápio.`);
+  }
+
+  // Problema com desperdício
   if (dna.problemas.length > 0 && dna.baseAvaliacoes >= 5) {
     const p = dna.problemas[0];
     const desp = p.desperdicio !== null ? ` e ${Math.round(p.desperdicio * 100)}% de sobra` : '';
-    insights.push(`"${p.prato}" acumula nota ${p.nota ?? '—'}★${desp}. Candidato a sair do rodízio.`);
+    insights.push(`"${p.prato}" acumula nota ${p.nota ?? '—'}★${desp}.`);
   }
 
-  return insights;
+  // ── Recomendação: o que fazer com tudo isso ──
+  let recomendacao: string | null = null;
+  if (melhorProt && top.proteina !== melhorProt.proteina && melhorProt.notaMedia !== null) {
+    recomendacao = `Dê mais espaço a ${melhorProt.rotulo.toLowerCase()} (${melhorProt.notaMedia}★, a melhor avaliada) nos dias de maior público — sem perder o ${top.rotulo.toLowerCase()} que a casa já gosta.`;
+  } else if (dna.problemas.length > 0 && dna.baseAvaliacoes >= 5) {
+    recomendacao = `Considere tirar "${dna.problemas[0].prato}" do rodízio ou reformular a receita — é o que mais pesa contra a operação.`;
+  } else if (campeaoComNota) {
+    recomendacao = `Mantenha "${campeaoComNota.prato}" frequente no cardápio — é aposta segura de aceitação.`;
+  }
+
+  return { conclusao, insights, recomendacao };
 }
 
 function NarrativaDescoberta({ dna }: { dna: DnaAlimentar }) {
-  const insights = gerarDescoberta(dna);
-  if (insights.length === 0) return null;
+  const d = gerarDescoberta(dna);
+  if (!d) return null;
   return (
-    <div className="space-y-2 border-b border-carvao-100 px-5 pb-4 pt-3 dark:border-carvao-800">
-      <p className="text-micro font-bold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
-        O que os dados revelam
-      </p>
-      {insights.map((txt, i) => (
-        <div key={i} className="flex gap-2.5">
-          <span className="mt-[3px] h-1.5 w-1.5 shrink-0 rounded-full bg-brand-500" />
-          <p className="text-sm leading-snug text-carvao-700 dark:text-areia-200">{txt}</p>
+    <div className="space-y-3 border-b border-carvao-100 px-5 pb-4 pt-4 dark:border-carvao-800">
+      <p className="text-base font-bold leading-snug text-carvao-900 dark:text-white">{d.conclusao}</p>
+      {d.insights.length > 0 && (
+        <div className="space-y-1.5">
+          {d.insights.map((txt, i) => (
+            <div key={i} className="flex gap-2.5">
+              <span className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-carvao-300 dark:bg-carvao-600" />
+              <p className="text-sm leading-snug text-carvao-600 dark:text-areia-300">{txt}</p>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
+      {d.recomendacao && (
+        <div className="flex gap-2.5 rounded-2xl bg-brand-50 px-3.5 py-3 ring-1 ring-brand-200/50 dark:bg-carvao-800 dark:ring-carvao-700">
+          <span className="text-sm">→</span>
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">Recomendação</p>
+            <p className="mt-0.5 text-sm font-medium leading-snug text-carvao-800 dark:text-areia-100">{d.recomendacao}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

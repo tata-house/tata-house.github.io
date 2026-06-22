@@ -36,6 +36,7 @@ import { AbaCustoPrato } from '@/components/cardapio/AbaCustoPrato';
 import { AbaFornecedorIntel } from '@/components/cardapio/AbaFornecedorIntel';
 import { AbaPedido } from '@/components/cardapio/AbaPedido';
 import { CardapioOrientadoDados } from '@/components/cardapio/CardapioOrientadoDados';
+import { PainelDiretor } from '@/components/cardapio/PainelDiretor';
 import {
   deslocarSemana,
   idSemanaIso,
@@ -694,14 +695,17 @@ export default function PaginaCardapios() {
             {/* ── INÍCIO ────────────────────────────────────── */}
             {aba === 'agora' && (
               <div className="space-y-4">
-                {/* Gerência: leitura gerencial de 5s logo no Início */}
+                {/* Painel do Diretor — leitura de 5s, só para gestão */}
                 {(papel === 'gestor' || papel === 'administrador') && (
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    <Kpi rotulo="Custo da semana" valor={kpisRelatorios.custoSemana > 0 ? formatarReais(kpisRelatorios.custoSemana) : '—'} tom="neutro" />
-                    <Kpi rotulo="Custo / refeição" valor={kpisRelatorios.custoRef ? formatarReais(kpisRelatorios.custoRef) : '—'} tom="verde" />
-                    <Kpi rotulo="Aceitação média" valor={kpisRelatorios.mediaAceit !== null ? `${kpisRelatorios.mediaAceit.toFixed(1)}★` : '—'} tom="ouro" />
-                    <Kpi rotulo="Desperdício" valor={kpisRelatorios.desperdicioPct !== null ? `${Math.round(kpisRelatorios.desperdicioPct)}%` : '—'} tom={kpisRelatorios.desperdicioPct !== null && kpisRelatorios.desperdicioPct >= 15 ? 'vermelho' : 'neutro'} />
-                  </div>
+                  <PainelDiretor
+                    nome={perfil?.rotulo ?? 'Gestor'}
+                    precos={precos}
+                    historico={historico}
+                    fornecedores={fornecedores}
+                    perfis={perfisFornecedores}
+                    aceitacao={aceitacao}
+                    estoque={estoque}
+                  />
                 )}
                 <BriefingCard
                   estado={estado}

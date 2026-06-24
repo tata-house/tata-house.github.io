@@ -18,6 +18,7 @@ import {
   type AjusteAprendido,
 } from './memoria';
 import { calcularDna, freqBaseDosDados, TOTAL_DIAS_HISTORICO, type DnaAlimentar } from './dna';
+import { ehRemetenteInterno } from './cotacao';
 import {
   PERFIS_FORNECEDORES_SEED,
   MAPA_FORNECEDORES_SEED,
@@ -393,12 +394,17 @@ export function useFornecedores() {
   const recarregar = useCallback(() => {
     // MAPA_FORNECEDORES_SEED como base; mapeamentos do usuário têm prioridade.
     const local = lerLocal<Record<string, string>>('fornecedores', {});
-    setFornecedores({ ...MAPA_FORNECEDORES_SEED, ...local });
+    const merge = { ...MAPA_FORNECEDORES_SEED, ...local };
+    // Remove remetentes internos (Erika etc.) que possam ter sido salvos antes.
+    for (const k of Object.keys(merge)) if (ehRemetenteInterno(merge[k])) delete merge[k];
+    setFornecedores(merge);
   }, []);
   useEffect(() => { recarregar(); }, [recarregar]);
   useReleituraExterna('fornecedores', recarregar);
 
   const definirFornecedor = useCallback((itemNorm: string, marca: string | null) => {
+    // Remetente interno (Erika etc.) nunca vira fornecedor de um item.
+    if (marca && ehRemetenteInterno(marca)) return;
     setFornecedores((atual) => {
       const anterior = atual[itemNorm];
       const novo = { ...atual };
@@ -1077,12 +1083,17 @@ export function useFornecedorPerfis() {
   const recarregar = useCallback(() => {
     // PERFIS_FORNECEDORES_SEED como base; perfis editados pelo usuário têm prioridade.
     const local = lerLocal<Record<string, PerfilFornecedor>>('fornecedorPerfis', {});
-    setPerfis({ ...PERFIS_FORNECEDORES_SEED, ...local });
+    const merge = { ...PERFIS_FORNECEDORES_SEED, ...local };
+    // Remove perfis de remetentes internos (Erika etc.) salvos por engano.
+    for (const k of Object.keys(merge)) if (ehRemetenteInterno(k)) delete merge[k];
+    setPerfis(merge);
   }, []);
   useEffect(() => { recarregar(); }, [recarregar]);
   useReleituraExterna('fornecedorPerfis', recarregar);
 
   const salvarPerfil = useCallback((nome: string, dados: Partial<Omit<PerfilFornecedor, 'nome' | 'avaliacoes'>>) => {
+    // Não cria perfil de fornecedor para quem só encaminha as cotações (Erika).
+    if (ehRemetenteInterno(nome)) return;
     setPerfis((atual) => {
       const prev = atual[nome] ?? { nome, avaliacoes: [] };
       const novo = { ...atual, [nome]: { ...prev, ...dados, nome } };

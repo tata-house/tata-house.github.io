@@ -64,6 +64,31 @@ const FORNECEDORES_BASE: [RegExp, string][] = [
   [/frito[\s-]*sul/i,   'Frito Sul'],
 ];
 
+/**
+ * Remetentes INTERNOS — pessoas do setor de compras que ENCAMINHAM as
+ * cotações dos fornecedores (ex.: a Erika). Nunca são fornecedores. O sistema
+ * ignora esses nomes ao detectar/registrar fornecedor e busca o nome REAL do
+ * fornecedor no conteúdo da mensagem. Estende-se em runtime via `bloquearRemetente`.
+ */
+const NAO_FORNECEDORES = new Set<string>(['erika']);
+
+/** Marca um nome como remetente interno (nunca tratado como fornecedor). */
+export function bloquearRemetente(nome: string) {
+  const n = normalizar(nome);
+  if (n) NAO_FORNECEDORES.add(n);
+}
+
+/** True se o nome é de alguém interno (quem encaminha), não um fornecedor. */
+export function ehRemetenteInterno(nome: string | null | undefined): boolean {
+  if (!nome) return false;
+  const n = normalizar(nome);
+  if (!n) return false;
+  if (NAO_FORNECEDORES.has(n)) return true;
+  // também pega "Erika Compras", "[10:32] Erika:" → o primeiro nome próprio
+  const palavras = n.split(/\s+/);
+  return palavras.some((p) => NAO_FORNECEDORES.has(p));
+}
+
 /** Gera regex a partir do nome cadastrado (case-insensitive, espaços flexíveis). */
 function regexDeFornecedor(nome: string): RegExp {
   const s = nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '[\\s-]+');
@@ -75,12 +100,15 @@ function regexDeFornecedor(nome: string): RegExp {
  * Nunca inventa fornecedor — só reconhece o que foi cadastrado ou está na base.
  */
 function buildLookupFornecedor(custom: string[]): (s: string) => string | null {
-  const customPares: [RegExp, string][] = custom.map((n) => [regexDeFornecedor(n), n]);
-  const customNomes = new Set(custom.map((n) => n.toLowerCase()));
+  // Remetentes internos (Erika etc.) nunca entram como fornecedor, mesmo se
+  // foram cadastrados por engano antes desta regra existir.
+  const customValido = custom.filter((n) => !ehRemetenteInterno(n));
+  const customPares: [RegExp, string][] = customValido.map((n) => [regexDeFornecedor(n), n]);
+  const customNomes = new Set(customValido.map((n) => n.toLowerCase()));
   const basePares = FORNECEDORES_BASE.filter(([, nome]) => !customNomes.has(nome.toLowerCase()));
   const lista = [...customPares, ...basePares];
   return (s: string) => {
-    for (const [re, nome] of lista) if (re.test(s)) return nome;
+    for (const [re, nome] of lista) if (re.test(s)) return ehRemetenteInterno(nome) ? null : nome;
     return null;
   };
 }
@@ -358,9 +386,12 @@ ${buildContextoHistorico()}
 
 FORNECEDORES CADASTRADOS: ${listForn}
 
+QUEM ENCAMINHA (NÃO é fornecedor): ${Array.from(NAO_FORNECEDORES).join(', ') || '—'}
+
 REGRAS:
 - Cabeçalhos de categoria (*ACÉM*, *SUÍNOS*, *BOVINOS* etc.) → IGNORE
 - Saudações, datas, dias da semana, status → IGNORE
+- A pessoa do setor de compras que ENCAMINHA a cotação (ex.: ${Array.from(NAO_FORNECEDORES).join(', ') || 'Erika'}) NÃO é fornecedor. Nunca use o nome de quem encaminhou como marca. Identifique o fornecedor REAL pelo conteúdo/cabeçalho da própria mensagem.
 - Remova qualificadores: Resf/Resfriado/Cong/Congelado/RF/CG/FIFO do nome
 - "Produto - Marca valor" → marca é o texto após o traço
 - Preço como número com ponto decimal (ex: 31.90)
@@ -397,13 +428,17 @@ async function chamarGroq(texto: string, apiKey: string, fornecedores: string[])
   const items: ItemIA[] = Array.isArray(parsed) ? parsed : (parsed as { items?: ItemIA[] }).items ?? [];
   return items
     .filter((it) => it.nome && it.preco > 0)
-    .map((it) => ({
-      nome: it.nome.trim(),
-      preco: it.preco,
-      marca: it.marca?.trim() || null,
-      unid: null,
-      item: casarItem(it.nome),
-    }));
+    .map((it) => {
+      // Se a IA escorregou e pôs o remetente interno como marca, descarta.
+      const marca = it.marca?.trim() || null;
+      return {
+        nome: it.nome.trim(),
+        preco: it.preco,
+        marca: marca && !ehRemetenteInterno(marca) ? marca : null,
+        unid: null,
+        item: casarItem(it.nome),
+      };
+    });
 }
 
 /**

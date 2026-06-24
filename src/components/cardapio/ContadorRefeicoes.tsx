@@ -73,7 +73,7 @@ function GraficoMensal({ dados, meta }: { dados: MesTendencia[]; meta?: number }
             className={`flex-1 text-center text-micro ${
               i === mesAtualIdx
                 ? 'font-bold text-brand-600 dark:text-brand-400'
-                : 'text-carvao-400'
+                : 'text-texto-suave'
             }`}
           >
             {d.mes}
@@ -139,7 +139,7 @@ export function ContadorRefeicoes({ custoRefSemana }: Props = {}) {
 
   return (
     <Cartao>
-      <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-carvao-400">
+      <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-texto-suave">
         Refeições
       </p>
 
@@ -162,28 +162,28 @@ export function ContadorRefeicoes({ custoRefSemana }: Props = {}) {
               <p className="text-4xl font-black tabular-nums text-carvao-900 dark:text-white">
                 {fmt(hoje.total)}
               </p>
-              <p className="mt-0.5 text-xs text-carvao-400">
+              <p className="mt-0.5 text-xs text-texto-suave">
                 Almoço {hoje.almoco} · Jantar {hoje.jantar}
                 {custoHoje && (
                   <> · <span className="font-semibold text-brand-600 dark:text-brand-400">{formatarReais(custoHoje)}</span></>
                 )}
               </p>
               {custoRefSemana && hoje.total > 0 && (
-                <p className="mt-1 text-xs text-carvao-400">
+                <p className="mt-1 text-xs text-texto-suave">
                   ~{formatarReais(custoRefSemana)}<span className="text-carvao-300"> / refeição esta semana</span>
                 </p>
               )}
             </div>
             <button
               onClick={() => { setAlmoco(String(hoje.almoco)); setJantar(String(hoje.jantar)); }}
-              className="mb-1 text-xs font-semibold text-carvao-400 hover:text-carvao-600"
+              className="mb-1 text-xs font-semibold text-texto-suave hover:text-carvao-600"
             >
               Editar
             </button>
           </div>
         ) : (
           <div>
-            <p className="text-sm text-carvao-400">Ainda não registrado hoje.</p>
+            <p className="text-sm text-texto-suave">Ainda não registrado hoje.</p>
             <p className="mt-0.5 text-xs text-carvao-300">Média {diaNome}: ~{mediaDia.total} refeições</p>
           </div>
         )}
@@ -241,14 +241,14 @@ export function ContadorRefeicoes({ custoRefSemana }: Props = {}) {
       {stats && (
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-xl bg-carvao-50 px-3 py-2.5 dark:bg-carvao-800/50">
-            <p className="text-micro uppercase tracking-wider text-carvao-400">Esta semana</p>
+            <p className="text-micro uppercase tracking-wider text-texto-suave">Esta semana</p>
             <p className="mt-0.5 text-xl font-black tabular-nums text-carvao-800 dark:text-white">
               {fmt(stats.semana)}
             </p>
           </div>
 
           <div className="rounded-xl bg-carvao-50 px-3 py-2.5 dark:bg-carvao-800/50">
-            <p className="text-micro uppercase tracking-wider text-carvao-400">Este ano</p>
+            <p className="text-micro uppercase tracking-wider text-texto-suave">Este ano</p>
             <p className="mt-0.5 text-xl font-black tabular-nums text-carvao-800 dark:text-white">
               {fmt(stats.anoAtual)}
             </p>
@@ -260,18 +260,18 @@ export function ContadorRefeicoes({ custoRefSemana }: Props = {}) {
           </div>
 
           <div className="rounded-xl bg-carvao-50 px-3 py-2.5 dark:bg-carvao-800/50">
-            <p className="text-micro uppercase tracking-wider text-carvao-400">Ano passado</p>
+            <p className="text-micro uppercase tracking-wider text-texto-suave">Ano passado</p>
             <p className="mt-0.5 text-xl font-black tabular-nums text-carvao-800 dark:text-white">
               {fmt(stats.anoPassado)}
             </p>
           </div>
 
           <div className="rounded-xl bg-carvao-50 px-3 py-2.5 dark:bg-carvao-800/50">
-            <p className="text-micro uppercase tracking-wider text-carvao-400">Total histórico</p>
+            <p className="text-micro uppercase tracking-wider text-texto-suave">Total histórico</p>
             <p className="mt-0.5 text-xl font-black tabular-nums text-carvao-800 dark:text-white">
               {fmt(stats.totalHistorico)}
             </p>
-            <p className="text-micro text-carvao-400">{fmt(stats.diasRegistrados)} dias</p>
+            <p className="text-micro text-texto-suave">{fmt(stats.diasRegistrados)} dias</p>
           </div>
         </div>
       )}
@@ -279,7 +279,7 @@ export function ContadorRefeicoes({ custoRefSemana }: Props = {}) {
       {/* Tendência mensal */}
       {tendencia.length > 0 && (
         <div className="mt-4 space-y-2">
-          <p className="text-micro font-bold uppercase tracking-wider text-carvao-400">
+          <p className="text-micro font-bold uppercase tracking-wider text-texto-suave">
             Últimos 12 meses
           </p>
           <GraficoMensal dados={tendencia} />

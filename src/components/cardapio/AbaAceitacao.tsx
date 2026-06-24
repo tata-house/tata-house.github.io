@@ -117,7 +117,7 @@ export function AbaAceitacao({
                 <Cartao key={i} className="flex flex-wrap items-center justify-between gap-3 !py-3">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{d.principal}</p>
-                    <p className="text-caption text-carvao-400">
+                    <p className="text-caption text-texto-suave">
                       {DIAS_SEMANA[i]}
                       {(() => {
                         const a = aceitacao[normalizar(d.principal)];
@@ -193,7 +193,7 @@ export function AbaAceitacao({
                 <li key={c.prato} className="flex items-center justify-between gap-3 px-4 py-2.5">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{c.prato}</p>
-                    <p className="text-caption text-carvao-400">
+                    <p className="text-caption text-texto-suave">
                       nota {c.media.toFixed(1)} · {formatarQtd(c.sobra)} de sobra
                     </p>
                   </div>
@@ -202,7 +202,7 @@ export function AbaAceitacao({
               ))}
             </ul>
           </Cartao>
-          <p className="text-xs font-semibold text-carvao-400">
+          <p className="text-xs font-semibold text-texto-suave">
             Pratos que a equipe não curtiu e ainda sobraram: bons candidatos a substituir no cardápio.
           </p>
         </Secao>
@@ -251,7 +251,7 @@ export function AbaAceitacao({
                   <li key={e.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold">{e.rotulo}</p>
-                      <p className="text-caption text-carvao-400">{e.data.split('-').reverse().join('/')}</p>
+                      <p className="text-caption text-texto-suave">{e.data.split('-').reverse().join('/')}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Pilula tom={e.fator < 1 ? 'vermelho' : 'verde'}>

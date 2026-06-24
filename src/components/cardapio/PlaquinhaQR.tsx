@@ -165,7 +165,7 @@ export function PlaquinhaQR({
         </div>
       </div>
 
-      <p className="mx-auto mt-4 max-w-[120mm] px-4 text-center text-xs text-carvao-400 print:hidden">
+      <p className="mx-auto mt-4 max-w-[120mm] px-4 text-center text-xs text-texto-suave print:hidden">
         Dica: imprima, dobre ao meio e deixe na mesa do refeitório. Para PDF, use “Imprimir → Salvar como PDF”.
       </p>
     </div>

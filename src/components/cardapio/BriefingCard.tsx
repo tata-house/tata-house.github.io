@@ -214,7 +214,7 @@ export function BriefingCard(props: Props) {
               {urgentes}
             </span>
           )}
-          <span className="text-carvao-400 transition-transform" style={{ transform: expandido ? 'rotate(180deg)' : 'none' }}>
+          <span className="text-texto-suave transition-transform" style={{ transform: expandido ? 'rotate(180deg)' : 'none' }}>
             ▾
           </span>
         </div>

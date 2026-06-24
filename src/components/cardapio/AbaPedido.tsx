@@ -178,7 +178,7 @@ export function AbaPedido({
   if (itensSemana.size === 0) {
     return (
       <Cartao className="py-10 text-center">
-        <p className="text-sm text-carvao-400">
+        <p className="text-sm text-texto-suave">
           Nenhum item na lista de compras desta semana.
           <br />
           Defina o cardápio na aba <strong>Cardápio</strong> primeiro.
@@ -282,7 +282,7 @@ function GrupoFornecedor({
                 ? 'bg-brand-500/15 text-brand-600 dark:text-brand-400'
                 : naoConfirmados > 0
                 ? 'bg-ouro-300/20 text-ouro-600 dark:text-ouro-400'
-                : 'bg-carvao-100 text-carvao-400 dark:bg-carvao-800'
+                : 'bg-carvao-100 text-texto-suave dark:bg-carvao-800'
             }`}
           >
             {tudo ? '✓' : naoConfirmados}
@@ -292,12 +292,12 @@ function GrupoFornecedor({
               {nome}
             </p>
             {obs && (
-              <p className="truncate text-caption text-carvao-400" title={obs}>
+              <p className="truncate text-caption text-texto-suave" title={obs}>
                 {obs.slice(0, 80)}{obs.length > 80 ? '…' : ''}
               </p>
             )}
           </div>
-          <span className="ml-auto text-rotulo font-semibold text-carvao-400">
+          <span className="ml-auto text-rotulo font-semibold text-texto-suave">
             {confirmados}/{total}
           </span>
           <Icone
@@ -360,11 +360,11 @@ function GrupoFornecedor({
                   </button>
 
                   <div className="min-w-0 flex-1">
-                    <p className={`text-sm font-semibold leading-snug ${p.confirmado ? 'line-through text-carvao-400' : 'text-carvao-800 dark:text-areia-100'}`}>
+                    <p className={`text-sm font-semibold leading-snug ${p.confirmado ? 'line-through text-texto-suave' : 'text-carvao-800 dark:text-areia-100'}`}>
                       {item}
                     </p>
                     {!podeEditar && (
-                      <p className="text-xs text-carvao-400 tabular-nums">
+                      <p className="text-xs text-texto-suave tabular-nums">
                         {formatarQtd(qtdFinal)} {unid}
                         {p.previsao && ` · previsto ${ddmm(p.previsao)}`}
                       </p>
@@ -381,7 +381,7 @@ function GrupoFornecedor({
                         onChange={(e) => onSetItem(chave, { qtdOverride: Number(e.target.value) || qtd })}
                         className="h-8 w-14 rounded-lg border border-carvao-200 bg-white px-1.5 text-center text-rotulo font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                       />
-                      <span className="text-xs text-carvao-400">{unid}</span>
+                      <span className="text-xs text-texto-suave">{unid}</span>
                       <input
                         type="date"
                         value={p.previsao ?? ''}

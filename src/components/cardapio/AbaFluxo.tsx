@@ -126,7 +126,7 @@ export function AbaFluxo({
         ].map((c) => (
           <Cartao key={c.rotulo} className="!p-4 text-center">
             <div className="font-display text-2xl font-bold">{c.valor}</div>
-            <div className="text-caption font-bold uppercase tracking-wider text-carvao-400">{c.rotulo}</div>
+            <div className="text-caption font-bold uppercase tracking-wider text-texto-suave">{c.rotulo}</div>
           </Cartao>
         ))}
       </div>
@@ -146,7 +146,7 @@ export function AbaFluxo({
                       ? 'bg-brand-600 text-white'
                       : atual
                         ? 'bg-carvao-900 text-white ring-4 ring-carvao-900/15 dark:bg-areia-100 dark:text-carvao-900'
-                        : 'bg-carvao-100 text-carvao-400 dark:bg-carvao-700'
+                        : 'bg-carvao-100 text-texto-suave dark:bg-carvao-700'
                   }`}
                 >
                   {feita ? '✓' : i + 1}
@@ -158,10 +158,10 @@ export function AbaFluxo({
                 )}
               </div>
               <div className="pb-5">
-                <p className={`font-semibold ${atual ? '' : feita ? 'text-carvao-500' : 'text-carvao-400'}`}>
+                <p className={`font-semibold ${atual ? '' : feita ? 'text-carvao-500' : 'text-texto-suave'}`}>
                   {e.rotulo}
                 </p>
-                <p className="text-xs text-carvao-400">
+                <p className="text-xs text-texto-suave">
                   {e.quem}
                   {registro && (
                     <>
@@ -185,7 +185,7 @@ export function AbaFluxo({
       {custoSemana > 0 && (
         <Cartao className="space-y-2">
           <div className="flex items-baseline justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-carvao-400">Custo vs. meta semanal</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-texto-suave">Custo vs. meta semanal</span>
             <span className="text-sm font-extrabold" style={{ color: corMeta }}>
               {formatarReais(custoSemana)} / {formatarReais(metaSemanal)}
             </span>
@@ -196,7 +196,7 @@ export function AbaFluxo({
               style={{ width: `${pctCusto}%`, backgroundColor: corMeta }}
             />
           </div>
-          <p className="text-caption text-carvao-400">
+          <p className="text-caption text-texto-suave">
             {estado.orcamento
               ? 'Meta informada pelo setor de compras.'
               : 'Meta derivada de R$ 15.000/mês (≈ 4,33 semanas). Defina o orçamento da semana na aba Cardápio para ajustar.'}
@@ -235,7 +235,7 @@ export function AbaFluxo({
             {acao.rotulo}
           </Botao>
           {!podeAgir && (
-            <p className="text-center text-xs text-carvao-400">
+            <p className="text-center text-xs text-texto-suave">
               Esta ação é de: <strong>{ETAPAS[idxAtual]?.quem}</strong>. Saia e entre com o perfil correto para
               executar.
             </p>
@@ -243,14 +243,14 @@ export function AbaFluxo({
         </div>
       )}
       {idxAtual > 0 && (
-        <button onClick={voltar} className="w-full text-center text-sm font-semibold text-carvao-400 hover:text-carvao-600">
+        <button onClick={voltar} className="w-full text-center text-sm font-semibold text-texto-suave hover:text-carvao-600">
           ← Voltar etapa
         </button>
       )}
 
       {/* Observações da cozinha */}
       <Cartao>
-        <label className="mb-1 block text-caption font-bold uppercase tracking-wider text-carvao-400">
+        <label className="mb-1 block text-caption font-bold uppercase tracking-wider text-texto-suave">
           Observações da cozinha
         </label>
         <textarea

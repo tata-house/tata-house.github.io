@@ -100,7 +100,7 @@ export function Assistente({
                 className={`flex-1 py-2.5 text-nota font-semibold transition ${
                   aba === a
                     ? 'border-b-2 border-brand-600 text-brand-700 dark:border-brand-400 dark:text-brand-300'
-                    : 'text-carvao-400 hover:text-carvao-700 dark:text-carvao-500'
+                    : 'text-texto-suave hover:text-carvao-700 dark:text-carvao-500'
                 }`}
               >
                 {a === 'chat' ? 'Perguntar' : 'Objetivos'}
@@ -171,7 +171,7 @@ export function Assistente({
                 {pensando && (
                   <div>
                     <div className="inline-block rounded-2xl bg-areia-100 px-3 py-2 dark:bg-carvao-700">
-                      <span className="inline-flex gap-1 text-carvao-400">
+                      <span className="inline-flex gap-1 text-texto-suave">
                         <span className="animate-pulse">●</span>
                         <span className="animate-pulse [animation-delay:150ms]">●</span>
                         <span className="animate-pulse [animation-delay:300ms]">●</span>

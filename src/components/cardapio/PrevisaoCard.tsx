@@ -77,20 +77,20 @@ export function PrevisaoCard({ semanaId, onPessoasAtualizadas }: Props) {
                 {/* confiança como opacidade da banda */}
                 {d.base === 'padrao' && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-[9px] font-bold text-carvao-400">est.</span>
+                    <span className="text-[9px] font-bold text-texto-suave">est.</span>
                   </div>
                 )}
               </div>
               <span className="text-micro font-bold text-carvao-600 dark:text-areia-300">{DIAS_PT[d.dia]}</span>
               <span className="text-caption font-semibold text-brand-700 dark:text-brand-300">{d.esperado}</span>
-              <span className="text-[9px] text-carvao-400">
+              <span className="text-[9px] text-texto-suave">
                 {d.pessimista}–{d.otimista}
               </span>
               {previsao.dias.indexOf(d) === picoDia && d.esperado > 0 && (
                 <span className="text-[8px] font-bold text-ouro-600 dark:text-ouro-400">↑ pico</span>
               )}
               {conf > 0 && (
-                <span className="text-[8px] text-carvao-400">{conf}%</span>
+                <span className="text-[8px] text-texto-suave">{conf}%</span>
               )}
             </div>
           );
@@ -124,7 +124,7 @@ export function PrevisaoCard({ semanaId, onPessoasAtualizadas }: Props) {
       )}
 
       {previsao.baseSemanas === 0 && (
-        <p className="mt-3 text-center text-caption text-carvao-400">
+        <p className="mt-3 text-center text-caption text-texto-suave">
           Registre as contagens reais de refeições para afinar a previsão semana a semana.
         </p>
       )}

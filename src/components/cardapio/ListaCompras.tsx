@@ -186,7 +186,7 @@ export function ListaCompras({
       )}
 
       {!algumDia && (
-        <p className="text-sm text-carvao-400">Monte o cardápio para gerar a lista de compras.</p>
+        <p className="text-sm text-texto-suave">Monte o cardápio para gerar a lista de compras.</p>
       )}
 
       {dias.map(({ di, dia, linhas, total, comprados, servido }) => {
@@ -223,7 +223,7 @@ export function ListaCompras({
 
             {/* Checklist compacto */}
             {linhas.length === 0 ? (
-              <p className="px-4 py-3 text-sm text-carvao-400">
+              <p className="px-4 py-3 text-sm text-texto-suave">
                 {total === 0 ? 'Sem itens de compra.' : 'Nenhum item encontrado na busca.'}
               </p>
             ) : (
@@ -298,7 +298,7 @@ export function ListaCompras({
                           />
                         )}
                         {obs && obsAberta !== `${di}:${l.chave}` && (
-                          <p className="mt-1 text-caption italic text-carvao-400">{obs}</p>
+                          <p className="mt-1 text-caption italic text-texto-suave">{obs}</p>
                         )}
                       </li>
                     );
@@ -322,23 +322,23 @@ export function ListaCompras({
                           ✓
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className={`block text-sm ${comprado ? 'text-carvao-400 line-through' : 'font-medium'}`}>
+                          <span className={`block text-sm ${comprado ? 'text-texto-suave line-through' : 'font-medium'}`}>
                             {l.item}
                             {l.manual && <span className="ml-1 text-micro font-bold uppercase text-ouro-600">extra</span>}
                             {!l.manual && l.fonte === 'receita' && (
                               <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-ouro-600/70">rcta</span>
                             )}
                             {!l.manual && l.fonte === 'fallback' && (
-                              <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-carvao-400">est.</span>
+                              <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-texto-suave">est.</span>
                             )}
-                            {obs && <span className="ml-1 text-caption italic text-carvao-400">· </span>}
+                            {obs && <span className="ml-1 text-caption italic text-texto-suave">· </span>}
                           </span>
                           {!podeMexerPreco && (fornecedores[l.chave] || precos[l.chave] > 0) && (
                             <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-micro font-semibold text-brand-600 dark:text-brand-300">
                               <span>
                                 {fornecedores[l.chave] || 'fornecedor não informado'}
                                 {precos[l.chave] > 0 && (
-                                  <span className="font-normal text-carvao-400">
+                                  <span className="font-normal text-texto-suave">
                                     {' · '}{formatarReais(precos[l.chave])}/{unidAtual}
                                   </span>
                                 )}
@@ -349,7 +349,7 @@ export function ListaCompras({
                             </span>
                           )}
                         </span>
-                        <span className={`shrink-0 self-start text-sm font-bold tabular-nums ${comprado ? 'text-carvao-400' : ''}`}>
+                        <span className={`shrink-0 self-start text-sm font-bold tabular-nums ${comprado ? 'text-texto-suave' : ''}`}>
                           {formatarQtd(l.qtd)} {unidAtual}
                         </span>
                       </button>
@@ -375,7 +375,7 @@ export function ListaCompras({
                                 ))}
                               </select>
                             ) : (
-                              <span className="text-caption text-carvao-400">sem fornecedor cadastrado</span>
+                              <span className="text-caption text-texto-suave">sem fornecedor cadastrado</span>
                             )}
                             {editandoForn ? (
                               <span className="flex items-center gap-1">
@@ -386,7 +386,7 @@ export function ListaCompras({
                                   placeholder="fornecedor"
                                   className="h-7 w-24 rounded-md border border-carvao-200 bg-white px-1.5 text-caption dark:border-carvao-600 dark:bg-carvao-900"
                                 />
-                                <span className="text-micro text-carvao-400">R$</span>
+                                <span className="text-micro text-texto-suave">R$</span>
                                 <input
                                   type="number"
                                   min={0}
@@ -406,7 +406,7 @@ export function ListaCompras({
                                 </button>
                                 <button
                                   onClick={() => { setAddFornDe(null); setNovoForn(''); setNovoPreco(''); }}
-                                  className="flex h-7 w-7 items-center justify-center rounded-md text-carvao-400 hover:text-perigo"
+                                  className="flex h-7 w-7 items-center justify-center rounded-md text-texto-suave hover:text-perigo"
                                   aria-label="Cancelar"
                                 >
                                   <Icone nome="fechar" tam={14} />

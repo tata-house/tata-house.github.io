@@ -187,7 +187,7 @@ export function AbaSimulador({
             )}
             {tipado.itensSemPreco > 0 && <Pilula tom="vermelho">{tipado.itensSemPreco} sem referência</Pilula>}
           </div>
-          <p className="text-caption text-carvao-400">
+          <p className="text-caption text-texto-suave">
             Sem cotação, o app usa o <strong>preço médio de mercado</strong> (histórico) automaticamente — confirme com
             a cotação real quando possível.
           </p>
@@ -241,7 +241,7 @@ export function AbaSimulador({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-areia-50/70 p-3 ring-1 ring-carvao-100 dark:bg-carvao-900/40 dark:ring-carvao-700/60">
-              <p className="text-micro font-bold uppercase tracking-wider text-carvao-400">Custo / refeição</p>
+              <p className="text-micro font-bold uppercase tracking-wider text-texto-suave">Custo / refeição</p>
               <p className="font-display text-xl font-bold tabular-nums">{formatarReais(cenarioSeEu.ref)}</p>
               {atual.custoRef > 0 && (
                 <p className={`text-caption font-bold ${cenarioSeEu.ref > atual.custoRef ? 'text-perigo' : 'text-brand-600'}`}>
@@ -251,7 +251,7 @@ export function AbaSimulador({
               )}
             </div>
             <div className="rounded-2xl bg-areia-50/70 p-3 ring-1 ring-carvao-100 dark:bg-carvao-900/40 dark:ring-carvao-700/60">
-              <p className="text-micro font-bold uppercase tracking-wider text-carvao-400">Custo total semana</p>
+              <p className="text-micro font-bold uppercase tracking-wider text-texto-suave">Custo total semana</p>
               <p className="font-display text-xl font-bold tabular-nums">{formatarReais(cenarioSeEu.total)}</p>
               {atual.custo > 0 && (
                 <p className={`text-caption font-bold ${cenarioSeEu.total > atual.custo ? 'text-perigo' : 'text-brand-600'}`}>
@@ -267,12 +267,12 @@ export function AbaSimulador({
                 setPrecoVar(0);
                 setPessoasDelta(0);
               }}
-              className="text-xs font-semibold text-carvao-400 hover:text-carvao-600"
+              className="text-xs font-semibold text-texto-suave hover:text-carvao-600"
             >
               ↺ Limpar cenário
             </button>
           )}
-          <p className="text-caption text-carvao-400">
+          <p className="text-caption text-texto-suave">
             Arraste para simular alta de preço ou mudança no movimento. Recalcula na hora — <strong>não altera</strong> o
             cardápio.
           </p>
@@ -311,7 +311,7 @@ export function AbaSimulador({
                     d.principal ? (
                       <li key={i} className="flex items-center justify-between gap-2">
                         <span className="truncate">
-                          <span className="text-micro font-bold uppercase text-carvao-400">{DIAS_SEMANA[i].slice(0, 3)}</span>{' '}
+                          <span className="text-micro font-bold uppercase text-texto-suave">{DIAS_SEMANA[i].slice(0, 3)}</span>{' '}
                           {d.principal}
                         </span>
                         <Pilula tom="neutro">{ROTULO_PROTEINA[proteinaDoPrato(d.principal)]}</Pilula>
@@ -338,14 +338,14 @@ export function AbaSimulador({
               <li key={m.dia} className="flex items-center justify-between gap-3 px-4 py-2.5">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold">{m.prato}</p>
-                  <p className="text-caption text-carvao-400">{DIAS_SEMANA[m.dia]}</p>
+                  <p className="text-caption text-texto-suave">{DIAS_SEMANA[m.dia]}</p>
                 </div>
                 <span className="shrink-0 font-bold">{formatarReais(m.custo)}</span>
               </li>
             ))}
           </ul>
         </Cartao>
-        <p className="text-xs text-carvao-400">
+        <p className="text-xs text-texto-suave">
           Gere uma alternativa econômica para ver como o app troca os pratos mais caros por opções de melhor custo-benefício.
         </p>
       </Secao>

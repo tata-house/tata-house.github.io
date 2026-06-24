@@ -48,9 +48,9 @@ export function AbaAuditoria({ papel }: { papel: Papel }) {
           <table className="w-full min-w-[640px] border-collapse text-sm">
             <thead>
               <tr className="border-b border-carvao-100 dark:border-carvao-700/60">
-                <th className="px-3 py-2.5 text-left text-caption font-extrabold uppercase tracking-wider text-carvao-400">Papel</th>
+                <th className="px-3 py-2.5 text-left text-caption font-extrabold uppercase tracking-wider text-texto-suave">Papel</th>
                 {PERMISSOES.map((p) => (
-                  <th key={p.id} className="px-2 py-2.5 text-center text-micro font-bold uppercase text-carvao-400">
+                  <th key={p.id} className="px-2 py-2.5 text-center text-micro font-bold uppercase text-texto-suave">
                     {p.rotulo}
                   </th>
                 ))}
@@ -74,7 +74,7 @@ export function AbaAuditoria({ papel }: { papel: Papel }) {
             </tbody>
           </table>
         </Cartao>
-        <p className="text-xs text-carvao-400">
+        <p className="text-xs text-texto-suave">
           Esta matriz é a fonte única de permissões — pronta para virar regras RLS por empresa/unidade quando migrar para o
           Supabase.
         </p>
@@ -103,7 +103,7 @@ export function AbaAuditoria({ papel }: { papel: Papel }) {
                       <span className="font-semibold">{r.acao}</span>{' '}
                       <span className="text-carvao-500 dark:text-areia-200">· {r.alvo}</span>
                     </p>
-                    <p className="text-caption text-carvao-400">
+                    <p className="text-caption text-texto-suave">
                       {(r.de !== undefined || r.para !== undefined) && (
                         <>
                           {fmt(r.de)} → <strong>{fmt(r.para)}</strong> ·{' '}

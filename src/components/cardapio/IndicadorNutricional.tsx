@@ -43,7 +43,7 @@ export function IndicadorNutricional({ dias }: { dias: DiaCardapio[] }) {
     <div className="space-y-3 rounded-2xl bg-carvao-50 p-4 ring-1 ring-carvao-200 dark:bg-carvao-900/60 dark:ring-carvao-700/60">
       {/* Cabeçalho */}
       <div className="flex items-center justify-between gap-3">
-        <p className="text-caption font-extrabold uppercase tracking-[0.2em] text-carvao-400">
+        <p className="text-caption font-extrabold uppercase tracking-[0.2em] text-texto-suave">
           Índice Nutricional Tata House
         </p>
         <div className={`flex items-center gap-2 rounded-full px-3 py-1 ring-1 ${corScore.anel} bg-white dark:bg-carvao-800`}>
@@ -70,12 +70,12 @@ export function IndicadorNutricional({ dias }: { dias: DiaCardapio[] }) {
           { rot: 'Sódio', val: `${media.sodio}mg` },
         ].map(({ rot, val }) => (
           <div key={rot} className="rounded-xl bg-white p-1.5 ring-1 ring-carvao-100 dark:bg-carvao-800 dark:ring-carvao-700/60">
-            <p className="text-[9px] font-bold uppercase text-carvao-400">{rot}</p>
+            <p className="text-[9px] font-bold uppercase text-texto-suave">{rot}</p>
             <p className="text-nota font-black text-carvao-700 dark:text-areia-100">{val}</p>
           </div>
         ))}
       </div>
-      <p className="text-micro text-carvao-400">Média por prato principal · {pratosComInfo.length} dia(s) com dados</p>
+      <p className="text-micro text-texto-suave">Média por prato principal · {pratosComInfo.length} dia(s) com dados</p>
 
       {/* Alertas nutricionais */}
       {detalhes.length > 0 && (

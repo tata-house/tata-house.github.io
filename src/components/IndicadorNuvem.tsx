@@ -34,7 +34,7 @@ export function IndicadorNuvem() {
       className="flex items-center gap-1.5 rounded-lg px-1.5 py-1"
     >
       <span className={`h-2 w-2 shrink-0 rounded-full ${m.cor} ${m.pulse ? 'animate-pulse' : ''}`} />
-      <span className="hidden text-caption font-semibold text-carvao-500 dark:text-carvao-400 lg:inline">
+      <span className="hidden text-caption font-semibold text-carvao-500 dark:text-texto-suave lg:inline">
         {m.rotulo}
       </span>
     </span>

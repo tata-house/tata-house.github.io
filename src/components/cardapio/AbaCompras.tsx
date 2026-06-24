@@ -267,7 +267,7 @@ export function AbaCompras({
               style={{ width: `${missao.total > 0 ? Math.round((missao.comprado / missao.total) * 100) : 0}%` }}
             />
           </div>
-          <div className="mt-1.5 flex gap-4 text-micro text-carvao-400">
+          <div className="mt-1.5 flex gap-4 text-micro text-texto-suave">
             <span><strong className="text-carvao-700 dark:text-areia-200">{missao.comprado}</strong> comprado{missao.comprado !== 1 ? 's' : ''}</span>
             <span><strong className="text-carvao-700 dark:text-areia-200">{missao.recebido}</strong> recebido{missao.recebido !== 1 ? 's' : ''}</span>
             <span><strong className="text-carvao-700 dark:text-areia-200">{missao.total}</strong> no total</span>
@@ -300,7 +300,7 @@ export function AbaCompras({
           className={`shrink-0 rounded-xl border px-3 py-2 text-caption font-bold transition ${
             mostrarBasicos
               ? 'border-ouro-400/40 bg-ouro-300/15 text-ouro-700 dark:text-ouro-300'
-              : 'border-carvao-200 text-carvao-400 hover:text-carvao-600 dark:border-carvao-600'
+              : 'border-carvao-200 text-texto-suave hover:text-carvao-600 dark:border-carvao-600'
           }`}
           title={mostrarBasicos ? 'Ocultar sal, óleo, alho…' : 'Mostrar básicos'}
         >
@@ -375,7 +375,7 @@ export function AbaCompras({
             </p>
           )}
           {(estado.notasFiscais ?? []).length === 0 ? (
-            <p className="text-xs text-carvao-400">
+            <p className="text-xs text-texto-suave">
               Tire a foto da nota na hora do recebimento — o app pergunta a quais dias de compra ela se refere e
               deixa tudo conferível.
             </p>
@@ -394,7 +394,7 @@ export function AbaCompras({
                     <span className="block text-caption font-bold uppercase text-brand-600">
                       {n.dias.map((d) => DIAS_SEMANA[d].slice(0, 3)).join(' · ')}
                     </span>
-                    <span className="block text-micro text-carvao-400">
+                    <span className="block text-micro text-texto-suave">
                       anexada em {n.em.slice(8, 10)}/{n.em.slice(5, 7)}
                     </span>
                   </span>
@@ -610,11 +610,11 @@ export function AbaCompras({
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h3 className="font-display text-lg font-semibold">
                 {DIAS_SEMANA[di]}{' '}
-                <span className="text-sm font-normal text-carvao-400">
+                <span className="text-sm font-normal text-texto-suave">
                   · {dia.principal || 'sem cardápio'} · {dia.pessoas} pessoas
                 </span>
               </h3>
-              <p className="text-xs font-semibold tabular-nums text-carvao-400">
+              <p className="text-xs font-semibold tabular-nums text-texto-suave">
                 {compradas}/{linhas.length} comprados · {recebidas}/{linhas.length} recebidos
                 {custo.itensComPreco > 0 && <> · ≈ {formatarReais(custo.total)}</>}
                 {divergencias > 0 && <span className="font-extrabold text-perigo"> · {divergencias} divergências</span>}
@@ -650,7 +650,7 @@ export function AbaCompras({
             )}
 
             {linhas.length === 0 ? (
-              <p className="text-sm text-carvao-400">Escolha o cardápio na aba anterior para gerar a lista.</p>
+              <p className="text-sm text-texto-suave">Escolha o cardápio na aba anterior para gerar a lista.</p>
             ) : (
               <div className="space-y-2">
                 {linhas.map((l) => {
@@ -675,13 +675,13 @@ export function AbaCompras({
                             {l.item}
                             {l.manual && <Pilula tom="ouro">extra</Pilula>}
                             {l.sugerida !== null && l.qtd !== l.sugerida && (
-                              <span className="text-micro font-normal text-carvao-400">(sugerido {formatarQtd(l.sugerida)})</span>
+                              <span className="text-micro font-normal text-texto-suave">(sugerido {formatarQtd(l.sugerida)})</span>
                             )}
                           </p>
                           {podePreco ? (
                             <div className="mt-1.5 flex flex-wrap items-center gap-1.5 print:hidden">
-                              <span className="text-micro font-bold uppercase tracking-wide text-carvao-400">cotação</span>
-                              <span className="text-micro text-carvao-400">R$</span>
+                              <span className="text-micro font-bold uppercase tracking-wide text-texto-suave">cotação</span>
+                              <span className="text-micro text-texto-suave">R$</span>
                               <input
                                 type="number"
                                 min={0}
@@ -696,7 +696,7 @@ export function AbaCompras({
                                 }}
                                 className="h-7 w-16 rounded-md border border-carvao-200 bg-white px-1.5 text-right text-caption font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                               />
-                              <span className="text-micro text-carvao-400">/{l.unid}</span>
+                              <span className="text-micro text-texto-suave">/{l.unid}</span>
                               <input
                                 type="text"
                                 defaultValue={fornecedores[l.chave] ?? ''}
@@ -734,7 +734,7 @@ export function AbaCompras({
                               {DADOS.unidades.map((u) => <option key={u}>{u}</option>)}
                             </select>
                           ) : (
-                            <span className="text-xs text-carvao-400">{estado.ajustes[di]?.[l.chave]?.unidOverride ?? l.unid}</span>
+                            <span className="text-xs text-texto-suave">{estado.ajustes[di]?.[l.chave]?.unidOverride ?? l.unid}</span>
                           )}
                           {podeAjustarQtd && (
                             <button
@@ -763,7 +763,7 @@ export function AbaCompras({
                         </div>
                       )}
                       {!podeAjustarQtd && estado.ajustes[di]?.[l.chave]?.obs && (
-                        <p className="mt-1 text-caption italic text-carvao-400">
+                        <p className="mt-1 text-caption italic text-texto-suave">
                           {estado.ajustes[di][l.chave].obs}
                         </p>
                       )}
@@ -772,7 +772,7 @@ export function AbaCompras({
                       <div className="mt-2.5 grid grid-cols-1 gap-2 sm:grid-cols-3">
                         {/* Comprado */}
                         <div className="rounded-xl bg-white p-2 ring-1 ring-carvao-100 dark:bg-carvao-850 dark:ring-carvao-700/60">
-                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-carvao-400">Comprado</p>
+                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-texto-suave">Comprado</p>
                           {l.status.compradoEm ? (
                             <div className="space-y-1">
                               <span className="text-xs font-bold text-brand-600">✓ {ddmm(l.status.compradoEm)}</span>
@@ -788,7 +788,7 @@ export function AbaCompras({
                                     onChange={(e) => setStatus(di, l.chave, { compradoQtd: Number(e.target.value) })}
                                     className="h-8 w-12 rounded-md border border-carvao-200 bg-white px-1 text-center font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                                   />
-                                  <span className="text-carvao-400">R$</span>
+                                  <span className="text-texto-suave">R$</span>
                                   <input
                                     type="number"
                                     min={0}
@@ -804,7 +804,7 @@ export function AbaCompras({
                                 </div>
                               ) : (
                                 l.status.precoPago !== undefined && (
-                                  <span className="block text-micro text-carvao-400">
+                                  <span className="block text-micro text-texto-suave">
                                     {formatarQtd(l.status.compradoQtd ?? l.qtd)} {l.unid} · {formatarReais(l.status.precoPago)}/{l.unid}
                                   </span>
                                 )
@@ -829,7 +829,7 @@ export function AbaCompras({
 
                         {/* Previsão */}
                         <div className="rounded-xl bg-white p-2 ring-1 ring-carvao-100 dark:bg-carvao-850 dark:ring-carvao-700/60">
-                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-carvao-400">Previsão</p>
+                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-texto-suave">Previsão</p>
                           {podeComprar ? (
                             <input
                               type="date"
@@ -846,7 +846,7 @@ export function AbaCompras({
 
                         {/* Recebido */}
                         <div className="rounded-xl bg-white p-2 ring-1 ring-carvao-100 dark:bg-carvao-850 dark:ring-carvao-700/60">
-                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-carvao-400">Recebido</p>
+                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-texto-suave">Recebido</p>
                           {l.status.recebidoOk ? (
                             <div className="space-y-0.5">
                               <span className="text-xs font-bold text-brand-600">✓ OK</span>

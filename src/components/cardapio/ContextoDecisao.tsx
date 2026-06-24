@@ -83,7 +83,7 @@ export function DialogoContexto({ aberto, titulo, fechar, onConfirmar }: Dialogo
         </button>
         <button
           onClick={pular}
-          className="w-full py-2 text-sm text-carvao-400 hover:text-carvao-600"
+          className="w-full py-2 text-sm text-texto-suave hover:text-carvao-600"
         >
           Pular por agora
         </button>

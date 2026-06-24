@@ -224,7 +224,7 @@ export function CentralGerencial({
     <div className="space-y-6">
       {/* Cabeçalho narrativo */}
       <div className="space-y-1">
-        <p className="text-micro font-bold uppercase tracking-[0.18em] text-carvao-400">Central gerencial</p>
+        <p className="text-micro font-bold uppercase tracking-[0.18em] text-texto-suave">Central gerencial</p>
         <p className="text-lg font-extrabold text-carvao-900 dark:text-white">
           {kpis.semanas === 1
             ? 'Esta semana em números'
@@ -232,7 +232,7 @@ export function CentralGerencial({
             ? `Últimas ${kpis.semanas} semanas`
             : 'Histórico completo'}
         </p>
-        <p className="text-xs text-carvao-400">Exporte para Excel ou Google Sheets em CSV</p>
+        <p className="text-xs text-texto-suave">Exporte para Excel ou Google Sheets em CSV</p>
       </div>
 
       {/* Seletor de período */}
@@ -250,22 +250,22 @@ export function CentralGerencial({
 
       {/* Stats inline */}
       <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
-        <span><strong className="font-bold text-carvao-900 dark:text-white">{kpis.semanas}</strong> <span className="text-carvao-400">semana{kpis.semanas !== 1 ? 's' : ''}</span></span>
-        <span><strong className="font-bold text-carvao-900 dark:text-white">{formatarReais(kpis.custoTotal)}</strong> <span className="text-carvao-400">em compras</span></span>
-        <span><strong className="font-bold text-carvao-900 dark:text-white">{kpis.itensComprados}</strong> <span className="text-carvao-400">itens · {kpis.itensRecebidos} recebidos</span></span>
-        {kpis.totalRefeicoes > 0 && <span><strong className="font-bold text-carvao-900 dark:text-white">{kpis.totalRefeicoes}</strong> <span className="text-carvao-400">refeições</span></span>}
+        <span><strong className="font-bold text-carvao-900 dark:text-white">{kpis.semanas}</strong> <span className="text-texto-suave">semana{kpis.semanas !== 1 ? 's' : ''}</span></span>
+        <span><strong className="font-bold text-carvao-900 dark:text-white">{formatarReais(kpis.custoTotal)}</strong> <span className="text-texto-suave">em compras</span></span>
+        <span><strong className="font-bold text-carvao-900 dark:text-white">{kpis.itensComprados}</strong> <span className="text-texto-suave">itens · {kpis.itensRecebidos} recebidos</span></span>
+        {kpis.totalRefeicoes > 0 && <span><strong className="font-bold text-carvao-900 dark:text-white">{kpis.totalRefeicoes}</strong> <span className="text-texto-suave">refeições</span></span>}
         <span>
           <strong className={`font-bold ${nutri.score >= 70 ? 'text-brand-600 dark:text-brand-400' : 'text-ouro-600 dark:text-ouro-400'}`}>{nutri.score}%</strong>
-          <span className="ml-1 text-carvao-400">nutricional</span>
+          <span className="ml-1 text-texto-suave">nutricional</span>
         </span>
       </div>
 
       {/* Relatórios exportáveis — agrupados */}
       <div className="space-y-4">
-        <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-carvao-400">Exportar relatórios (CSV)</h3>
+        <h3 className="text-caption font-extrabold uppercase tracking-[0.2em] text-texto-suave">Exportar relatórios (CSV)</h3>
         {GRUPOS_RELATORIOS.map((g) => (
           <div key={g.grupo}>
-            <p className="mb-2 px-1 text-micro font-bold uppercase tracking-[0.16em] text-carvao-400">{g.grupo}</p>
+            <p className="mb-2 px-1 text-micro font-bold uppercase tracking-[0.16em] text-texto-suave">{g.grupo}</p>
             <div className="grid gap-2 sm:grid-cols-2">
               {g.itens.map((r) => (
                 <button
@@ -276,7 +276,7 @@ export function CentralGerencial({
                   <span className="shrink-0 text-xl leading-none">{r.icone}</span>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-bold">{r.titulo}</p>
-                    <p className="text-caption text-carvao-400">{r.desc}</p>
+                    <p className="text-caption text-texto-suave">{r.desc}</p>
                   </div>
                   <Icone nome="exportar" tam={16} className="shrink-0 text-brand-400" />
                 </button>
@@ -293,15 +293,15 @@ export function CentralGerencial({
           <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
             {auditoria.slice(0, 10).map((r, i) => (
               <li key={i} className="flex items-center gap-3 py-2 text-sm">
-                <span className="shrink-0 text-caption tabular-nums text-carvao-400">{r.em.slice(0, 10)}</span>
+                <span className="shrink-0 text-caption tabular-nums text-texto-suave">{r.em.slice(0, 10)}</span>
                 <span className="min-w-0 flex-1 truncate">
                   <strong className="font-semibold">{r.acao}</strong>
                   {' — '}{r.alvo}
                   {r.de != null && r.para != null && (
-                    <span className="text-carvao-400"> ({r.de} → {r.para})</span>
+                    <span className="text-texto-suave"> ({r.de} → {r.para})</span>
                   )}
                 </span>
-                <span className="shrink-0 text-micro text-carvao-400">{r.papel}</span>
+                <span className="shrink-0 text-micro text-texto-suave">{r.papel}</span>
               </li>
             ))}
           </ul>

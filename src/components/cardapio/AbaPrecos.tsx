@@ -112,7 +112,7 @@ export function AbaPrecos({
                     <Icone
                       nome="baixo"
                       tam={14}
-                      className={`shrink-0 text-carvao-400 transition-transform ${estaAberto ? 'rotate-180' : ''}`}
+                      className={`shrink-0 text-texto-suave transition-transform ${estaAberto ? 'rotate-180' : ''}`}
                     />
                     <span className="min-w-0">
                       <span className="flex items-center gap-1.5">
@@ -121,14 +121,14 @@ export function AbaPrecos({
                           {ROTULO_TIPO_PRECO[pr.tipo]}
                         </Pilula>
                       </span>
-                      <span className="block text-caption text-carvao-400">
+                      <span className="block text-caption text-texto-suave">
                         {i.u}
                         {fornecedores[k] && <span className="font-semibold text-brand-600"> · ↓ {fornecedores[k]}</span>}
                       </span>
                     </span>
                   </button>
                   <div className="flex shrink-0 items-center gap-1.5 text-sm">
-                    <span className="text-carvao-400">R$</span>
+                    <span className="text-texto-suave">R$</span>
                     <input
                       type="number"
                       min={0}
@@ -147,7 +147,7 @@ export function AbaPrecos({
                       }}
                       className="w-20 rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-right font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                     />
-                    <span className="w-6 text-caption text-carvao-400">/{i.u}</span>
+                    <span className="w-6 text-caption text-texto-suave">/{i.u}</span>
                   </div>
                 </div>
 
@@ -162,13 +162,13 @@ export function AbaPrecos({
                           { r: 'Maior', v: Math.max(...valores) },
                         ].map((c) => (
                           <div key={c.r} className="rounded-xl bg-white p-2 ring-1 ring-carvao-100 dark:bg-carvao-850 dark:ring-carvao-700/60">
-                            <p className="text-[9px] font-bold uppercase tracking-wide text-carvao-400">{c.r}</p>
+                            <p className="text-[9px] font-bold uppercase tracking-wide text-texto-suave">{c.r}</p>
                             <p className="text-nota font-bold tabular-nums">{c.v ? formatarReais(c.v) : '—'}</p>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-xs text-carvao-400">Sem histórico ainda — o histórico se forma ao aplicar cotações.</p>
+                      <p className="text-xs text-texto-suave">Sem histórico ainda — o histórico se forma ao aplicar cotações.</p>
                     )}
 
                     {variacao !== undefined && Math.abs(variacao) > 0.001 && (
@@ -191,7 +191,7 @@ export function AbaPrecos({
                           onChange={(e) => definirEstimativa(k, e.target.value === '' ? null : Number(e.target.value))}
                           className="w-24 rounded-xl border border-ouro-400/40 bg-white px-2 py-1.5 text-right font-bold tabular-nums dark:bg-carvao-900"
                         />
-                        <span className="text-caption text-carvao-400">
+                        <span className="text-caption text-texto-suave">
                           {pr.tipo === 'historico'
                             ? 'preço histórico (Mai/Jun 2026) — confirme se mudou.'
                             : pr.tipo === 'estimado'

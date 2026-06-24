@@ -102,13 +102,13 @@ function PratoIntel({
       {nota !== null ? (
         <span className={nota >= 4 ? 'font-semibold text-emerald-600 dark:text-emerald-400' : nota >= 3 ? 'font-semibold text-ouro-600 dark:text-ouro-300' : 'font-semibold text-perigo'}>
           {nota.toFixed(1)}★{' '}
-          <span className="font-normal text-carvao-400">({av!.n})</span>
+          <span className="font-normal text-texto-suave">({av!.n})</span>
         </span>
       ) : (
-        <span className="text-carvao-400">sem avaliações</span>
+        <span className="text-texto-suave">sem avaliações</span>
       )}
       {freq >= 2 && (
-        <span className={freq >= 3 ? 'text-ouro-600 dark:text-ouro-300' : 'text-carvao-400'}>
+        <span className={freq >= 3 ? 'text-ouro-600 dark:text-ouro-300' : 'text-texto-suave'}>
           {freq}× recente
         </span>
       )}
@@ -335,13 +335,13 @@ export function AbaCardapio({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-baseline gap-3">
               <div>
-                <p className="text-micro font-semibold uppercase tracking-wider text-carvao-400">Custo / refeição</p>
+                <p className="text-micro font-semibold uppercase tracking-wider text-texto-suave">Custo / refeição</p>
                 <p className="font-display text-2xl font-bold leading-none tabular-nums text-carvao-900 dark:text-areia-50">
                   {custoRef ? formatarReais(custoRef) : '—'}
                 </p>
               </div>
               {custoSemana.total > 0 && (
-                <p className="text-xs font-semibold text-carvao-400">
+                <p className="text-xs font-semibold text-texto-suave">
                   semana {formatarReais(custoSemana.total)}
                   {dentroOrcamento !== null && (
                     <span className={dentroOrcamento ? 'text-brand-600' : 'font-bold text-perigo'}>
@@ -409,7 +409,7 @@ export function AbaCardapio({
                 <span className="mt-0.5 text-brand-600 dark:text-brand-300"><Icone nome={m.icone} tam={20} /></span>
                 <div>
                   <p className="text-sm font-bold text-carvao-800 dark:text-areia-100">{m.titulo}</p>
-                  <p className="text-caption text-carvao-500 dark:text-carvao-400">{m.desc}</p>
+                  <p className="text-caption text-carvao-500 dark:text-texto-suave">{m.desc}</p>
                 </div>
               </button>
             ))}
@@ -557,7 +557,7 @@ export function AbaCardapio({
             <button
               onClick={() => setExplicacao(null)}
               aria-label="Fechar explicação"
-              className="shrink-0 text-carvao-400 transition hover:text-carvao-700 dark:hover:text-areia-200"
+              className="shrink-0 text-texto-suave transition hover:text-carvao-700 dark:hover:text-areia-200"
             >
               <Icone nome="fechar" tam={15} />
             </button>
@@ -613,7 +613,7 @@ export function AbaCardapio({
               <div className="flex items-center justify-between gap-2">
                 <h3 className="font-display text-lg font-semibold">{DIAS_SEMANA[i]}</h3>
                 <div className="flex items-center gap-1.5">
-                  <Icone nome="usuario" tam={15} className="text-carvao-400" />
+                  <Icone nome="usuario" tam={15} className="text-texto-suave" />
                   <Stepper
                     valor={dia.pessoas}
                     min={1}
@@ -707,7 +707,7 @@ export function AbaCardapio({
       {/* Orçamento + itens sem preço */}
       <Cartao className="space-y-3">
         <label className="block">
-          <span className="mb-1 block text-caption font-bold uppercase tracking-wider text-carvao-400">
+          <span className="mb-1 block text-caption font-bold uppercase tracking-wider text-texto-suave">
             Orçamento da semana (R$)
           </span>
           <input
@@ -722,7 +722,7 @@ export function AbaCardapio({
           />
         </label>
         {!temPrecos && (
-          <p className="text-xs text-carvao-400">
+          <p className="text-xs text-texto-suave">
             Cole a cotação da semana em <strong>Ajustes → Catálogo de preços</strong> ou edite item a item em{' '}
             <strong>Compras → Preços</strong> para ver o custo estimado e otimizar a sugestão.
           </p>
@@ -750,7 +750,7 @@ export function AbaCardapio({
                   className="flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-caption font-semibold ring-1 ring-carvao-200 dark:bg-carvao-800 dark:ring-carvao-600"
                 >
                   {s.item}
-                  <span className="text-carvao-400">R$</span>
+                  <span className="text-texto-suave">R$</span>
                   <input
                     type="number"
                     min={0}
@@ -763,7 +763,7 @@ export function AbaCardapio({
                     }}
                     className="w-14 rounded-md border border-carvao-200 bg-white px-1 py-0.5 text-right text-caption font-bold tabular-nums dark:border-carvao-600 dark:bg-carvao-900"
                   />
-                  <span className="text-carvao-400">/{s.unid}</span>
+                  <span className="text-texto-suave">/{s.unid}</span>
                 </span>
               ))}
               {semPreco.length > 16 && (
@@ -777,7 +777,7 @@ export function AbaCardapio({
             </div>
           </div>
         )}
-        <p className="text-xs text-carvao-400">
+        <p className="text-xs text-texto-suave">
           <strong>Antigo</strong>: combinações que a equipe já aprovou no histórico. <strong>Mesclado</strong>: equilibra
           tradição e variedade. <strong>Novo</strong>: inventa combinações inéditas e, com a cotação aplicada, puxa para as
           proteínas mais baratas. <strong>Personalizado</strong>: você define proteínas, público, custo, eventos e regras.

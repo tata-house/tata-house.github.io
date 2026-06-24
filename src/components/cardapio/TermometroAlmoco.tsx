@@ -78,7 +78,7 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
         <button
           type="button"
           onClick={atualizar}
-          className="text-micro font-bold text-carvao-400 hover:text-carvao-600 dark:hover:text-areia-200"
+          className="text-micro font-bold text-texto-suave hover:text-carvao-600 dark:hover:text-areia-200"
           aria-label="Atualizar"
         >
           ↺ {horaAtualiz}
@@ -118,12 +118,12 @@ export function TermometroAlmoco({ estado }: { estado: EstadoSemana }) {
           <div className="bg-ouro-400 transition-all duration-500" style={{ width: barOk }} />
           <div className="bg-perigo transition-all duration-500" style={{ width: barRuim }} />
         </div>
-        <p className="text-xs font-semibold tabular-nums text-carvao-400">{total} votos</p>
+        <p className="text-xs font-semibold tabular-nums text-texto-suave">{total} votos</p>
       </div>
 
       {/* Janela dos últimos 30 min */}
       {janela.length > 0 && (
-        <p className="text-caption text-carvao-400">
+        <p className="text-caption text-texto-suave">
           Últimos 30 min:{' '}
           <span className="font-semibold text-brand-600 dark:text-brand-300">{janela.filter((v) => v.voto === 'bom').length} </span>
           {' · '}

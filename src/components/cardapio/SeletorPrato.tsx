@@ -51,7 +51,7 @@ export function SeletorPrato({
         }`}
       >
         <span className="min-w-0">
-          <span className="block text-micro font-bold uppercase tracking-wider text-carvao-400">
+          <span className="block text-micro font-bold uppercase tracking-wider text-texto-suave">
             {rotulo}
           </span>
           <span
@@ -110,7 +110,7 @@ export function SeletorPrato({
             </button>
           ))}
           {filtradas.length === 0 && !busca.trim() && (
-            <p className="px-3 py-4 text-sm text-carvao-400">Nenhuma opção cadastrada.</p>
+            <p className="px-3 py-4 text-sm text-texto-suave">Nenhuma opção cadastrada.</p>
           )}
         </div>
       </Modal>

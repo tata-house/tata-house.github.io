@@ -122,7 +122,7 @@ function RankBadge({ pos }: { pos: number }) {
         ? 'bg-gradient-to-br from-carvao-200 to-carvao-400 text-white'
         : pos === 2
           ? 'bg-gradient-to-br from-[#c89466] to-[#a06a3a] text-white'
-          : 'bg-carvao-100 text-carvao-400 dark:bg-carvao-700 dark:text-carvao-300';
+          : 'bg-carvao-100 text-texto-suave dark:bg-carvao-700 dark:text-carvao-300';
   return (
     <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-caption font-black tabular-nums ${estilo}`}>
       {pos + 1}
@@ -131,7 +131,7 @@ function RankBadge({ pos }: { pos: number }) {
 }
 
 function notaTom(nota: number | null): string {
-  if (nota === null) return 'text-carvao-400';
+  if (nota === null) return 'text-texto-suave';
   if (nota >= 4) return 'text-brand-600 dark:text-brand-300';
   if (nota >= 3) return 'text-[#9a6c17] dark:text-[#e3b45c]';
   return 'text-perigo';
@@ -184,7 +184,7 @@ export function DnaCard() {
 
       {semBase ? (
         <div className="px-5 pb-5">
-          <p className="text-sm text-carvao-400">
+          <p className="text-sm text-texto-suave">
             Sem histórico suficiente ainda. Conforme você montar cardápios e a equipe avaliar os pratos, o
             perfil da casa se forma sozinho aqui.
           </p>
@@ -195,7 +195,7 @@ export function DnaCard() {
         <div className="space-y-5 px-5 pb-5">
           {/* Perfil de proteínas */}
           <div className="space-y-2">
-            <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">
+            <p className="text-caption font-bold uppercase tracking-wider text-texto-suave">
               Perfil de proteínas — {TOTAL_DIAS_HISTORICO} dias
             </p>
             {dna.perfilProteinas
@@ -210,7 +210,7 @@ export function DnaCard() {
                     />
                   </div>
                   <span className="w-8 shrink-0 text-right text-xs font-bold tabular-nums text-carvao-500">{p.pct}%</span>
-                  <span className="w-12 shrink-0 text-right text-xs tabular-nums text-carvao-400">{p.freq}×</span>
+                  <span className="w-12 shrink-0 text-right text-xs tabular-nums text-texto-suave">{p.freq}×</span>
                   <span className={`w-12 shrink-0 text-right text-xs font-bold tabular-nums ${notaTom(p.notaMedia)}`}>
                     {p.notaMedia !== null ? `${p.notaMedia}★` : '—'}
                   </span>
@@ -221,7 +221,7 @@ export function DnaCard() {
           {/* Mais servidos no histórico */}
           {dna.topPorFrequencia.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">
+              <p className="text-caption font-bold uppercase tracking-wider text-texto-suave">
                 Mais servidos no histórico
               </p>
               <div className="space-y-1">
@@ -238,7 +238,7 @@ export function DnaCard() {
                     <span className="min-w-0 flex-1 truncate text-nota font-semibold text-carvao-800 dark:text-areia-100">
                       {p.prato}
                     </span>
-                    <span className="shrink-0 text-caption font-semibold tabular-nums text-carvao-400">{p.frequencia}×</span>
+                    <span className="shrink-0 text-caption font-semibold tabular-nums text-texto-suave">{p.frequencia}×</span>
                     {p.nota !== null && (
                       <span className={`shrink-0 text-caption font-bold tabular-nums ${notaTom(p.nota)}`}>
                         {p.nota}★
@@ -256,7 +256,7 @@ export function DnaCard() {
               <p className="text-caption font-bold uppercase tracking-wider text-brand-600 dark:text-brand-300">
                 Campeões da casa
                 {dna.baseAvaliacoes === 0 && (
-                  <span className="ml-1 font-medium normal-case tracking-normal text-carvao-400">· por frequência</span>
+                  <span className="ml-1 font-medium normal-case tracking-normal text-texto-suave">· por frequência</span>
                 )}
               </p>
               <ul className="space-y-1">
@@ -266,7 +266,7 @@ export function DnaCard() {
                       {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`}
                     </span>
                     <span className="flex-1 text-sm font-semibold text-carvao-800 dark:text-areia-100">{c.prato}</span>
-                    <span className="shrink-0 text-xs text-carvao-400">
+                    <span className="shrink-0 text-xs text-texto-suave">
                       {c.nota !== null ? `${c.nota}★` : `${c.frequencia}×`}
                     </span>
                   </li>
@@ -286,7 +286,7 @@ export function DnaCard() {
                     className="rounded-xl bg-perigo/5 px-3 py-2.5 ring-1 ring-perigo/15"
                   >
                     <p className="text-sm font-semibold text-carvao-800 dark:text-areia-100">{p.prato}</p>
-                    <p className="mt-0.5 text-xs text-carvao-400">
+                    <p className="mt-0.5 text-xs text-texto-suave">
                       {p.nota !== null ? `Nota ${p.nota} ` : ''}
                       {p.desperdicio !== null && p.desperdicio >= 0.1
                         ? `· ${Math.round(p.desperdicio * 100)}% de sobra — revise a quantidade`
@@ -301,7 +301,7 @@ export function DnaCard() {
           )}
 
           {dna.baseAvaliacoes === 0 && (
-            <p className="text-caption text-carvao-400">
+            <p className="text-caption text-texto-suave">
               Os campeões acima vêm da frequência no histórico. Conforme a equipe avaliar os pratos, o ranking
               passa a considerar as notas e os pontos de atenção aparecem.
             </p>

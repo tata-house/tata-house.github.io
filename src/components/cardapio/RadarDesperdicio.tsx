@@ -124,7 +124,7 @@ export function RadarDesperdicio({
           <p className="text-sm font-semibold text-brand-700 dark:text-brand-300">
             Nenhum risco previsto para os pratos desta semana.
           </p>
-          <p className="text-caption text-carvao-400">
+          <p className="text-caption text-texto-suave">
             O radar aprendeu com {padroes.size} prato(s) do histórico. Os pratos planejados não têm padrão de sobra
             relevante.
           </p>
@@ -135,7 +135,7 @@ export function RadarDesperdicio({
             <Cartao key={p.dia} className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">
-                  <span className="text-micro font-bold uppercase text-carvao-400">{DIAS_SEMANA[p.dia].slice(0, 3)}</span>{' '}
+                  <span className="text-micro font-bold uppercase text-texto-suave">{DIAS_SEMANA[p.dia].slice(0, 3)}</span>{' '}
                   {p.prato}
                 </p>
                 <p className="text-rotulo text-carvao-500 dark:text-areia-200">
@@ -143,7 +143,7 @@ export function RadarDesperdicio({
                   <strong>~{p.cortePct}% a menos</strong>
                   {custoRef ? <> e evite ~{formatarReais(p.custoEvitado)}</> : null}.
                 </p>
-                <p className="text-micro text-carvao-400">
+                <p className="text-micro text-texto-suave">
                   confiança {confianca(p.ocasioes)} · {p.ocasioes} registro(s)
                 </p>
               </div>
@@ -155,7 +155,7 @@ export function RadarDesperdicio({
 
       {observar.length > 0 && (
         <Cartao className="space-y-1.5 bg-areia-50/60 dark:bg-carvao-900/40">
-          <p className="text-caption font-bold uppercase tracking-wider text-carvao-400">Vigiar quando voltarem</p>
+          <p className="text-caption font-bold uppercase tracking-wider text-texto-suave">Vigiar quando voltarem</p>
           <ul className="space-y-1 text-rotulo">
             {observar.map((p) => (
               <li key={p.prato} className="flex items-center justify-between gap-2">
@@ -167,7 +167,7 @@ export function RadarDesperdicio({
         </Cartao>
       )}
 
-      <p className="text-micro text-carvao-400">
+      <p className="text-micro text-texto-suave">
         Previsões aprendidas dos seus lançamentos de sobra. Quanto mais você registrar, mais preciso fica.
       </p>
     </Secao>

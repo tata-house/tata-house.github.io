@@ -41,10 +41,10 @@ export function Disclosure({
           {icone && <Icone nome={icone} tam={18} className="text-brand-500" />}
           <span>
             <span className="block text-subtitulo font-semibold text-carvao-800 dark:text-areia-100">{titulo}</span>
-            {subtitulo && <span className="block text-caption text-carvao-400">{subtitulo}</span>}
+            {subtitulo && <span className="block text-caption text-texto-suave">{subtitulo}</span>}
           </span>
         </span>
-        <Icone nome="baixo" tam={16} className={`shrink-0 text-carvao-400 transition-transform ${aberta ? 'rotate-180' : ''}`} />
+        <Icone nome="baixo" tam={16} className={`shrink-0 text-texto-suave transition-transform ${aberta ? 'rotate-180' : ''}`} />
       </button>
       {aberta && (
         <div className="space-y-4 border-t border-carvao-100/80 bg-areia-50/30 p-3 dark:border-carvao-800 dark:bg-carvao-900/40">
@@ -206,12 +206,12 @@ export function Kpi({
   return (
     <div className="flex flex-col rounded-2xl bg-white p-3.5 dark:bg-carvao-850 dark:ring-1 dark:ring-carvao-700/60">
       <div className="flex items-center gap-1.5">
-        {icone && <span className="leading-none text-carvao-400 opacity-70">{icone}</span>}
+        {icone && <span className="leading-none text-texto-suave opacity-70">{icone}</span>}
         <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${ponto}`} />
-        <p className="text-micro font-bold uppercase tracking-[0.16em] text-carvao-400">{rotulo}</p>
+        <p className="text-micro font-bold uppercase tracking-[0.16em] text-texto-suave">{rotulo}</p>
       </div>
       <p className={`mt-2 font-display text-[22px] font-bold leading-none tabular-nums ${valorCor}`}>{valor}</p>
-      {detalhe && <p className="mt-1.5 text-caption text-carvao-400">{detalhe}</p>}
+      {detalhe && <p className="mt-1.5 text-caption text-texto-suave">{detalhe}</p>}
     </div>
   );
 }
@@ -231,7 +231,7 @@ export function EstadoVazio({
     <div className="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center">
       {icone && <span className="text-4xl opacity-60">{icone}</span>}
       <p className="font-display text-lg font-semibold text-carvao-700 dark:text-areia-100">{titulo}</p>
-      {texto && <p className="max-w-sm text-sm leading-relaxed text-carvao-400">{texto}</p>}
+      {texto && <p className="max-w-sm text-sm leading-relaxed text-texto-suave">{texto}</p>}
       {acao && <div className="mt-2">{acao}</div>}
     </div>
   );
@@ -256,7 +256,7 @@ export function Secao({ titulo, acao, children }: { titulo: ReactNode; acao?: Re
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-micro font-bold uppercase tracking-[0.16em] text-carvao-400">{titulo}</p>
+        <p className="text-micro font-bold uppercase tracking-[0.16em] text-texto-suave">{titulo}</p>
         {acao}
       </div>
       {children}
@@ -347,7 +347,7 @@ export function Stepper({
       </button>
       <span className="min-w-[3ch] px-1 text-center text-base font-bold tabular-nums">
         {valor}
-        {sufixo ? <span className="ml-0.5 text-xs font-semibold text-carvao-400">{sufixo}</span> : null}
+        {sufixo ? <span className="ml-0.5 text-xs font-semibold text-texto-suave">{sufixo}</span> : null}
       </span>
       <button type="button" className={bt} onClick={() => aoMudar(valor + passo)} aria-label="Aumentar">
         <Icone nome="somar" tam={18} />

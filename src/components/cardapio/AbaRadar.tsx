@@ -145,17 +145,17 @@ export function AbaRadar({
       <div className="flex flex-wrap gap-x-6 gap-y-1 px-1">
         <span>
           <span className="font-display text-titulo font-bold tabular-nums text-info">{radar.length}</span>
-          <span className="ml-1.5 text-rotulo text-carvao-400">itens</span>
+          <span className="ml-1.5 text-rotulo text-texto-suave">itens</span>
         </span>
         <span>
           <span className={`font-display text-titulo font-bold tabular-nums ${alertas.length ? 'text-perigo' : 'text-brand-600'}`}>
             {alertas.length}
           </span>
-          <span className="ml-1.5 text-rotulo text-carvao-400">alertas</span>
+          <span className="ml-1.5 text-rotulo text-texto-suave">alertas</span>
         </span>
         <span>
           <span className="font-display text-titulo font-bold tabular-nums text-carvao-900 dark:text-areia-50">{fornecedoresUsados.length}</span>
-          <span className="ml-1.5 text-rotulo text-carvao-400">fornecedores</span>
+          <span className="ml-1.5 text-rotulo text-texto-suave">fornecedores</span>
         </span>
       </div>
 
@@ -166,7 +166,7 @@ export function AbaRadar({
             <li key={r.norm} className="flex items-center justify-between gap-3 px-4 py-2.5 transition hover:bg-areia-50/70 dark:hover:bg-carvao-800/60">
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{r.item}</p>
-                <p className="text-caption text-carvao-400">
+                <p className="text-caption text-texto-suave">
                   {formatarReais(r.atual)}/{r.unid}
                   {r.fornecedor && <span className="text-brand-600"> · {r.fornecedor}</span>}
                 </p>
@@ -175,7 +175,7 @@ export function AbaRadar({
                 {r.variacao !== null && (
                   <span
                     className={`text-sm font-bold ${
-                      r.variacao > 0.001 ? 'text-perigo' : r.variacao < -0.001 ? 'text-brand-600' : 'text-carvao-400'
+                      r.variacao > 0.001 ? 'text-perigo' : r.variacao < -0.001 ? 'text-brand-600' : 'text-texto-suave'
                     }`}
                   >
                     {seta(r.tendencia)} {r.variacao > 0 ? '+' : ''}

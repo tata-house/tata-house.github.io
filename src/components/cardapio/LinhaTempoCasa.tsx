@@ -73,7 +73,7 @@ export function LinhaTempoCasa() {
               >
                 <span className="text-lg leading-none">{c.icone}</span>
                 <div className="min-w-0">
-                  <p className="text-micro font-bold uppercase tracking-wider text-carvao-400">{c.titulo}</p>
+                  <p className="text-micro font-bold uppercase tracking-wider text-texto-suave">{c.titulo}</p>
                   <p className="mt-0.5 text-sm font-bold leading-snug text-carvao-800 dark:text-areia-100">{c.valor}</p>
                 </div>
               </div>
@@ -99,7 +99,7 @@ export function LinhaTempoCasa() {
             <div className="min-w-0 flex-1 pt-1">
               <p className="font-display text-base font-bold text-carvao-900 dark:text-white">{c.titulo}</p>
               <p className="mt-0.5 text-sm text-carvao-600 dark:text-areia-200">{c.destaque}</p>
-              <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-caption text-carvao-400">
+              <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-caption text-texto-suave">
                 <span>{c.refeicoes.toLocaleString('pt-BR')} refeições</span>
                 <span>·</span>
                 <span>{c.dias} dias</span>

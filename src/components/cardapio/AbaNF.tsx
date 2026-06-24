@@ -148,7 +148,7 @@ export function AbaNF({
           ) : (
             <>
               <Icone nome="imagem" tam={36} className="mb-3 text-carvao-300" />
-              <p className="text-xs text-carvao-400">JPG, PNG ou PDF · toque ou arraste</p>
+              <p className="text-xs text-texto-suave">JPG, PNG ou PDF · toque ou arraste</p>
             </>
           )}
         </div>
@@ -173,7 +173,7 @@ export function AbaNF({
         {preview && resultado && (
           <button
             onClick={() => { setPreview(null); setResultado(null); setFileData(null); setErro(null); }}
-            className="mt-3 w-full text-center text-sm font-semibold text-carvao-400 hover:text-carvao-600"
+            className="mt-3 w-full text-center text-sm font-semibold text-texto-suave hover:text-carvao-600"
           >
             Carregar outra nota
           </button>
@@ -247,7 +247,7 @@ export function AbaNF({
                     <p className="truncate text-xs font-semibold capitalize text-carvao-800 dark:text-areia-100">
                       {it.produto}
                     </p>
-                    <p className="text-xs text-carvao-400">
+                    <p className="text-xs text-texto-suave">
                       {it.qtd} {it.unid} · {formatarReais(it.precoUnit)}/{it.unid.toLowerCase()}
                     </p>
                   </div>
@@ -270,7 +270,7 @@ export function AbaNF({
                 if (selecionados.size === resultado.itens.length) setSelecionados(new Set());
                 else setSelecionados(new Set(resultado.itens.map((_, i) => i)));
               }}
-              className="text-xs font-semibold text-carvao-400 hover:text-carvao-700"
+              className="text-xs font-semibold text-texto-suave hover:text-carvao-700"
             >
               {selecionados.size === resultado.itens.length ? 'Desmarcar todos' : 'Selecionar todos'}
             </button>
@@ -287,7 +287,7 @@ export function AbaNF({
           </div>
 
           {aplicado && (
-            <p className="mt-2 text-center text-xs text-carvao-400">
+            <p className="mt-2 text-center text-xs text-texto-suave">
               Os preços foram adicionados ao catálogo e ao histórico de preços.
             </p>
           )}

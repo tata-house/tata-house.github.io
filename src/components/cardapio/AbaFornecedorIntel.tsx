@@ -121,7 +121,7 @@ function FormAvaliacao({
               className={`flex-1 rounded-2xl border py-2.5 text-sm font-semibold transition ${
                 entregaOk === ok
                   ? ok ? 'border-brand-600 bg-brand-50 text-brand-700 dark:bg-brand-900/20' : 'border-red-400 bg-red-50 text-red-700 dark:bg-red-900/20'
-                  : 'border-carvao-200 text-carvao-400 dark:border-carvao-600'
+                  : 'border-carvao-200 text-texto-suave dark:border-carvao-600'
               }`}
             >
               {ok ? '✓ Entregou no prazo' : '✗ Atrasou / problema'}
@@ -200,7 +200,7 @@ function CartaoRecomendacao({ perfis, porFornecedor }: {
           <p className="text-sm font-bold text-carvao-900 dark:text-white">
             Priorize <span className="text-brand-700 dark:text-brand-300">{melhor.nome}</span>
           </p>
-          <p className="text-xs text-carvao-400">
+          <p className="text-xs text-texto-suave">
             {'★'.repeat(Math.round(melhor.qualidade))}{'☆'.repeat(5 - Math.round(melhor.qualidade))}
             {' · '}melhor combinação de qualidade e entrega agora
           </p>
@@ -291,9 +291,9 @@ export function AbaFornecedorIntel({
         const nAlertas = Object.values(perfis).filter((p) => { const t = taxaEntregaOk(p.avaliacoes); return t !== null && t < 0.7; }).length;
         return (
           <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm">
-            <span><strong className="font-bold text-carvao-900 dark:text-white">{todosFornecedores.length}</strong> <span className="text-carvao-400">fornecedores</span></span>
-            <span><strong className="font-bold text-brand-600 dark:text-brand-400">{nAvaliados}</strong> <span className="text-carvao-400">avaliados</span></span>
-            {nAlertas > 0 && <span><strong className="font-bold text-perigo">{nAlertas}</strong> <span className="text-carvao-400">alertas</span></span>}
+            <span><strong className="font-bold text-carvao-900 dark:text-white">{todosFornecedores.length}</strong> <span className="text-texto-suave">fornecedores</span></span>
+            <span><strong className="font-bold text-brand-600 dark:text-brand-400">{nAvaliados}</strong> <span className="text-texto-suave">avaliados</span></span>
+            {nAlertas > 0 && <span><strong className="font-bold text-perigo">{nAlertas}</strong> <span className="text-texto-suave">alertas</span></span>}
           </div>
         );
       })()}
@@ -324,7 +324,7 @@ export function AbaFornecedorIntel({
                       </span>
                     )}
                   </div>
-                  <div className="mt-0.5 flex flex-wrap gap-2 text-xs text-carvao-400">
+                  <div className="mt-0.5 flex flex-wrap gap-2 text-xs text-texto-suave">
                     <span>{itens.length} item(ns)</span>
                     {perfil?.pedidoMinimo && <span>Mín. R$ {perfil.pedidoMinimo}</span>}
                     {perfil?.prazoEntregaDias && <span>{perfil.prazoEntregaDias}d prazo</span>}
@@ -346,7 +346,7 @@ export function AbaFornecedorIntel({
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); setEditando(nome); }}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-carvao-400 hover:bg-carvao-100 dark:hover:bg-carvao-700"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-texto-suave hover:bg-carvao-100 dark:hover:bg-carvao-700"
                     title="Editar perfil"
                   >
                     <Icone nome="ajustes" tam={15} />
@@ -359,14 +359,14 @@ export function AbaFornecedorIntel({
                 <div className="border-t border-carvao-100 px-4 pb-4 pt-3 dark:border-carvao-700">
                   {itens.length > 0 && (
                     <div className="mb-3">
-                      <p className="mb-1.5 text-micro font-bold uppercase tracking-widest text-carvao-400">Itens fornecidos</p>
+                      <p className="mb-1.5 text-micro font-bold uppercase tracking-widest text-texto-suave">Itens fornecidos</p>
                       <div className="flex flex-wrap gap-1.5">
                         {itens.slice(0, 12).map((it) => (
                           <span key={it} className="rounded-full bg-carvao-100 px-2 py-0.5 text-caption font-semibold text-carvao-600 dark:bg-carvao-700 dark:text-carvao-300">
                             {it} {precos[it] ? `· R$ ${precos[it].toFixed(2)}` : ''}
                           </span>
                         ))}
-                        {itens.length > 12 && <span className="text-xs text-carvao-400">+{itens.length - 12}</span>}
+                        {itens.length > 12 && <span className="text-xs text-texto-suave">+{itens.length - 12}</span>}
                       </div>
                     </div>
                   )}
@@ -375,12 +375,12 @@ export function AbaFornecedorIntel({
                     <p className="mb-2 text-sm text-carvao-600 dark:text-carvao-300">{perfil.whatsapp}</p>
                   )}
                   {perfil?.obs && (
-                    <p className="mb-3 text-xs italic text-carvao-400">{perfil.obs}</p>
+                    <p className="mb-3 text-xs italic text-texto-suave">{perfil.obs}</p>
                   )}
 
                   {avs.length > 0 && (
                     <div>
-                      <p className="mb-1.5 text-micro font-bold uppercase tracking-widest text-carvao-400">Últimas avaliações</p>
+                      <p className="mb-1.5 text-micro font-bold uppercase tracking-widest text-texto-suave">Últimas avaliações</p>
                       <div className="divide-y divide-carvao-100 dark:divide-carvao-700/50">
                         {avs.slice(0, 4).map((av, i) => (
                           <div key={i} className="flex items-center gap-2 py-1.5">
@@ -388,7 +388,7 @@ export function AbaFornecedorIntel({
                             <span className={`text-xs font-semibold ${av.entregaOk ? 'text-brand-600 dark:text-brand-400' : 'text-red-500 dark:text-red-400'}`}>
                               {av.entregaOk ? '✓ entregou' : '✗ problema'}
                             </span>
-                            {av.obs && <span className="text-xs text-carvao-400 truncate">{av.obs}</span>}
+                            {av.obs && <span className="text-xs text-texto-suave truncate">{av.obs}</span>}
                             <span className="ml-auto shrink-0 text-micro text-carvao-300">
                               {new Date(av.em).toLocaleDateString('pt-BR')}
                             </span>
@@ -399,7 +399,7 @@ export function AbaFornecedorIntel({
                   )}
 
                   {avs.length === 0 && (
-                    <p className="text-xs text-carvao-400">Sem avaliações ainda. Registre após cada entrega.</p>
+                    <p className="text-xs text-texto-suave">Sem avaliações ainda. Registre após cada entrega.</p>
                   )}
                 </div>
               )}

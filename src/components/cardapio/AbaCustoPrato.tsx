@@ -33,12 +33,12 @@ function DetalheIngredientes({ custo, onFechar }: { custo: CustoPorcao; onFechar
         <div className="mb-4 flex items-start justify-between gap-2">
           <div>
             <h3 className="font-display text-lg font-bold text-carvao-900 dark:text-white">{custo.prato}</h3>
-            <p className="text-xs text-carvao-400">
+            <p className="text-xs text-texto-suave">
               {custo.categoria} · {custo.pessoas} pessoas ·{' '}
               {custo.deMapa ? 'dados de receita' : 'estimado de combo'}
             </p>
           </div>
-          <button onClick={onFechar} className="text-2xl text-carvao-400 hover:text-carvao-700">✕</button>
+          <button onClick={onFechar} className="text-2xl text-texto-suave hover:text-carvao-700">✕</button>
         </div>
 
         <div className="mb-4 grid grid-cols-2 gap-3">
@@ -46,13 +46,13 @@ function DetalheIngredientes({ custo, onFechar }: { custo: CustoPorcao; onFechar
             <p className="text-xl font-bold text-carvao-900 dark:text-white">
               R$ {custo.custoPorcao.toFixed(2).replace('.', ',')}
             </p>
-            <p className="text-xs text-carvao-400">por porção</p>
+            <p className="text-xs text-texto-suave">por porção</p>
           </div>
           <div className="rounded-2xl bg-carvao-50 p-3 text-center dark:bg-carvao-800">
             <p className="text-xl font-bold text-carvao-900 dark:text-white">
               R$ {custo.custoTotal.toFixed(2).replace('.', ',')}
             </p>
-            <p className="text-xs text-carvao-400">total ({custo.pessoas} pax)</p>
+            <p className="text-xs text-texto-suave">total ({custo.pessoas} pax)</p>
           </div>
         </div>
 
@@ -63,7 +63,7 @@ function DetalheIngredientes({ custo, onFechar }: { custo: CustoPorcao; onFechar
               <div key={i} className="flex items-center justify-between gap-2 rounded-xl bg-carvao-50 px-3 py-2 dark:bg-carvao-800">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-carvao-800 dark:text-areia-100">{ing.item}</p>
-                  <p className="text-xs text-carvao-400">
+                  <p className="text-xs text-texto-suave">
                     {ing.qtd.toFixed(2)} {ing.unid}
                     {ing.temPreco ? ` · R$ ${ing.precoUnit.toFixed(2)}/${ing.unid}` : ' · sem preço'}
                   </p>
@@ -74,7 +74,7 @@ function DetalheIngredientes({ custo, onFechar }: { custo: CustoPorcao; onFechar
                       <p className="text-sm font-bold text-carvao-700 dark:text-areia-100">
                         R$ {ing.custo.toFixed(2).replace('.', ',')}
                       </p>
-                      <p className="text-micro text-carvao-400">
+                      <p className="text-micro text-texto-suave">
                         {total > 0 ? Math.round((ing.custo / total) * 100) : 0}%
                       </p>
                     </>
@@ -87,7 +87,7 @@ function DetalheIngredientes({ custo, onFechar }: { custo: CustoPorcao; onFechar
         </div>
 
         {custo.cobertura < 1 && (
-          <p className="mt-4 text-center text-xs text-carvao-400">
+          <p className="mt-4 text-center text-xs text-texto-suave">
             {Math.round((1 - custo.cobertura) * custo.ingredientes.length)} ingrediente(s) sem preço cadastrado — custo subestimado.
           </p>
         )}
@@ -194,7 +194,7 @@ export function AbaCustoPrato({
                         {Math.round(c.cobertura * 100)}% de ingredientes com preço
                       </span>
                       {!c.deMapa && (
-                        <span className="text-micro text-carvao-400">estimado</span>
+                        <span className="text-micro text-texto-suave">estimado</span>
                       )}
                     </div>
                   </div>
@@ -205,13 +205,13 @@ export function AbaCustoPrato({
               <li key={`sem-${prato}`} className="flex items-center gap-3 px-4 py-3 opacity-50">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="truncate text-sm font-semibold text-carvao-600 dark:text-carvao-400">{prato}</p>
-                    <span className="shrink-0 text-xs text-carvao-400">sem dados</span>
+                    <p className="truncate text-sm font-semibold text-carvao-600 dark:text-texto-suave">{prato}</p>
+                    <span className="shrink-0 text-xs text-texto-suave">sem dados</span>
                   </div>
                   <div className="mt-1.5 h-1.5 w-full rounded-full bg-carvao-100 dark:bg-carvao-700" />
                   <div className="mt-1 flex items-center gap-2">
-                    <span className="rounded bg-carvao-100 px-1 py-0.5 text-micro font-semibold text-carvao-400 dark:bg-carvao-700">Principal</span>
-                    <span className="text-micro text-carvao-400">ingredientes não cadastrados</span>
+                    <span className="rounded bg-carvao-100 px-1 py-0.5 text-micro font-semibold text-texto-suave dark:bg-carvao-700">Principal</span>
+                    <span className="text-micro text-texto-suave">ingredientes não cadastrados</span>
                   </div>
                 </div>
               </li>

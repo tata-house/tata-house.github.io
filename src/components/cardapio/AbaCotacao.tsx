@@ -219,7 +219,7 @@ export function AbaCotacao({
       <Cartao className="space-y-3">
         {/* Upload */}
         <div className="flex flex-wrap items-center gap-3">
-          <label className={`cursor-pointer rounded-full border border-dashed px-4 py-2 text-rotulo font-bold transition ${pdfCarregando ? 'pointer-events-none border-carvao-200 text-carvao-300 dark:border-carvao-700' : 'border-carvao-300 text-carvao-500 hover:border-brand-400 hover:text-brand-600 dark:border-carvao-600 dark:text-carvao-400'}`}>
+          <label className={`cursor-pointer rounded-full border border-dashed px-4 py-2 text-rotulo font-bold transition ${pdfCarregando ? 'pointer-events-none border-carvao-200 text-carvao-300 dark:border-carvao-700' : 'border-carvao-300 text-carvao-500 hover:border-brand-400 hover:text-brand-600 dark:border-carvao-600 dark:text-texto-suave'}`}>
             {pdfCarregando ? 'Lendo PDF…' : 'Importar arquivo (CSV / TXT / PDF)'}
             <input type="file" accept=".csv,.txt,.tsv,.pdf" className="hidden" disabled={pdfCarregando} onChange={importarArquivo} />
           </label>
@@ -239,7 +239,7 @@ export function AbaCotacao({
         />
 
         <div>
-          <label className="mb-1 block text-caption font-bold uppercase tracking-widest text-carvao-400">
+          <label className="mb-1 block text-caption font-bold uppercase tracking-widest text-texto-suave">
             Fornecedor (detectado ou informe)
           </label>
           <input
@@ -253,7 +253,7 @@ export function AbaCotacao({
         {/* Fornecedores — toggle inline */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-carvao-400">
+            <span className="text-xs text-texto-suave">
               {fornecedoresList.length > 0 ? `${fornecedoresList.length} fornecedor${fornecedoresList.length !== 1 ? 'es' : ''}` : 'Nenhum fornecedor'}
             </span>
             <button
@@ -275,7 +275,7 @@ export function AbaCotacao({
                       {nome}
                       <button
                         onClick={() => removerFornecedor(nome)}
-                        className="ml-1 text-carvao-400 hover:text-red-500"
+                        className="ml-1 text-texto-suave hover:text-red-500"
                         aria-label={`Remover ${nome}`}
                       >
                         ×
@@ -306,7 +306,7 @@ export function AbaCotacao({
         {/* Chave Groq — toggle inline */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-xs text-carvao-400">
+            <span className="flex items-center gap-1.5 text-xs text-texto-suave">
               <span className={`h-1.5 w-1.5 rounded-full ${temKey ? 'bg-brand-500' : 'bg-carvao-300'}`} />
               {temKey ? 'IA Groq ativa' : 'IA Groq não configurada'}
             </span>
@@ -369,7 +369,7 @@ export function AbaCotacao({
         <>
           {casados.length === 0 && soltos.length === 0 ? (
             <Cartao>
-              <p className="text-sm text-carvao-400">
+              <p className="text-sm text-texto-suave">
                 Nenhum preço reconhecido. Confira se o texto tem valores no formato <code>12,34</code>.
               </p>
             </Cartao>
@@ -377,7 +377,7 @@ export function AbaCotacao({
             <Cartao className="space-y-3 !p-0">
               <div className="flex flex-wrap items-center justify-between gap-2 px-5 pt-4">
                 <h3 className="font-display text-lg font-semibold">{casados.length} itens reconhecidos</h3>
-                <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${modoUsado === 'combo' ? 'bg-brand-500/10 text-brand-700 dark:text-brand-300' : 'bg-carvao-100 text-carvao-500 dark:bg-carvao-700 dark:text-carvao-400'}`}>
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${modoUsado === 'combo' ? 'bg-brand-500/10 text-brand-700 dark:text-brand-300' : 'bg-carvao-100 text-carvao-500 dark:bg-carvao-700 dark:text-texto-suave'}`}>
                   {modoUsado === 'combo' ? '✦ Combo IA + Lógica' : 'Lógica'}
                 </span>
               </div>
@@ -390,12 +390,12 @@ export function AbaCotacao({
                     delta == null ? ''
                     : delta > 0.12 ? 'text-red-600 dark:text-red-400'
                     : delta < -0.12 ? 'text-brand-600 dark:text-brand-400'
-                    : 'text-carvao-400';
+                    : 'text-texto-suave';
                   const corConfianca =
                     c.confianca === 'alta' ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400'
                     : c.confianca === 'media' ? 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'
                     : c.confianca === 'baixa' ? 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400'
-                    : 'bg-carvao-100 text-carvao-400 dark:bg-carvao-700';
+                    : 'bg-carvao-100 text-texto-suave dark:bg-carvao-700';
                   const labelConfianca =
                     c.confianca === 'alta' ? '● alta'
                     : c.confianca === 'media' ? '● média'
@@ -413,7 +413,7 @@ export function AbaCotacao({
                           />
                           <span className="min-w-0">
                             <span className="block truncate text-sm font-semibold">{c.item}</span>
-                            <span className="block text-caption text-carvao-400">
+                            <span className="block text-caption text-texto-suave">
                               {c.marca ? `${c.marca} · ` : ''}
                               {c.ofertas > 1 ? `melhor de ${c.ofertas} ofertas` : '1 oferta'}
                               {c.origemHistorico ? ` · ${c.origemHistorico}` : ''}
@@ -423,7 +423,7 @@ export function AbaCotacao({
                         <div className="shrink-0 text-right">
                           <span className="text-sm font-bold">
                             {formatarReais(c.preco)}
-                            <span className="font-normal text-carvao-400">/{c.unid}</span>
+                            <span className="font-normal text-texto-suave">/{c.unid}</span>
                           </span>
                           <div className="mt-0.5 flex items-center justify-end gap-1.5">
                             <span className={`rounded-full px-1.5 py-0.5 text-micro font-bold ${corConfianca}`}>
@@ -471,7 +471,7 @@ export function AbaCotacao({
                   Cadastrar todos de uma vez
                 </button>
               </div>
-              <p className="text-xs text-carvao-400">
+              <p className="text-xs text-texto-suave">
                 Ainda não existem no catálogo. Cadastre todos com um toque ou um a um ajustando a unidade.
               </p>
               <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
@@ -482,7 +482,7 @@ export function AbaCotacao({
                     <li key={`${idx}-${s.nome}`} className="flex items-center justify-between gap-3 py-2">
                       <span className="min-w-0">
                         <span className="block truncate text-sm font-semibold">{s.nome}</span>
-                        <span className="block text-caption text-carvao-400">
+                        <span className="block text-caption text-texto-suave">
                           {formatarReais(s.preco)}{s.marca ? ` · ${s.marca}` : ''}
                         </span>
                       </span>

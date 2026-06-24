@@ -136,7 +136,7 @@ export function ConciliacaoSemana({
 
   return (
     <div className="space-y-4 rounded-2xl bg-carvao-50 p-4 ring-1 ring-carvao-200 dark:bg-carvao-900/60 dark:ring-carvao-700/60">
-      <p className="text-caption font-extrabold uppercase tracking-[0.2em] text-carvao-400">
+      <p className="text-caption font-extrabold uppercase tracking-[0.2em] text-texto-suave">
         Conciliação automática
       </p>
 
@@ -153,7 +153,7 @@ export function ConciliacaoSemana({
               <p className={`text-nota font-semibold ${alertaCustoIrreal.tipo === 'baixo' ? 'text-blue-700 dark:text-blue-300' : 'text-perigo'}`}>
                 Custo por refeição {alertaCustoIrreal.tipo === 'baixo' ? 'muito baixo' : 'muito alto'}
               </p>
-              <p className="text-caption text-carvao-400">
+              <p className="text-caption text-texto-suave">
                 Média calculada: {formatarReais(alertaCustoIrreal.valor)}/refeição —{' '}
                 {alertaCustoIrreal.tipo === 'baixo'
                   ? `abaixo de ${formatarReais(CUSTO_MIN_POR_REFEICAO)}. Verifique se os preços dos principais itens foram cadastrados.`
@@ -175,7 +175,7 @@ export function ConciliacaoSemana({
             <div key={i} className="flex items-center gap-3 rounded-xl bg-ouro-300/10 px-3 py-2.5 ring-1 ring-ouro-400/25">
               <div className="min-w-0 flex-1">
                 <p className="text-nota font-semibold leading-tight">{a.item}</p>
-                <p className="text-caption text-carvao-400">
+                <p className="text-caption text-texto-suave">
                   Cotado {formatarReais(a.atual)}/{a.unid} · média recente {formatarReais(a.medio)}/{a.unid}
                 </p>
               </div>
@@ -201,7 +201,7 @@ export function ConciliacaoSemana({
             >
               <div className="min-w-0 flex-1">
                 <p className="text-nota font-semibold leading-tight">{a.item}</p>
-                <p className="text-caption text-carvao-400">
+                <p className="text-caption text-texto-suave">
                   Necessário {formatarQtd(a.necessario)} {a.unid} · comprado {formatarQtd(a.comprado)} {a.unid}
                   {a.custoExcesso > 0 && <> · excesso ≈ {formatarReais(a.custoExcesso)}</>}
                 </p>

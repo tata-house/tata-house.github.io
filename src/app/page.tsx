@@ -101,7 +101,7 @@ const ROTULO_ETAPA: Record<Etapa, string> = {
 };
 
 const COR_ETAPA_TEXTO: Record<Etapa, string> = {
-  rascunho:    'text-carvao-400',
+  rascunho:    'text-texto-suave',
   cozinha:     'text-ouro-600 dark:text-ouro-400',
   compras:     'text-info dark:text-info-claro',
   recebimento: 'text-ouro-600 dark:text-ouro-400',
@@ -141,9 +141,9 @@ function MiniEtapas({ etapa, sufixo }: { etapa: Etapa; sufixo?: string }) {
           <span className={`h-2 w-2 rounded-full ${COR_ETAPA_PONTO[etapa]}`} />
           {ROTULO_ETAPA[etapa]}
         </span>
-        {sufixo && <span className="font-normal text-carvao-400">· {sufixo}</span>}
+        {sufixo && <span className="font-normal text-texto-suave">· {sufixo}</span>}
         {proxima && (
-          <span className="font-normal text-carvao-400">
+          <span className="font-normal text-texto-suave">
             · próximo: <span className="font-semibold text-carvao-500 dark:text-carvao-300">{ROTULO_ETAPA[proxima]}</span>
           </span>
         )}
@@ -323,20 +323,20 @@ function BuscaGlobal({
       >
         {/* campo de busca */}
         <div className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3.5 shadow-2xl ring-1 ring-carvao-200 dark:bg-carvao-900 dark:ring-carvao-600">
-          <Icone nome="busca" tam={18} className="shrink-0 text-carvao-400" />
+          <Icone nome="busca" tam={18} className="shrink-0 text-texto-suave" />
           <input
             ref={inputRef}
             value={termo}
             onChange={(e) => setTermo(e.target.value)}
             placeholder="Buscar cardápio, ingrediente, fornecedor, relatório…"
-            className="flex-1 bg-transparent text-subtitulo text-carvao-800 outline-none placeholder:text-carvao-400 dark:text-areia-100"
+            className="flex-1 bg-transparent text-subtitulo text-carvao-800 outline-none placeholder:text-texto-suave dark:text-areia-100"
           />
           {termo && (
-            <button onClick={() => setTermo('')} className="text-carvao-400 hover:text-carvao-600">
+            <button onClick={() => setTermo('')} className="text-texto-suave hover:text-carvao-600">
               <Icone nome="fechar" tam={16} />
             </button>
           )}
-          <kbd className="hidden rounded bg-carvao-100 px-1.5 py-0.5 text-caption font-semibold text-carvao-400 sm:block dark:bg-carvao-700">
+          <kbd className="hidden rounded bg-carvao-100 px-1.5 py-0.5 text-caption font-semibold text-texto-suave sm:block dark:bg-carvao-700">
             esc
           </kbd>
         </div>
@@ -346,7 +346,7 @@ function BuscaGlobal({
           <div className="mt-2 max-h-[60vh] overflow-y-auto rounded-2xl bg-white py-1.5 shadow-2xl ring-1 ring-carvao-200 dark:bg-carvao-900 dark:ring-carvao-600">
             {ORDEM_GRUPO.filter((g) => resultados.some((r) => r.tipo === g)).map((g) => (
               <div key={g} className="px-1.5 pb-1">
-                <p className="px-3 pb-1 pt-2 text-micro font-bold uppercase tracking-[0.12em] text-carvao-400">
+                <p className="px-3 pb-1 pt-2 text-micro font-bold uppercase tracking-[0.12em] text-texto-suave">
                   {ROTULO_GRUPO[g]}
                 </p>
                 {resultados.filter((r) => r.tipo === g).map((r) => {
@@ -370,10 +370,10 @@ function BuscaGlobal({
                       </span>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-corpo font-semibold text-carvao-800 dark:text-areia-100">{r.titulo}</p>
-                        {r.subtitulo && <p className="truncate text-caption text-carvao-400">{r.subtitulo}</p>}
+                        {r.subtitulo && <p className="truncate text-caption text-texto-suave">{r.subtitulo}</p>}
                       </div>
                       {ativo && (
-                        <kbd className="hidden shrink-0 rounded bg-white px-1.5 py-0.5 text-micro font-semibold text-carvao-400 ring-1 ring-carvao-200 sm:block dark:bg-carvao-900 dark:ring-carvao-600">↵</kbd>
+                        <kbd className="hidden shrink-0 rounded bg-white px-1.5 py-0.5 text-micro font-semibold text-texto-suave ring-1 ring-carvao-200 sm:block dark:bg-carvao-900 dark:ring-carvao-600">↵</kbd>
                       )}
                     </button>
                   );
@@ -385,7 +385,7 @@ function BuscaGlobal({
 
         {termo.trim().length >= 2 && ordenados.length === 0 && (
           <div className="mt-2 rounded-2xl bg-white px-4 py-6 text-center shadow-xl ring-1 ring-carvao-200 dark:bg-carvao-900 dark:ring-carvao-600">
-            <p className="text-sm text-carvao-400">Nenhum resultado para "{termo}"</p>
+            <p className="text-sm text-texto-suave">Nenhum resultado para "{termo}"</p>
           </div>
         )}
       </div>
@@ -628,7 +628,7 @@ export default function PaginaCardapios() {
               <div className="truncate font-display text-[16px] font-bold tracking-[0.18em] text-carvao-900 dark:text-white sm:text-[18px]">
                 TATÁ&nbsp;HOUSE
               </div>
-              <div className="truncate text-micro font-semibold uppercase tracking-[0.28em] text-carvao-400">
+              <div className="truncate text-micro font-semibold uppercase tracking-[0.28em] text-texto-suave">
                 Refeitório do Tatá Sushi
               </div>
             </div>
@@ -637,7 +637,7 @@ export default function PaginaCardapios() {
           {/* Busca — barra central */}
           <button
             onClick={() => setBuscaAberta(true)}
-            className="mx-auto hidden max-w-sm flex-1 items-center gap-2 rounded-xl border border-carvao-200 bg-carvao-50 px-4 py-2 text-sm text-carvao-400 transition hover:border-carvao-300 hover:bg-carvao-100 sm:flex dark:border-carvao-700 dark:bg-carvao-900 dark:text-carvao-500"
+            className="mx-auto hidden max-w-sm flex-1 items-center gap-2 rounded-xl border border-carvao-200 bg-carvao-50 px-4 py-2 text-sm text-texto-suave transition hover:border-carvao-300 hover:bg-carvao-100 sm:flex dark:border-carvao-700 dark:bg-carvao-900 dark:text-carvao-500"
           >
             <Icone nome="busca" tam={14} />
             <span>Buscar…</span>
@@ -648,18 +648,18 @@ export default function PaginaCardapios() {
           <div className="ml-auto flex shrink-0 items-center gap-2 sm:ml-0">
             <button
               onClick={() => setBuscaAberta(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-carvao-500 transition hover:bg-carvao-100 sm:hidden dark:text-carvao-400 dark:hover:bg-carvao-800"
+              className="flex h-9 w-9 items-center justify-center rounded-xl text-carvao-500 transition hover:bg-carvao-100 sm:hidden dark:text-texto-suave dark:hover:bg-carvao-800"
               aria-label="Buscar"
             >
               <Icone nome="busca" tam={17} />
             </button>
-            <span className="hidden items-center gap-1.5 text-xs font-semibold text-carvao-500 sm:flex lg:hidden dark:text-carvao-400">
+            <span className="hidden items-center gap-1.5 text-xs font-semibold text-carvao-500 sm:flex lg:hidden dark:text-texto-suave">
               <Icone nome="usuario" tam={13} />
               {perfil?.rotulo ?? 'Perfil'}
             </span>
             <button
               onClick={() => { sair(); if (typeof window !== 'undefined') window.location.reload(); }}
-              className="rounded-lg border border-carvao-200 px-3 py-1.5 text-xs font-semibold text-carvao-500 transition hover:border-carvao-300 hover:text-carvao-700 lg:hidden dark:border-carvao-700 dark:text-carvao-400"
+              className="rounded-lg border border-carvao-200 px-3 py-1.5 text-xs font-semibold text-carvao-500 transition hover:border-carvao-300 hover:text-carvao-700 lg:hidden dark:border-carvao-700 dark:text-texto-suave"
             >
               Sair
             </button>
@@ -683,7 +683,7 @@ export default function PaginaCardapios() {
                 className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-subtitulo font-semibold transition ${
                   ativo
                     ? 'bg-brand-50 text-brand-700 dark:bg-carvao-800 dark:text-brand-300'
-                    : 'text-carvao-500 hover:bg-carvao-50 hover:text-carvao-800 dark:text-carvao-400 dark:hover:bg-carvao-800/60'
+                    : 'text-carvao-500 hover:bg-carvao-50 hover:text-carvao-800 dark:text-texto-suave dark:hover:bg-carvao-800/60'
                 }`}
               >
                 <Icone nome={g.id} tam={19} />
@@ -702,7 +702,7 @@ export default function PaginaCardapios() {
                 <p className="truncate text-rotulo font-bold text-carvao-700 dark:text-areia-100">{perfil?.rotulo ?? 'Perfil'}</p>
                 <button
                   onClick={() => { sair(); if (typeof window !== 'undefined') window.location.reload(); }}
-                  className="text-caption font-semibold text-carvao-400 transition hover:text-perigo"
+                  className="text-caption font-semibold text-texto-suave transition hover:text-perigo"
                 >
                   Sair
                 </button>
@@ -730,7 +730,7 @@ export default function PaginaCardapios() {
             <button
               onClick={() => irSemana(-1)}
               aria-label="Semana anterior"
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-carvao-400 transition hover:bg-carvao-100 hover:text-carvao-700 dark:hover:bg-carvao-800"
+              className="flex h-11 w-11 items-center justify-center rounded-lg text-texto-suave transition hover:bg-carvao-100 hover:text-carvao-700 dark:hover:bg-carvao-800"
             >
               <Icone nome="anterior" tam={17} />
             </button>
@@ -738,13 +738,13 @@ export default function PaginaCardapios() {
               onClick={() => setSemanaSheet(true)}
               className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-carvao-700 tabular-nums transition hover:bg-carvao-100 dark:text-areia-200 dark:hover:bg-carvao-800"
             >
-              <Icone nome="calendario" tam={14} className="text-carvao-400" />
+              <Icone nome="calendario" tam={14} className="text-texto-suave" />
               {periodoSemana(semanaId)}
             </button>
             <button
               onClick={() => irSemana(1)}
               aria-label="Próxima semana"
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-carvao-400 transition hover:bg-carvao-100 hover:text-carvao-700 dark:hover:bg-carvao-800"
+              className="flex h-11 w-11 items-center justify-center rounded-lg text-texto-suave transition hover:bg-carvao-100 hover:text-carvao-700 dark:hover:bg-carvao-800"
             >
               <Icone nome="proximo" tam={17} />
             </button>
@@ -832,7 +832,7 @@ export default function PaginaCardapios() {
                       className={`relative whitespace-nowrap pb-3 text-sm font-semibold transition ${
                         abaCardapioSeg === seg.id
                           ? 'text-brand-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:rounded-full after:bg-brand-600 dark:text-brand-400'
-                          : 'text-carvao-400 hover:text-carvao-600 dark:text-carvao-500'
+                          : 'text-texto-suave hover:text-carvao-600 dark:text-carvao-500'
                       }`}
                     >
                       {seg.rotulo}
@@ -920,7 +920,7 @@ export default function PaginaCardapios() {
                       className={`relative whitespace-nowrap pb-3 text-sm font-semibold transition ${
                         abaCompras === seg
                           ? 'text-brand-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:rounded-full after:bg-brand-600 dark:text-brand-400'
-                          : 'text-carvao-400 hover:text-carvao-600 dark:text-carvao-500'
+                          : 'text-texto-suave hover:text-carvao-600 dark:text-carvao-500'
                       }`}
                     >
                       {seg === 'lista'
@@ -1043,7 +1043,7 @@ export default function PaginaCardapios() {
                       className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2 text-rotulo font-semibold transition ${
                         abaRelatorios === s.id
                           ? 'bg-white shadow-sm dark:bg-carvao-700'
-                          : 'text-carvao-500 hover:text-carvao-700 dark:text-carvao-400'
+                          : 'text-carvao-500 hover:text-carvao-700 dark:text-texto-suave'
                       }`}
                     >
                       {s.rotulo}
@@ -1158,7 +1158,7 @@ export default function PaginaCardapios() {
             </button>
           </div>
           <label className="flex items-center gap-2 rounded-2xl border border-carvao-200 px-3 py-2 dark:border-carvao-600">
-            <Icone nome="calendario" tam={16} className="shrink-0 text-carvao-400" />
+            <Icone nome="calendario" tam={16} className="shrink-0 text-texto-suave" />
             <span className="shrink-0 text-nota font-semibold text-carvao-500">Ir para a semana de</span>
             <input
               type="date"
@@ -1215,7 +1215,7 @@ export default function PaginaCardapios() {
 function SecaoAjuste({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
     <div className="space-y-4">
-      <p className="text-micro font-bold uppercase tracking-[0.16em] text-carvao-400">{titulo}</p>
+      <p className="text-micro font-bold uppercase tracking-[0.16em] text-texto-suave">{titulo}</p>
       {children}
     </div>
   );

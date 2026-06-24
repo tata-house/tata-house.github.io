@@ -66,7 +66,7 @@ function EtapaProgress({ etapa }: { etapa: Etapa }) {
               i === ativo
                 ? 'text-brand-600 dark:text-brand-400'
                 : i < ativo
-                ? 'text-carvao-400'
+                ? 'text-texto-suave'
                 : 'text-carvao-300 dark:text-carvao-700'
             }`}
           >
@@ -85,7 +85,7 @@ function BarraProgresso({ valor, total, rotulo }: { valor: number; total: number
   return (
     <div className="space-y-2">
       <div className="flex items-baseline justify-between">
-        <span className="text-sm text-carvao-500 dark:text-carvao-400">{rotulo}</span>
+        <span className="text-sm text-carvao-500 dark:text-texto-suave">{rotulo}</span>
         <span className="font-display text-lg font-bold text-carvao-900 dark:text-white">{pct}%</span>
       </div>
       <div className="h-1.5 overflow-hidden rounded-full bg-carvao-100 dark:bg-carvao-800">
@@ -94,7 +94,7 @@ function BarraProgresso({ valor, total, rotulo }: { valor: number; total: number
           style={{ width: `${pct}%` }}
         />
       </div>
-      <p className="text-xs text-carvao-400">
+      <p className="text-xs text-texto-suave">
         {valor} de {total} {valor === 1 ? 'item' : 'itens'}
       </p>
     </div>
@@ -157,11 +157,11 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
         {etapa === 'rascunho' && (
           <>
             <div>
-              <p className="text-xs font-bold text-carvao-400">Próximo passo</p>
+              <p className="text-xs font-bold text-texto-suave">Próximo passo</p>
               <h2 className="mt-2 font-display text-3xl font-bold text-carvao-900 dark:text-white">
                 Monte o cardápio
               </h2>
-              <p className="mt-2 text-base leading-relaxed text-carvao-500 dark:text-carvao-400">
+              <p className="mt-2 text-base leading-relaxed text-carvao-500 dark:text-texto-suave">
                 Defina os pratos e a lista de compras é gerada automaticamente.
               </p>
             </div>
@@ -172,7 +172,7 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
               if (sugs.length === 0) return null;
               return (
                 <div className="space-y-2">
-                  <p className="text-xs font-bold text-carvao-400">Aprovados pela equipe</p>
+                  <p className="text-xs font-bold text-texto-suave">Aprovados pela equipe</p>
                   <div className="flex flex-wrap gap-2">
                     {sugs.map((s) => (
                       <span
@@ -213,7 +213,7 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
             <div className="space-y-0 divide-y divide-carvao-50 dark:divide-carvao-800/40">
               {estado.dias.slice(0, 5).map((d, i) => (
                 <div key={i} className="flex items-center gap-4 py-3">
-                  <span className="w-8 shrink-0 text-xs font-bold text-carvao-400">{DIAS_PT[i]}</span>
+                  <span className="w-8 shrink-0 text-xs font-bold text-texto-suave">{DIAS_PT[i]}</span>
                   <span className={`text-sm ${d.principal ? 'font-medium text-carvao-800 dark:text-areia-100' : 'text-carvao-300 dark:text-carvao-700'}`}>
                     {d.principal || '—'}
                   </span>
@@ -230,7 +230,7 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
         {etapa === 'compras' && (
           <>
             <div>
-              <p className="text-xs font-bold text-carvao-400">Em andamento</p>
+              <p className="text-xs font-bold text-texto-suave">Em andamento</p>
               <h2 className="mt-2 font-display text-3xl font-bold text-carvao-900 dark:text-white">
                 Lista de compras
               </h2>
@@ -290,7 +290,7 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
                 <p className="font-display text-2xl font-bold text-carvao-900 dark:text-white">
                   {resumo.refeicoesReais || resumo.refeicoesPrevistas || '—'}
                 </p>
-                <p className="mt-0.5 text-xs text-carvao-400">refeições</p>
+                <p className="mt-0.5 text-xs text-texto-suave">refeições</p>
               </div>
               <div className="px-6">
                 <p className="font-display text-2xl font-bold text-carvao-900 dark:text-white">
@@ -300,13 +300,13 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
                     ? formatarReais(resumo.custoRefEstimado)
                     : '—'}
                 </p>
-                <p className="mt-0.5 text-xs text-carvao-400">por refeição</p>
+                <p className="mt-0.5 text-xs text-texto-suave">por refeição</p>
               </div>
               <div className="pl-6">
                 <p className="font-display text-2xl font-bold text-carvao-900 dark:text-white">
                   {media !== null ? `${media.toFixed(1)}★` : '—'}
                 </p>
-                <p className="mt-0.5 text-xs text-carvao-400">aceitação</p>
+                <p className="mt-0.5 text-xs text-texto-suave">aceitação</p>
               </div>
             </div>
             <BotaoSecundario onClick={() => irPara('cardapio')}>
@@ -325,7 +325,7 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
                 <p className="font-display text-2xl font-bold text-carvao-900 dark:text-white">
                   {resumo.refeicoesPrevistas}
                 </p>
-                <p className="mt-0.5 text-xs text-carvao-400">refeições previstas</p>
+                <p className="mt-0.5 text-xs text-texto-suave">refeições previstas</p>
               </div>
             )}
             <div className={resumo.refeicoesPrevistas > 0 ? 'pl-6' : ''}>
@@ -334,10 +334,10 @@ export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: 
                   <p className="font-display text-2xl font-bold text-carvao-900 dark:text-white">
                     {formatarReais(resumo.custoRefEstimado)}
                   </p>
-                  <p className="mt-0.5 text-xs text-carvao-400">estimado / refeição</p>
+                  <p className="mt-0.5 text-xs text-texto-suave">estimado / refeição</p>
                 </>
               ) : (
-                <p className="text-sm text-carvao-400">Lance preços para ver o custo estimado</p>
+                <p className="text-sm text-texto-suave">Lance preços para ver o custo estimado</p>
               )}
             </div>
           </div>

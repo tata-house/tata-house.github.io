@@ -85,7 +85,7 @@ function GraficoMensal({ dados }: { dados: MesTendencia[] }) {
       </div>
       <div className="flex gap-1">
         {dados.map((d, i) => (
-          <span key={i} className={`flex-1 text-center text-micro ${i === mesAtualIdx ? 'font-bold text-brand-600 dark:text-brand-400' : 'text-carvao-400'}`}>
+          <span key={i} className={`flex-1 text-center text-micro ${i === mesAtualIdx ? 'font-bold text-brand-600 dark:text-brand-400' : 'text-texto-suave'}`}>
             {d.mes}
           </span>
         ))}
@@ -237,7 +237,7 @@ export function AbaContagem({
       {/* ── Painel unificado ──────────────────────────────────────────── */}
       <Cartao className="space-y-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <p className="text-sm font-extrabold uppercase tracking-widest text-carvao-400">
+          <p className="text-sm font-extrabold uppercase tracking-widest text-texto-suave">
             Refeições
           </p>
           {custoPorRefeicao !== null && (
@@ -263,7 +263,7 @@ export function AbaContagem({
                     : 'bg-carvao-50 text-carvao-600 hover:bg-carvao-100 dark:bg-carvao-800 dark:text-carvao-300 dark:hover:bg-carvao-700'
                 }`}
               >
-                <span className={`text-micro font-extrabold uppercase tracking-wide ${ativo ? 'text-white/70' : 'text-carvao-400'}`}>
+                <span className={`text-micro font-extrabold uppercase tracking-wide ${ativo ? 'text-white/70' : 'text-texto-suave'}`}>
                   {DIAS_SEMANA[i].slice(0, 3)}
                 </span>
                 <span className={`text-xs tabular-nums ${ehHoje && !ativo ? 'font-extrabold text-brand-600 dark:text-brand-400' : ''}`}>
@@ -281,10 +281,10 @@ export function AbaContagem({
         {podeContar && (
           <div className="space-y-3 rounded-2xl bg-carvao-50 p-4 dark:bg-carvao-800/50">
             <div className="flex flex-wrap items-center justify-between gap-1">
-              <p className="text-xs font-bold text-carvao-500 dark:text-carvao-400">
+              <p className="text-xs font-bold text-carvao-500 dark:text-texto-suave">
                 {DIAS_SEMANA[diaAtivo]}, {displayData(DATAS_SEMANA[diaAtivo])}
                 {regAtivo && (
-                  <span className="ml-2 font-normal text-carvao-400">
+                  <span className="ml-2 font-normal text-texto-suave">
                     · já registrado: {regAtivo.almoco}A · {regAtivo.jantar}J · {regAtivo.marmitas}M
                   </span>
                 )}
@@ -334,7 +334,7 @@ export function AbaContagem({
         )}
 
         {totalSemana > 0 && (
-          <p className="text-xs font-semibold text-carvao-400">
+          <p className="text-xs font-semibold text-texto-suave">
             {totalSemana} refeições na semana
             {custoSemana > 0 && <> · custo da semana ≈ {formatarReais(custoSemana)}</>}
           </p>
@@ -351,7 +351,7 @@ export function AbaContagem({
           </div>
 
           <Cartao>
-            <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-carvao-400">
+            <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-texto-suave">
               Médias por dia da semana
             </p>
             <div className="space-y-3">
@@ -373,7 +373,7 @@ export function AbaContagem({
                 );
               })}
             </div>
-            <div className="mt-4 flex gap-4 text-caption text-carvao-400">
+            <div className="mt-4 flex gap-4 text-caption text-texto-suave">
               <span className="flex items-center gap-1"><span className="h-2 w-4 rounded bg-brand-500" />Almoço</span>
               <span className="flex items-center gap-1"><span className="h-2 w-4 rounded bg-ouro-400" />Jantar</span>
               <span className="flex items-center gap-1"><span className="h-2 w-4 rounded bg-info" />Marmitas</span>
@@ -381,7 +381,7 @@ export function AbaContagem({
           </Cartao>
 
           <Cartao>
-            <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-carvao-400">
+            <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-texto-suave">
               Histórico recente
             </p>
             <div className="space-y-1.5">
@@ -394,12 +394,12 @@ export function AbaContagem({
                   }}
                   className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm hover:bg-carvao-50 dark:hover:bg-carvao-800"
                 >
-                  <span className="w-10 shrink-0 text-xs font-bold text-carvao-400">{diaSemDaData(c.data)}</span>
+                  <span className="w-10 shrink-0 text-xs font-bold text-texto-suave">{diaSemDaData(c.data)}</span>
                   <span className="w-10 text-xs text-carvao-500 tabular-nums">{displayData(c.data)}</span>
                   <span className="flex-1 text-xs text-carvao-600 dark:text-carvao-300 tabular-nums">
                     {c.almoco} · {c.jantar} · {c.marmitas}
                   </span>
-                  {c.obs && <span className="truncate text-xs text-carvao-400">{c.obs}</span>}
+                  {c.obs && <span className="truncate text-xs text-texto-suave">{c.obs}</span>}
                 </button>
               ))}
             </div>
@@ -412,28 +412,28 @@ export function AbaContagem({
         <>
           <div className="grid grid-cols-2 gap-2">
             <div className="rounded-2xl bg-carvao-50 px-3 py-2.5 dark:bg-carvao-800/50">
-              <p className="text-micro uppercase tracking-wider text-carvao-400">Este ano</p>
+              <p className="text-micro uppercase tracking-wider text-texto-suave">Este ano</p>
               <p className="mt-0.5 text-xl font-black tabular-nums text-carvao-800 dark:text-white">
                 {statsHist.anoAtual.toLocaleString('pt-BR')}
               </p>
             </div>
             <div className="rounded-2xl bg-carvao-50 px-3 py-2.5 dark:bg-carvao-800/50">
-              <p className="text-micro uppercase tracking-wider text-carvao-400">Ano passado</p>
+              <p className="text-micro uppercase tracking-wider text-texto-suave">Ano passado</p>
               <p className="mt-0.5 text-xl font-black tabular-nums text-carvao-800 dark:text-white">
                 {statsHist.anoPassado.toLocaleString('pt-BR')}
               </p>
             </div>
             <div className="col-span-2 rounded-2xl bg-carvao-50 px-3 py-2.5 dark:bg-carvao-800/50">
-              <p className="text-micro uppercase tracking-wider text-carvao-400">Total histórico</p>
+              <p className="text-micro uppercase tracking-wider text-texto-suave">Total histórico</p>
               <p className="mt-0.5 text-xl font-black tabular-nums text-carvao-800 dark:text-white">
                 {statsHist.totalHistorico.toLocaleString('pt-BR')}
               </p>
-              <p className="text-micro text-carvao-400">{statsHist.diasRegistrados.toLocaleString('pt-BR')} dias registrados</p>
+              <p className="text-micro text-texto-suave">{statsHist.diasRegistrados.toLocaleString('pt-BR')} dias registrados</p>
             </div>
           </div>
           {tendencia.length > 0 && (
             <Cartao>
-              <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-carvao-400">
+              <p className="mb-4 text-sm font-extrabold uppercase tracking-widest text-texto-suave">
                 Últimos 12 meses
               </p>
               <GraficoMensal dados={tendencia} />
@@ -445,7 +445,7 @@ export function AbaContagem({
       {contagens.length === 0 && (
         <div className="rounded-2xl bg-carvao-50 py-10 text-center dark:bg-carvao-800/50">
           <p className="text-sm font-semibold text-carvao-500">Sem registros ainda</p>
-          <p className="mt-1 text-xs text-carvao-400">
+          <p className="mt-1 text-xs text-texto-suave">
             Clique num dia acima e registre as refeições para gerar métricas e padrões históricos.
           </p>
         </div>

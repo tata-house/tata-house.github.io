@@ -163,7 +163,7 @@ export function AbaDesperdicio({
                 <li key={p.prato} className="flex items-center justify-between gap-3 px-4 py-2.5">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{p.prato}</p>
-                    <p className="text-caption text-carvao-400">
+                    <p className="text-caption text-texto-suave">
                       {formatarQtd(p.sobra)} de sobra{custoRef ? ` · ${formatarReais(p.custo)}` : ''}
                     </p>
                   </div>
@@ -195,9 +195,9 @@ export function AbaDesperdicio({
                   <li key={r.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold">
-                        {r.prato} <span className="font-normal text-carvao-400">· {DIAS_SEMANA[r.dia].slice(0, 3)}</span>
+                        {r.prato} <span className="font-normal text-texto-suave">· {DIAS_SEMANA[r.dia].slice(0, 3)}</span>
                       </p>
-                      <p className="text-caption text-carvao-400">
+                      <p className="text-caption text-texto-suave">
                         produziu {formatarQtd(r.produzido)} · consumiu {formatarQtd(r.consumido)} {r.unid}
                         {r.motivo ? ` · ${r.motivo}` : ''}
                       </p>

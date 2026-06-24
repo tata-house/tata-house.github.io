@@ -50,15 +50,15 @@ export function NutricaoPrato({ prato }: { prato: string }) {
         className="flex w-full items-center justify-between gap-2"
         aria-expanded={aberto}
       >
-        <span className="flex items-center gap-1.5 text-micro font-extrabold uppercase tracking-[0.18em] text-carvao-400">
+        <span className="flex items-center gap-1.5 text-micro font-extrabold uppercase tracking-[0.18em] text-texto-suave">
           <Icone nome="nutricao" tam={13} className="text-brand-500" /> Nutrição do prato
-          {info.porcao !== '—' && <span className="font-bold text-carvao-400">· {info.porcao}</span>}
+          {info.porcao !== '—' && <span className="font-bold text-texto-suave">· {info.porcao}</span>}
         </span>
         <span className="flex items-center gap-1.5">
           <span className={`flex items-center gap-1 rounded-full bg-white px-2.5 py-0.5 text-caption font-black ring-1 ring-carvao-100 dark:bg-carvao-800 dark:ring-carvao-700 ${idx.cor}`}>
             {info.indiceSaudavel}% {idx.texto}
           </span>
-          <Icone nome="baixo" tam={14} className={`text-carvao-400 transition-transform ${aberto ? 'rotate-180' : ''}`} />
+          <Icone nome="baixo" tam={14} className={`text-texto-suave transition-transform ${aberto ? 'rotate-180' : ''}`} />
         </span>
       </button>
 
@@ -73,7 +73,7 @@ export function NutricaoPrato({ prato }: { prato: string }) {
       <div className="grid grid-cols-3 gap-1.5">
         {macros.map(([rot, val]) => (
           <div key={rot} className="min-w-0 rounded-lg bg-white px-1.5 py-1.5 text-center ring-1 ring-carvao-100 dark:bg-carvao-800 dark:ring-carvao-700/60">
-            <p className="text-micro font-bold uppercase leading-tight text-carvao-400">{rot}</p>
+            <p className="text-micro font-bold uppercase leading-tight text-texto-suave">{rot}</p>
             <p className="truncate text-nota font-black leading-tight tabular-nums text-carvao-700 dark:text-areia-100">{val}</p>
           </div>
         ))}

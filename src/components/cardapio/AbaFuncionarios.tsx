@@ -118,7 +118,7 @@ function FormFuncionario({
               className={`flex-1 rounded-2xl border py-2 text-sm font-semibold transition ${
                 turno === t
                   ? 'border-brand-600 bg-brand-50 text-brand-700 dark:border-brand-400 dark:bg-brand-900/20 dark:text-brand-300'
-                  : 'border-carvao-200 text-carvao-500 hover:border-carvao-400 dark:border-carvao-600 dark:text-carvao-400'
+                  : 'border-carvao-200 text-carvao-500 hover:border-carvao-400 dark:border-carvao-600 dark:text-texto-suave'
               }`}
             >
               {TURNO_ROTULO[t]}
@@ -135,9 +135,9 @@ function FormFuncionario({
               <div key={i} className="flex items-center gap-2 rounded-xl bg-carvao-50 px-3 py-2 dark:bg-carvao-800">
                 <span className={`h-2 w-2 shrink-0 rounded-full ${RESTRICAO_DOT[r.tipo]}`} />
                 <span className="flex-1 text-sm font-semibold capitalize text-carvao-800 dark:text-areia-100">{r.alimento}</span>
-                <span className="text-xs text-carvao-400">{RESTRICAO_ROTULO[r.tipo]}</span>
-                {r.obs && <span className="text-xs text-carvao-400">· {r.obs}</span>}
-                <button type="button" onClick={() => setRestricoes((prev) => prev.filter((_, j) => j !== i))} className="text-carvao-400 hover:text-red-500">
+                <span className="text-xs text-texto-suave">{RESTRICAO_ROTULO[r.tipo]}</span>
+                {r.obs && <span className="text-xs text-texto-suave">· {r.obs}</span>}
+                <button type="button" onClick={() => setRestricoes((prev) => prev.filter((_, j) => j !== i))} className="text-texto-suave hover:text-red-500">
                   <Icone nome="fechar" tam={14} />
                 </button>
               </div>
@@ -182,7 +182,7 @@ function FormFuncionario({
       {(onDesativar || onRemover) && (
         <div className="flex items-center justify-center gap-5 border-t border-carvao-100 pt-3 dark:border-carvao-700">
           {onDesativar && (
-            <button onClick={() => { onDesativar(); aoFechar(); }} className="text-xs font-semibold text-carvao-400 hover:text-ouro-600">
+            <button onClick={() => { onDesativar(); aoFechar(); }} className="text-xs font-semibold text-texto-suave hover:text-ouro-600">
               Desativar
             </button>
           )}
@@ -192,7 +192,7 @@ function FormFuncionario({
                 Confirmar remoção
               </button>
             ) : (
-              <button onClick={() => setConfirmRemover(true)} className="text-xs font-semibold text-carvao-400 hover:text-red-500">
+              <button onClick={() => setConfirmRemover(true)} className="text-xs font-semibold text-texto-suave hover:text-red-500">
                 Remover
               </button>
             )
@@ -308,18 +308,18 @@ export function AbaFuncionarios({
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
           <span>
             <strong className="font-bold text-carvao-900 dark:text-white">{ativos.length}</strong>
-            <span className="ml-1 text-carvao-400">ativo{ativos.length !== 1 ? 's' : ''}</span>
+            <span className="ml-1 text-texto-suave">ativo{ativos.length !== 1 ? 's' : ''}</span>
           </span>
           {totalRestricoes > 0 && (
             <span>
               <strong className="font-bold text-carvao-900 dark:text-white">{totalRestricoes}</strong>
-              <span className="ml-1 text-carvao-400">restrição{totalRestricoes !== 1 ? 'ões' : ''}</span>
+              <span className="ml-1 text-texto-suave">restrição{totalRestricoes !== 1 ? 'ões' : ''}</span>
             </span>
           )}
           {conflitos.length > 0 && (
             <span>
               <strong className="font-bold text-perigo">{conflitos.length}</strong>
-              <span className="ml-1 text-carvao-400">conflito{conflitos.length !== 1 ? 's' : ''}</span>
+              <span className="ml-1 text-texto-suave">conflito{conflitos.length !== 1 ? 's' : ''}</span>
             </span>
           )}
         </div>
@@ -329,7 +329,7 @@ export function AbaFuncionarios({
             className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition ${
               importAberto
                 ? 'border-brand-400 bg-brand-50 text-brand-700 dark:bg-carvao-800 dark:text-brand-300'
-                : 'border-carvao-200 text-carvao-500 hover:border-brand-400 hover:text-brand-600 dark:border-carvao-600 dark:text-carvao-400'
+                : 'border-carvao-200 text-carvao-500 hover:border-brand-400 hover:text-brand-600 dark:border-carvao-600 dark:text-texto-suave'
             }`}
             title="Importar restrições de conversa"
           >
@@ -347,7 +347,7 @@ export function AbaFuncionarios({
         <div className="space-y-3 rounded-2xl bg-carvao-50 p-4 dark:bg-carvao-800/40">
           <div className="space-y-1">
             <p className="text-sm font-bold text-carvao-700 dark:text-areia-100">Importar via conversa</p>
-            <p className="text-xs text-carvao-400">
+            <p className="text-xs text-texto-suave">
               Cole um texto do WhatsApp — o Gemini extrai nomes e restrições automaticamente.
             </p>
           </div>
@@ -387,7 +387,7 @@ export function AbaFuncionarios({
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-carvao-800 dark:text-areia-100">
                         {e.nome}
-                        {e.setor && <span className="ml-1.5 text-xs font-normal text-carvao-400">[{e.setor}]</span>}
+                        {e.setor && <span className="ml-1.5 text-xs font-normal text-texto-suave">[{e.setor}]</span>}
                       </p>
                       <div className="mt-1 flex flex-wrap gap-1">
                         {e.restricoes.map((r, ri) => (
@@ -395,7 +395,7 @@ export function AbaFuncionarios({
                             {r.alimento}
                           </span>
                         ))}
-                        {e.restricoes.length === 0 && <span className="text-xs text-carvao-400">sem restrições identificadas</span>}
+                        {e.restricoes.length === 0 && <span className="text-xs text-texto-suave">sem restrições identificadas</span>}
                       </div>
                     </div>
                     {feito ? (
@@ -417,7 +417,7 @@ export function AbaFuncionarios({
       {funcionarios.length === 0 && (
         <div className="py-8 text-center">
           <p className="text-sm font-semibold text-carvao-500">Nenhum integrante cadastrado</p>
-          <p className="mt-1 text-xs text-carvao-400">Cadastre a equipe para detectar conflitos no cardápio automaticamente.</p>
+          <p className="mt-1 text-xs text-texto-suave">Cadastre a equipe para detectar conflitos no cardápio automaticamente.</p>
         </div>
       )}
 
@@ -433,13 +433,13 @@ export function AbaFuncionarios({
                     {temConflito && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-perigo" />}
                     <p className="font-bold text-carvao-900 dark:text-white">{f.nome}</p>
                   </div>
-                  <p className="mt-0.5 text-xs text-carvao-400">
+                  <p className="mt-0.5 text-xs text-texto-suave">
                     {f.setor ? `${f.setor} · ` : ''}{TURNO_ROTULO[f.turno]}
                   </p>
                   {f.restricoes.length > 0 ? (
                     <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
                       {f.restricoes.map((r, i) => (
-                        <span key={i} className="flex items-center gap-1 text-xs text-carvao-500 dark:text-carvao-400">
+                        <span key={i} className="flex items-center gap-1 text-xs text-carvao-500 dark:text-texto-suave">
                           <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${RESTRICAO_DOT[r.tipo]}`} />
                           {r.alimento}
                         </span>
@@ -465,7 +465,7 @@ export function AbaFuncionarios({
       {/* Inativos — recolhidos */}
       {inativos.length > 0 && (
         <details className="group">
-          <summary className="cursor-pointer select-none text-xs font-bold uppercase tracking-widest text-carvao-400 hover:text-carvao-600">
+          <summary className="cursor-pointer select-none text-xs font-bold uppercase tracking-widest text-texto-suave hover:text-carvao-600">
             {inativos.length} inativo{inativos.length > 1 ? 's' : ''}
           </summary>
           <div className="mt-2 space-y-px">

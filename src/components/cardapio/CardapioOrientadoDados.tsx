@@ -148,10 +148,10 @@ export function CardapioOrientadoDados({
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-carvao-800 dark:text-areia-100">{p.item}</p>
-                    <p className="text-xs text-carvao-400">
+                    <p className="text-xs text-texto-suave">
                       Hoje: {fmt(p.atual)} · Projetado: {fmt(p.projecao4s)} em 4 semanas
                     </p>
-                    <p className="text-caption text-carvao-400">
+                    <p className="text-caption text-texto-suave">
                       Confiança: {Math.round(p.confianca * 100)}% · {p.pontos} pontos de histórico
                     </p>
                   </div>
@@ -176,14 +176,14 @@ export function CardapioOrientadoDados({
           <div className="space-y-3">
             {sugestoes.map((s, i) => (
               <Cartao key={i} className="!py-3">
-                <p className="mb-2 text-micro font-bold uppercase tracking-widest text-carvao-400">{s.categoria}</p>
+                <p className="mb-2 text-micro font-bold uppercase tracking-widest text-texto-suave">{s.categoria}</p>
                 <div className="flex items-start gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-semibold text-perigo dark:text-perigo-claro line-through opacity-70">{s.pratoAtual}</p>
-                      <span className="text-xs text-carvao-400">{fmt(s.custoPorcaoAtual)}/pax</span>
+                      <span className="text-xs text-texto-suave">{fmt(s.custoPorcaoAtual)}/pax</span>
                     </div>
-                    <div className="my-1 flex items-center gap-1 text-xs text-carvao-400">
+                    <div className="my-1 flex items-center gap-1 text-xs text-texto-suave">
                       <span>↓</span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -212,10 +212,10 @@ export function CardapioOrientadoDados({
               <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">
                 {top5.map((s, i) => (
                   <li key={s.norm} className="flex items-center gap-3 px-4 py-3">
-                    <span className="w-5 shrink-0 text-center text-sm font-bold text-carvao-400">#{i + 1}</span>
+                    <span className="w-5 shrink-0 text-center text-sm font-bold text-texto-suave">#{i + 1}</span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-carvao-800 dark:text-areia-100">{s.prato}</p>
-                      <p className="text-xs text-carvao-400">
+                      <p className="text-xs text-texto-suave">
                         {fmt(s.custoPorcao)}/pax
                         {s.mediaAceitacao !== null && ` · ${s.mediaAceitacao.toFixed(1)}/5 aceitação`}
                       </p>
@@ -237,7 +237,7 @@ export function CardapioOrientadoDados({
                     <li key={s.norm} className="flex items-center gap-3 px-4 py-3">
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold text-carvao-800 dark:text-areia-100">{s.prato}</p>
-                        <p className="text-xs text-carvao-400">
+                        <p className="text-xs text-texto-suave">
                           {fmt(s.custoPorcao)}/pax
                           {s.mediaAceitacao !== null ? ` · ${s.mediaAceitacao.toFixed(1)}/5 aceitação` : ' · sem avaliações'}
                         </p>
@@ -257,7 +257,7 @@ export function CardapioOrientadoDados({
       {comScore.length === 0 && custos.length > 0 && (
         <div className="rounded-2xl bg-carvao-50 py-8 text-center dark:bg-carvao-800/50">
           <p className="text-sm font-semibold text-carvao-500">Sem avaliações ainda</p>
-          <p className="mt-1 text-xs text-carvao-400">
+          <p className="mt-1 text-xs text-texto-suave">
             Registre avaliações dos pratos para gerar o ranking de custo-benefício.
           </p>
         </div>
@@ -277,7 +277,7 @@ export function CardapioOrientadoDados({
                     <p className="truncate text-sm font-semibold text-carvao-800 dark:text-areia-100">
                       {p.prato}
                     </p>
-                    <p className="text-caption text-carvao-400">
+                    <p className="text-caption text-texto-suave">
                       servido {p.totalServido}× no histórico
                       {p.nota !== null ? ` · ${p.nota.toFixed(1)}★ aceitação` : ' · sem avaliação ainda'}
                     </p>
@@ -292,7 +292,7 @@ export function CardapioOrientadoDados({
                         {p.nota.toFixed(1)}★
                       </span>
                     )}
-                    <span className="rounded-full bg-carvao-50 px-2 py-0.5 text-micro font-semibold text-carvao-400 dark:bg-carvao-700 dark:text-carvao-300">
+                    <span className="rounded-full bg-carvao-50 px-2 py-0.5 text-micro font-semibold text-texto-suave dark:bg-carvao-700 dark:text-carvao-300">
                       {p.totalServido}×
                     </span>
                   </div>
@@ -300,7 +300,7 @@ export function CardapioOrientadoDados({
               ))}
             </ul>
           </Cartao>
-          <p className="mt-2 text-caption text-carvao-400 text-center">
+          <p className="mt-2 text-caption text-texto-suave text-center">
             Frequência de todos os anos de operação registrados · Avaliações acumulam conforme a equipe registra
           </p>
         </Secao>

@@ -100,16 +100,16 @@ export function AbaEstoque({
             <span className={`font-display text-[2.5rem] font-black leading-none tabular-nums ${totalCriticos > 0 ? 'text-perigo' : 'text-brand-600 dark:text-brand-400'}`}>
               {totalCriticos}
             </span>
-            <span className="ml-1.5 text-sm font-semibold text-carvao-400">crítico{totalCriticos !== 1 ? 's' : ''}</span>
+            <span className="ml-1.5 text-sm font-semibold text-texto-suave">crítico{totalCriticos !== 1 ? 's' : ''}</span>
           </div>
           <div className="space-y-0.5 text-right">
             <p className="text-sm tabular-nums">
               <span className="font-bold text-carvao-700 dark:text-areia-100">{Object.keys(estoque).length}</span>
-              <span className="ml-1 text-carvao-400">itens</span>
+              <span className="ml-1 text-texto-suave">itens</span>
             </p>
             <p className="text-sm tabular-nums">
-              <span className={`font-bold ${aComprar.length > 0 ? 'text-ouro-600 dark:text-ouro-400' : 'text-carvao-400'}`}>{aComprar.length}</span>
-              <span className="ml-1 text-carvao-400">a comprar</span>
+              <span className={`font-bold ${aComprar.length > 0 ? 'text-ouro-600 dark:text-ouro-400' : 'text-texto-suave'}`}>{aComprar.length}</span>
+              <span className="ml-1 text-texto-suave">a comprar</span>
             </p>
           </div>
         </div>
@@ -131,7 +131,7 @@ export function AbaEstoque({
               <li key={n.norm} className="flex items-center justify-between gap-3 px-4 py-2.5">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold">{n.item}</p>
-                  <p className="text-caption text-carvao-400">
+                  <p className="text-caption text-texto-suave">
                     {formatarQtd(n.qtd)} {n.unid} · estoque {formatarQtd(n.emEstoque)}
                   </p>
                 </div>
@@ -228,11 +228,11 @@ export function AbaEstoque({
                       {baixo && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-perigo" />}
                       {e.item}
                     </p>
-                    <p className="text-caption text-carvao-400">{e.unid}</p>
+                    <p className="text-caption text-texto-suave">{e.unid}</p>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <label className="flex items-center gap-1">
-                      <span className="text-micro uppercase text-carvao-400">saldo</span>
+                      <span className="text-micro uppercase text-texto-suave">saldo</span>
                       <input
                         type="number"
                         min={0}
@@ -244,7 +244,7 @@ export function AbaEstoque({
                       />
                     </label>
                     <label className="flex items-center gap-1">
-                      <span className="text-micro uppercase text-carvao-400">mín.</span>
+                      <span className="text-micro uppercase text-texto-suave">mín.</span>
                       <input
                         type="number"
                         min={0}

@@ -39,7 +39,7 @@ const fmtReais = (v: number) => `R$ ${v.toFixed(0)}`;
 
 const COR_AVALIACAO: Record<string, string> = {
   melhorou: 'text-brand-600 dark:text-brand-400',
-  igual: 'text-carvao-400',
+  igual: 'text-texto-suave',
   piorou: 'text-ouro-600 dark:text-ouro-400',
 };
 
@@ -196,7 +196,7 @@ export function InteligenciaCard(props: Props) {
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-nota font-medium text-carvao-800 dark:text-areia-100">{a.acao}</p>
-                    <p className="mt-0.5 text-caption text-carvao-400 dark:text-areia-400">
+                    <p className="mt-0.5 text-caption text-texto-suave dark:text-areia-400">
                       {a.base}
                       {a.impactoReais ? ` · economia ~${fmtReais(a.impactoReais)}` : ''}
                     </p>

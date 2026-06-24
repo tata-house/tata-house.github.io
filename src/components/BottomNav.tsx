@@ -39,7 +39,7 @@ export function BottomNav({
               onClick={() => aoSelecionar(g.id)}
               aria-current={ativo ? 'page' : undefined}
               className={`flex flex-1 flex-col items-center gap-0.5 pt-1 pb-2 transition-colors ${
-                ativo ? 'text-brand-600 dark:text-brand-400' : 'text-carvao-400 dark:text-carvao-600'
+                ativo ? 'text-brand-600 dark:text-brand-400' : 'text-texto-suave dark:text-carvao-600'
               }`}
             >
               <span className={`h-[3px] w-5 rounded-full transition-all ${ativo ? 'bg-brand-600 dark:bg-brand-400' : 'bg-transparent'}`} />

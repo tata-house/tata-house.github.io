@@ -252,10 +252,10 @@ export function ChefIA({
         <div className="rounded-2xl bg-brand-500/5 px-4 py-6 text-center">
           
           <p className="mt-2 font-semibold text-brand-700 dark:text-brand-300">Semana bem planejada!</p>
-          <p className="mt-1 text-sm text-carvao-400">Nenhuma recomendação no momento. Continue assim.</p>
+          <p className="mt-1 text-sm text-texto-suave">Nenhuma recomendação no momento. Continue assim.</p>
         </div>
         {feedbacks.length > 0 && (
-          <p className="text-caption text-carvao-400">{feedbacks.filter((f) => f.voto === 'ruim').length} sugestão(ões) descartada(s) pelo time.</p>
+          <p className="text-caption text-texto-suave">{feedbacks.filter((f) => f.voto === 'ruim').length} sugestão(ões) descartada(s) pelo time.</p>
         )}
       </Cartao>
     ) : null;
@@ -267,7 +267,7 @@ export function ChefIA({
         
         <h3 className="font-display text-sm font-bold">Chef IA</h3>
         <Pilula tom="azul">{dicas.length}</Pilula>
-        <span className="text-caption text-carvao-400">
+        <span className="text-caption text-texto-suave">
           {expandido ? 'recomendações baseadas em dados reais' : 'recomendações para esta semana'}
         </span>
       </div>
@@ -333,11 +333,11 @@ export function ChefIA({
       </ul>
 
       {feedbacks.filter((f) => f.voto === 'ruim').length > 0 && (
-        <p className="text-micro text-carvao-400">
+        <p className="text-micro text-texto-suave">
           {feedbacks.filter((f) => f.voto === 'ruim').length} sugestão(ões) descartada(s) pelo time — o Chef IA aprendeu suas preferências.
         </p>
       )}
-      <p className="text-micro text-carvao-400">Use para ensinar o Chef IA sobre o que não funciona na operação.</p>
+      <p className="text-micro text-texto-suave">Use para ensinar o Chef IA sobre o que não funciona na operação.</p>
     </Cartao>
   );
 }

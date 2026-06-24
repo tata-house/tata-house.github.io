@@ -88,6 +88,42 @@ function gravarLocal(chave: string, valor: unknown) {
 }
 
 /* =====================================================================
+   Reatividade a mudanças externas (nuvem/outra aba). Quando o BootNuvem
+   aplica um valor vindo do Supabase — ou outra aba do mesmo navegador grava
+   no localStorage — os hooks re-leem a chave e atualizam o estado React,
+   SEM recarregar a página. É o que torna a colaboração ao vivo fluida.
+   ===================================================================== */
+
+const EVENTO_CHAVE = 'tata:chave-externa';
+
+/** Avisa os hooks que uma chave mudou por fora (chamado pelo BootNuvem). */
+export function notificarChaveExterna(chave: string) {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new CustomEvent(EVENTO_CHAVE, { detail: { chave } }));
+}
+
+/** Re-executa `recarregar` quando a `chave` muda por fora (nuvem/outra aba).
+   O evento nativo `storage` só dispara em OUTRAS abas, então a aba que está
+   editando nunca re-lê o próprio texto — o foco e o cursor ficam intactos. */
+function useReleituraExterna(chave: string, recarregar: () => void) {
+  useEffect(() => {
+    const onExterno = (e: Event) => {
+      const det = (e as CustomEvent<{ chave?: string }>).detail;
+      if (det?.chave === chave) recarregar();
+    };
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === PREFIXO + chave) recarregar();
+    };
+    window.addEventListener(EVENTO_CHAVE, onExterno);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(EVENTO_CHAVE, onExterno);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, [chave, recarregar]);
+}
+
+/* =====================================================================
    Auditoria global (Módulo 9) — qualquer parte do app registra ações
    relevantes aqui; a aba de Auditoria escuta via assinatura simples.
    ===================================================================== */
@@ -129,6 +165,12 @@ export function useAuditoria() {
       ouvintesAuditoria.delete(f);
     };
   }, []);
+  // mudança vinda da nuvem/outra aba: invalida o cache e re-renderiza
+  const recarregar = useCallback(() => {
+    cacheAuditoria = null;
+    forcar((x) => x + 1);
+  }, []);
+  useReleituraExterna('auditoria', recarregar);
   const limpar = useCallback(() => {
     cacheAuditoria = [];
     gravarLocal('auditoria', []);
@@ -231,10 +273,16 @@ export function useSemana(semanaId: string) {
   const [estado, setEstado] = useState<EstadoSemana>(semanaVazia);
   const [pronto, setPronto] = useState(false);
 
-  useEffect(() => {
+  const recarregar = useCallback(() => {
     setEstado(lerLocal('semana.' + semanaId, semanaVazia()));
-    setPronto(true);
   }, [semanaId]);
+
+  useEffect(() => {
+    recarregar();
+    setPronto(true);
+  }, [recarregar]);
+
+  useReleituraExterna('semana.' + semanaId, recarregar);
 
   const atualizar = useCallback(
     (fn: (atual: EstadoSemana) => EstadoSemana) => {
@@ -253,11 +301,14 @@ export function useSemana(semanaId: string) {
 export function usePrecos() {
   const [precos, setPrecos] = useState<Record<string, number>>({});
 
-  useEffect(() => {
+  const recarregar = useCallback(() => {
     // PRECOS_COMPRAS + PRECOS_COTACAO_SEED como base; entradas manuais têm prioridade.
     const local = lerLocal('precos', {});
     setPrecos({ ...PRECOS_COMPRAS, ...PRECOS_COTACAO_SEED, ...local });
   }, []);
+
+  useEffect(() => { recarregar(); }, [recarregar]);
+  useReleituraExterna('precos', recarregar);
 
   const definirPreco = useCallback((itemNorm: string, valor: number | null, nome?: string) => {
     setPrecos((atual) => {
@@ -293,9 +344,9 @@ export function usePrecos() {
 /** Série temporal de preços por item (alimenta o radar). */
 export function useHistoricoPrecos() {
   const [historico, setHistorico] = useState<HistoricoPrecos>({});
-  useEffect(() => {
-    setHistorico(lerLocal('historicoPrecos', {}));
-  }, []);
+  const recarregar = useCallback(() => setHistorico(lerLocal('historicoPrecos', {})), []);
+  useEffect(() => { recarregar(); }, [recarregar]);
+  useReleituraExterna('historicoPrecos', recarregar);
   return historico;
 }
 
@@ -313,9 +364,9 @@ export interface ItemExtra {
 export function useItensExtras() {
   const [itensExtras, setItensExtras] = useState<Record<string, ItemExtra>>({});
 
-  useEffect(() => {
-    setItensExtras(lerLocal('itensExtras', {}));
-  }, []);
+  const recarregar = useCallback(() => setItensExtras(lerLocal('itensExtras', {})), []);
+  useEffect(() => { recarregar(); }, [recarregar]);
+  useReleituraExterna('itensExtras', recarregar);
 
   const cadastrarItem = useCallback((norm: string, nome: string, unid: string) => {
     setItensExtras((atual) => {
@@ -332,11 +383,13 @@ export function useItensExtras() {
 export function useFornecedores() {
   const [fornecedores, setFornecedores] = useState<Record<string, string>>({});
 
-  useEffect(() => {
+  const recarregar = useCallback(() => {
     // MAPA_FORNECEDORES_SEED como base; mapeamentos do usuário têm prioridade.
     const local = lerLocal<Record<string, string>>('fornecedores', {});
     setFornecedores({ ...MAPA_FORNECEDORES_SEED, ...local });
   }, []);
+  useEffect(() => { recarregar(); }, [recarregar]);
+  useReleituraExterna('fornecedores', recarregar);
 
   const definirFornecedor = useCallback((itemNorm: string, marca: string | null) => {
     setFornecedores((atual) => {
@@ -373,9 +426,9 @@ export type Ofertas = Record<string, Oferta[]>;
 export function useOfertas() {
   const [ofertas, setOfertas] = useState<Ofertas>({});
 
-  useEffect(() => {
-    setOfertas(lerLocal('ofertas', {}));
-  }, []);
+  const recarregar = useCallback(() => setOfertas(lerLocal('ofertas', {})), []);
+  useEffect(() => { recarregar(); }, [recarregar]);
+  useReleituraExterna('ofertas', recarregar);
 
   /** Insere/atualiza o preço de um fornecedor para um item (dedupe por nome). */
   const registrarOferta = useCallback((itemNorm: string, fornecedor: string, preco: number) => {
@@ -419,9 +472,9 @@ export function useOfertas() {
 export function useAprendizado() {
   const [registros, setRegistros] = useState<Record<string, RegistroAprendizado>>({});
 
-  useEffect(() => {
-    setRegistros(lerLocal('aprendizado', {}));
-  }, []);
+  const recarregar = useCallback(() => setRegistros(lerLocal('aprendizado', {})), []);
+  useEffect(() => { recarregar(); }, [recarregar]);
+  useReleituraExterna('aprendizado', recarregar);
 
   // fatores prontos para usar na lista (mediana + confiança, limitados)
   const fatores: Record<string, number> = {};
@@ -494,10 +547,12 @@ export function useEstoque() {
   const [estoque, setEstoque] = useState<Estoque>({});
   const [pronto, setPronto] = useState(false);
 
+  const recarregar = useCallback(() => setEstoque(lerLocal('estoque', {})), []);
   useEffect(() => {
-    setEstoque(lerLocal('estoque', {}));
+    recarregar();
     setPronto(true);
-  }, []);
+  }, [recarregar]);
+  useReleituraExterna('estoque', recarregar);
 
   /** Aplica um movimento (entrada +, baixa −, ajuste/recebimento) e audita. */
   const movimentar = useCallback((mov: Omit<MovEstoque, 'em' | 'papel'>) => {
@@ -568,9 +623,9 @@ export function useEstoque() {
 export function useDesperdicio(semanaId: string) {
   const [registros, setRegistros] = useState<RegistroDesperdicio[]>([]);
 
-  useEffect(() => {
-    setRegistros(lerLocal('desperdicio.' + semanaId, []));
-  }, [semanaId]);
+  const recarregar = useCallback(() => setRegistros(lerLocal('desperdicio.' + semanaId, [])), [semanaId]);
+  useEffect(() => { recarregar(); }, [recarregar]);
+  useReleituraExterna('desperdicio.' + semanaId, recarregar);
 
   const adicionar = useCallback(
     (r: Omit<RegistroDesperdicio, 'id' | 'em'>) => {
@@ -693,9 +748,9 @@ export function montarDossieCompleto(args: {
 export function useAceitacao() {
   const [aceitacao, setAceitacao] = useState<Aceitacao>({});
 
-  useEffect(() => {
-    setAceitacao(lerLocal('aceitacao', {}));
-  }, []);
+  const recarregar = useCallback(() => setAceitacao(lerLocal('aceitacao', {})), []);
+  useEffect(() => { recarregar(); }, [recarregar]);
+  useReleituraExterna('aceitacao', recarregar);
 
   const avaliar = useCallback((prato: string, voto: 'bom' | 'ok' | 'ruim') => {
     const k = normalizar(prato);
@@ -779,9 +834,9 @@ export function lerSatisfacao(): RegistroSatisfacao[] {
 export function useEventos() {
   const [eventos, setEventos] = useState<EventoDemanda[]>([]);
 
-  useEffect(() => {
-    setEventos(lerLocal('eventos', []));
-  }, []);
+  const recarregar = useCallback(() => setEventos(lerLocal('eventos', [])), []);
+  useEffect(() => { recarregar(); }, [recarregar]);
+  useReleituraExterna('eventos', recarregar);
 
   const adicionar = useCallback((e: Omit<EventoDemanda, 'id'>) => {
     setEventos((atual) => {
@@ -921,7 +976,7 @@ export function lerSubstituicoes(): SubstituicaoRegistro[] {
 export function useFuncionarios() {
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
 
-  useEffect(() => {
+  const recarregar = useCallback(() => {
     const local = lerLocal<Funcionario[]>('funcionarios', []);
     // Se o usuário não cadastrou ninguém ainda, usa o seed das conversas reais.
     // Se já há dados, mescla: seed fornece registros cujos IDs não existem localmente.
@@ -933,6 +988,8 @@ export function useFuncionarios() {
       setFuncionarios([...local, ...novos]);
     }
   }, []);
+  useEffect(() => { recarregar(); }, [recarregar]);
+  useReleituraExterna('funcionarios', recarregar);
 
   const salvar = useCallback((f: Omit<Funcionario, 'id' | 'criadoEm'>) => {
     setFuncionarios((atual) => {
@@ -980,9 +1037,9 @@ export function lerFuncionarios(): Funcionario[] {
 export function useContagemRefeicoes() {
   const [contagens, setContagens] = useState<ContagemRefeicoesDia[]>([]);
 
-  useEffect(() => {
-    setContagens(lerLocal<ContagemRefeicoesDia[]>('contagemRefeicoes', []));
-  }, []);
+  const recarregar = useCallback(() => setContagens(lerLocal<ContagemRefeicoesDia[]>('contagemRefeicoes', [])), []);
+  useEffect(() => { recarregar(); }, [recarregar]);
+  useReleituraExterna('contagemRefeicoes', recarregar);
 
   const registrar = useCallback((c: Omit<ContagemRefeicoesDia, 'registradoEm'>) => {
     setContagens((atual) => {
@@ -1010,11 +1067,13 @@ export function lerContagemRefeicoes(): ContagemRefeicoesDia[] {
 export function useFornecedorPerfis() {
   const [perfis, setPerfis] = useState<Record<string, PerfilFornecedor>>({});
 
-  useEffect(() => {
+  const recarregar = useCallback(() => {
     // PERFIS_FORNECEDORES_SEED como base; perfis editados pelo usuário têm prioridade.
     const local = lerLocal<Record<string, PerfilFornecedor>>('fornecedorPerfis', {});
     setPerfis({ ...PERFIS_FORNECEDORES_SEED, ...local });
   }, []);
+  useEffect(() => { recarregar(); }, [recarregar]);
+  useReleituraExterna('fornecedorPerfis', recarregar);
 
   const salvarPerfil = useCallback((nome: string, dados: Partial<Omit<PerfilFornecedor, 'nome' | 'avaliacoes'>>) => {
     setPerfis((atual) => {

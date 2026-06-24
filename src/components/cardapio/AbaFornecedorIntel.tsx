@@ -315,8 +315,8 @@ export function AbaFornecedorIntel({
                 onClick={() => setExpandido(exp ? null : nome)}
               >
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="font-bold text-carvao-900 dark:text-white">{nome}</p>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <p className="truncate font-bold text-carvao-900 dark:text-white">{nome}</p>
                     {avs.length > 0 && (
                       <span className="text-xs text-ouro-500">
                         {'★'.repeat(Math.round(mediaQ ?? 0))}
@@ -388,7 +388,7 @@ export function AbaFornecedorIntel({
                             <span className={`text-xs font-semibold ${av.entregaOk ? 'text-brand-600 dark:text-brand-400' : 'text-red-500 dark:text-red-400'}`}>
                               {av.entregaOk ? '✓ entregou' : '✗ problema'}
                             </span>
-                            {av.obs && <span className="text-xs text-texto-suave truncate">{av.obs}</span>}
+                            {av.obs && <span className="min-w-0 flex-1 truncate text-xs text-texto-suave">{av.obs}</span>}
                             <span className="ml-auto shrink-0 text-micro text-carvao-300">
                               {new Date(av.em).toLocaleDateString('pt-BR')}
                             </span>

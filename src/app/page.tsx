@@ -962,6 +962,7 @@ export default function PaginaCardapios() {
                     definirMinimo={definirMinimo}
                     definirSaldo={definirSaldo}
                     podeEditar={podeEstoque}
+                    semanaId={semanaId}
                   />
                 )}
 

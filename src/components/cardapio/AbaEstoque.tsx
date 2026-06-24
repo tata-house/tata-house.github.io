@@ -1,12 +1,124 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from '@/components/Toast';
 import { Botao, Cartao, EstadoVazio, Pilula, Secao, estiloInput } from '@/components/ui';
+import { Icone } from '@/components/Icones';
 import { DADOS, formatarQtd, normalizar } from '@/lib/cardapio/motor';
 import { consumoDaSemana, necessidadeDeCompra } from '@/lib/cardapio/indicadores';
+import { periodoSemana } from '@/lib/cardapio/estado';
 import { AbaInventario } from './AbaInventario';
 import type { Estoque, EstadoSemana, MovEstoque } from '@/lib/cardapio/tipos';
+
+/* ── Impressão da lista de compras ───────────────────────────────────── */
+
+function ImpressaoEstoque({
+  aberto,
+  aoFechar,
+  aComprar,
+  cobertos,
+  semanaId,
+}: {
+  aberto: boolean;
+  aoFechar: () => void;
+  aComprar: { item: string; unid: string; comprar: number }[];
+  cobertos: { item: string; unid: string; comprar: number }[];
+  semanaId: string;
+}) {
+  useEffect(() => {
+    const esc = (e: KeyboardEvent) => e.key === 'Escape' && aoFechar();
+    window.addEventListener('keydown', esc);
+    return () => window.removeEventListener('keydown', esc);
+  }, [aoFechar]);
+
+  if (!aberto) return null;
+
+  const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  const periodo = periodoSemana(semanaId);
+
+  return (
+    <div className="min-h-screen bg-carvao-100 py-6 dark:bg-carvao-950 print:bg-white print:py-0">
+      {/* Controles — somem na impressão */}
+      <div className="mx-auto mb-4 flex max-w-xl items-center justify-between gap-2 px-4 print:hidden">
+        <button
+          onClick={aoFechar}
+          className="text-sm font-bold uppercase tracking-wide text-carvao-500 hover:text-carvao-800 dark:text-areia-200"
+        >
+          ← Voltar
+        </button>
+        <Botao variante="sucesso" onClick={() => window.print()} className="!min-h-10 !px-5 !py-2 text-sm">
+          <Icone nome="exportar" tam={16} /> Imprimir
+        </Botao>
+      </div>
+
+      {/* Página imprimível */}
+      <div className="mx-auto max-w-xl overflow-hidden rounded-3xl bg-white shadow-2xl print:max-w-none print:rounded-none print:shadow-none">
+        {/* Header */}
+        <div className="bg-brand-800 px-8 py-6 text-white print:py-5">
+          <div className="h-0.5 w-10 rounded-full bg-ouro-400 mb-3" />
+          <h1 className="font-display text-2xl font-black tracking-[0.12em]">TATÁ HOUSE</h1>
+          <p className="mt-0.5 text-[11px] font-extrabold uppercase tracking-[0.3em] text-ouro-300">Lista de Compras</p>
+          <p className="mt-2 text-xs text-brand-200">{periodo} · emitida {hoje}</p>
+        </div>
+
+        <div className="px-8 py-6">
+          {/* Itens a comprar */}
+          {aComprar.length > 0 && (
+            <div className="mb-6">
+              <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.25em] text-carvao-400">
+                A comprar ({aComprar.length})
+              </p>
+              <table className="w-full text-sm">
+                <tbody className="divide-y divide-carvao-100">
+                  {aComprar.map((n) => (
+                    <tr key={n.item}>
+                      <td className="py-2.5 pr-4 font-semibold text-carvao-900">{n.item}</td>
+                      <td className="py-2.5 text-right font-bold text-brand-700">
+                        {formatarQtd(n.comprar)} {n.unid}
+                      </td>
+                      <td className="w-8 py-2.5 pl-3 text-right">
+                        <span className="inline-block h-4 w-4 rounded border border-carvao-300" />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Cobertos pelo estoque */}
+          {cobertos.length > 0 && (
+            <div className="border-t border-carvao-100 pt-4">
+              <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.25em] text-carvao-400">
+                Cobertos pelo estoque ({cobertos.length})
+              </p>
+              <ul className="space-y-1">
+                {cobertos.map((n) => (
+                  <li key={n.item} className="flex items-center gap-2 text-xs text-carvao-400">
+                    <span className="text-brand-500">✓</span>
+                    {n.item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {aComprar.length === 0 && cobertos.length === 0 && (
+            <p className="py-8 text-center text-sm text-carvao-400">Nenhum item na lista.</p>
+          )}
+        </div>
+
+        {/* Rodapé */}
+        <div className="border-t border-carvao-100 px-8 py-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-carvao-300">
+            Tatá House · Refeitório do Tatá Sushi
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 export function AbaEstoque({
   estado,
@@ -16,6 +128,7 @@ export function AbaEstoque({
   definirMinimo,
   definirSaldo,
   podeEditar,
+  semanaId,
 }: {
   estado: EstadoSemana;
   fatores?: Record<string, number>;
@@ -24,12 +137,14 @@ export function AbaEstoque({
   definirMinimo: (norm: string, item: string, unid: string, minimo: number) => void;
   definirSaldo: (norm: string, item: string, unid: string, saldo: number) => void;
   podeEditar: boolean;
+  semanaId: string;
 }) {
   const [busca, setBusca] = useState('');
   const [apenasCriticos, setApenasCriticos] = useState(false);
   const [novoItem, setNovoItem] = useState('');
   const [novaQtd, setNovaQtd] = useState('');
   const [invAberto, setInvAberto] = useState(false);
+  const [impAberto, setImpAberto] = useState(false);
 
   const consumo = useMemo(() => consumoDaSemana(estado, fatores), [estado, fatores]);
   const necessidade = useMemo(() => necessidadeDeCompra(consumo, estoque), [consumo, estoque]);
@@ -85,6 +200,13 @@ export function AbaEstoque({
 
   return (
     <div className="space-y-5">
+      <ImpressaoEstoque
+        aberto={impAberto}
+        aoFechar={() => setImpAberto(false)}
+        aComprar={aComprar}
+        cobertos={cobertos}
+        semanaId={semanaId}
+      />
       <AbaInventario
         aberto={invAberto}
         aoFechar={() => setInvAberto(false)}
@@ -122,7 +244,22 @@ export function AbaEstoque({
       </div>
 
       {/* Necessidade real de compra */}
-      <Secao titulo="Necessidade de compra" acao={<Pilula tom="azul">cardápio − estoque</Pilula>}>
+      <Secao
+        titulo="Necessidade de compra"
+        acao={
+          <div className="flex items-center gap-2">
+            <Pilula tom="azul">cardápio − estoque</Pilula>
+            {(aComprar.length > 0 || cobertos.length > 0) && (
+              <button
+                onClick={() => setImpAberto(true)}
+                className="flex items-center gap-1 rounded-full bg-brand-600 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white transition hover:bg-brand-700 print:hidden"
+              >
+                <Icone nome="exportar" tam={12} /> Imprimir
+              </button>
+            )}
+          </div>
+        }
+      >
         {consumo.length === 0 ? (
           <EstadoVazio titulo="Monte o cardápio da semana" texto="A lista de necessidade aparece quando há pratos definidos." />
         ) : (

@@ -8,7 +8,7 @@
    ===================================================================== */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Cartao } from '@/components/ui';
+import { Botao, Cartao } from '@/components/ui';
 import { Icone } from '@/components/Icones';
 import {
   DIAS_SEMANA,
@@ -107,6 +107,112 @@ function abrirWhatsApp(telefone: string | undefined, texto: string) {
   window.open(url, '_blank', 'noopener');
 }
 
+/* ── impressão do pedido ──────────────────────────────────────────── */
+
+function ImpressaoPedido({
+  aberto,
+  aoFechar,
+  grupos,
+  semanaId,
+  pedido,
+  precos,
+}: {
+  aberto: boolean;
+  aoFechar: () => void;
+  grupos: [string, ItemAgregado[]][];
+  semanaId: string;
+  pedido: EstadoPedido;
+  precos: Record<string, number>;
+}) {
+  useEffect(() => {
+    const esc = (e: KeyboardEvent) => e.key === 'Escape' && aoFechar();
+    window.addEventListener('keydown', esc);
+    return () => window.removeEventListener('keydown', esc);
+  }, [aoFechar]);
+
+  if (!aberto) return null;
+
+  const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  const periodo = periodoSemana(semanaId);
+
+  return (
+    <div className="min-h-screen bg-carvao-100 py-6 dark:bg-carvao-950 print:bg-white print:py-0">
+      <div className="mx-auto mb-4 flex max-w-2xl items-center justify-between gap-2 px-4 print:hidden">
+        <button onClick={aoFechar} className="text-sm font-bold uppercase tracking-wide text-carvao-500 hover:text-carvao-800 dark:text-areia-200">
+          ← Voltar
+        </button>
+        <Botao variante="sucesso" onClick={() => window.print()} className="!min-h-10 !px-5 !py-2 text-sm">
+          <Icone nome="exportar" tam={16} /> Imprimir
+        </Botao>
+      </div>
+
+      <div className="mx-auto max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl print:max-w-none print:rounded-none print:shadow-none">
+        {/* cabeçalho */}
+        <div className="bg-brand-800 px-8 py-6 text-white print:py-5">
+          <div className="h-0.5 w-10 rounded-full bg-ouro-400 mb-3" />
+          <h1 className="font-display text-2xl font-black tracking-[0.12em]">TATÁ HOUSE</h1>
+          <p className="mt-0.5 text-[11px] font-extrabold uppercase tracking-[0.3em] text-ouro-300">Pedido Semanal</p>
+          <p className="mt-2 text-xs text-brand-200">{periodo} · emitido {hoje}</p>
+        </div>
+
+        {/* grupos por fornecedor */}
+        <div className="divide-y divide-carvao-100 px-8">
+          {grupos
+            .filter(([nome]) => nome !== 'Sem fornecedor')
+            .map(([nomeForn, itens]) => {
+              const custoForn = itens.reduce((s, i) => {
+                const qtd = pedido[i.chave]?.qtdOverride ?? i.qtd;
+                return s + (precos[i.chave] ?? 0) * qtd;
+              }, 0);
+              return (
+                <div key={nomeForn} className="py-5 print:break-inside-avoid">
+                  <div className="mb-3 flex items-baseline justify-between">
+                    <p className="font-display text-base font-bold text-carvao-900">{nomeForn}</p>
+                    {custoForn > 0 && (
+                      <p className="text-xs font-semibold text-carvao-400">≈ {formatarReais(custoForn)}</p>
+                    )}
+                  </div>
+                  <table className="w-full text-sm">
+                    <tbody className="divide-y divide-carvao-100">
+                      {itens.map((item) => {
+                        const qtdFinal = pedido[item.chave]?.qtdOverride ?? item.qtd;
+                        const previsao = pedido[item.chave]?.previsao;
+                        return (
+                          <tr key={item.chave}>
+                            <td className="py-2 pr-4 font-semibold text-carvao-800">{item.item}</td>
+                            <td className="py-2 text-right font-bold text-brand-700">
+                              {formatarQtd(qtdFinal)} {item.unid}
+                            </td>
+                            {previsao && (
+                              <td className="py-2 pl-3 text-right text-xs text-texto-suave">
+                                até {ddmm(previsao)}
+                              </td>
+                            )}
+                            <td className="w-8 py-2 pl-3 text-right">
+                              <span className={`inline-flex h-4 w-4 items-center justify-center rounded border ${pedido[item.chave]?.confirmado ? 'border-brand-500 bg-brand-500 text-white' : 'border-carvao-300'}`}>
+                                {pedido[item.chave]?.confirmado && <span className="text-[10px]">✓</span>}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })}
+        </div>
+
+        <div className="border-t border-carvao-100 px-8 py-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-carvao-300">
+            Tatá House · Refeitório do Tatá Sushi
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── componente principal ─────────────────────────────────────────── */
 
 export function AbaPedido({
@@ -128,6 +234,7 @@ export function AbaPedido({
 }) {
   const { mostrarBasicos } = useMostrarBasicos();
   const { pedido, setItem } = usePedido(semanaId);
+  const [impAberto, setImpAberto] = useState(false);
 
   const podeEditar =
     papel === 'administrador' || papel === 'gestor' || papel === 'compras';
@@ -188,6 +295,15 @@ export function AbaPedido({
   }
 
   return (
+    <>
+      <ImpressaoPedido
+        aberto={impAberto}
+        aoFechar={() => setImpAberto(false)}
+        grupos={grupos}
+        semanaId={semanaId}
+        pedido={pedido}
+        precos={precos}
+      />
     <div className="space-y-4">
       {/* resumo */}
       <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-carvao-50 px-4 py-3 ring-1 ring-carvao-100 dark:bg-carvao-900/40 dark:ring-carvao-700/50">
@@ -206,9 +322,17 @@ export function AbaPedido({
             </span>
           </>
         )}
-        <span className="ml-auto text-caption font-bold uppercase tracking-wide text-brand-600 dark:text-brand-400">
-          {periodoSemana(semanaId)}
-        </span>
+        <div className="ml-auto flex items-center gap-2">
+          <span className="text-caption font-bold uppercase tracking-wide text-brand-600 dark:text-brand-400">
+            {periodoSemana(semanaId)}
+          </span>
+          <button
+            onClick={() => setImpAberto(true)}
+            className="flex items-center gap-1 rounded-full bg-brand-600 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white transition hover:bg-brand-700"
+          >
+            <Icone nome="exportar" tam={12} /> Imprimir
+          </button>
+        </div>
       </div>
 
       {/* grupos por fornecedor */}
@@ -237,6 +361,7 @@ export function AbaPedido({
         );
       })}
     </div>
+    </>
   );
 }
 

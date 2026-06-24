@@ -75,6 +75,7 @@ import {
 import { useLogo } from '@/lib/cardapio/logo';
 import { useLogin, abasDoPapel } from '@/lib/cardapio/login';
 import { Login } from '@/components/Login';
+import { TourOnboarding } from '@/components/TourOnboarding';
 import { pode } from '@/lib/cardapio/org';
 import type { Etapa } from '@/lib/cardapio/tipos';
 
@@ -1207,6 +1208,7 @@ export default function PaginaCardapios() {
         aoMudarAberto={setIaAberta}
       />
       <ToastHost />
+      <TourOnboarding />
     </>
   );
 }

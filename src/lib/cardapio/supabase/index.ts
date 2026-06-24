@@ -13,3 +13,4 @@ export {
   type Armazenamento,
 } from './armazenamento';
 export { enviarTudo, baixarTudo, useSincronizacao, type EstadoSync } from './sync';
+export { definirStatusNuvem, lerStatusNuvem, useStatusNuvem, type StatusNuvem } from './status';

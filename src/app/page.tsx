@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { AlternadorTema } from '@/components/AlternadorTema';
+import { IndicadorNuvem } from '@/components/IndicadorNuvem';
 import { BottomNav, GRUPOS } from '@/components/BottomNav';
 import { ToastHost, toast } from '@/components/Toast';
 import { Icone } from '@/components/Icones';
@@ -646,6 +647,7 @@ export default function PaginaCardapios() {
             >
               Sair
             </button>
+            <IndicadorNuvem />
             <AlternadorTema />
           </div>
         </div>

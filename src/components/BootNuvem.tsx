@@ -17,6 +17,7 @@ import {
   supabaseHabilitado,
   getSupabase,
   ESPACO_DADOS,
+  definirStatusNuvem,
 } from '@/lib/cardapio/supabase';
 import { notificarChaveExterna } from '@/lib/cardapio/estado';
 
@@ -31,7 +32,11 @@ export function BootNuvem() {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
 
-    if (!supabaseHabilitado()) return;
+    if (!supabaseHabilitado()) {
+      definirStatusNuvem('desligado');
+      return;
+    }
+    definirStatusNuvem('conectando');
 
     const orig = localStorage.setItem.bind(localStorage);
 
@@ -49,7 +54,11 @@ export function BootNuvem() {
           const k = chave.slice(PREFIXO.length);
           recentes.set(k, Date.now());
           try {
-            armazenamentoSupabase.gravar(k, JSON.parse(valor)).catch(() => {});
+            definirStatusNuvem('sincronizando');
+            armazenamentoSupabase
+              .gravar(k, JSON.parse(valor))
+              .then(() => definirStatusNuvem('online'))
+              .catch(() => definirStatusNuvem('erro'));
           } catch {
             /* valor não-JSON: ignora */
           }
@@ -81,8 +90,10 @@ export function BootNuvem() {
             const valorNuvem = await armazenamentoSupabase.ler<unknown>(chave, null);
             aplicarLocal(chave, valorNuvem);
           }
+          definirStatusNuvem('online');
         } catch {
           /* offline/erro: segue com os dados locais */
+          definirStatusNuvem('erro');
         }
       })();
     }
@@ -111,6 +122,7 @@ export function BootNuvem() {
             },
           )
           .subscribe();
+        definirStatusNuvem('online');
       } catch {
         /* realtime indisponível: segue com boot + espelhamento */
       }

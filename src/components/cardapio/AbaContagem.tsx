@@ -56,26 +56,29 @@ function mediasPorDiaSemana(contagens: ContagemRefeicoesDia[]): Record<number, {
   return acc;
 }
 
+const GRAFICO_H = 56; // px — h-14
+
 function GraficoMensal({ dados }: { dados: MesTendencia[] }) {
   const max = Math.max(...dados.map((d) => d.total), 1);
   const mesAtualIdx = dados.length - 1;
   return (
     <div className="space-y-1.5">
-      <div className="flex h-14 items-end gap-1">
+      <div className="flex items-end gap-1" style={{ height: GRAFICO_H }}>
         {dados.map((d, i) => {
-          const pct = (d.total / max) * 100;
+          const h = d.total === 0 ? 3 : Math.max(3, Math.round((d.total / max) * GRAFICO_H));
           const isAtual = i === mesAtualIdx;
           return (
-            <div key={i} className="group relative flex flex-1 flex-col items-center gap-0.5">
-              <div className="pointer-events-none absolute -top-7 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-carvao-900 px-2 py-1 text-micro font-semibold text-white group-hover:block">
+            <div key={i} className="group relative flex flex-1 flex-col justify-end">
+              <div
+                className="pointer-events-none absolute left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-carvao-900 px-2 py-1 text-micro font-semibold text-white group-hover:block"
+                style={{ bottom: h + 4 }}
+              >
                 {d.total.toLocaleString('pt-BR')}
               </div>
-              <div className="flex w-full flex-1 items-end">
-                <div
-                  className={`w-full rounded-t-sm transition-all ${d.total === 0 ? 'bg-carvao-100 dark:bg-carvao-800' : isAtual ? 'bg-brand-600' : 'bg-brand-200 dark:bg-brand-800'}`}
-                  style={{ height: d.total === 0 ? '3px' : `${pct}%` }}
-                />
-              </div>
+              <div
+                className={`w-full rounded-t-sm transition-all ${d.total === 0 ? 'bg-carvao-100 dark:bg-carvao-800' : isAtual ? 'bg-brand-600' : 'bg-brand-200 dark:bg-brand-800'}`}
+                style={{ height: h }}
+              />
             </div>
           );
         })}

@@ -24,6 +24,7 @@ interface Props {
   historico: HistoricoPrecos;
   fornecedores: Record<string, string>;
   onOpenIA?: () => void;
+  nomeUsuario?: string;
 }
 
 const NIVEL_COR: Record<NivelAlerta, string> = {
@@ -55,6 +56,12 @@ function ItemCard({ item }: { item: ItemBriefing }) {
       </div>
     </div>
   );
+}
+
+function saudacaoLocal(nome?: string): string {
+  const h = new Date().getHours();
+  const periodo = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
+  return nome ? `${periodo}, ${nome}` : periodo;
 }
 
 export function BriefingCard(props: Props) {
@@ -143,19 +150,42 @@ export function BriefingCard(props: Props) {
 
   if (briefing.tudo_ok) {
     const temPlan = props.estado.dias.some((d) => d.principal);
+    const temPrecos = Object.keys(props.precos).length > 0;
+    const primeiroUso = !temPlan && !temPrecos;
+
     const pulseSemana = temPlan && resumo.refeicoesPrevistas > 0
       ? resumo.custoRefEstimado
         ? `${resumo.refeicoesPrevistas} refeições · ${formatarReais(resumo.custoRefEstimado)}/ref estimado`
         : `${resumo.refeicoesPrevistas} refeições planejadas`
       : null;
 
+    const saudacao = saudacaoLocal(props.nomeUsuario);
+
     return (
       <div className="rounded-3xl bg-brand-50 px-5 py-4 dark:bg-carvao-850 dark:ring-1 dark:ring-carvao-700">
         <div className="flex items-start gap-3">
-          <span className="mt-0.5 shrink-0 text-lg leading-none">{insightOk ? '⚡' : '✓'}</span>
+          <span className="mt-0.5 shrink-0 text-lg leading-none">{primeiroUso ? '👋' : insightOk ? '⚡' : '✓'}</span>
           <div className="min-w-0 flex-1">
-            <p className="font-display text-sm font-bold text-brand-700 dark:text-brand-300">{briefing.saudacao}</p>
-            {insightOk ? (
+            <p className="font-display text-sm font-bold text-brand-700 dark:text-brand-300">{saudacao}</p>
+            {primeiroUso ? (
+              <div className="mt-1 space-y-1">
+                <p className="text-nota text-carvao-600 dark:text-areia-300">
+                  Bem-vindo ao Tatá House. Comece montando o cardápio desta semana — o sistema cuida do resto.
+                </p>
+                <ul className="mt-2 space-y-1">
+                  {[
+                    'Cardápio → defina os pratos de cada dia',
+                    'Compras → veja a lista gerada automaticamente',
+                    'Ajustes → configure PIN e logo do restaurante',
+                  ].map((dica) => (
+                    <li key={dica} className="flex items-start gap-2 text-rotulo text-carvao-500 dark:text-areia-400">
+                      <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-brand-400" />
+                      {dica}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : insightOk ? (
               <>
                 <p className="mt-0.5 text-nota text-carvao-600 dark:text-areia-300">{insightOk.texto}</p>
                 {insightOk.itens && (
@@ -179,7 +209,7 @@ export function BriefingCard(props: Props) {
               </>
             ) : (
               <p className="mt-0.5 text-nota text-carvao-600 dark:text-areia-300">
-                {pulseSemana ?? 'Semana sem alertas — boa operação para hoje.'}
+                {pulseSemana ?? 'Sem alertas agora — boa operação para hoje.'}
               </p>
             )}
           </div>
@@ -200,7 +230,7 @@ export function BriefingCard(props: Props) {
         <div className="flex items-center gap-2.5">
           
           <div>
-            <p className="font-display text-sm font-bold text-carvao-800 dark:text-areia-100">{briefing.saudacao}</p>
+            <p className="font-display text-sm font-bold text-carvao-800 dark:text-areia-100">{saudacaoLocal(props.nomeUsuario)}</p>
             <p className="text-rotulo text-carvao-500 dark:text-areia-400">
               {urgentes > 0
                 ? `${urgentes} alerta${urgentes > 1 ? 's' : ''} urgente${urgentes > 1 ? 's' : ''}`

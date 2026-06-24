@@ -100,6 +100,9 @@ export function Login() {
 
         <p className="mt-8 text-center text-micro text-brand-100/50">
           Acesso restrito da equipe · Tatá House
+          <span className="mt-1 block text-brand-100/30">
+            Primeiro acesso? Altere o PIN em Ajustes → Área segura.
+          </span>
         </p>
       </div>
     </div>

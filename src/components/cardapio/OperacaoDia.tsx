@@ -116,7 +116,7 @@ export function OperacaoDia({
       <div className="mx-auto max-w-2xl space-y-5 px-4 py-5">
         {!dia.principal ? (
           <Cartao className="!bg-white/10 !text-white !ring-white/15">
-            <p className="text-sm">Não há cardápio definido para hoje ({DIAS_SEMANA[di]}). Monte o cardápio para ver as tarefas.</p>
+            <p className="text-sm">Cardápio de {DIAS_SEMANA[di]} ainda não definido. Monte o prato principal na aba Cardápio para liberar as tarefas do dia.</p>
           </Cartao>
         ) : (
           <>

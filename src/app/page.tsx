@@ -804,6 +804,7 @@ export default function PaginaCardapios() {
                   historico={historico}
                   fornecedores={fornecedores}
                   onOpenIA={() => setIaAberta(true)}
+                  nomeUsuario={perfil?.rotulo}
                 />
                 <AbaAgora
                   estado={estado}

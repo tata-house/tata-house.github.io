@@ -110,7 +110,7 @@ export function SeletorPrato({
             </button>
           ))}
           {filtradas.length === 0 && !busca.trim() && (
-            <p className="px-3 py-4 text-sm text-texto-suave">Nenhuma opção cadastrada.</p>
+            <p className="px-3 py-4 text-sm text-texto-suave">Nenhuma sugestão ainda — comece a digitar para criar um novo prato.</p>
           )}
         </div>
       </Modal>

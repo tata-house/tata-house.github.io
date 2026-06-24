@@ -42,12 +42,17 @@ export function Configuracoes() {
             }`}
           >
             <div className="mb-3">
-              <p className={`text-sm font-extrabold ${isPrimario ? 'text-brand-800 dark:text-brand-300' : 'text-carvao-700 dark:text-areia-200'}`}>
-                {p.icone} {p.rotulo}
-              </p>
+              <div className="flex items-center justify-between gap-2">
+                <p className={`text-sm font-extrabold ${isPrimario ? 'text-brand-800 dark:text-brand-300' : 'text-carvao-700 dark:text-areia-200'}`}>
+                  {p.icone} {p.rotulo}
+                </p>
+                <span className="text-micro font-semibold text-carvao-400 dark:text-carvao-500">
+                  padrão: {p.pinPadrao}
+                </span>
+              </div>
               {isPrimario && (
                 <p className="mt-0.5 text-caption text-carvao-500 dark:text-areia-400">
-                  Acesso total ao sistema — guarde este PIN com atenção.
+                  Acesso total ao sistema — substitua o padrão antes de distribuir.
                 </p>
               )}
             </div>

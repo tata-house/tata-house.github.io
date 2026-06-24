@@ -255,8 +255,8 @@ export function AbaFornecedorIntel({
   if (todosFornecedores.length === 0) {
     return (
       <EstadoVazio
-        titulo="Nenhum fornecedor cadastrado"
-        texto="Vincule fornecedores aos itens na aba Preços para começar a monitorar."
+        titulo="Nenhum fornecedor ainda"
+        texto="Vá em Compras → Preços, abra um item e preencha o campo Fornecedor. O perfil aparece aqui assim que você salvar o primeiro."
       />
     );
   }

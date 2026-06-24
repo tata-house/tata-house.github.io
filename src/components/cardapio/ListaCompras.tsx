@@ -224,7 +224,7 @@ export function ListaCompras({
             {/* Checklist compacto */}
             {linhas.length === 0 ? (
               <p className="px-4 py-3 text-sm text-texto-suave">
-                {total === 0 ? 'Sem itens de compra.' : 'Nenhum item encontrado na busca.'}
+                {total === 0 ? 'Monte o cardápio para gerar a lista automaticamente.' : 'Nenhum item encontrado na busca.'}
               </p>
             ) : (
               <ul className="divide-y divide-carvao-100 dark:divide-carvao-700/60">

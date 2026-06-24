@@ -216,7 +216,7 @@ export function AbaEstoque({
           )}
         </div>
         {itensEstoque.length === 0 ? (
-          <EstadoVazio titulo="Estoque vazio" texto="Lance entradas de produtos para começar." />
+          <EstadoVazio titulo="Estoque vazio" texto="Use o formulário acima para registrar a primeira entrada. O saldo é atualizado automaticamente ao aplicar o cardápio." />
         ) : (
           <ul className="overflow-hidden rounded-2xl bg-white divide-y divide-carvao-100 dark:divide-carvao-700/50 dark:bg-carvao-850 dark:ring-1 dark:ring-carvao-700/60">
             {itensEstoque.map(([norm, e]) => {

@@ -588,7 +588,7 @@ export default function PaginaCardapios() {
   // redireciona para primeira aba permitida se a atual for bloqueada
   useEffect(() => {
     if (!abasPermitidas.includes(aba)) setAba(abasPermitidas[0] as AbaId);
-  }, [abasPermitidas, aba]);
+  }, [abasPermitidas, aba, setAba]);
 
   if (!loginPronto) return null;
   if (!perfilId) return <Login />;

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { AlternadorTema } from '@/components/AlternadorTema';
 import { BottomNav, GRUPOS } from '@/components/BottomNav';
 import { ToastHost, toast } from '@/components/Toast';
@@ -8,34 +9,44 @@ import { Icone } from '@/components/Icones';
 import { BottomSheet, Skeleton, Kpi } from '@/components/ui';
 import { resumoSemana } from '@/lib/cardapio/indicadores';
 import { formatarReais } from '@/lib/cardapio/motor';
+
+/* Tela de Início (visão padrão pós-login) — eager para não piscar no
+   primeiro paint. */
 import { AbaAgora } from '@/components/cardapio/AbaAgora';
-import { AbaAceitacao } from '@/components/cardapio/AbaAceitacao';
-import { PlaquinhaQR } from '@/components/cardapio/PlaquinhaQR';
-import { AbaCardapio } from '@/components/cardapio/AbaCardapio';
-import { AbaCompras } from '@/components/cardapio/AbaCompras';
-import { AbaDesperdicio } from '@/components/cardapio/AbaDesperdicio';
-import { AbaEstoque } from '@/components/cardapio/AbaEstoque';
-import { AbaFluxo } from '@/components/cardapio/AbaFluxo';
-import { AbaRadar } from '@/components/cardapio/AbaRadar';
-import { CentralGerencial } from '@/components/cardapio/CentralGerencial';
-import { Configuracoes } from '@/components/cardapio/Configuracoes';
-import { Assistente } from '@/components/cardapio/Assistente';
-import { PosterSemana } from '@/components/cardapio/PosterSemana';
 import { BriefingCard } from '@/components/cardapio/BriefingCard';
-import { AbaAuditoria } from '@/components/cardapio/AbaAuditoria';
-import { DnaCard } from '@/components/cardapio/DnaCard';
-import { LinhaTempoCasa } from '@/components/cardapio/LinhaTempoCasa';
-import { PrevisaoCard } from '@/components/cardapio/PrevisaoCard';
-import { RoiCard } from '@/components/cardapio/RoiCard';
-import { AbaFuncionarios } from '@/components/cardapio/AbaFuncionarios';
-import { AbaContagem } from '@/components/cardapio/AbaContagem';
-import { AbaNF } from '@/components/cardapio/AbaNF';
-import { AlertaProteinaDia } from '@/components/cardapio/AlertaProteinaDia';
-import { AbaCustoPrato } from '@/components/cardapio/AbaCustoPrato';
-import { AbaFornecedorIntel } from '@/components/cardapio/AbaFornecedorIntel';
-import { AbaPedido } from '@/components/cardapio/AbaPedido';
-import { CardapioOrientadoDados } from '@/components/cardapio/CardapioOrientadoDados';
 import { PainelDiretor } from '@/components/cardapio/PainelDiretor';
+
+/* Demais abas — carregadas sob demanda (code-splitting). Cada uma vira um
+   chunk separado, baixado só quando o usuário abre aquela aba. Isso tira do
+   First Load o peso de Cardápio (≈6 mil linhas de receitas), Compras,
+   Relatórios e Ajustes. */
+const Carregando = ({ h }: { h: string }) => <Skeleton className={h} />;
+
+const AbaAceitacao = dynamic(() => import('@/components/cardapio/AbaAceitacao').then((m) => ({ default: m.AbaAceitacao })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const PlaquinhaQR = dynamic(() => import('@/components/cardapio/PlaquinhaQR').then((m) => ({ default: m.PlaquinhaQR })), { ssr: false, loading: () => null });
+const AbaCardapio = dynamic(() => import('@/components/cardapio/AbaCardapio').then((m) => ({ default: m.AbaCardapio })), { ssr: false, loading: () => <Carregando h="h-96" /> });
+const AbaCompras = dynamic(() => import('@/components/cardapio/AbaCompras').then((m) => ({ default: m.AbaCompras })), { ssr: false, loading: () => <Carregando h="h-96" /> });
+const AbaDesperdicio = dynamic(() => import('@/components/cardapio/AbaDesperdicio').then((m) => ({ default: m.AbaDesperdicio })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const AbaEstoque = dynamic(() => import('@/components/cardapio/AbaEstoque').then((m) => ({ default: m.AbaEstoque })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const AbaFluxo = dynamic(() => import('@/components/cardapio/AbaFluxo').then((m) => ({ default: m.AbaFluxo })), { ssr: false, loading: () => <Carregando h="h-48" /> });
+const AbaRadar = dynamic(() => import('@/components/cardapio/AbaRadar').then((m) => ({ default: m.AbaRadar })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const CentralGerencial = dynamic(() => import('@/components/cardapio/CentralGerencial').then((m) => ({ default: m.CentralGerencial })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const Configuracoes = dynamic(() => import('@/components/cardapio/Configuracoes').then((m) => ({ default: m.Configuracoes })), { ssr: false, loading: () => <Carregando h="h-48" /> });
+const Assistente = dynamic(() => import('@/components/cardapio/Assistente').then((m) => ({ default: m.Assistente })), { ssr: false, loading: () => null });
+const PosterSemana = dynamic(() => import('@/components/cardapio/PosterSemana').then((m) => ({ default: m.PosterSemana })), { ssr: false, loading: () => null });
+const AbaAuditoria = dynamic(() => import('@/components/cardapio/AbaAuditoria').then((m) => ({ default: m.AbaAuditoria })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const DnaCard = dynamic(() => import('@/components/cardapio/DnaCard').then((m) => ({ default: m.DnaCard })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const LinhaTempoCasa = dynamic(() => import('@/components/cardapio/LinhaTempoCasa').then((m) => ({ default: m.LinhaTempoCasa })), { ssr: false, loading: () => <Carregando h="h-48" /> });
+const PrevisaoCard = dynamic(() => import('@/components/cardapio/PrevisaoCard').then((m) => ({ default: m.PrevisaoCard })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const RoiCard = dynamic(() => import('@/components/cardapio/RoiCard').then((m) => ({ default: m.RoiCard })), { ssr: false, loading: () => <Carregando h="h-48" /> });
+const AbaFuncionarios = dynamic(() => import('@/components/cardapio/AbaFuncionarios').then((m) => ({ default: m.AbaFuncionarios })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const AbaContagem = dynamic(() => import('@/components/cardapio/AbaContagem').then((m) => ({ default: m.AbaContagem })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const AbaNF = dynamic(() => import('@/components/cardapio/AbaNF').then((m) => ({ default: m.AbaNF })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const AlertaProteinaDia = dynamic(() => import('@/components/cardapio/AlertaProteinaDia').then((m) => ({ default: m.AlertaProteinaDia })), { ssr: false, loading: () => null });
+const AbaCustoPrato = dynamic(() => import('@/components/cardapio/AbaCustoPrato').then((m) => ({ default: m.AbaCustoPrato })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const AbaFornecedorIntel = dynamic(() => import('@/components/cardapio/AbaFornecedorIntel').then((m) => ({ default: m.AbaFornecedorIntel })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const AbaPedido = dynamic(() => import('@/components/cardapio/AbaPedido').then((m) => ({ default: m.AbaPedido })), { ssr: false, loading: () => <Carregando h="h-64" /> });
+const CardapioOrientadoDados = dynamic(() => import('@/components/cardapio/CardapioOrientadoDados').then((m) => ({ default: m.CardapioOrientadoDados })), { ssr: false, loading: () => <Carregando h="h-64" /> });
 import {
   deslocarSemana,
   idSemanaIso,

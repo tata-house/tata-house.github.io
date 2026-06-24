@@ -8,10 +8,14 @@
 
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { idSemanaIso, useAceitacao, useSemana } from '@/lib/cardapio/estado';
-import { registrarSatisfacao } from '@/lib/cardapio/estado';
-import { DIAS_SEMANA } from '@/lib/cardapio/motor';
-import { registrarVotoDia } from '@/lib/cardapio/termometro';
+import { DIAS_SEMANA } from '@/lib/cardapio/texto';
+import {
+  assinarChaveExterna,
+  idSemanaIso,
+  lerCardapioDoDia,
+  registrarVotoCliente,
+  type CardapioDoDia,
+} from '@/lib/cardapio/avaliar-cliente';
 
 type Voto = 'bom' | 'ok' | 'ruim';
 
@@ -82,15 +86,23 @@ export default function PaginaAvaliar() {
   const semanaId = idSemanaIso(hoje);
   const diaIdx = (hoje.getDay() + 6) % 7;
 
-  const { estado, pronto } = useSemana(semanaId);
-  const { avaliar } = useAceitacao();
+  // Lê o cardápio do dia no cliente (evita mismatch de hidratação).
+  const [cardapio, setCardapio] = useState<CardapioDoDia | null>(null);
+  const [pronto, setPronto] = useState(false);
   const [enviado, setEnviado] = useState(false);
 
   const [qualidade, setQualidade] = useState<Voto | null>(null);
   const [comentario, setComentario] = useState('');
 
-  const dia   = estado.dias[diaIdx];
-  const prato = dia?.principal?.trim();
+  useEffect(() => {
+    const ler = () => setCardapio(lerCardapioDoDia(semanaId, diaIdx));
+    ler();
+    setPronto(true);
+    // mostra o cardápio assim que o BootNuvem o traz da nuvem (celular novo)
+    return assinarChaveExterna('semana.' + semanaId, ler);
+  }, [semanaId, diaIdx]);
+
+  const prato = cardapio?.principal;
 
   useEffect(() => {
     if (!enviado) return;
@@ -104,19 +116,8 @@ export default function PaginaAvaliar() {
     if (!prato || !qualidade) return;
     try { navigator.vibrate?.(15); } catch { /* sem suporte */ }
 
-    // alimenta o índice de aceitação existente com a nota de qualidade
-    avaliar(prato, qualidade);
-    registrarVotoDia(prato, qualidade);
-
-    // registra a pesquisa — variedade e atendimento espelham qualidade
-    // para manter a estrutura de dados existente sem quebrar relatórios
-    registrarSatisfacao({
-      prato,
-      qualidade,
-      variedade:   qualidade,
-      atendimento: qualidade,
-      comentario:  comentario.trim() || undefined,
-    });
+    // alimenta aceitação + termômetro + pesquisa de satisfação de uma vez
+    registrarVotoCliente(prato, qualidade, comentario);
 
     setEnviado(true);
     setQualidade(null);
@@ -165,9 +166,9 @@ export default function PaginaAvaliar() {
               {DIAS_SEMANA[diaIdx]} · prato do dia
             </p>
             <h1 className="font-display text-3xl font-black uppercase leading-tight sm:text-4xl">{prato}</h1>
-            {[dia.guarnicao, dia.salada].filter(Boolean).length > 0 && (
+            {cardapio && [cardapio.guarnicao, cardapio.salada].filter(Boolean).length > 0 && (
               <p className="text-sm font-semibold uppercase tracking-wide text-brand-100">
-                {[dia.guarnicao, dia.salada].filter(Boolean).join(' · ')}
+                {[cardapio.guarnicao, cardapio.salada].filter(Boolean).join(' · ')}
               </p>
             )}
           </div>

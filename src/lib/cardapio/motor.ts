@@ -5,6 +5,7 @@
 
 import dadosJson from './dados.json';
 import { receitaDoPrato, RECEITAS_POR_CATEGORIA } from './receitas';
+import { DIAS_SEMANA, normalizar } from './texto';
 import type {
   Aviso,
   DadosCardapio,
@@ -18,31 +19,14 @@ import type {
 } from './tipos';
 
 export type { FonteItem };
+// Re-export das utilidades de texto (definidas em ./texto, sem dependências)
+// para manter a API histórica `import { normalizar, DIAS_SEMANA } from './motor'`.
+export { DIAS_SEMANA, normalizar };
 
 export const DADOS = dadosJson as unknown as DadosCardapio;
 
-export const DIAS_SEMANA = [
-  'Segunda-feira',
-  'Terça-feira',
-  'Quarta-feira',
-  'Quinta-feira',
-  'Sexta-feira',
-  'Sábado',
-  'Domingo',
-] as const;
-
 /** Curva de movimento padrão: Seg/Ter menor, Qua/Qui média, Sex–Dom pico. */
 export const PESSOAS_PADRAO = [55, 55, 65, 65, 80, 80, 80];
-
-export function normalizar(s: string | null | undefined): string {
-  if (!s) return '';
-  return s
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .toLowerCase();
-}
 
 /* ------------------------- proteína do prato ------------------------- */
 

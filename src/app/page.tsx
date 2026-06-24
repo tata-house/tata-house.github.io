@@ -629,7 +629,7 @@ export default function PaginaCardapios() {
               <div className="truncate font-display text-[16px] font-bold tracking-[0.18em] text-carvao-900 dark:text-white sm:text-[18px]">
                 TATÁ&nbsp;HOUSE
               </div>
-              <div className="truncate text-micro font-semibold uppercase tracking-[0.28em] text-texto-suave">
+              <div className="hidden truncate text-micro font-semibold uppercase tracking-[0.28em] text-texto-suave sm:block">
                 Refeitório do Tatá Sushi
               </div>
             </div>

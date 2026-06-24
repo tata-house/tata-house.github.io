@@ -313,7 +313,7 @@ export function AbaFuncionarios({
           {totalRestricoes > 0 && (
             <span>
               <strong className="font-bold text-carvao-900 dark:text-white">{totalRestricoes}</strong>
-              <span className="ml-1 text-texto-suave">restrição{totalRestricoes !== 1 ? 'ões' : ''}</span>
+              <span className="ml-1 text-texto-suave">restriç{totalRestricoes !== 1 ? 'ões' : 'ão'}</span>
             </span>
           )}
           {conflitos.length > 0 && (

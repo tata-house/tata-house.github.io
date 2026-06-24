@@ -192,7 +192,7 @@ export function AbaPedido({
       {/* resumo */}
       <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-carvao-50 px-4 py-3 ring-1 ring-carvao-100 dark:bg-carvao-900/40 dark:ring-carvao-700/50">
         <span className="text-nota font-semibold text-carvao-600 dark:text-areia-200">
-          {grupos.length} fornecedor{grupos.length !== 1 ? 'es' : ''}
+          {(() => { const n = grupos.filter(([g]) => g !== 'Sem fornecedor').length; return `${n} fornecedor${n !== 1 ? 'es' : ''}`; })()}
         </span>
         <span className="text-carvao-300">·</span>
         <span className="text-nota font-semibold text-carvao-600 dark:text-areia-200">
@@ -325,6 +325,11 @@ function GrupoFornecedor({
       {/* itens do grupo */}
       {expandido && (
         <div className="border-t border-carvao-100 dark:border-carvao-800">
+          {nome === 'Sem fornecedor' && (
+            <p className="border-b border-ouro-100 bg-ouro-50 px-4 py-2.5 text-caption font-semibold text-ouro-700 dark:border-ouro-900/30 dark:bg-ouro-900/20 dark:text-ouro-300">
+              → Atribua fornecedores em <strong>Compras → Lista</strong> para liberar o pedido pelo WhatsApp.
+            </p>
+          )}
           {podeEditar && !tudo && (
             <div className="flex justify-end border-b border-carvao-100 px-4 py-2 dark:border-carvao-800">
               <button

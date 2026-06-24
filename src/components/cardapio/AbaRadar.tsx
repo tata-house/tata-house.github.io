@@ -98,7 +98,7 @@ function ParecerComprador({ radar }: { radar: RadarItem[] }) {
           <li key={i} className="flex items-start gap-3 rounded-xl px-3 py-2.5">
             <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${TOM_REC[r.tom].ponto}`} />
             <div className="min-w-0">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-white/50">{TOM_REC[r.tom].rotulo}</span>
+              <span className="text-micro font-bold uppercase tracking-wider text-white/50">{TOM_REC[r.tom].rotulo}</span>
               <p className="text-sm leading-snug text-areia-50">{r.texto}</p>
             </div>
           </li>

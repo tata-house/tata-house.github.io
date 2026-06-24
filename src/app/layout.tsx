@@ -35,7 +35,11 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  themeColor: '#15171b',
+  // Cromo do navegador acompanha a superfície do app (claro/escuro).
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#15171b' },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

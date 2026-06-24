@@ -159,10 +159,10 @@ function DashCard({ cor, label, valor, sub }: CardItem) {
     <div className="rounded-2xl bg-white/[0.07] p-3.5 ring-1 ring-white/10">
       <div className="flex items-center gap-1.5">
         <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${DOT_COR[cor]}`} />
-        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/60">{label}</p>
+        <p className="text-micro font-bold uppercase tracking-[0.14em] text-white/60">{label}</p>
       </div>
       <p className="mt-2 truncate text-sm font-bold leading-snug text-white">{valor}</p>
-      <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-white/50">{sub}</p>
+      <p className="mt-0.5 line-clamp-2 text-caption leading-snug text-white/50">{sub}</p>
     </div>
   );
 }

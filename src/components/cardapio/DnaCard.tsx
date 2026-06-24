@@ -105,7 +105,7 @@ function NarrativaDescoberta({ dna }: { dna: DnaAlimentar }) {
       {/* Recomendação — bloco de ação destacado */}
       {d.recomendacao && (
         <div className="mt-3 rounded-2xl bg-brand-600 px-4 py-3">
-          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brand-100/70">O que fazer agora</p>
+          <p className="text-micro font-bold uppercase tracking-[0.16em] text-brand-100/70">O que fazer agora</p>
           <p className="mt-1 text-sm font-semibold leading-snug text-white">{d.recomendacao}</p>
         </div>
       )}

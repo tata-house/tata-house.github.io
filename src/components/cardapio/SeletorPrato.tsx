@@ -81,7 +81,7 @@ export function SeletorPrato({
             <button
               type="button"
               onClick={() => escolher('')}
-              className="w-full rounded-xl px-3 py-2.5 text-left text-[14px] font-semibold text-perigo hover:bg-areia-100 dark:hover:bg-carvao-700"
+              className="w-full rounded-xl px-3 py-2.5 text-left text-corpo font-semibold text-perigo hover:bg-areia-100 dark:hover:bg-carvao-700"
             >
               ✕ Limpar seleção
             </button>
@@ -90,7 +90,7 @@ export function SeletorPrato({
             <button
               type="button"
               onClick={() => escolher(busca.trim())}
-              className="w-full rounded-xl bg-ouro-300/20 px-3 py-2.5 text-left text-[14px] font-semibold text-carvao-800 ring-1 ring-ouro-400/40 hover:bg-ouro-300/30 dark:text-areia-100"
+              className="w-full rounded-xl bg-ouro-300/20 px-3 py-2.5 text-left text-corpo font-semibold text-carvao-800 ring-1 ring-ouro-400/40 hover:bg-ouro-300/30 dark:text-areia-100"
             >
               Usar “{busca.trim()}” (fora da lista — exceção)
             </button>
@@ -100,7 +100,7 @@ export function SeletorPrato({
               key={o}
               type="button"
               onClick={() => escolher(o)}
-              className={`w-full rounded-xl px-3 py-2.5 text-left text-[14px] font-medium transition hover:bg-areia-100 dark:hover:bg-carvao-700 ${
+              className={`w-full rounded-xl px-3 py-2.5 text-left text-corpo font-medium transition hover:bg-areia-100 dark:hover:bg-carvao-700 ${
                 normalizar(o) === normalizar(valor)
                   ? 'bg-brand-50 font-bold text-brand-700 dark:bg-brand-900/30 dark:text-brand-300'
                   : 'text-carvao-700 dark:text-areia-200'

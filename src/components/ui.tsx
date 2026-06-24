@@ -78,7 +78,7 @@ export function Botao({
   };
   return (
     <button
-      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-[14px] font-bold tracking-tight transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ouro-400 hover:-translate-y-px active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transform-none ${estilos[variante]} ${className}`}
+      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-corpo font-bold tracking-tight transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ouro-400 hover:-translate-y-px active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transform-none ${estilos[variante]} ${className}`}
       {...props}
     />
   );

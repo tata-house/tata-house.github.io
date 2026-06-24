@@ -73,7 +73,7 @@ export function LinhaTempoCasa() {
               >
                 <span className="text-lg leading-none">{c.icone}</span>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-carvao-400">{c.titulo}</p>
+                  <p className="text-micro font-bold uppercase tracking-wider text-carvao-400">{c.titulo}</p>
                   <p className="mt-0.5 text-sm font-bold leading-snug text-carvao-800 dark:text-areia-100">{c.valor}</p>
                 </div>
               </div>

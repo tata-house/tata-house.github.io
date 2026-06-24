@@ -105,6 +105,12 @@ export function Modal({
   aoFechar: () => void;
   children: ReactNode;
 }) {
+  useEffect(() => {
+    if (!aberto) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') aoFechar(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [aberto, aoFechar]);
   if (!aberto) return null;
   return (
     <div
@@ -112,6 +118,9 @@ export function Modal({
       onClick={aoFechar}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={titulo}
         className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 shadow-flutuante animate-subir dark:bg-carvao-850 sm:rounded-3xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -276,6 +285,12 @@ export function BottomSheet({
   aoFechar: () => void;
   children: ReactNode;
 }) {
+  useEffect(() => {
+    if (!aberto) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') aoFechar(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [aberto, aoFechar]);
   if (!aberto) return null;
   return (
     <div
@@ -283,6 +298,9 @@ export function BottomSheet({
       onClick={aoFechar}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={titulo}
         className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-5 shadow-flutuante animate-deslizar dark:bg-carvao-850 sm:rounded-3xl"
         style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
         onClick={(e) => e.stopPropagation()}

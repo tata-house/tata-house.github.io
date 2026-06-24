@@ -71,6 +71,15 @@ body {
   @apply bg-brand-200 text-carvao-900;
 }
 
+/* Foco de teclado consistente em todo o app. Só aparece no foco por TECLADO
+   (:focus-visible) — nunca no clique de mouse. Especificidade 0 (:where) para
+   que componentes com anel próprio (ex.: Botao) sobreponham via outline-none.
+   Cobre botões, links e elementos focáveis; inputs já têm anel próprio. */
+:where(a, button, summary, [role='button'], [tabindex]:not([tabindex='-1'])):focus-visible {
+  outline: 2px solid rgb(var(--anel));
+  outline-offset: 2px;
+}
+
 /* Barra de rolagem fina e discreta (lista lateral no tablet) */
 *::-webkit-scrollbar {
   width: 6px;

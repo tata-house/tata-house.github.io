@@ -17,9 +17,9 @@ export function Login() {
 
   const perfil = PERFIS.find((p) => p.id === sel) ?? null;
 
-  const confirmar = () => {
+  const confirmar = async () => {
     if (!sel) return;
-    if (entrar(sel, pin)) {
+    if (await entrar(sel, pin)) {
       if (typeof window !== 'undefined') window.location.reload();
     } else {
       setErro(true);

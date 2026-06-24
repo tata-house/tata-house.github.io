@@ -9,13 +9,13 @@ export function Configuracoes() {
   const { definirPin } = useLogin();
   const [pins, setPins] = useState<Record<string, string>>({});
 
-  const salvar = (id: string, rotulo: string) => {
+  const salvar = async (id: string, rotulo: string) => {
     const v = (pins[id] ?? '').trim();
     if (v.length < 4) {
       toast('Use um PIN de pelo menos 4 dígitos', 'erro');
       return;
     }
-    definirPin(id as never, v);
+    await definirPin(id as never, v);
     toast(`PIN de ${rotulo} atualizado`);
     setPins((s) => ({ ...s, [id]: '' }));
   };

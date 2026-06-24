@@ -92,10 +92,28 @@ export function abasDoPapel(papel: Papel): AbaId[] {
   return mapa[papel] ?? ['agora'];
 }
 
-function pinsAtuais(): Record<string, string> {
-  const base: Record<string, string> = {};
-  PERFIS.forEach((p) => (base[p.id] = p.pinPadrao));
-  return { ...base, ...ler<Record<string, string>>('login.pins', {}) };
+/* ── Hash de PIN (SHA-256 + sal fixo) ───────────────────────────────────
+   Os PINs personalizados são guardados como hash — nunca em texto puro no
+   localStorage nem na nuvem (que é espelhada). Não é autenticação de banco,
+   mas tira o PIN de circulação em claro. Auth real (Supabase Auth + RLS) é
+   o próximo nível, documentado em supabase/functions. */
+const ehHash = (s: string) => /^[0-9a-f]{64}$/.test(s);
+
+async function hashPin(pin: string): Promise<string> {
+  const dados = new TextEncoder().encode('tata-house:' + pin);
+  const buf = await crypto.subtle.digest('SHA-256', dados);
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/** Confere o PIN contra o esperado (hash do custom, ou o padrão em claro). */
+async function pinConfere(id: PerfilLogin, pin: string): Promise<boolean> {
+  const custom = ler<Record<string, string>>('login.pins', {});
+  const stored = custom[id];
+  if (stored) {
+    // custom hasheado → compara hash; legado em claro → compara direto (migra ao trocar)
+    return ehHash(stored) ? (await hashPin(pin)) === stored : pin === stored;
+  }
+  return pin === (perfilDe(id)?.pinPadrao ?? '');
 }
 
 export function useLogin() {
@@ -107,8 +125,8 @@ export function useLogin() {
     setPronto(true);
   }, []);
 
-  const entrar = useCallback((id: PerfilLogin, pin: string): boolean => {
-    if (pin !== pinsAtuais()[id]) return false;
+  const entrar = useCallback(async (id: PerfilLogin, pin: string): Promise<boolean> => {
+    if (!(await pinConfere(id, pin))) return false;
     const perfil = perfilDe(id);
     if (!perfil) return false;
     gravar('login.perfil', id);
@@ -122,8 +140,8 @@ export function useLogin() {
     setPerfilId(null);
   }, []);
 
-  const definirPin = useCallback((id: PerfilLogin, pin: string) => {
-    const novo = { ...ler<Record<string, string>>('login.pins', {}), [id]: pin };
+  const definirPin = useCallback(async (id: PerfilLogin, pin: string) => {
+    const novo = { ...ler<Record<string, string>>('login.pins', {}), [id]: await hashPin(pin) };
     gravar('login.pins', novo);
   }, []);
 

@@ -64,6 +64,18 @@ Turno padrão: "almoco". Retorne [] se nada encontrado. Não invente.`;
 export async function extrairRestricoesDaConversa(
   texto: string,
 ): Promise<{ nome: string; setor: string | null; turno: string; restricoes: { tipo: string; alimento: string; obs: string | null }[] }[]> {
+  // 1) Edge Function (chave no servidor) — preferida quando ativada.
+  if (iaEdgeAtivo()) {
+    try {
+      const txt = await chamarEdge('gemini', SYSTEM_RESTRICOES, texto, true);
+      const data = JSON.parse(txt || '[]');
+      return Array.isArray(data) ? data : [];
+    } catch {
+      return [];
+    }
+  }
+
+  // 2) Direto com a chave NEXT_PUBLIC.
   const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
   if (!apiKey) return [];
   try {
@@ -87,6 +99,43 @@ export async function extrairRestricoesDaConversa(
   } catch {
     return [];
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Edge Function (proxy seguro — chave fica no servidor, fora do bundle) */
+/* ------------------------------------------------------------------ */
+
+/** URL da função `llm` quando ativada (NEXT_PUBLIC_IA_EDGE=1 + Supabase). */
+function urlEdgeLLM(): string | null {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const ativo = process.env.NEXT_PUBLIC_IA_EDGE;
+  if (!url || !ativo || ativo === '0') return null;
+  return `${url.replace(/\/$/, '')}/functions/v1/llm`;
+}
+
+export function iaEdgeAtivo(): boolean {
+  return urlEdgeLLM() !== null;
+}
+
+/** Chama a Edge Function. Lança em falha (para o chamador cair no fallback). */
+export async function chamarEdge(
+  provider: 'gemini' | 'groq',
+  system: string,
+  prompt: string,
+  comoJson: boolean,
+): Promise<string> {
+  const fnUrl = urlEdgeLLM();
+  if (!fnUrl) throw new Error('edge desativada');
+  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '';
+  const res = await fetch(fnUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${anon}`, apikey: anon },
+    body: JSON.stringify({ provider, system, prompt, json: comoJson }),
+  });
+  if (!res.ok) throw new Error(`edge ${res.status}`);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return (data.text as string) ?? '';
 }
 
 /** Extrai o primeiro objeto JSON de um texto (LLMs às vezes envolvem em prosa). */
@@ -193,6 +242,18 @@ export async function chamarIACliente(
   dossie: DossieIA,
   modo: ModoIA = 'pergunta',
 ): Promise<RespostaIA> {
+  const prompt = promptParaModo(modo, tarefa, dossie);
+
+  // 1) Edge Function (chave no servidor) — preferida quando ativada.
+  if (iaEdgeAtivo()) {
+    try {
+      return extrairJson(await chamarEdge('gemini', SYSTEM, prompt, true));
+    } catch {
+      /* função indisponível: tenta o caminho direto abaixo */
+    }
+  }
+
+  // 2) Direto com chaves NEXT_PUBLIC (modo atual, exposto no client).
   const geminiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
   const openaiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
   const anthropicKey = process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY;
@@ -200,8 +261,6 @@ export async function chamarIACliente(
   if (!geminiKey && !openaiKey && !anthropicKey) {
     return { offline: true, texto: '' };
   }
-
-  const prompt = promptParaModo(modo, tarefa, dossie);
 
   try {
     if (geminiKey) return await chamarGemini(geminiKey, prompt);

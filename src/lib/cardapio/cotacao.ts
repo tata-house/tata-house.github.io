@@ -13,6 +13,7 @@
 import { DADOS, normalizar } from './motor';
 import { resolverPreco } from './precos';
 import { PRECOS_COMPRAS, UNIDADES_COMPRAS } from './precos-compras';
+import { iaEdgeAtivo, chamarEdge } from './ia-cliente';
 
 export type Confianca = 'alta' | 'media' | 'baixa' | 'sem-historico';
 
@@ -405,26 +406,13 @@ Responda APENAS com JSON no formato {"items":[...]} (sem markdown):
 
 type ItemIA = { nome: string; preco: number; marca?: string };
 
-async function chamarGroq(texto: string, apiKey: string, fornecedores: string[]): Promise<LinhaCotacao[]> {
-  const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({
-      model: GROQ_MODELO,
-      messages: [
-        { role: 'user', content: `${buildPromptIA(fornecedores)}\n\nCOTAÇÃO:\n${texto.slice(0, 16000)}` },
-      ],
-      temperature: 0.1,
-      response_format: { type: 'json_object' },
-    }),
-  });
-  if (!resp.ok) {
-    const err: { error?: { message?: string } } = await resp.json().catch(() => ({}));
-    throw new Error(err?.error?.message ?? `HTTP ${resp.status}`);
-  }
-  const data: { choices?: { message?: { content?: string } }[] } = await resp.json();
-  const txt = data?.choices?.[0]?.message?.content ?? '{}';
-  const parsed: { items?: ItemIA[] } | ItemIA[] = JSON.parse(txt);
+function buildGroqPrompt(texto: string, fornecedores: string[]): string {
+  return `${buildPromptIA(fornecedores)}\n\nCOTAÇÃO:\n${texto.slice(0, 16000)}`;
+}
+
+/** Converte o JSON da IA em linhas de cotação (descarta remetente interno como marca). */
+function parseItensIA(txt: string): LinhaCotacao[] {
+  const parsed: { items?: ItemIA[] } | ItemIA[] = JSON.parse(txt || '{}');
   const items: ItemIA[] = Array.isArray(parsed) ? parsed : (parsed as { items?: ItemIA[] }).items ?? [];
   return items
     .filter((it) => it.nome && it.preco > 0)
@@ -439,6 +427,25 @@ async function chamarGroq(texto: string, apiKey: string, fornecedores: string[])
         item: casarItem(it.nome),
       };
     });
+}
+
+async function chamarGroqDireto(prompt: string, apiKey: string): Promise<string> {
+  const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      model: GROQ_MODELO,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.1,
+      response_format: { type: 'json_object' },
+    }),
+  });
+  if (!resp.ok) {
+    const err: { error?: { message?: string } } = await resp.json().catch(() => ({}));
+    throw new Error(err?.error?.message ?? `HTTP ${resp.status}`);
+  }
+  const data: { choices?: { message?: { content?: string } }[] } = await resp.json();
+  return data?.choices?.[0]?.message?.content ?? '{}';
 }
 
 /**
@@ -494,9 +501,13 @@ export async function parsearCotacaoComIA(
   fornecedoresCustom: string[] = [],
 ): Promise<{ linhas: LinhaCotacao[]; comIA: boolean; erroIA?: string }> {
   const logica = parsearCotacao(texto, fornecedoresCustom);
+  const prompt = buildGroqPrompt(texto, fornecedoresCustom);
   try {
-    const ia = await chamarGroq(texto, apiKey, fornecedoresCustom);
-    return { linhas: combinarResultados(logica, ia), comIA: true };
+    // Edge Function (chave no servidor) quando ativada; senão, Groq direto.
+    const txt = iaEdgeAtivo()
+      ? await chamarEdge('groq', '', prompt, true)
+      : await chamarGroqDireto(prompt, apiKey);
+    return { linhas: combinarResultados(logica, parseItensIA(txt)), comIA: true };
   } catch (e) {
     return { linhas: logica, comIA: false, erroIA: e instanceof Error ? e.message : String(e) };
   }
@@ -513,7 +524,8 @@ export function extrairRemetenteWhatsApp(texto: string): string | null {
   let m: RegExpExecArray | null;
   while ((m = re.exec(texto)) !== null) {
     const nome = m[1].trim();
-    if (nome) freq[nome] = (freq[nome] ?? 0) + 1;
+    // Ignora quem só ENCAMINHA (Erika etc.) — não é fornecedor.
+    if (nome && !ehRemetenteInterno(nome)) freq[nome] = (freq[nome] ?? 0) + 1;
   }
   if (!Object.keys(freq).length) return null;
   return Object.entries(freq).sort(([, a], [, b]) => b - a)[0]?.[0] ?? null;

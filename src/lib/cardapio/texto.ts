@@ -23,6 +23,7 @@ export function normalizar(s: string | null | undefined): string {
   return s
     .normalize('NFKD')
     .replace(/[̀-ͯ]/g, '')
+    .replace(/-/g, ' ')      // hífen = espaço: "couve-flor" == "couve flor"; remove "cenoura-"
     .replace(/\s+/g, ' ')
     .trim()
     .toLowerCase();

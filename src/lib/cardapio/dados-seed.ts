@@ -168,8 +168,16 @@ export const MAPA_FORNECEDORES_SEED: Record<string, string> = {
   'acelga': 'FLD',
   'alface': 'FLD',
   'alface americana': 'FLD',
+  'alface americano': 'FLD',
   'alface crespa': 'FLD',
   'alface lisa': 'FLD',
+  'agriao': 'FLD',
+  'rucula': 'FLD',
+  'coentro': 'FLD',
+  'cheiro verde': 'FLD',
+  'salsinha': 'FLD',
+  'abacate': 'FLD',
+  'milho verde': 'FLD',
   'beterraba': 'FLD',
   'brocolis': 'FLD',
   'goiaba': 'FLD',
@@ -363,6 +371,16 @@ export const PRECOS_COTACAO_SEED: Record<string, number> = {
   // Malte / Roldão (referência)
   'oleo': 5.99,
   'acucar': 3.99,
+  // Itens de despensa/hortifrúti sem cotação própria — referência de mercado
+  // (substituídos pela cotação real quando o usuário cola).
+  'grao de bico': 12.90,
+  'ervilha': 9.50,
+  'canjica de milho': 7.20,
+  'amido de milho': 9.80,
+  'uva passa': 24.90,
+  'chocolate em po': 22.50,
+  'polpa de morango': 18.00,
+  'canela em po': 44.00,
 };
 
 /* ─────────────────────────────────────────── FUNCIONÁRIOS + RESTRIÇÕES */

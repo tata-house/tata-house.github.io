@@ -309,7 +309,7 @@ function ehAcompanhamentoDoPrincipal(nome: string): boolean {
    já vem normalizada (minúscula, sem acento). Usado no preço (precos.ts) e para
    evitar que a forma preparada duplique o ingrediente cru na lista. */
 const PREPARO_RE =
-  /\b(frit[oa]s?|assad[oa]s?|cozid[oa]s?|grelhad[oa]s?|refogad[oa]s?|empanad[oa]s?|gratinad[oa]s?|saltead[oa]s?|mexid[oa]s?|dourad[oa]s?|milanesa|a dore|na chapa|na brasa|ao? forno|de forno|ao molho|marinad[oa]s?|temperad[oa]s?|desfiad[oa]s?|ralad[oa]s?|picad[oa]s?|cremos[oa]s?|de panela|caseir[oa]s?|a moda|rechead[oa]s?|no vapor|cozid[oa] no vapor)\b/g;
+  /\b(frit[oa]s?|assad[oa]s?|cozid[oa]s?|grelhad[oa]s?|refogad[oa]s?|empanad[oa]s?|gratinad[oa]s?|saltead[oa]s?|mexid[oa]s?|dourad[oa]s?|milanesa|a dore|na chapa|na brasa|ao? forno|de forno|ao molho|marinad[oa]s?|temperad[oa]s?|desfiad[oa]s?|ralad[oa]s?|picad[oa]s?|cremos[oa]s?|de panela|caseir[oa]s?|a moda|rechead[oa]s?|no vapor|cozid[oa] no vapor|em cubos?|em cubinhos?|em tiras?|em iscas?|em pedacos?|em postas?|em bifes?|em rodelas?|moid[oa]s?|desossad[oa]s?|sem osso|com osso|fatiad[oa]s?)\b/g;
 
 /** Reduz um item preparado ao ingrediente base ("mandioca frita" → "mandioca").
     Idempotente; devolve o próprio nome quando não há preparo a remover. */

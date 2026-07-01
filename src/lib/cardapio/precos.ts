@@ -8,7 +8,7 @@
    Funções puras, sem efeitos; a camada de UI só consome o resultado.
    ===================================================================== */
 
-import { DADOS, normalizar, converterParaUnidadeBase } from './motor';
+import { DADOS, normalizar, converterParaUnidadeBase, ingredienteBase } from './motor';
 import { PRECOS_COMPRAS, UNIDADES_COMPRAS } from './precos-compras';
 import type { HistoricoPrecos } from './tipos';
 
@@ -298,26 +298,6 @@ function buscarHistorico(norm: string): number | null {
   }
 
   return null;
-}
-
-/**
- * Modos de preparo/derivação que NÃO mudam o ingrediente comprado: um item
- * "mandioca frita", "batata assada", "frango grelhado" ou "arroz cozido" é
- * comprado como o ingrediente cru ("mandioca", "batata", "frango", "arroz").
- * A entrada já vem normalizada (minúscula, sem acento), então os padrões
- * dispensam variações de acento. Ordem não importa — remove todos de uma vez.
- */
-const PREPARO_RE =
-  /\b(frit[oa]s?|assad[oa]s?|cozid[oa]s?|grelhad[oa]s?|refogad[oa]s?|empanad[oa]s?|gratinad[oa]s?|saltead[oa]s?|mexid[oa]s?|dourad[oa]s?|milanesa|a dore|na chapa|na brasa|ao? forno|de forno|ao molho|marinad[oa]s?|temperad[oa]s?|desfiad[oa]s?|ralad[oa]s?|picad[oa]s?|cremos[oa]s?|de panela|caseir[oa]s?|a moda|rechead[oa]s?|no vapor|cozid[oa] no vapor)\b/g;
-
-/**
- * Reduz um item preparado ao ingrediente base para fins de preço e fornecedor.
- * Ex.: "mandioca frita" → "mandioca". Se nada for removido (ou sobrar vazio),
- * devolve o próprio nome. Idempotente: aplicar de novo não muda mais nada.
- */
-export function ingredienteBase(norm: string): string {
-  const base = norm.replace(PREPARO_RE, '').replace(/\s+/g, ' ').trim();
-  return base && base !== norm ? base : norm;
 }
 
 /**

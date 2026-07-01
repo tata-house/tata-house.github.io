@@ -14,8 +14,8 @@
 import { useMemo, useState } from 'react';
 import { Botao, Cartao, Modal, Pilula, estiloInput } from '@/components/ui';
 import { Icone } from '@/components/Icones';
-import { DADOS, DIAS_SEMANA, formatarQtd, formatarReais, linhasDoDia, normalizar } from '@/lib/cardapio/motor';
-import { resolverPreco, ingredienteBase } from '@/lib/cardapio/precos';
+import { DADOS, DIAS_SEMANA, formatarQtd, formatarReais, ingredienteBase, linhasDoDia, normalizar } from '@/lib/cardapio/motor';
+import { resolverPreco } from '@/lib/cardapio/precos';
 import { ehRemetenteInterno } from '@/lib/cardapio/cotacao';
 import comparativoJson from '@/lib/cardapio/comparativo-fornecedores.json';
 import { confiancaPreco, COR_CONFIANCA } from '@/lib/cardapio/confianca';

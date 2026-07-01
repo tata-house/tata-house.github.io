@@ -291,6 +291,34 @@ export interface OpcoesLista {
   mostrarBasicos?: boolean;
 }
 
+/* Acompanhamentos de amido que, quando citados no PRATO PRINCIPAL
+   ("Carne com mandioca", "Frango com batata"), NÃO devem virar item de compra
+   pelo principal — a guarnição do dia já cobre. Evita duplicar mandioca/batata
+   na lista e inflar o custo. Só se aplica ao campo principal. */
+const ACOMPANHAMENTOS_PRINCIPAL = [
+  'mandioca', 'aipim', 'macaxeira', 'batata', 'batata doce', 'batata palha',
+  'farofa', 'pure', 'macarrao', 'polenta', 'mandioquinha', 'cuscuz', 'angu', 'baiao',
+];
+function ehAcompanhamentoDoPrincipal(nome: string): boolean {
+  const k = normalizar(nome);
+  return ACOMPANHAMENTOS_PRINCIPAL.some((a) => k === a || k.startsWith(a + ' '));
+}
+
+/* Modos de preparo/derivação que NÃO mudam o ingrediente comprado: "mandioca
+   frita" é comprada como "mandioca", "frango grelhado" como "frango". A entrada
+   já vem normalizada (minúscula, sem acento). Usado no preço (precos.ts) e para
+   evitar que a forma preparada duplique o ingrediente cru na lista. */
+const PREPARO_RE =
+  /\b(frit[oa]s?|assad[oa]s?|cozid[oa]s?|grelhad[oa]s?|refogad[oa]s?|empanad[oa]s?|gratinad[oa]s?|saltead[oa]s?|mexid[oa]s?|dourad[oa]s?|milanesa|a dore|na chapa|na brasa|ao? forno|de forno|ao molho|marinad[oa]s?|temperad[oa]s?|desfiad[oa]s?|ralad[oa]s?|picad[oa]s?|cremos[oa]s?|de panela|caseir[oa]s?|a moda|rechead[oa]s?|no vapor|cozid[oa] no vapor)\b/g;
+
+/** Reduz um item preparado ao ingrediente base ("mandioca frita" → "mandioca").
+    Idempotente; devolve o próprio nome quando não há preparo a remover. */
+export function ingredienteBase(nome: string): string {
+  const norm = normalizar(nome);
+  const base = norm.replace(PREPARO_RE, '').replace(/\s+/g, ' ').trim();
+  return base && base !== norm ? base : norm;
+}
+
 export function listaDoDia(dia: DiaCardapio, fatores?: Record<string, number>, opts?: OpcoesLista): ItemSugerido[] {
   const fator = dia.pessoas > 0 ? dia.pessoas / DADOS.baseline : 1;
   const acc = new Map<string, { item: string; unid: string; qtd: number; fonte: FonteItem }>();
@@ -376,7 +404,13 @@ export function listaDoDia(dia: DiaCardapio, fatores?: Record<string, number>, o
       const it = itemDoTexto(parte);
       if (!it) continue;
       const k = normalizar(it.n);
+      // Prato principal não puxa acompanhamento de amido (guarnição já cobre).
+      if (categoria === 'principal' && ehAcompanhamentoDoPrincipal(it.n)) continue;
       if (acc.has(k) || (!opts?.mostrarBasicos && excluidos.has(k))) continue;
+      // Forma preparada ("Mandioca Frita") não entra se o ingrediente base
+      // ("Mandioca") já está na lista — compra-se o cru, não o preparo.
+      const base = ingredienteBase(it.n);
+      if (base !== k && acc.has(base)) continue;
       const toks = tokensTexto(it.n);
       const coberto = Array.from(acc.values()).some((v) => {
         const vt = new Set(tokensTexto(v.item));

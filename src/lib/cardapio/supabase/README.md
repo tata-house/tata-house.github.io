@@ -14,7 +14,15 @@ build da Vercel não exige o pacote `@supabase/supabase-js`.
 | `armazenamento.ts` | Abstração `ler/gravar/remover/listarChaves` com 2 implementações: `local` e `supabase` (tabela KV `tata_estado`). |
 | `sync.ts` | `enviarTudo()` / `baixarTudo()` e o hook `useSincronizacao()`. |
 | `schema.sql` | DDL para rodar no Supabase (KV + tabelas relacionais de referência). |
+| `migracoes/` | Ajustes idempotentes para bancos já criados (Realtime, RLS). |
 | `index.ts` | Ponto único de import. |
+
+## Migrações (rodar no SQL Editor de um banco já existente)
+
+| Arquivo | Para quê |
+|---|---|
+| `migracoes/2026-realtime-sync.sql` | Publica `tata_estado` no Realtime → sincronização **ao vivo** entre aparelhos. |
+| `migracoes/2026-seguranca-rls.sql` | Endurece o RLS: escopa `tata_estado` ao espaço e tranca as tabelas de referência (só `authenticated`). |
 
 A KV `tata_estado` espelha **exatamente** as chaves do localStorage
 (`cardapio.v1.*`), então a primeira migração é fiel e de baixo risco.
@@ -58,6 +66,17 @@ normalizadas.
 
 ## ⚠️ Segurança
 
-As políticas RLS do `schema.sql` são **permissivas** (acesso anônimo amplo)
-só para destravar o protótipo. **Antes de produção**, restrinja por
-`auth.uid()` / espaço e remova a escrita anônima.
+O site é público e a **chave anônima** fica embutida nele — qualquer visitante
+consegue extraí-la. Por isso:
+
+- **`tata_estado`** (onde o app grava): fica acessível pela chave anônima
+  (a sincronização depende disso), mas **escopada ao espaço `tata-house`**.
+- **Tabelas de referência** (`usuarios`, `semanas`, `precos`, …): o app não as
+  usa, então ficam **trancadas para a chave anônima** — só um usuário
+  `authenticated` acessa (`migracoes/2026-seguranca-rls.sql`).
+
+**Limite honesto:** enquanto não houver autenticação Supabase de verdade, quem
+tiver a URL do site consegue ler/gravar o `tata_estado`. Para restringir de fato
+ao time, é preciso adicionar login (e-mail/senha ou magic link) e habilitar a
+seção **OPCIONAL** do `2026-seguranca-rls.sql` (exige `authenticated` também no
+`tata_estado`).

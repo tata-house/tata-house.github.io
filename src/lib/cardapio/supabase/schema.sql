@@ -27,10 +27,12 @@ create index if not exists tata_estado_espaco_idx on public.tata_estado (espaco)
 
 alter table public.tata_estado enable row level security;
 
--- Protótipo: acesso por chave anônima. Restrinja por espaço/usuário depois.
+-- Acesso pela chave anônima (o app sincroniza por aqui), porém escopado ao
+-- espaço 'tata-house'. Para exigir login também aqui, veja a seção OPCIONAL
+-- em migracoes/2026-seguranca-rls.sql.
 drop policy if exists tata_estado_rw on public.tata_estado;
 create policy tata_estado_rw on public.tata_estado
-  for all using (true) with check (true);
+  for all using (espaco = 'tata-house') with check (espaco = 'tata-house');
 
 -- Realtime: SEM isto, o app espelha para a nuvem mas os OUTROS aparelhos
 -- nunca recebem a mudança ao vivo (a assinatura postgres_changes fica muda).
@@ -178,7 +180,10 @@ create table if not exists public.auditoria (
   semana text
 );
 
--- RLS permissiva no protótipo para todas as tabelas relacionais.
+-- Tabelas relacionais de referência: NÃO são usadas pelo app (só tata_estado
+-- é). Ficam trancadas para a chave anônima — apenas o papel "authenticated"
+-- acessa. Isso remove a maior parte da superfície de ataque (inclusive a
+-- tabela `usuarios`, com e-mails). Ver migracoes/2026-seguranca-rls.sql.
 do $$
 declare t text;
 begin
@@ -188,8 +193,9 @@ begin
   ] loop
     execute format('alter table public.%I enable row level security;', t);
     execute format('drop policy if exists %I_rw on public.%I;', t, t);
+    execute format('drop policy if exists %I_auth on public.%I;', t, t);
     execute format(
-      'create policy %I_rw on public.%I for all using (true) with check (true);',
+      'create policy %I_auth on public.%I for all to authenticated using (true) with check (true);',
       t, t);
   end loop;
 end $$;

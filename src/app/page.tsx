@@ -73,6 +73,7 @@ import {
   usePrecos,
   useSemana,
 } from '@/lib/cardapio/estado';
+import { useEstimativas } from '@/lib/cardapio/estimativas';
 import { useLogo } from '@/lib/cardapio/logo';
 import { useLogin, abasDoPapel } from '@/lib/cardapio/login';
 import { Login } from '@/components/Login';
@@ -476,6 +477,7 @@ export default function PaginaCardapios() {
 
   const { estado, atualizar, pronto } = useSemana(semanaId);
   const { precos, definirPreco } = usePrecos();
+  const { estimativas } = useEstimativas();
   const { fornecedores, definirFornecedor, renomearFornecedor } = useFornecedores();
   const { ofertas, registrarOferta } = useOfertas();
   const { itensExtras, cadastrarItem } = useItensExtras();
@@ -551,7 +553,7 @@ export default function PaginaCardapios() {
 
   // KPIs-herói do topo de Relatórios — leitura gerencial de 5 segundos
   const kpisRelatorios = useMemo(() => {
-    const r = resumoSemana(estado, precos, fatores);
+    const r = resumoSemana(estado, precos, fatores, estimativas);
     const custoSemana = r.custoReal || r.custoEstimado;
     const custoRef = r.custoRefReal ?? r.custoRefEstimado;
     let somaNotas = 0, nNotas = 0;
@@ -561,7 +563,7 @@ export default function PaginaCardapios() {
     desperdicio.forEach((d) => { if (d.produzido > 0) { prod += d.produzido; sobra += Math.max(0, d.produzido - d.consumido); } });
     const desperdicioPct = prod > 0 ? (sobra / prod) * 100 : null;
     return { custoSemana, custoRef, mediaAceit, desperdicioPct };
-  }, [estado, precos, fatores, aceitacao, desperdicio]);
+  }, [estado, precos, fatores, estimativas, aceitacao, desperdicio]);
 
   // atalho de teclado ⌘K / Ctrl+K
   useEffect(() => {

@@ -15,6 +15,7 @@ import { useMemo, useState } from 'react';
 import { Botao, Cartao, Modal, Pilula, estiloInput } from '@/components/ui';
 import { Icone } from '@/components/Icones';
 import { DADOS, DIAS_SEMANA, formatarQtd, formatarReais, linhasDoDia, normalizar } from '@/lib/cardapio/motor';
+import { resolverPreco } from '@/lib/cardapio/precos';
 import { confiancaPreco, COR_CONFIANCA } from '@/lib/cardapio/confianca';
 import type { EstadoSemana, HistoricoPrecos } from '@/lib/cardapio/tipos';
 
@@ -55,6 +56,7 @@ export function ListaCompras({
   podeEditar = false,
   mostrarBasicos = false,
   precos = {},
+  estimativas = {},
   fornecedores = {},
   ofertas = {},
   historico = {},
@@ -74,6 +76,7 @@ export function ListaCompras({
   podeEditar?: boolean;
   mostrarBasicos?: boolean;
   precos?: Record<string, number>;
+  estimativas?: Record<string, number>;
   fornecedores?: Record<string, string>;
   ofertas?: Record<string, { fornecedor: string; preco: number }[]>;
   historico?: HistoricoPrecos;
@@ -333,21 +336,35 @@ export function ListaCompras({
                             )}
                             {obs && <span className="ml-1 text-caption italic text-texto-suave">· </span>}
                           </span>
-                          {!podeMexerPreco && (fornecedores[l.chave] || precos[l.chave] > 0) && (
-                            <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-micro font-semibold text-brand-600 dark:text-brand-300">
-                              <span>
-                                {fornecedores[l.chave] || 'fornecedor não informado'}
-                                {precos[l.chave] > 0 && (
-                                  <span className="font-normal text-texto-suave">
-                                    {' · '}{formatarReais(precos[l.chave])}/{unidAtual}
-                                  </span>
+                          {!podeMexerPreco && (() => {
+                            // Mesma engine do cardápio: mostra um preço de referência
+                            // para todo item que o motor consegue precificar (real →
+                            // histórico/planilha → estimado), não só os cotados na mão.
+                            const pr = resolverPreco(l.chave, precos, estimativas);
+                            const temDireto = precos[l.chave] > 0;
+                            const forn = fornecedores[l.chave];
+                            if (!forn && pr.valor <= 0) return null;
+                            return (
+                              <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-micro font-semibold text-brand-600 dark:text-brand-300">
+                                <span>
+                                  {forn || 'fornecedor não informado'}
+                                  {pr.valor > 0 && (
+                                    <span className="font-normal text-texto-suave">
+                                      {' · '}{formatarReais(pr.valor)}/{unidAtual}
+                                      {!temDireto && (
+                                        <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-texto-suave">
+                                          {pr.tipo === 'estimado' ? 'est.' : 'ref.'}
+                                        </span>
+                                      )}
+                                    </span>
+                                  )}
+                                </span>
+                                {pr.valor > 0 && (
+                                  <SeloConfianca norm={l.chave} historico={historico} ofertas={ofertas} temPreco={temDireto} />
                                 )}
                               </span>
-                              {precos[l.chave] > 0 && (
-                                <SeloConfianca norm={l.chave} historico={historico} ofertas={ofertas} temPreco />
-                              )}
-                            </span>
-                          )}
+                            );
+                          })()}
                         </span>
                         <span className={`shrink-0 self-start text-sm font-bold tabular-nums ${comprado ? 'text-texto-suave' : ''}`}>
                           {formatarQtd(l.qtd)} {unidAtual}

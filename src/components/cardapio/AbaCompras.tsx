@@ -6,12 +6,15 @@ import { Icone } from '@/components/Icones';
 import {
   DADOS,
   DIAS_SEMANA,
+  converterParaUnidadeBase,
   custoDaLista,
   formatarQtd,
   formatarReais,
   linhasDoDia,
 } from '@/lib/cardapio/motor';
+import { resolverPreco } from '@/lib/cardapio/precos';
 import { registrarAuditoria, useMostrarBasicos } from '@/lib/cardapio/estado';
+import { useEstimativas } from '@/lib/cardapio/estimativas';
 import { pode } from '@/lib/cardapio/org';
 import type { EstadoSemana, HistoricoPrecos, Papel, StatusItem } from '@/lib/cardapio/tipos';
 import { ListaCompras } from './ListaCompras';
@@ -70,6 +73,9 @@ export function AbaCompras({
   registrarOferta?: (itemNorm: string, fornecedor: string, preco: number) => void;
 }) {
   const { mostrarBasicos, setMostrarBasicos } = useMostrarBasicos();
+  // Mesma base de estimativas do cardápio — para o orçamento da lista bater
+  // com o custo mostrado na aba Cardápio (real → histórico → estimado).
+  const { estimativas } = useEstimativas();
   const [novoItemDia, setNovoItemDia] = useState<number | null>(null);
   const [fotoPendente, setFotoPendente] = useState<string | null>(null);
   const [diasDaNota, setDiasDaNota] = useState<Set<number>>(new Set());
@@ -221,11 +227,12 @@ export function AbaCompras({
         total++;
         if (l.status.compradoEm) comprado++;
         if (l.status.recebidoOk) recebido++;
-        estimado += (precos[l.chave] ?? 0) * l.qtd;
+        const preco = resolverPreco(l.chave, precos, estimativas).valor;
+        estimado += preco * converterParaUnidadeBase(l.qtd, l.unid);
       });
     });
     return { total, aComprar: total - comprado, comprado, recebido, estimado };
-  }, [estado, precos, fatores, mostrarBasicos]);
+  }, [estado, precos, estimativas, fatores, mostrarBasicos]);
 
   // ações em lote — sobre todos os itens do dia
   const comprarTudo = (dia: number) =>
@@ -320,6 +327,7 @@ export function AbaCompras({
           podeEditar={podeAjustarQtd}
           mostrarBasicos={mostrarBasicos}
           precos={precos}
+          estimativas={estimativas}
           fornecedores={fornecedores}
           ofertas={ofertas}
           historico={historico}

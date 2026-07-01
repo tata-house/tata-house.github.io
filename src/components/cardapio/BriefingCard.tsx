@@ -11,6 +11,7 @@ import {
 } from '@/lib/cardapio/estado';
 import { alertasProspectivos } from '@/lib/cardapio/prospectivo';
 import { gerarBriefing, insightProativo } from '@/lib/cardapio/assistente';
+import { useEstimativas } from '@/lib/cardapio/estimativas';
 import { resumoSemana } from '@/lib/cardapio/indicadores';
 import { formatarReais } from '@/lib/cardapio/motor';
 import type { Aceitacao, Estoque, EstadoSemana, HistoricoPrecos } from '@/lib/cardapio/tipos';
@@ -71,10 +72,11 @@ export function BriefingCard(props: Props) {
   const [carregandoIa, setCarregandoIa] = useState(false);
 
   const { fatores } = useAprendizado();
+  const { estimativas } = useEstimativas();
 
   const resumo = useMemo(
-    () => resumoSemana(props.estado, props.precos, fatores),
-    [props.estado, props.precos, fatores],
+    () => resumoSemana(props.estado, props.precos, fatores, estimativas),
+    [props.estado, props.precos, fatores, estimativas],
   );
 
   const insightOk = useMemo(

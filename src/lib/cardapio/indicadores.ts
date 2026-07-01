@@ -4,7 +4,8 @@
    e o ROI (M12). Tudo derivado do estado já existente, sem efeitos.
    ===================================================================== */
 
-import { PESSOAS_PADRAO, linhasDoDia } from './motor';
+import { PESSOAS_PADRAO, linhasDoDia, converterParaUnidadeBase } from './motor';
+import { resolverPreco } from './precos';
 import {
   datasDaSemana,
   idSemanaIso,
@@ -35,6 +36,7 @@ export function resumoSemana(
   estado: EstadoSemana,
   precos: Record<string, number>,
   fatores?: Record<string, number>,
+  estimativas: Record<string, number> = {},
 ): ResumoSemana {
   let itensTotal = 0;
   let itensComprados = 0;
@@ -48,10 +50,12 @@ export function resumoSemana(
     linhas.forEach((l) => {
       if (l.status.compradoEm) itensComprados++;
       if (l.status.recebidoOk) itensRecebidos++;
-      const cotado = precos[l.chave];
-      if (cotado > 0) custoEstimado += cotado * l.qtd;
+      // mesma engine de preços do cardápio: real → histórico (planilhas/aliases)
+      // → estimado, e converte g/ml → kg/lt antes de multiplicar pela quantidade.
+      const cotado = resolverPreco(l.chave, precos, estimativas).valor;
+      if (cotado > 0) custoEstimado += cotado * converterParaUnidadeBase(l.qtd, l.unid);
       const pago = l.status.precoPago ?? cotado;
-      if (pago > 0) custoReal += pago * (l.status.compradoQtd ?? l.qtd);
+      if (pago > 0) custoReal += pago * converterParaUnidadeBase(l.status.compradoQtd ?? l.qtd, l.unid);
     });
   });
 

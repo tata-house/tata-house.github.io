@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { Icone } from '@/components/Icones';
 import { resumoSemana } from '@/lib/cardapio/indicadores';
+import { useEstimativas } from '@/lib/cardapio/estimativas';
 import { formatarReais } from '@/lib/cardapio/motor';
 import type { EstadoSemana, Aceitacao, Etapa } from '@/lib/cardapio/tipos';
 import type { Papel } from '@/lib/cardapio/tipos';
@@ -139,7 +140,8 @@ interface Props {
 /* ── Componente principal ────────────────────────────────── */
 
 export function AbaAgora({ estado, precos, aceitacao, fatores, papel, irPara }: Props) {
-  const resumo = useMemo(() => resumoSemana(estado, precos, fatores), [estado, precos, fatores]);
+  const { estimativas } = useEstimativas();
+  const resumo = useMemo(() => resumoSemana(estado, precos, fatores, estimativas), [estado, precos, fatores, estimativas]);
   const etapa = estado.etapa;
   const media = useMemo(() => mediaAceitacaoGlobal(aceitacao), [aceitacao]);
   const podeEditar = papel === 'gestor' || papel === 'administrador' || papel === 'cozinha';

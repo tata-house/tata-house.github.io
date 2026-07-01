@@ -5,6 +5,7 @@ import { PERGUNTAS_SUGERIDAS, insightProativo, resumoEstrategico, responder, res
 import { montarDossieCompleto } from '@/lib/cardapio/estado';
 import { Icone } from '@/components/Icones';
 import { InteligenciaCard } from './InteligenciaCard';
+import { ChefIA } from './ChefIA';
 
 interface Fala {
   de: 'voce' | 'assistente';
@@ -12,7 +13,7 @@ interface Fala {
   itens?: string[];
 }
 
-type Aba = 'chat' | 'objetivos';
+type Aba = 'chat' | 'chefia' | 'objetivos';
 
 export function Assistente({
   contexto,
@@ -93,7 +94,7 @@ export function Assistente({
 
           {/* Abas */}
           <div className="flex border-b border-carvao-100 dark:border-carvao-700">
-            {(['chat', 'objetivos'] as const).map((a) => (
+            {(['chat', 'chefia', 'objetivos'] as const).map((a) => (
               <button
                 key={a}
                 onClick={() => setAba(a)}
@@ -103,7 +104,7 @@ export function Assistente({
                     : 'text-texto-suave hover:text-carvao-700 dark:text-carvao-500'
                 }`}
               >
-                {a === 'chat' ? 'Perguntar' : 'Objetivos'}
+                {a === 'chat' ? 'Perguntar' : a === 'chefia' ? 'Chef IA' : 'Objetivos'}
               </button>
             ))}
           </div>
@@ -215,6 +216,13 @@ export function Assistente({
                 </button>
               </form>
             </>
+          )}
+
+          {/* Conteúdo Chef IA — recomendações da semana, centralizadas aqui */}
+          {aba === 'chefia' && (
+            <div className="flex-1 overflow-y-auto p-4">
+              <ChefIA estado={contexto.estado} precos={contexto.precos} expandido />
+            </div>
           )}
 
           {/* Conteúdo Objetivos */}

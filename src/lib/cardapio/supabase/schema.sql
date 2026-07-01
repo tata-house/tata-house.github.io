@@ -32,6 +32,24 @@ drop policy if exists tata_estado_rw on public.tata_estado;
 create policy tata_estado_rw on public.tata_estado
   for all using (true) with check (true);
 
+-- Realtime: SEM isto, o app espelha para a nuvem mas os OUTROS aparelhos
+-- nunca recebem a mudança ao vivo (a assinatura postgres_changes fica muda).
+-- É o que faz o cardápio feito no celular aparecer na hora no computador.
+--   • replica identity full → os filtros por `espaco` funcionam em UPDATE.
+--   • add table …           → publica INSERT/UPDATE/DELETE de tata_estado.
+alter table public.tata_estado replica identity full;
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'tata_estado'
+  ) then
+    execute 'alter publication supabase_realtime add table public.tata_estado';
+  end if;
+end $$;
+
 -- ---------------------------------------------------------------------
 -- 2) Modelo relacional de referência (evolução futura)
 --    Mantido alinhado aos tipos de src/lib/cardapio/tipos.ts

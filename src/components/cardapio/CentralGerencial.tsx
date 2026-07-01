@@ -11,10 +11,12 @@ import { Cartao } from '@/components/ui';
 import { Icone } from '@/components/Icones';
 import {
   DIAS_SEMANA,
+  converterParaUnidadeBase,
   formatarReais,
   linhasDoDia,
   normalizar,
 } from '@/lib/cardapio/motor';
+import { resolverPreco } from '@/lib/cardapio/precos';
 import {
   useAuditoria,
   semanasComConteudo,
@@ -22,6 +24,7 @@ import {
   datasDaSemana,
   periodoSemana,
 } from '@/lib/cardapio/estado';
+import { useEstimativas } from '@/lib/cardapio/estimativas';
 import { indiceNutricionalSemana } from '@/lib/cardapio/nutricional';
 import type { EstadoSemana, HistoricoPrecos, Aceitacao } from '@/lib/cardapio/tipos';
 
@@ -55,6 +58,7 @@ export function CentralGerencial({
   fatores?: Record<string, number>;
 }) {
   const { registros: auditoria } = useAuditoria();
+  const { estimativas } = useEstimativas();
   const [periodo, setPeriodo] = useState<'semana' | 'mes' | 'tudo'>('semana');
 
   /* Semanas do período selecionado */
@@ -79,8 +83,12 @@ export function CentralGerencial({
         linhas.forEach((l) => {
           if (l.status.compradoEm) {
             itensComprados++;
-            if (l.status.precoPago) custoTotal += l.status.precoPago * (l.status.compradoQtd ?? l.qtd);
-            else if (precos[l.chave]) custoTotal += precos[l.chave] * l.qtd;
+            if (l.status.precoPago) {
+              custoTotal += l.status.precoPago * converterParaUnidadeBase(l.status.compradoQtd ?? l.qtd, l.unid);
+            } else {
+              const preco = resolverPreco(l.chave, precos, estimativas).valor;
+              if (preco > 0) custoTotal += preco * converterParaUnidadeBase(l.qtd, l.unid);
+            }
           }
           if (l.status.recebidoOk) itensRecebidos++;
         });
@@ -89,7 +97,7 @@ export function CentralGerencial({
     }
 
     return { custoTotal, itensComprados, itensRecebidos, totalRefeicoes, semanas: semanaIds.length };
-  }, [semanaIds, precos, fatores]);
+  }, [semanaIds, precos, estimativas, fatores]);
 
   /* Índice nutricional da semana atual */
   const nutri = useMemo(() => indiceNutricionalSemana(estado.dias), [estado.dias]);
@@ -183,8 +191,11 @@ export function CentralGerencial({
       for (let di = 0; di < 7; di++) {
         const linhas = linhasDoDia(s, di, fatores);
         linhas.forEach((l) => {
-          if (precos[l.chave]) custoEst += precos[l.chave] * l.qtd;
-          if (l.status.precoPago && l.status.compradoQtd) custoReal += l.status.precoPago * l.status.compradoQtd;
+          const preco = resolverPreco(l.chave, precos, estimativas).valor;
+          if (preco > 0) custoEst += preco * converterParaUnidadeBase(l.qtd, l.unid);
+          if (l.status.precoPago && l.status.compradoQtd) {
+            custoReal += l.status.precoPago * converterParaUnidadeBase(l.status.compradoQtd, l.unid);
+          }
         });
         pessoasPrev += s.dias[di]?.pessoas ?? 0;
         pessoasReal += s.refeicoes?.[di] ?? 0;

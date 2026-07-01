@@ -26,7 +26,6 @@ import { useAceitacao, semanasComConteudo, lerSemana } from '@/lib/cardapio/esta
 import type { Aceitacao, DiaCardapio, EstadoSemana, Proteina } from '@/lib/cardapio/tipos';
 import { SeletorPrato } from './SeletorPrato';
 import { OperacaoDia } from './OperacaoDia';
-import { ChefIA } from './ChefIA';
 import { PrevisaoPresenca } from './PrevisaoPresenca';
 import { ComoFazer } from './ComoFazer';
 import { NutricaoPrato } from './NutricaoPrato';
@@ -693,13 +692,12 @@ export function AbaCardapio({
       <Disclosure
         icone="insights"
         titulo="Análise da semana"
-        subtitulo="Termômetro, monotonia, Chef IA, nutrição e previsão de presença"
+        subtitulo="Termômetro, monotonia, nutrição e previsão de presença"
         aberto={analiseAberta}
         aoAlternar={() => setAnaliseAberta((a) => !a)}
       >
         <TermometroAlmoco estado={estado} />
         <AntiMonotonia estado={estado} />
-        <ChefIA estado={estado} precos={precos} />
         <IndicadorNutricional dias={estado.dias} />
         <PrevisaoPresenca estado={estado} atualizar={atualizar} podeEditar={podeEditar} />
       </Disclosure>

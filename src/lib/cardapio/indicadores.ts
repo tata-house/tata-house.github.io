@@ -224,7 +224,7 @@ export function calcularRoi(
       const atual = precos[c.norm];
       if (!serie || serie.length < 2 || !(atual > 0)) return;
       const media = serie.reduce((a, p) => a + p.valor, 0) / serie.length;
-      if (atual < media) economiaFornecedor += (media - atual) * c.qtd;
+      if (atual < media) economiaFornecedor += (media - atual) * converterParaUnidadeBase(c.qtd, c.unid);
     });
 
     // (2) desperdício abaixo da referência

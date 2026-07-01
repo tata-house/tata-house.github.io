@@ -4,7 +4,8 @@
    com base só nos dados deste dossiê. Nunca inventa métricas.
    ===================================================================== */
 
-import { normalizar, proteinaDoPrato, linhasDoDia } from './motor';
+import { normalizar, proteinaDoPrato, linhasDoDia, converterParaUnidadeBase } from './motor';
+import { resolverPreco } from './precos';
 import { analisarRadar } from './radar';
 import { resumoSemana, alertasEstoque } from './indicadores';
 import type {
@@ -186,7 +187,7 @@ export function montarDossie(
   const custoMap = new Map<string, { item: string; custo: number }>();
   estado.dias.forEach((_, di) => {
     linhasDoDia(estado, di).forEach((l) => {
-      const c = (precos[l.chave] ?? 0) * l.qtd;
+      const c = resolverPreco(l.chave, precos).valor * converterParaUnidadeBase(l.qtd, l.unid);
       const prev = custoMap.get(l.chave) ?? { item: l.item, custo: 0 };
       custoMap.set(l.chave, { item: l.item, custo: prev.custo + c });
     });

@@ -456,8 +456,8 @@ export default function ManualPage() {
           <p className="font-semibold text-gray-800">Inteligência dentro do Cardápio:</p>
 
           <div className="space-y-2">
-            <Card titulo="🤖 Chef IA — sugestões com raciocínio"
-              desc="Analisa aceitação histórica, custo atual dos ingredientes e variedade da semana. Três modos: Tradicional (pratos aprovados pelo histórico), Novo (combinações ainda não testadas), Personalizado (você define as regras)."
+            <Card titulo="🤖 Chef IA — agora dentro do chat de Inteligência"
+              desc="As recomendações do Chef IA ficam centralizadas no assistente de Inteligência (botão flutuante no canto), na aba 'Chef IA'. Ele analisa a semana montada e aponta oportunidades de economia, pratos com baixa aceitação, excesso de uma mesma proteína, repetição das últimas 4 semanas, ingredientes sem preço e risco de desperdício. Você aprova (👍) ou descarta (👎) cada dica e ele aprende com o time."
               cor="green" />
             <Card titulo="🔄 Anti-monotonia"
               desc='Detecta quando a mesma proteína aparece muitas vezes na semana e avisa antes de você salvar. "Frango 3× esta semana — considere variar para manter a equipe satisfeita."'
@@ -843,6 +843,7 @@ export default function ManualPage() {
             <Card titulo="DNA & Rankings" desc="A história da casa em linha do tempo + perfil alimentar: proteínas mais usadas, campeões de aceitação, pratos a evitar e os 485 dias de operação." cor="purple" />
             <Card titulo="Previsão" desc="Projeção de demanda com três cenários — pessimista, esperado e otimista. Aplique diretamente ao cardápio para recalcular a lista de compras." cor="green" />
             <Card titulo="Fornecedores" desc="O Comprador Virtual: abre com o parecer e a economia possível, depois o radar de preços com tendências e alertas de variação anormal por fornecedor." cor="gray" />
+            <Card titulo="Gastos reais" desc="Gastos de verdade da planilha jan–mai/2026: total e média mensal, evolução mês a mês com variação % e o ranking dos itens que mais pesam no orçamento." cor="green" />
             <Card titulo="Auditoria" desc="Histórico completo de tudo que foi alterado — quem mudou, o quê e quando. Exclusivo para Administrador." cor="yellow" />
           </div>
         </Secao>
@@ -951,6 +952,9 @@ export default function ManualPage() {
 
           <Destaque cor="blue" icone="💬"
             texto="Depois da abertura, pergunte o que quiser em linguagem natural. O Assistente conhece os pratos, fornecedores, preços e histórico desta casa — responde com os dados reais, não com estimativas genéricas." />
+
+          <Destaque cor="green" icone="🤖"
+            texto="Três abas num só lugar: 'Perguntar' (o chat), 'Chef IA' (as recomendações da semana — economia, baixa aceitação, excesso de proteína, repetição, risco de desperdício) e 'Objetivos'. Toda a inteligência do sistema centralizada aqui, sem se perder no meio das telas." />
 
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {[
@@ -1096,6 +1100,14 @@ export default function ManualPage() {
               {
                 p: 'O Briefing sumiu o aviso dourado de destaque da IA. Onde foi parar?',
                 r: 'O aviso proativo foi integrado diretamente ao Briefing. Quando não há alertas urgentes, o Briefing exibe o ícone ⚡ com o insight mais relevante da semana e o link "Analisar com IA →". A informação está no mesmo lugar — só deixou de ser um banner separado para ficar mais limpo.',
+              },
+              {
+                p: 'Montei o cardápio no celular e não apareceu no computador. Por quê?',
+                r: 'Quando a nuvem está ligada, tudo sincroniza sozinho entre os aparelhos, ao vivo — o que você monta no celular aparece no computador em segundos, sem recarregar. Confira o indicador no topo: "Sincronizado" (bolinha verde) = nuvem ativa. Se não aparecer nenhum indicador, o aparelho está trabalhando só localmente (os dados ficam salvos nele, mas não viajam para os outros) — nesse caso o gestor precisa ativar a nuvem nas configurações do sistema.',
+              },
+              {
+                p: 'Onde encontro o Chef IA agora?',
+                r: 'O Chef IA foi centralizado no assistente de Inteligência — o botão flutuante no canto inferior direito. Toque nele e vá na aba "Chef IA" para ver as recomendações da semana. Antes ele ficava no meio da aba Cardápio; agora toda a inteligência mora num lugar só.',
               },
             ].map((item, i) => (
               <div key={i} className="rounded-2xl bg-gray-50 p-4">

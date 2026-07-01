@@ -15,6 +15,7 @@ import { Cartao, Pilula } from '@/components/ui';
 import {
   DADOS,
   DIAS_SEMANA,
+  converterParaUnidadeBase,
   formatarReais,
   listaDoDia,
   normalizar,
@@ -23,7 +24,7 @@ import {
 import { resolverPreco } from '@/lib/cardapio/precos';
 import { receitaDoPrato, RECEITAS_POR_CATEGORIA } from '@/lib/cardapio/receitas';
 import { useEstimativas } from '@/lib/cardapio/estimativas';
-import { useHistoricoPrecos, useAceitacao, useChefFeedback, semanasComConteudo, lerSemana } from '@/lib/cardapio/estado';
+import { useAceitacao, useChefFeedback, semanasComConteudo, lerSemana } from '@/lib/cardapio/estado';
 import type { DiaCardapio, EstadoSemana } from '@/lib/cardapio/tipos';
 
 /* Pratos que nunca devem ser sugeridos como prato principal de almoço */
@@ -59,7 +60,6 @@ export function ChefIA({
   expandido?: boolean;
 }) {
   const { estimativas } = useEstimativas();
-  const historico = useHistoricoPrecos();
   const { aceitacao } = useAceitacao();
   const { vetados, registrar, feedbacks } = useChefFeedback();
   const [motivoAberto, setMotivoAberto] = useState<string | null>(null);
@@ -94,7 +94,7 @@ export function ChefIA({
         pessoas: base, principal: nome,
         guarnicaoFixa: '', guarnicao: '', salada: '', sobremesa: '',
       };
-      const total = listaDoDia(dia).reduce((t, s) => t + precoItem(normalizar(s.item)) * s.qtd, 0);
+      const total = listaDoDia(dia).reduce((t, s) => t + precoItem(normalizar(s.item)) * converterParaUnidadeBase(s.qtd, s.unid), 0);
       return total / base;
     };
 
@@ -210,7 +210,7 @@ export function ChefIA({
     return out
       .filter((d) => !vetados.has(hashDica(d.icone, d.texto)))
       .slice(0, expandido ? 10 : 5);
-  }, [estado.dias, precos, estimativas, historico, aceitacao, vetados, frequenciaRecente, expandido]);
+  }, [estado.dias, precos, estimativas, aceitacao, vetados, frequenciaRecente, expandido]);
 
   const darFeedback = (dica: Dica, voto: 'bom' | 'ruim') => {
     const hash = hashDica(dica.icone, dica.texto);

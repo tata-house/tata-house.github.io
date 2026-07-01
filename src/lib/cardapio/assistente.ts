@@ -8,7 +8,8 @@
    há chave configurada; em caso de falha caem no modo baseado em regras.
    ===================================================================== */
 
-import { formatarQtd, formatarReais, normalizar, proteinaDoPrato } from './motor';
+import { formatarQtd, formatarReais, normalizar, proteinaDoPrato, converterParaUnidadeBase } from './motor';
+import { resolverPreco } from './precos';
 import { consumoDaSemana, alertasEstoque } from './indicadores';
 import { analisarRadar, fraseAlerta } from './radar';
 import type { Aceitacao, Estoque, EstadoSemana, HistoricoPrecos } from './tipos';
@@ -41,7 +42,7 @@ export const PERGUNTAS_SUGERIDAS = [
 
 function gastosDaSemana(ctx: ContextoAssistente) {
   return consumoDaSemana(ctx.estado, ctx.fatores)
-    .map((c) => ({ item: c.item, unid: c.unid, qtd: c.qtd, custo: (ctx.precos[c.norm] ?? 0) * c.qtd }))
+    .map((c) => ({ item: c.item, unid: c.unid, qtd: c.qtd, custo: resolverPreco(c.norm, ctx.precos).valor * converterParaUnidadeBase(c.qtd, c.unid) }))
     .filter((x) => x.custo > 0)
     .sort((a, b) => b.custo - a.custo);
 }

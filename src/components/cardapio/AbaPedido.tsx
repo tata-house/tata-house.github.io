@@ -12,11 +12,14 @@ import { Botao, Cartao } from '@/components/ui';
 import { Icone } from '@/components/Icones';
 import {
   DIAS_SEMANA,
+  converterParaUnidadeBase,
   formatarQtd,
   formatarReais,
   linhasDoDia,
 } from '@/lib/cardapio/motor';
+import { resolverPreco } from '@/lib/cardapio/precos';
 import { periodoSemana, useMostrarBasicos } from '@/lib/cardapio/estado';
+import { useEstimativas } from '@/lib/cardapio/estimativas';
 import type { EstadoSemana, Papel, PerfilFornecedor } from '@/lib/cardapio/tipos';
 
 /* ── tipos locais ─────────────────────────────────────────────────── */
@@ -116,6 +119,7 @@ function ImpressaoPedido({
   semanaId,
   pedido,
   precos,
+  estimativas,
 }: {
   aberto: boolean;
   aoFechar: () => void;
@@ -123,6 +127,7 @@ function ImpressaoPedido({
   semanaId: string;
   pedido: EstadoPedido;
   precos: Record<string, number>;
+  estimativas: Record<string, number>;
 }) {
   useEffect(() => {
     const esc = (e: KeyboardEvent) => e.key === 'Escape' && aoFechar();
@@ -162,7 +167,7 @@ function ImpressaoPedido({
             .map(([nomeForn, itens]) => {
               const custoForn = itens.reduce((s, i) => {
                 const qtd = pedido[i.chave]?.qtdOverride ?? i.qtd;
-                return s + (precos[i.chave] ?? 0) * qtd;
+                return s + resolverPreco(i.chave, precos, estimativas).valor * converterParaUnidadeBase(qtd, i.unid);
               }, 0);
               return (
                 <div key={nomeForn} className="py-5 print:break-inside-avoid">
@@ -233,6 +238,7 @@ export function AbaPedido({
   papel: Papel;
 }) {
   const { mostrarBasicos } = useMostrarBasicos();
+  const { estimativas } = useEstimativas();
   const { pedido, setItem } = usePedido(semanaId);
   const [impAberto, setImpAberto] = useState(false);
 
@@ -275,12 +281,12 @@ export function AbaPedido({
     Array.from(itensSemana.values()).forEach((item) => {
       totalItens++;
       if (pedido[item.chave]?.confirmado) totalConfirmados++;
-      const preco = precos[item.chave] ?? 0;
+      const preco = resolverPreco(item.chave, precos, estimativas).valor;
       const qtd = pedido[item.chave]?.qtdOverride ?? item.qtd;
-      if (preco > 0) custoEstimado += preco * qtd;
+      if (preco > 0) custoEstimado += preco * converterParaUnidadeBase(qtd, item.unid);
     });
     return { totalItens, totalConfirmados, custoEstimado };
-  }, [itensSemana, pedido, precos]);
+  }, [itensSemana, pedido, precos, estimativas]);
 
   if (itensSemana.size === 0) {
     return (
@@ -303,6 +309,7 @@ export function AbaPedido({
         semanaId={semanaId}
         pedido={pedido}
         precos={precos}
+        estimativas={estimativas}
       />
     <div className="space-y-4">
       {/* resumo */}

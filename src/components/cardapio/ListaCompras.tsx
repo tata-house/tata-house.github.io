@@ -16,6 +16,7 @@ import { Botao, Cartao, Modal, Pilula, estiloInput } from '@/components/ui';
 import { Icone } from '@/components/Icones';
 import { DADOS, DIAS_SEMANA, formatarQtd, formatarReais, linhasDoDia, normalizar } from '@/lib/cardapio/motor';
 import { resolverPreco } from '@/lib/cardapio/precos';
+import { ehRemetenteInterno } from '@/lib/cardapio/cotacao';
 import comparativoJson from '@/lib/cardapio/comparativo-fornecedores.json';
 import { confiancaPreco, COR_CONFIANCA } from '@/lib/cardapio/confianca';
 
@@ -106,10 +107,11 @@ export function ListaCompras({
 
   /** Opções de fornecedor de um item: ofertas salvas + o fornecedor atual. */
   const opcoesFornecedor = (chave: string): { fornecedor: string; preco: number }[] => {
-    const lista = [...(ofertas[chave] ?? [])];
+    // Remetentes internos (Érika / Tatá Sushi Compras) nunca aparecem como opção.
+    const lista = [...(ofertas[chave] ?? [])].filter((o) => !ehRemetenteInterno(o.fornecedor));
     const atualForn = fornecedores[chave];
     const atualPreco = precos[chave];
-    if (atualForn && !lista.some((o) => o.fornecedor.toLowerCase() === atualForn.toLowerCase())) {
+    if (atualForn && !ehRemetenteInterno(atualForn) && !lista.some((o) => o.fornecedor.toLowerCase() === atualForn.toLowerCase())) {
       lista.push({ fornecedor: atualForn, preco: atualPreco ?? 0 });
     }
     return lista.sort((a, b) => a.preco - b.preco);
@@ -351,7 +353,7 @@ export function ListaCompras({
                             // cotação não gravou um explicitamente.
                             const fornAtribuido = fornecedores[l.chave];
                             const forn = fornAtribuido
-                              || ofertas[l.chave]?.slice().sort((a, b) => a.preco - b.preco)[0]?.fornecedor
+                              || ofertas[l.chave]?.filter((o) => !ehRemetenteInterno(o.fornecedor)).sort((a, b) => a.preco - b.preco)[0]?.fornecedor
                               || COMPARATIVO[l.chave]?.[0]?.f;
                             const fornDaPlanilha = !fornAtribuido && !!forn;
                             if (!forn && pr.valor <= 0) return null;

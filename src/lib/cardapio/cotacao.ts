@@ -73,6 +73,9 @@ const FORNECEDORES_BASE: [RegExp, string][] = [
  */
 const NAO_FORNECEDORES = new Set<string>(['erika']);
 
+/** Frases da própria casa que encaminha as cotações — nunca são fornecedor. */
+const FRASES_INTERNAS = ['tata sushi', 'tata house', 'sushi compras', 'compras erika'];
+
 /** Marca um nome como remetente interno (nunca tratado como fornecedor). */
 export function bloquearRemetente(nome: string) {
   const n = normalizar(nome);
@@ -85,6 +88,8 @@ export function ehRemetenteInterno(nome: string | null | undefined): boolean {
   const n = normalizar(nome);
   if (!n) return false;
   if (NAO_FORNECEDORES.has(n)) return true;
+  // frases da própria casa: "Tatá Sushi Compras - Érika", "Tatá House" etc.
+  if (FRASES_INTERNAS.some((f) => n.includes(f))) return true;
   // também pega "Erika Compras", "[10:32] Erika:" → o primeiro nome próprio
   const palavras = n.split(/\s+/);
   return palavras.some((p) => NAO_FORNECEDORES.has(p));

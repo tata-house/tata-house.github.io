@@ -158,10 +158,23 @@ export function BootNuvem() {
       sessionStorage.setItem('nuvem.boot', '1');
       (async () => {
         try {
-          const chaves = await armazenamentoSupabase.listarChaves();
-          for (const chave of chaves) {
+          const chavesNuvem = await armazenamentoSupabase.listarChaves();
+          const setNuvem = new Set(chavesNuvem);
+          for (const chave of chavesNuvem) {
             const valorNuvem = await armazenamentoSupabase.ler<unknown>(chave, null);
             aplicarLocal(chave, valorNuvem);
+          }
+          // Empurra o que existe SÓ neste aparelho e nunca subiu (ex.: o
+          // cardápio da semana atual, fornecedores/ofertas de uma cotação
+          // aplicada offline). Só preenche lacunas — nunca sobrescreve a nuvem.
+          for (let i = 0; i < localStorage.length; i++) {
+            const kFull = localStorage.key(i);
+            if (!kFull || !kFull.startsWith(PREFIXO)) continue;
+            const k = kFull.slice(PREFIXO.length);
+            if (k.startsWith('__') || setNuvem.has(k)) continue;
+            const raw = localStorage.getItem(kFull);
+            if (raw == null) continue;
+            try { recentes.set(k, Date.now()); subir(k, JSON.parse(raw)); } catch { /* não-JSON */ }
           }
           definirStatusNuvem('online');
           flush(); // reenvia o que ficou pendente de sessões offline anteriores

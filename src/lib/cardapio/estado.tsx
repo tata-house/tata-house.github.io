@@ -484,7 +484,20 @@ export type Ofertas = Record<string, Oferta[]>;
 export function useOfertas() {
   const [ofertas, setOfertas] = useState<Ofertas>({});
 
-  const recarregar = useCallback(() => setOfertas(lerLocal('ofertas', {})), []);
+  const recarregar = useCallback(() => {
+    // Limpa ofertas de remetentes internos (Érika / Tatá Sushi Compras) que
+    // tenham sido gravadas antes desta regra — nunca são fornecedores.
+    const bruto = lerLocal<Ofertas>('ofertas', {});
+    let mudou = false;
+    const limpo: Ofertas = {};
+    for (const [item, lista] of Object.entries(bruto)) {
+      const filtrada = (lista ?? []).filter((o) => !ehRemetenteInterno(o.fornecedor));
+      if (filtrada.length !== (lista ?? []).length) mudou = true;
+      if (filtrada.length) limpo[item] = filtrada;
+    }
+    if (mudou) gravarLocal('ofertas', limpo);
+    setOfertas(limpo);
+  }, []);
   useEffect(() => { recarregar(); }, [recarregar]);
   useReleituraExterna('ofertas', recarregar);
 
@@ -492,6 +505,8 @@ export function useOfertas() {
   const registrarOferta = useCallback((itemNorm: string, fornecedor: string, preco: number) => {
     const nome = fornecedor.trim();
     if (!nome || !(preco > 0)) return;
+    // Remetente interno (Érika / Tatá Sushi Compras) nunca vira oferta.
+    if (ehRemetenteInterno(nome)) return;
     setOfertas((atual) => {
       const lista = atual[itemNorm] ?? [];
       const i = lista.findIndex((o) => o.fornecedor.toLowerCase() === nome.toLowerCase());

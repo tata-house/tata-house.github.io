@@ -496,6 +496,36 @@ export default function PaginaCardapios() {
 
   const semanaAtualId = idSemanaIso(new Date());
 
+  // Sincronização entre aparelhos: a semana do calendário pode estar vazia
+  // enquanto o cardápio ativo está em outra semana já sincronizada (ex.: montado
+  // no celular na semana passada). Quando os dados chegam da nuvem, abre a semana
+  // que tem cardápio — uma única vez e só se o usuário não navegou/deep-linkou,
+  // para nunca atrapalhar quem está começando uma semana nova.
+  const jaAbriuSemanaCheia = useRef(false);
+  useEffect(() => {
+    if (jaAbriuSemanaCheia.current) return;
+    if (lerHashNav().sub) { jaAbriuSemanaCheia.current = true; return; }
+    const abrirSeVazia = () => {
+      if (jaAbriuSemanaCheia.current) return;
+      const atual = lerSemana(semanaId);
+      if (atual.dias?.some((d) => d.principal)) { jaAbriuSemanaCheia.current = true; return; }
+      const comConteudo = semanasComConteudo();
+      const alvo = comConteudo[comConteudo.length - 1]; // mais recente com cardápio
+      if (alvo && alvo !== semanaId) {
+        jaAbriuSemanaCheia.current = true;
+        setSemanaId(alvo);
+        toast('Abrindo o cardápio sincronizado de outro aparelho');
+      }
+    };
+    abrirSeVazia();
+    const onExterno = (e: Event) => {
+      const chave = (e as CustomEvent<{ chave?: string }>).detail?.chave;
+      if (chave?.startsWith('semana.')) abrirSeVazia();
+    };
+    window.addEventListener('tata:chave-externa', onExterno);
+    return () => window.removeEventListener('tata:chave-externa', onExterno);
+  }, [semanaId]);
+
   const abasPermitidas = useMemo(() => abasDoPapel(papel), [papel]);
   const gruposVisiveis = useMemo(
     () => GRUPOS.filter((g) => g.abas.some((a) => abasPermitidas.includes(a as AbaId))),

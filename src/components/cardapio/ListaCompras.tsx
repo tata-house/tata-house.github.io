@@ -16,7 +16,11 @@ import { Botao, Cartao, Modal, Pilula, estiloInput } from '@/components/ui';
 import { Icone } from '@/components/Icones';
 import { DADOS, DIAS_SEMANA, formatarQtd, formatarReais, linhasDoDia, normalizar } from '@/lib/cardapio/motor';
 import { resolverPreco } from '@/lib/cardapio/precos';
+import comparativoJson from '@/lib/cardapio/comparativo-fornecedores.json';
 import { confiancaPreco, COR_CONFIANCA } from '@/lib/cardapio/confianca';
+
+/** Comparativo de fornecedores (planilha): item norm → cotações por preço. */
+const COMPARATIVO = comparativoJson as Record<string, { f: string; p: number; u?: string }[]>;
 import type { EstadoSemana, HistoricoPrecos } from '@/lib/cardapio/tipos';
 
 function hojeIso(): string {
@@ -342,12 +346,22 @@ export function ListaCompras({
                             // histórico/planilha → estimado), não só os cotados na mão.
                             const pr = resolverPreco(l.chave, precos, estimativas);
                             const temDireto = precos[l.chave] > 0;
-                            const forn = fornecedores[l.chave];
+                            // Fornecedor: o atribuído → oferta mais barata → comparativo
+                            // da planilha. Assim o item mostra fornecedor mesmo quando a
+                            // cotação não gravou um explicitamente.
+                            const fornAtribuido = fornecedores[l.chave];
+                            const forn = fornAtribuido
+                              || ofertas[l.chave]?.slice().sort((a, b) => a.preco - b.preco)[0]?.fornecedor
+                              || COMPARATIVO[l.chave]?.[0]?.f;
+                            const fornDaPlanilha = !fornAtribuido && !!forn;
                             if (!forn && pr.valor <= 0) return null;
                             return (
                               <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-micro font-semibold text-brand-600 dark:text-brand-300">
                                 <span>
                                   {forn || 'fornecedor não informado'}
+                                  {fornDaPlanilha && (
+                                    <span className="ml-1 text-[9px] font-bold uppercase tracking-wide text-texto-suave">sug.</span>
+                                  )}
                                   {pr.valor > 0 && (
                                     <span className="font-normal text-texto-suave">
                                       {' · '}{formatarReais(pr.valor)}/{unidAtual}

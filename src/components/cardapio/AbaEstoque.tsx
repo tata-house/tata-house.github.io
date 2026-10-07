@@ -8,6 +8,7 @@ import { DADOS, formatarQtd, normalizar } from '@/lib/cardapio/motor';
 import { consumoDaSemana, necessidadeDeCompra } from '@/lib/cardapio/indicadores';
 import { periodoSemana } from '@/lib/cardapio/estado';
 import { AbaInventario } from './AbaInventario';
+import { CampoNumeroEstoque } from './CampoNumeroEstoque';
 import type { Estoque, EstadoSemana, MovEstoque } from '@/lib/cardapio/tipos';
 
 /* ── Impressão da lista de compras ───────────────────────────────────── */
@@ -370,26 +371,21 @@ export function AbaEstoque({
                   <div className="flex items-center gap-2 text-sm">
                     <label className="flex items-center gap-1">
                       <span className="text-micro uppercase text-texto-suave">saldo</span>
-                      <input
-                        type="number"
-                        min={0}
-                        step="0.1"
+                      <CampoNumeroEstoque
+                        valor={e.qtd}
+                        ariaLabel={`Saldo de ${e.item}`}
                         disabled={!podeEditar}
-                        value={e.qtd}
-                        onChange={(ev) => definirSaldo(norm, e.item, e.unid, Number(ev.target.value))}
+                        aoConfirmar={(valor) => definirSaldo(norm, e.item, e.unid, valor)}
                         className="w-20 rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-right font-bold disabled:opacity-50 dark:border-carvao-600 dark:bg-carvao-900"
                       />
                     </label>
                     <label className="flex items-center gap-1">
                       <span className="text-micro uppercase text-texto-suave">mín.</span>
-                      <input
-                        type="number"
-                        min={0}
-                        step="0.1"
+                      <CampoNumeroEstoque
+                        valor={e.minimo}
+                        ariaLabel={`Estoque mínimo de ${e.item}`}
                         disabled={!podeEditar}
-                        value={e.minimo || ''}
-                        placeholder="0"
-                        onChange={(ev) => definirMinimo(norm, e.item, e.unid, Number(ev.target.value))}
+                        aoConfirmar={(valor) => definirMinimo(norm, e.item, e.unid, valor)}
                         className="w-16 rounded-xl border border-carvao-200 bg-white px-2 py-1.5 text-right font-bold disabled:opacity-50 dark:border-carvao-600 dark:bg-carvao-900"
                       />
                     </label>

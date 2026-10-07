@@ -94,6 +94,107 @@ function mesclarNo(base: TalvezAusente, local: TalvezAusente, remoto: TalvezAuse
 
 export interface ResultadoMesclaConcorrente { valor: unknown; conflitos: string[]; }
 
+function timestampEstoque(v: TalvezAusente): number {
+  if (!objeto(v) || typeof v.atualizadoEm !== 'string') return Number.NEGATIVE_INFINITY;
+  const t = Date.parse(v.atualizadoEm);
+  return Number.isFinite(t) ? t : Number.NEGATIVE_INFINITY;
+}
+
+function semTimestampEstoque(v: TalvezAusente): TalvezAusente {
+  if (!objeto(v)) return v;
+  const { atualizadoEm: _ignorar, ...resto } = v;
+  return resto;
+}
+
+function mesclarItemEstoque(
+  base: TalvezAusente,
+  local: TalvezAusente,
+  remoto: TalvezAusente,
+  caminho: string,
+): Interno {
+  if (igual(local, remoto)) return { valor: local, conflitos: [] };
+  if (igual(local, base)) return { valor: remoto, conflitos: [] };
+  if (igual(remoto, base)) return { valor: local, conflitos: [] };
+
+  if (objeto(local) && objeto(remoto)) {
+    const tl = timestampEstoque(local);
+    const tr = timestampEstoque(remoto);
+    const localMaisNovo = tl >= tr;
+    // mesclarNo preserva o primeiro lado em folhas conflitantes. Colocamos
+    // primeiro o item mais novo, mas ainda aproveitamos do outro lado todos
+    // os campos que não conflitam.
+    const semTs = mesclarNo(
+      semTimestampEstoque(base),
+      semTimestampEstoque(localMaisNovo ? local : remoto),
+      semTimestampEstoque(localMaisNovo ? remoto : local),
+      caminho,
+    );
+    const atualizadoEm = localMaisNovo ? local.atualizadoEm : remoto.atualizadoEm;
+
+    if (semTs.conflitos.length === 0 && objeto(semTs.valor)) {
+      return {
+        valor: typeof atualizadoEm === 'string'
+          ? { ...semTs.valor, atualizadoEm }
+          : semTs.valor,
+        conflitos: [],
+      };
+    }
+
+    // Se o mesmo campo foi alterado nos dois aparelhos, o carimbo de atualização
+    // resolve apenas as folhas conflitantes; alterações independentes continuam
+    // combinadas no resultado.
+    if (tl !== tr && objeto(semTs.valor) && (Number.isFinite(tl) || Number.isFinite(tr))) {
+      return {
+        valor: typeof atualizadoEm === 'string'
+          ? { ...semTs.valor, atualizadoEm }
+          : semTs.valor,
+        conflitos: [],
+      };
+    }
+  }
+
+  return { valor: local, conflitos: [caminho || '(estoque)'] };
+}
+
+function ehMapaEstoque(v: unknown): v is Record<string, unknown> {
+  return !!v && typeof v === 'object' && !Array.isArray(v);
+}
+
+/**
+ * Estoque é um mapa de itens independentes. Um conflito em um produto não pode
+ * bloquear todos os outros produtos. Cada item já carrega atualizadoEm, então
+ * ele pode convergir por item mesmo após suspensão/reentrada de um aparelho.
+ */
+export function mesclarEstoqueConcorrenteSeguro(
+  baseConhecida: boolean,
+  base: unknown,
+  local: unknown,
+  remoto: unknown,
+): ResultadoMesclaConcorrente {
+  if (!ehMapaEstoque(local) || !ehMapaEstoque(remoto) || (baseConhecida && !ehMapaEstoque(base))) {
+    return mesclarDocumentoConcorrenteSeguro(baseConhecida, base, local, remoto);
+  }
+
+  const b = baseConhecida && ehMapaEstoque(base) ? base : {};
+  const chaves = new Set([...Object.keys(b), ...Object.keys(local), ...Object.keys(remoto)]);
+  const saida: Record<string, unknown> = {};
+  const conflitos: string[] = [];
+
+  for (const chave of chaves) {
+    const item = mesclarItemEstoque(
+      Object.prototype.hasOwnProperty.call(b, chave) ? b[chave] : AUSENTE,
+      Object.prototype.hasOwnProperty.call(local, chave) ? local[chave] : AUSENTE,
+      Object.prototype.hasOwnProperty.call(remoto, chave) ? remoto[chave] : AUSENTE,
+      chave,
+    );
+    conflitos.push(...item.conflitos);
+    if (item.valor !== AUSENTE) saida[chave] = item.valor;
+  }
+
+  return { valor: saida, conflitos };
+}
+
+
 export function mesclarDocumentoConcorrente(base: unknown, local: unknown, remoto: unknown): ResultadoMesclaConcorrente {
   const r = mesclarNo(base, local, remoto, '');
   return { valor: r.valor === AUSENTE ? null : r.valor, conflitos: r.conflitos };

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mesclarDocumentoConcorrente, mesclarDocumentoConcorrenteSeguro, selecionarBaseConcorrente } from './sync-concorrente';
+import { mesclarDocumentoConcorrente, mesclarDocumentoConcorrenteSeguro, mesclarEstoqueConcorrenteSeguro, selecionarBaseConcorrente } from './sync-concorrente';
 
 describe('sync-concorrente', () => {
   it('preserva edicoes simultaneas em itens diferentes do mesmo mapa', () => {
@@ -94,6 +94,78 @@ describe('sync-concorrente', () => {
     expect(b.conhecida).toBe(false);
     const r = mesclarDocumentoConcorrenteSeguro(b.conhecida, b.valor, { arroz: 12 }, { arroz: 10 });
     expect(r.conflitos).toEqual(['(base-desconhecida)']);
+  });
+
+
+  it('estoque não deixa um conflito antigo bloquear os demais itens', () => {
+    const base = {
+      feijao: { item: 'Feijão', unid: 'kg', qtd: 26, minimo: 22, atualizadoEm: '2026-10-07T18:00:00.000Z' },
+      oleo: { item: 'Óleo', unid: 'un', qtd: 35, minimo: 0, atualizadoEm: '2026-10-07T18:00:00.000Z' },
+    };
+    const local = {
+      feijao: { ...base.feijao, qtd: 18, atualizadoEm: '2026-10-07T18:07:43.040Z' },
+      oleo: { ...base.oleo, qtd: 17, atualizadoEm: '2026-10-07T18:10:45.772Z' },
+    };
+    const remoto = {
+      feijao: { ...base.feijao, qtd: 0, atualizadoEm: '2026-10-07T18:07:41.303Z' },
+      oleo: base.oleo,
+    };
+    const r = mesclarEstoqueConcorrenteSeguro(true, base, local, remoto);
+    expect(r.conflitos).toEqual([]);
+    expect((r.valor as typeof local).feijao.qtd).toBe(18);
+    expect((r.valor as typeof local).oleo.qtd).toBe(17);
+  });
+
+  it('estoque converge mesmo sem base usando a atualização mais nova de cada item', () => {
+    const local = {
+      feijao: { item: 'Feijão', unid: 'kg', qtd: 18, minimo: 22, atualizadoEm: '2026-10-07T18:07:43.040Z' },
+      leite: { item: 'Leite', unid: 'lt', qtd: 11, minimo: 0, atualizadoEm: '2026-10-07T18:09:09.858Z' },
+    };
+    const remoto = {
+      feijao: { item: 'Feijão', unid: 'kg', qtd: 0, minimo: 22, atualizadoEm: '2026-10-07T18:07:41.303Z' },
+      oleo: { item: 'Óleo', unid: 'un', qtd: 35, minimo: 0, atualizadoEm: '2026-09-30T14:27:57.808Z' },
+    };
+    const r = mesclarEstoqueConcorrenteSeguro(false, undefined, local, remoto);
+    expect(r.conflitos).toEqual([]);
+    expect(r.valor).toEqual({
+      feijao: local.feijao,
+      leite: local.leite,
+      oleo: remoto.oleo,
+    });
+  });
+
+  it('estoque preserva alterações concorrentes em campos diferentes do mesmo item', () => {
+    const base = {
+      arroz: { item: 'Arroz', unid: 'kg', qtd: 10, minimo: 5, atualizadoEm: '2026-10-07T10:00:00.000Z' },
+    };
+    const local = {
+      arroz: { ...base.arroz, qtd: 8, atualizadoEm: '2026-10-07T10:01:00.000Z' },
+    };
+    const remoto = {
+      arroz: { ...base.arroz, minimo: 6, atualizadoEm: '2026-10-07T10:02:00.000Z' },
+    };
+    const r = mesclarEstoqueConcorrenteSeguro(true, base, local, remoto);
+    expect(r.conflitos).toEqual([]);
+    expect(r.valor).toEqual({
+      arroz: { item: 'Arroz', unid: 'kg', qtd: 8, minimo: 6, atualizadoEm: '2026-10-07T10:02:00.000Z' },
+    });
+  });
+
+  it('estoque resolve o campo conflitante pelo item mais novo sem perder outro campo remoto', () => {
+    const base = {
+      arroz: { item: 'Arroz', unid: 'kg', qtd: 10, minimo: 5, atualizadoEm: '2026-10-07T10:00:00.000Z' },
+    };
+    const local = {
+      arroz: { ...base.arroz, qtd: 8, atualizadoEm: '2026-10-07T10:03:00.000Z' },
+    };
+    const remoto = {
+      arroz: { ...base.arroz, qtd: 9, minimo: 6, atualizadoEm: '2026-10-07T10:02:00.000Z' },
+    };
+    const r = mesclarEstoqueConcorrenteSeguro(true, base, local, remoto);
+    expect(r.conflitos).toEqual([]);
+    expect(r.valor).toEqual({
+      arroz: { item: 'Arroz', unid: 'kg', qtd: 8, minimo: 6, atualizadoEm: '2026-10-07T10:03:00.000Z' },
+    });
   });
 
   it('fila online 10 para 11 para 12 usa 11 como base depois do primeiro upload confirmado', () => {

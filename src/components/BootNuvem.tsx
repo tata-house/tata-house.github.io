@@ -33,7 +33,7 @@ import {
 import { ehChaveEstadoGrande } from '@/lib/cardapio/estado-grande-merge';
 import { inicializarOutbox, listarOutbox, removerOutbox, salvarOutbox } from '@/lib/cardapio/sync-outbox';
 import { adicionarEcoRecente, ehEcoProprio, serializarCanonico, type EcoRecente } from '@/lib/cardapio/sync-util';
-import { ehChaveConcorrente, mesclarDocumentoConcorrenteSeguro, selecionarBaseConcorrente } from '@/lib/cardapio/sync-concorrente';
+import { ehChaveConcorrente, mesclarDocumentoConcorrenteSeguro, mesclarEstoqueConcorrenteSeguro, selecionarBaseConcorrente } from '@/lib/cardapio/sync-concorrente';
 import { definirArmazenamentoLocalCheio } from '@/lib/cardapio/aviso-armazenamento';
 import { mesclarSemana } from '@/lib/cardapio/merge-semana';
 import { listaDoDia, normalizar } from '@/lib/cardapio/motor';
@@ -282,12 +282,19 @@ export function BootNuvem() {
                 basesConcorrentes.get(k),
                 baseHint,
               );
-              const mescla = mesclarDocumentoConcorrenteSeguro(
-                baseSelecionada.conhecida,
-                baseSelecionada.valor,
-                valor,
-                remoto,
-              );
+              const mescla = k === 'estoque'
+                ? mesclarEstoqueConcorrenteSeguro(
+                    baseSelecionada.conhecida,
+                    baseSelecionada.valor,
+                    valor,
+                    remoto,
+                  )
+                : mesclarDocumentoConcorrenteSeguro(
+                    baseSelecionada.conhecida,
+                    baseSelecionada.valor,
+                    valor,
+                    remoto,
+                  );
               if (mescla.conflitos.length > 0) {
                 pendentesConhecidos.add(k);
                 atualizarFilaVisual();
@@ -554,7 +561,9 @@ export function BootNuvem() {
           if (pendentesConhecidos.has(chave)) return false;
           basesConcorrentes.set(chave, valorNuvem);
         } else {
-          const mescla = mesclarDocumentoConcorrenteSeguro(true, basesConcorrentes.get(chave), localAtual, valorNuvem);
+          const mescla = chave === 'estoque'
+            ? mesclarEstoqueConcorrenteSeguro(true, basesConcorrentes.get(chave), localAtual, valorNuvem)
+            : mesclarDocumentoConcorrenteSeguro(true, basesConcorrentes.get(chave), localAtual, valorNuvem);
           if (mescla.conflitos.length > 0) {
             pendentesConhecidos.add(chave);
             atualizarFilaVisual();
